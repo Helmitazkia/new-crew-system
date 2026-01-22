@@ -28,14 +28,40 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navMenu">
-      <ul class="navbar-nav mx-auto gap-3">
+      <!-- <ul class="navbar-nav mx-auto gap-3">
         <li class="nav-item  fst-italic  fw-semibold"><a class="nav-link">Dashboard</a></li>
         <li class="nav-item  fst-italic fw-semibold"><a class="nav-link">Master Data</a></li>
         <li class="nav-item  fst-italic fw-semibold"><a class="nav-link ">Crew Roster</a></li>
         <li class="nav-item  fst-italic fw-semibold "><a class="nav-link">Recruitment</a></li>
         <li class="nav-item  fst-italic fw-semibold"><a class="nav-link">Training & Evaluation</a></li>
         <li class="nav-item  fst-italic fw-semibold"><a class="nav-link">Report</a></li>
+      </ul> -->
+      <ul class="navbar-nav mx-auto gap-3">
+        <li class="nav-item fst-italic fw-semibold">
+          <a class="nav-link <?php echo ($active_menu == 'dashboard') ? 'active' : '' ?>">Dashboard</a>
+        </li>
+
+        <li class="nav-item fst-italic fw-semibold">
+          <a class="nav-link <?php echo ($active_menu == 'master_data') ? 'active' : '' ?>">Master Data</a>
+        </li>
+
+        <li class="nav-item fst-italic fw-semibold">
+          <a class="nav-link <?php echo ($active_menu == 'crew_roster') ? 'active' : '' ?>">Crew Roster</a>
+        </li>
+
+        <li class="nav-item fst-italic fw-semibold">
+          <a class="nav-link <?php echo ($active_menu == 'recruitment') ? 'active' : '' ?>">Recruitment</a>
+        </li>
+
+        <li class="nav-item fst-italic fw-semibold">
+          <a class="nav-link <?php echo ($active_menu == 'training') ? 'active' : '' ?>">Training & Evaluation</a>
+        </li>
+
+        <li class="nav-item fst-italic fw-semibold">
+          <a class="nav-link <?php echo ($active_menu == 'report') ? 'active' : '' ?>">Report</a>
+        </li>
       </ul>
+
 
       <?php if($this->session->userdata('isLogin')): ?>
       <div class="dropdown position-relative">
@@ -325,6 +351,12 @@
 
     .navbar-nav .nav-link:hover {
       color: #000099;
+      text-decoration: underline;
+    }
+
+    .navbar-nav .nav-link.active {
+      color: #000099;
+      font-weight: 700;
       text-decoration: underline;
     }
   </style>

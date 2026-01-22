@@ -120,6 +120,20 @@
       </table>
     </div>
 
+    <div id="loginLoading" class="text-center mt-3">
+      <img src="<?php echo base_url('assets/img/loading-new.gif'); ?>" width="60" alt="Loading">
+    </div>
+
+    <style>
+      #loginLoading {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 9999;
+      }
+    </style>
+
     <style>
       .crew-table th,
       .crew-table td {
@@ -165,6 +179,7 @@
   <script>
     $(document).ready(function () {
       loadCrew(1);
+      $('#loginLoading').hide();
 
       $('.status-tabs button').click(function () {
         $('.status-tabs button').removeClass('btn-info active').addClass('btn-light');
@@ -297,8 +312,9 @@
     let currentPage = 1;
 
     function loadCrew(page = 1) {
-      currentPage = page;
+      $('#loginLoading').show();
 
+      currentPage = page;
       let status = $('.status-tabs .active').data('status') || 'All';
       console.log('Status:', status);
 
@@ -329,6 +345,7 @@
         },
         success: function (res) {
           if (res.success) {
+            $('#loginLoading').hide();
             if (status === "All") {
               renderTable(res.data, res.page || 1, res.limit || 30);
               renderPagination(res.total || 0, res.page || 1, res.limit || 30);
@@ -337,6 +354,8 @@
               $('#paginationNav').hide();
               $('#crewPagination').empty();
             }
+
+
           } else {
             $('#crewBody').html(
               `<tr><td colspan="9" class="text-center text-muted">No data</td></tr>`

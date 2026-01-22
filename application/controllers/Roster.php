@@ -1,29 +1,28 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
 class Roster extends CI_Controller {
     
-    // public function __construct()
-    // {
-    //     parent::__construct();
-        
-    //     // Cek session login
-    //     if(!$this->session->userdata('is_login')) {
-    //         redirect('auth/login'); // redirect ke login
-    //     }
-    // }
-
     function __construct()
-	{
-		parent::__construct();
-		
-		$this->load->model('MCrewscv');
-		// $this->load->helper(array('form', 'url'));
-		$this->load->library('../controllers/DataContext');
-	}
+    {
+        parent::__construct();
+
+        $this->load->model('MCrewscv');
+        $this->load->library('../controllers/DataContext');
+        $this->load->library('session');
+        $allowed_methods = array('do_login');
+        $current_method = $this->router->fetch_method();
+        if (
+            !in_array($current_method, $allowed_methods) &&
+            !$this->session->userdata('isLogin')
+        ) {
+            redirect('auth/login');
+            exit;
+        }
+    }
     
     public function getCrewRoster()
     {
         $data['title'] = 'Crew Roster';
+        $data['active_menu'] = 'crew_roster';
         $this->load->view('menu/header',$data); 
         $this->load->view('Roster/index_crewRoster');
         $this->load->view('menu/footer');
