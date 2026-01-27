@@ -24,6 +24,7 @@ class Roster extends CI_Controller {
         $data['title'] = 'Crew Roster';
         $data['active_menu'] = 'crew_roster';
         $this->load->view('menu/header',$data); 
+        $this->load->view('menu/sub_header_Crew_Lifecycle');
         $this->load->view('Roster/index_crewRoster');
         $this->load->view('menu/footer');
     }

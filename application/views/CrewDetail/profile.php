@@ -1,51 +1,9 @@
 <div class="container-fluid content-wrapper">
   <div class="row align-items-center">
-    <!-- DROPDOWN FILTER -->
-    <div class="col-md-6 d-flex gap-2 compact-form">
-      <button class="btn btn-dark btn-pill rounded-pill ms-3">
-        New
-      </button>
-      <div class="input-group">
-
-        <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown"
-          aria-expanded="false">
-          Filter
-        </button>
-        <ul class="dropdown-menu">
-          <li>
-            <a class="dropdown-item filter-item" href="#" data-value="id">ID</a>
-          </li>
-          <li>
-            <a class="dropdown-item filter-item" href="#" data-value="name">Name</a>
-          </li>
-          <li>
-            <a class="dropdown-item filter-item" href="#" data-value="age">Age</a>
-          </li>
-          <li>
-            <a class="dropdown-item filter-item" href="#" data-value="rank">Rank</a>
-          </li>
-          <li>
-            <a class="dropdown-item filter-item" href="#" data-value="applied">Applied For</a>
-          </li>
-          <li>
-            <a class="dropdown-item filter-item" href="#" data-value="vessel">Vessel</a>
-          </li>
-        </ul>
-        <input type="text" class="form-control" id="txtSearch" placeholder="Type keyword...">
-        <input type="hidden" id="typeSearch" value="name">
-        <button class="btn btn-outline-secondary" type="button" onclick="loadCrew(1)">
-          Search
-        </button>
-      </div>
-      <button class="btn btn-success" type="button" onclick="loadCrew(1)">
-        Export
-      </button>
-    </div>
-
     <!-- RIGHT : STATUS TABS -->
-    <div class="col-md-6 d-flex justify-content-end gap-1 status-tabs pe-md-4">
+    <div class="col-md-6 d-flex justify-content-end gap-1 profile-tabs pe-md-4">
       <button class="btn btn-info rounded-pill fst-italic fw-semibold" data-status="All">
-        All
+        Profile
       </button>
       <button class="btn btn-light btn-pill rounded-pill fst-italic fw-semibold" data-status="pickup">
         Data Pickup
@@ -155,7 +113,7 @@
 
 </div>
 
-<script>
+<!-- <script>
   $(document).ready(function () {
     loadCrew(1);
     $('#loginLoading').hide();
@@ -165,6 +123,20 @@
       $(this).addClass('btn-info active').removeClass('btn-light');
       loadCrew(1);
     });
+
+      // $('.status-tabs button').on('click', function () {
+      //   $('.status-tabs button')
+      //     .removeClass('btn-info active')
+      //     .addClass('btn-light');
+
+      //   $(this)
+      //     .addClass('btn-info active')
+      //     .removeClass('btn-light');
+
+      //   loadCrew(1);
+      //   $('#menuMasterPersonal').addClass('active');
+      // });
+
 
     $('#button-addon2').click(function () {
       loadCrew(1);
@@ -288,33 +260,6 @@
     $('#crewBody').html(html);
   }
 
-
-
-  function detailCrew(idperson) {
-      $('#loginLoading').show();
-
-      $.ajax({
-          url: '<?php echo base_url("Profile/getProfileAjax"); ?>/' + idperson,
-          type: 'GET',
-          success: function (html) {
-              // $('#contentArea').html(html);
-              console.log('Loaded Profile layout successfully');
-          },
-          error: function (xhr) {
-              console.log(xhr.responseText);
-              alert('Gagal load layout Profile');
-          },
-          complete: function () {
-              $('#loginLoading').hide();
-          }
-      });
-  }
-
-
-
-
-
-
   let currentPage = 1;
 
   function loadCrew(page = 1) {
@@ -378,4 +323,4 @@
       }
     });
   }
-</script>
+</script> -->

@@ -46,7 +46,7 @@
         </li>
 
         <li class="nav-item fst-italic fw-semibold">
-          <a class="nav-link <?php echo ($active_menu == 'crew_roster') ? 'active' : '' ?>">Crew Roster</a>
+          <a class="nav-link <?php echo ($active_menu == 'crew_roster') ? 'active' : '' ?>">Crew Lifecycle</a>
         </li>
 
         <li class="nav-item fst-italic fw-semibold">

@@ -166,6 +166,20 @@
       loadCrew(1);
     });
 
+      // $('.status-tabs button').on('click', function () {
+      //   $('.status-tabs button')
+      //     .removeClass('btn-info active')
+      //     .addClass('btn-light');
+
+      //   $(this)
+      //     .addClass('btn-info active')
+      //     .removeClass('btn-light');
+
+      //   loadCrew(1);
+      //   $('#menuMasterPersonal').addClass('active');
+      // });
+
+
     $('#button-addon2').click(function () {
       loadCrew(1);
     });
@@ -289,31 +303,71 @@
   }
 
 
+//   function detailCrew(idperson) {
+//     // Tampilkan loading
+//     // showLoading();
+    
+//     // AJAX request ke controller Profile
+//     $.ajax({
+//         url: '<?php echo base_url("Profile/getProfile"); ?>',
+//         type: 'POST',
+//         dataType: 'json',
+//         data: {
+//             idperson: idperson
+//         },
+//         success: function(response) {
+//             // hideLoading();
+            
+//             if (response.success) {
+//                 // Tampilkan data dalam modal
+//                 showCrewDetailModal(response.data, idperson);
+//             } else {
+//                 Swal.fire({
+//                     icon: 'error',
+//                     title: 'Error',
+//                     text: response.message || 'Failed to load crew details'
+//                 });
+//             }
+//         },
+//         error: function(xhr, status, error) {
+//             // hideLoading();
+//             console.error('AJAX Error:', error);
+//             Swal.fire({
+//                 icon: 'error',
+//                 title: 'Error',
+//                 text: 'Failed to load crew details. Please try again.'
+//             });
+//         }
+//     });
+// }
 
-  function detailCrew(idperson) {
-      $('#loginLoading').show();
+    function detailCrew(idperson) {
+        // Tampilkan loading
+        $('#loginLoading').show();
+        
+        // Beri sedikit delay agar loading terlihat
+        setTimeout(function() {
+            window.location.href = '<?php echo base_url("Profile/getProfile"); ?>/' + idperson;
+        }, 300);
+    }
 
-      $.ajax({
-          url: '<?php echo base_url("Profile/getProfileAjax"); ?>/' + idperson,
-          type: 'GET',
-          success: function (html) {
-              // $('#contentArea').html(html);
-              console.log('Loaded Profile layout successfully');
-          },
-          error: function (xhr) {
-              console.log(xhr.responseText);
-              alert('Gagal load layout Profile');
-          },
-          complete: function () {
-              $('#loginLoading').hide();
-          }
-      });
-  }
-
-
-
-
-
+    // Di loadCrew function, pastikan selalu hide loading di success/error
+    function loadCrew(page = 1) {
+        $('#loginLoading').show();
+        
+        // ... kode AJAX ...
+        
+        success: function (res) {
+            if (res.success) {
+                $('#loginLoading').hide(); // ← INI PASTIKAN ADA
+                // ... render data ...
+            }
+        },
+        error: function (xhr) {
+            $('#loginLoading').hide(); // ← INI JUGA PASTIKAN ADA
+            // ... error handling ...
+        }
+    }
 
   let currentPage = 1;
 
