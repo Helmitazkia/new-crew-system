@@ -329,17 +329,17 @@
 
     let url = '';
     if (status === 'onboard') {
-      url = "<?php echo base_url('MasterPersonal/MasterPersonal/getDataOnboard/search'); ?>";
+      url = "<?php echo base_url('MasterPersonal/getDataOnboard/search'); ?>";
     } else if (status === 'onleave') {
-      url = "<?php echo base_url('MasterPersonal/MasterPersonal/getDataOnLeave/search'); ?>";
+      url = "<?php echo base_url('MasterPersonal/getDataOnLeave/search'); ?>";
     } else if (status === 'nonactive') {
-      url = "<?php echo base_url('MasterPersonal/MasterPersonal/getDataNonAktif/search'); ?>";
+      url = "<?php echo base_url('MasterPersonal/getDataNonAktif/search'); ?>";
     } else if (status === 'nonforemp') {
-      url = "<?php echo base_url('MasterPersonal/MasterPersonal/getDataNotForEmp/search'); ?>";
+      url = "<?php echo base_url('MasterPersonal/getDataNotForEmp/search'); ?>";
     } else if (status === 'pickup') {
-      url = "<?php echo base_url('MasterPersonal/MasterPersonal/getDataPickup/search'); ?>";
+      url = "<?php echo base_url('MasterPersonal/getDataPickup/search'); ?>";
     } else if (status === 'All') {
-      url = "<?php echo base_url('MasterPersonal/MasterPersonal/getAllData_personal'); ?>";
+      url = "<?php echo base_url('MasterPersonal/getAllData_personal'); ?>";
     }
 
     $.ajax({

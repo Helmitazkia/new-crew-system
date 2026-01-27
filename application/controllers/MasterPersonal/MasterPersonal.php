@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-class Roster extends CI_Controller {
+class MasterPersonal extends CI_Controller {
     
     function __construct()
     {
@@ -19,15 +19,48 @@ class Roster extends CI_Controller {
         }
     }
     
+    // public function getCrewRoster()
+    // {
+    //     $data['title'] = 'Crew Roster';
+    //     $data['active_menu'] = 'crew_roster';
+    //     $this->load->view('menu/header',$data); 
+    //     $this->load->view('menu/sub_header_Crew_Lifecycle');
+    //     $this->load->view('Roster/index_crewRoster');
+    //     $this->load->view('menu/footer');
+    // }
+
+    // public function getActiveRoster()
+    // {
+    //     $data['title'] = 'Crew Roster';
+    //     $data['active_menu'] = 'crew_roster';
+    //     $this->load->view('menu/header',$data); 
+    //     $this->load->view('menu/sub_header_Crew_Lifecycle');
+    //     $this->load->view('Roster/ActiveRoster/active_roster');
+    //     $this->load->view('menu/footer');
+    // }
+
     public function getCrewRoster()
     {
-        $data['title'] = 'Crew Roster';
-        $data['active_menu'] = 'crew_roster';
-        $this->load->view('menu/header',$data); 
-        $this->load->view('menu/sub_header_Crew_Lifecycle');
-        $this->load->view('Roster/index_crewRoster');
-        $this->load->view('menu/footer');
+        $data = array(
+            'title' => 'Crew Roster',
+            'active_menu' => 'crew_roster',
+            'content' => 'Roster/index_crewRoster'
+        );
+
+        $this->load->view('menu/main_CrewLifecycle', $data);
     }
+
+    public function getActiveRoster()
+    {
+        $data = array(
+            'title' => 'Active Roster',
+            'active_menu' => 'crew_roster',
+            'content' => 'Roster/ActiveRoster/active_roster'
+        );
+
+        $this->load->view('menu/main_CrewLifecycle', $data);
+    }
+
     
     public function getAllData_personal()
     {
@@ -610,14 +643,5 @@ public function getDataPickup($searchNya = "")
         'data'    => $rows
     ));
 }
-
-
-
-
-
-
-
-
-
 
 }
