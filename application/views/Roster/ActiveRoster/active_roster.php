@@ -296,21 +296,28 @@
   function detailCrew(idperson) {
     $('#loginLoading').show();
 
-    $.ajax({
-      url: '<?php echo base_url("Profile/getProfileAjax"); ?>/' + idperson,
-      type: 'GET',
-      success: function (html) {
-        // $('#contentArea').html(html);
-        console.log('Loaded Profile layout successfully');
-      },
-      error: function (xhr) {
-        console.log(xhr.responseText);
-        alert('Gagal load layout Profile');
-      },
-      complete: function () {
+    window.location.href = "<?php echo base_url('PersonDetail'); ?>";
+      setTimeout(function () {
         $('#loginLoading').hide();
-      }
-    });
+    }, 5000); // 5000ms = 5 detik
+
+    $('#loginLoading').hide();
+
+    // $.ajax({
+    //   url: '<?php echo base_url("Profile/getProfileAjax"); ?>/' + idperson,
+    //   type: 'GET',
+    //   success: function (html) {
+    //     // $('#contentArea').html(html);
+    //     console.log('Loaded Profile layout successfully');
+    //   },
+    //   error: function (xhr) {
+    //     console.log(xhr.responseText);
+    //     alert('Gagal load layout Profile');
+    //   },
+    //   complete: function () {
+    //     $('#loginLoading').hide();
+    //   }
+    // });
   }
 
 

@@ -164,7 +164,7 @@
             console.log("Login berhasil", res);
 
             // // REDIRECT KE DASHBOARD
-            window.location.href = "<?php echo base_url('ActiveRoster/ActiveRoster/getActiveRoster'); ?>";
+            window.location.href = "<?php echo base_url('CrewLifecycle'); ?>";
             setTimeout(function () {
               $('#loginLoading').hide();
             }, 5000); // 5000ms = 5 detik

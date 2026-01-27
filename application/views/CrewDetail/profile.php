@@ -1,326 +1,953 @@
-<div class="container-fluid content-wrapper">
-  <div class="row align-items-center">
-    <!-- RIGHT : STATUS TABS -->
-    <div class="col-md-6 d-flex justify-content-end gap-1 profile-tabs pe-md-4">
-      <button class="btn btn-info rounded-pill fst-italic fw-semibold" data-status="All">
-        Profile
-      </button>
-      <button class="btn btn-light btn-pill rounded-pill fst-italic fw-semibold" data-status="pickup">
-        Data Pickup
-      </button>
-      <button class="btn btn-light rounded-pill fst-italic fw-semibold" data-status="onboard">
-        On Board
-      </button>
-      <button class="btn btn-light rounded-pill fst-italic fw-semibold" data-status="onleave">
-        On Leave
-      </button>
-      <button class="btn btn-light rounded-pill fst-italic fw-semibold" data-status="nonactive">
-        Non Active
-      </button>
-      <button class="btn btn-light rounded-pill fst-italic fw-semibold" data-status="nonforemp">
-        Non For Emp
-      </button>
+<div class="profile-content">
+  <!-- SEMUA CONTENT PROFILE MASUK SINI -->
+
+  <div class="container-fluid mb-4">
+    <div class="row g-3 mb-4">
+
+      <!-- FOTO -->
+      <div class="col-lg-3 col-md-4 col-sm-12 text-center">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <img src="<?php echo base_url('assets/img/banner/andhika-lines.png'); ?>" class="img-fluid rounded mb-3"
+              alt="Crew Photo">
+            <h6 class="fw-bold mb-0">A. LOLO</h6>
+            <small class="text-muted">ID : 004059</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- BASIC IDENTITY -->
+      <div class="col-lg-9 col-md-8 col-sm-12">
+        <div class="card shadow-sm h-100">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="fw-semibold fst-italic">Basic Identity</span>
+
+            <div class="action-btn">
+              <button class="btn btn-sm btn-outline-primary btn-edit">
+                <i class="fa fa-edit"></i> Edit
+              </button>
+              <button class="btn btn-sm btn-success btn-save d-none">
+                <i class="fa fa-save"></i> Save
+              </button>
+              <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <div class="card-body small">
+            <div class="row g-2">
+              <!-- Old Crew ID -->
+              <div class="col-md-4">
+                <label class="form-label mb-0 fst-italic fw-semibold">Old Crew ID</label>
+                <div class="form-view fst-italic">004059</div>
+                <input type="text" class="form-control form-edit d-none" value="004059">
+              </div>
+
+              <!-- Old Contract Number -->
+              <div class="col-md-4">
+                <label class="form-label mb-0 fst-italic fw-semibold">Old Contract Number</label>
+                <div class="form-view fst-italic">CTR-2023-0098</div>
+                <input type="text" class="form-control form-edit d-none" value="CTR-2023-0098">
+              </div>
+
+              <!-- Seafarer Code -->
+              <div class="col-md-4">
+                <label class="form-label mb-0 fst-italic fw-semibold">Seafarer Code</label>
+                <div class="form-view fst-italic">SEA-2024-001</div>
+                <input type="text" class="form-control form-edit d-none" value="SEA-2024-001">
+              </div>
+
+              <!-- First Name -->
+              <div class="col-md-4">
+                <label class="form-label mb-0 fst-italic fw-semibold">First Name</label>
+                <div class="form-view fst-italic">A</div>
+                <input type="text" class="form-control form-edit d-none" value="A">
+              </div>
+
+              <!-- Middle Name -->
+              <div class="col-md-4">
+                <label class="form-label mb-0 fst-italic fw-semibold">Middle Name</label>
+                <div class="form-view fst-italic">Lolo</div>
+                <input type="text" class="form-control form-edit d-none" value="Lolo">
+              </div>
+
+              <!-- Last Name -->
+              <div class="col-md-4">
+                <label class="form-label mb-0 fst-italic fw-semibold">Last Name</label>
+                <div class="form-view fst-italic">Gading</div>
+                <input type="text" class="form-control form-edit d-none" value="Gading">
+              </div>
+
+              <!-- Gender -->
+              <div class="col-md-4">
+                <label class="form-label mb-0 fst-italic fw-semibold">Gender</label>
+                <div class="form-view fst-italic">Male</div>
+                <select class="form-select form-edit d-none">
+                  <option>Male</option>
+                  <option>Female</option>
+                </select>
+              </div>
+
+              <!-- Nationality -->
+              <div class="col-md-4">
+                <label class="form-label mb-0 fst-italic fw-semibold">Nationality (Citizenship)</label>
+                <div class="form-view fst-italic">Indonesia</div>
+                <select class="form-select form-edit d-none">
+                  <option>Indonesia</option>
+                  <option>Philippines</option>
+                  <option>India</option>
+                </select>
+              </div>
+
+              <!-- Country of Origin -->
+              <div class="col-md-4">
+                <label class="form-label mb-0 fst-italic fw-semibold">Country of Origin</label>
+                <div class="form-view fst-italic">Indonesia</div>
+                <select class="form-select form-edit d-none">
+                  <option>Indonesia</option>
+                  <option>Philippines</option>
+                  <option>India</option>
+                </select>
+              </div>
+
+              <!-- Date of Birth -->
+              <div class="col-md-4">
+                <label class="form-label mb-0 fst-italic fw-semibold">Date of Birth</label>
+                <div class="form-view fst-italic">22 Nov 1972</div>
+                <input type="date" class="form-control form-edit d-none" value="1972-11-22">
+              </div>
+
+              <!-- Place of Birth -->
+              <div class="col-md-4">
+                <label class="form-label mb-0 fst-italic fw-semibold">Place / City of Birth</label>
+                <div class="form-view fst-italic">Jakarta</div>
+                <input type="text" class="form-control form-edit d-none" value="Jakarta">
+              </div>
+
+              <!-- Religion -->
+              <div class="col-md-4">
+                <label class="form-label mb-0 fst-italic fw-semibold">Religion</label>
+                <div class="form-view fst-italic">Islam</div>
+                <select class="form-select form-edit d-none">
+                  <option>Islam</option>
+                  <option>Christian</option>
+                  <option>Catholic</option>
+                  <option>Hindu</option>
+                  <option>Buddha</option>
+                </select>
+              </div>
+
+              <!-- Marital Status -->
+              <div class="col-md-4">
+                <label class="form-label mb-0 fst-italic fw-semibold">Marital Status</label>
+                <div class="form-view fst-italic">Married</div>
+                <select class="form-select form-edit d-none">
+                  <option>Single</option>
+                  <option>Married</option>
+                  <option>Divorced</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div>
+
+  <div class="container-fluid mb-4">
+    <div class="row">
+      <div class="col-6 mb-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="fw-semibold fst-italic">Family Information</span>
+
+            <div class="action-btn">
+              <button class="btn btn-sm btn-outline-primary btn-edit">
+                <i class="fa fa-edit"></i> Edit
+              </button>
+              <button class="btn btn-sm btn-success btn-save d-none">
+                <i class="fa fa-save"></i> Save
+              </button>
+              <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <div class="card-body small">
+            <div class="row g-2">
+
+              <div class="col-12">
+                <label class="form-label mb-0 fst-italic fw-semibold">Father Name</label>
+                <div class="form-view fst-italic">Ahmad</div>
+                <input type="text" class="form-control form-edit d-none" value="Ahmad">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label mb-0 fst-italic fw-semibold">Mother Name</label>
+                <div class="form-view fst-italic">Siti</div>
+                <input type="text" class="form-control form-edit d-none" value="Siti">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label mb-0 fst-italic fw-semibold">Wife Name</label>
+                <div class="form-view fst-italic">Aisyah</div>
+                <input type="text" class="form-control form-edit d-none" value="Aisyah">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label mb-0 fst-italic fw-semibold">Next of Kin</label>
+                <div class="form-view fst-italic">Aisyah (Wife)</div>
+                <input type="text" class="form-control form-edit d-none" value="Aisyah (Wife)">
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-6 mb-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="fw-semibold fst-italic">Tax & Social Security</span>
+
+            <div class="action-btn">
+              <button class="btn btn-sm btn-outline-primary btn-edit">
+                <i class="fa fa-edit"></i> Edit
+              </button>
+              <button class="btn btn-sm btn-success btn-save d-none">
+                <i class="fa fa-save"></i> Save
+              </button>
+              <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <div class="card-body small">
+            <div class="row g-2">
+
+              <div class="col-md-6">
+                <label class="form-label mb-0 fst-italic fw-semibold">Social Security Number</label>
+                <div class="form-view fst-italic">SSN-998877</div>
+                <input type="text" class="form-control form-edit d-none" value="SSN-998877">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label mb-0 fst-italic fw-semibold">SS Issuing Country</label>
+                <div class="form-view fst-italic">Indonesia</div>
+                <select class="form-select form-edit d-none">
+                  <option>Indonesia</option>
+                  <option>Philippines</option>
+                  <option>India</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label mb-0 fst-italic fw-semibold">Personal Tax Number</label>
+                <div class="form-view fst-italic">12.345.678.9-012.000</div>
+                <input type="text" class="form-control form-edit d-none" value="12.345.678.9-012.000">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label mb-0 fst-italic fw-semibold">Tax Issuing Country</label>
+                <div class="form-view fst-italic">Indonesia</div>
+                <select class="form-select form-edit d-none">
+                  <option>Indonesia</option>
+                  <option>Philippines</option>
+                  <option>India</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label mb-0 fst-italic fw-semibold">Tax Status</label>
+                <div class="form-view fst-italic">Married - K/1</div>
+                <select class="form-select form-edit d-none">
+                  <option>Single</option>
+                  <option>Married - K/0</option>
+                  <option>Married - K/1</option>
+                  <option>Married - K/2</option>
+                </select>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
 
 
-<style>
-  .table-header-blue th {
-    background: #000099 !important;
-    color: #ffffff !important;
-    text-align: center;
-    vertical-align: middle;
-    font-weight: 600;
-  }
-</style>
-<!-- TABLE -->
-<!-- TABLE -->
-<div class="table-responsive ms-3 me-md-3 pt-3">
-  <table class="table table-bordered crew-table">
-    <thead class="table-header-blue">
-      <tr>
-        <th class="fst-italic">No</th>
-        <th class="fst-italic">Full Name Crew</th>
-        <th class="fst-italic">Rank Applied For</th>
-        <th class="fst-italic">Gender</th>
-        <th class="fst-italic">Religion</th>
-        <th class="fst-italic">Birth</th>
-        <th class="fst-italic">Status Person</th>
-        <th class="fst-italic">Accept Lower Rank</th>
-        <th class="fst-italic">Action</th>
-      </tr>
-    </thead>
-    <tbody id="crewBody">
-      <!-- FILLED BY JSON -->
-    </tbody>
-  </table>
-</div>
+      <div class="container-fluid mb-4">
+        <div class="row">
+          <div class="col-6 mb-4">
+            <div class="card shadow-sm h-100">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fw-semibold fst-italic">Contact & Address</span>
 
-<div id="loginLoading" class="text-center mt-3">
-  <img src="<?php echo base_url('assets/img/loading-new.gif'); ?>" width="60" alt="Loading">
-</div>
+                <div class="action-btn">
+                  <button class="btn btn-sm btn-outline-primary btn-edit">
+                    <i class="fa fa-edit"></i> Edit
+                  </button>
+                  <button class="btn btn-sm btn-success btn-save d-none">
+                    <i class="fa fa-save"></i> Save
+                  </button>
+                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                    Cancel
+                  </button>
+                </div>
+              </div>
 
-<style>
-  #loginLoading {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 9999;
-  }
-</style>
+              <div class="card-body small">
+                <div class="row g-2">
 
-<style>
-  .crew-table th,
-  .crew-table td {
-    font-size: 12px;
-    /* default kecil & nyaman */
-    vertical-align: middle;
-  }
+                  <div class="col-12">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Primary / Permanent Address</label>
+                    <div class="form-view fst-italic">Jl. Merdeka No. 10</div>
+                    <textarea class="form-control form-edit d-none">Jl. Merdeka No. 10</textarea>
+                  </div>
 
-  .crew-table th {
-    font-weight: 600;
-  }
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">City</label>
+                    <div class="form-view fst-italic">Jakarta</div>
+                    <input type="text" class="form-control form-edit d-none" value="Jakarta">
+                  </div>
 
-  .crew-table .btn {
-    font-size: 11px;
-    padding: 2px 6px;
-  }
-</style>
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Post Code</label>
+                    <div class="form-view fst-italic">10110</div>
+                    <input type="text" class="form-control form-edit d-none" value="10110">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Country</label>
+                    <div class="form-view fst-italic">Indonesia</div>
+                    <select class="form-select form-edit d-none">
+                      <option>Indonesia</option>
+                      <option>Philippines</option>
+                      <option>India</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Nearest Airport</label>
+                    <div class="form-view fst-italic">CGK</div>
+                    <input type="text" class="form-control form-edit d-none" value="CGK">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Mobile Tel.</label>
+                    <div class="form-view fst-italic">+62 812 3456 7890</div>
+                    <input type="text" class="form-control form-edit d-none" value="+62 812 3456 7890">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Home Tel.</label>
+                    <div class="form-view fst-italic">021-555666</div>
+                    <input type="text" class="form-control form-edit d-none" value="021-555666">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Fax</label>
+                    <div class="form-view fst-italic">021-777888</div>
+                    <input type="text" class="form-control form-edit d-none" value="021-777888">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Email</label>
+                    <div class="form-view fst-italic">crew@mail.com</div>
+                    <input type="email" class="form-control form-edit d-none" value="crew@mail.com">
+                  </div>
+
+                  <!-- CONTACT METHOD -->
+                  <div class="col-12 mt-2">
+                    <label class="form-label mb-1 fst-italic fw-semibold">Contact Method</label>
+
+                    <!-- VIEW -->
+                    <div class="form-view fst-italic">
+                      Email, Mobile Phone
+                    </div>
+
+                    <!-- EDIT -->
+                    <div class="form-edit d-none">
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" checked>
+                        <label class="form-check-label">Email</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox">
+                        <label class="form-check-label">Fax</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" checked>
+                        <label class="form-check-label">Mobile Phone</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox">
+                        <label class="form-check-label">Home Phone</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox">
+                        <label class="form-check-label">Post</label>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 mb-4">
+            <div class="card shadow-sm h-100">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fw-semibold fst-italic">Physical & Medical</span>
+
+                <div class="action-btn">
+                  <button class="btn btn-sm btn-outline-primary btn-edit">
+                    <i class="fa fa-edit"></i> Edit
+                  </button>
+                  <button class="btn btn-sm btn-success btn-save d-none">
+                    <i class="fa fa-save"></i> Save
+                  </button>
+                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+
+              <div class="card-body small">
+                <div class="row g-2">
+
+                  <div class="col-md-4">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Blood Type</label>
+                    <div class="form-view fst-italic">O</div>
+                    <select class="form-select form-edit d-none">
+                      <option>A</option>
+                      <option>B</option>
+                      <option>AB</option>
+                      <option selected>O</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Eye Color</label>
+                    <div class="form-view fst-italic">Brown</div>
+                    <input type="text" class="form-control form-edit d-none" value="Brown">
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Weight (kg)</label>
+                    <div class="form-view fst-italic">70</div>
+                    <input type="number" class="form-control form-edit d-none" value="70">
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Height (cm)</label>
+                    <div class="form-view fst-italic">175</div>
+                    <input type="number" class="form-control form-edit d-none" value="175">
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Shoes (mm)</label>
+                    <div class="form-view fst-italic">270</div>
+                    <input type="number" class="form-control form-edit d-none" value="270">
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Collar (cm)</label>
+                    <div class="form-view fst-italic">40</div>
+                    <input type="number" class="form-control form-edit d-none" value="40">
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Chest (cm)</label>
+                    <div class="form-view fst-italic">98</div>
+                    <input type="number" class="form-control form-edit d-none" value="98">
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Waist (cm)</label>
+                    <div class="form-view fst-italic">82</div>
+                    <input type="number" class="form-control form-edit d-none" value="82">
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Ins. Leg (cm)</label>
+                    <div class="form-view fst-italic">78</div>
+                    <input type="number" class="form-control form-edit d-none" value="78">
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Clothes Size</label>
+                    <div class="form-view fst-italic">L</div>
+                    <select class="form-select form-edit d-none">
+                      <option>S</option>
+                      <option>M</option>
+                      <option selected>L</option>
+                      <option>XL</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-4">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Boilersuit Size</label>
+                    <div class="form-view fst-italic">L</div>
+                    <select class="form-select form-edit d-none">
+                      <option>S</option>
+                      <option>M</option>
+                      <option selected>L</option>
+                      <option>XL</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Height Phobia</label>
+                    <div class="form-view fst-italic">No</div>
+                    <select class="form-select form-edit d-none">
+                      <option>No</option>
+                      <option>Yes</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Feel Claustrophobic</label>
+                    <div class="form-view fst-italic">No</div>
+                    <select class="form-select form-edit d-none">
+                      <option>No</option>
+                      <option>Yes</option>
+                    </select>
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Any Allergy</label>
+                    <div class="form-view fst-italic">None</div>
+                    <textarea class="form-control form-edit d-none">None</textarea>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6 mb-4">
+            <div class="card shadow-sm h-100">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fw-semibold fst-italic">Assessment & Training</span>
+
+                <div class="action-btn">
+                  <button class="btn btn-sm btn-outline-primary btn-edit">
+                    <i class="fa fa-edit"></i> Edit
+                  </button>
+                  <button class="btn btn-sm btn-success btn-save d-none">
+                    <i class="fa fa-save"></i> Save
+                  </button>
+                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+
+              <div class="card-body small">
+                <div class="row g-2">
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">CES Score</label>
+                    <div class="form-view fst-italic">85</div>
+                    <input type="number" class="form-control form-edit d-none" value="85">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Marlin Test Score</label>
+                    <div class="form-view fst-italic">78</div>
+                    <input type="number" class="form-control form-edit d-none" value="78">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Training Date</label>
+                    <div class="form-view fst-italic">2024-08-15</div>
+                    <input type="date" class="form-control form-edit d-none" value="2024-08-15">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Evaluation</label>
+                    <div class="form-view fst-italic">Recommended</div>
+                    <select class="form-select form-edit d-none">
+                      <option>Recommended</option>
+                      <option>Need Improvement</option>
+                      <option>Not Recommended</option>
+                    </select>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Career & Placement -->
+          <div class="col-6 mb-4">
+            <div class="card shadow-sm h-100">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fw-semibold fst-italic">Career & Placement</span>
+
+                <div class="action-btn">
+                  <button class="btn btn-sm btn-outline-primary btn-edit">
+                    <i class="fa fa-edit"></i> Edit
+                  </button>
+                  <button class="btn btn-sm btn-success btn-save d-none">
+                    <i class="fa fa-save"></i> Save
+                  </button>
+                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+
+              <div class="card-body small">
+                <div class="row g-2">
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Rank Applied For</label>
+                    <div class="form-view fst-italic">Chief Officer</div>
+                    <select class="form-select form-edit d-none">
+                      <option>Master</option>
+                      <option selected>Chief Officer</option>
+                      <option>Second Officer</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Vessel Applied For</label>
+                    <div class="form-view fst-italic">MT. ANDHIKA VIDYANATA</div>
+                    <input type="text" class="form-control form-edit d-none" value="MT. ANDHIKA VIDYANATA">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Crew Vessel Type</label>
+                    <div class="form-view fst-italic">Oil Tanker</div>
+                    <select class="form-select form-edit d-none">
+                      <option>Oil Tanker</option>
+                      <option>Chemical Tanker</option>
+                      <option>Bulk Carrier</option>
+                      <option>Container</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">
+                      Willing to Accept Lower Rank
+                    </label>
+                    <div class="form-view fst-italic">Yes</div>
+                    <select class="form-select form-edit d-none">
+                      <option>Yes</option>
+                      <option>No</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Available From</label>
+                    <div class="form-view fst-italic">2024-10-01</div>
+                    <input type="date" class="form-control form-edit d-none" value="2024-10-01">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- HOME SALARY -->
+          <div class="col-6 mb-4">
+            <div class="card shadow-sm h-100">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fw-semibold fst-italic">🏠 Home Salary</span>
+
+                <div class="action-btn">
+                  <button class="btn btn-sm btn-outline-primary btn-edit">
+                    <i class="fa fa-edit"></i> Edit
+                  </button>
+                  <button class="btn btn-sm btn-success btn-save d-none">
+                    <i class="fa fa-save"></i> Save
+                  </button>
+                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+              <div class="card-body small">
+                <div class="row g-2">
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Home Salary</label>
+                    <div class="form-view fst-italic">USD 1,500</div>
+                    <input type="text" class="form-control form-edit d-none" value="1500">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Percentage</label>
+                    <div class="form-view fst-italic">60 %</div>
+                    <input type="number" class="form-control form-edit d-none" value="60">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Bank Name</label>
+                    <div class="form-view fst-italic">BNI</div>
+                    <input type="text" class="form-control form-edit d-none" value="BNI">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Account Number</label>
+                    <div class="form-view fst-italic">1234567890</div>
+                    <input type="text" class="form-control form-edit d-none" value="1234567890">
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Account Name</label>
+                    <div class="form-view fst-italic">A LOLO GADING</div>
+                    <input type="text" class="form-control form-edit d-none" value="A LOLO GADING">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Board Salary -->
+          <div class="col-6 mb-4">
+            <div class="card shadow-sm h-100">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fw-semibold fst-italic">🚢 Board Salary</span>
+
+                <div class="action-btn">
+                  <button class="btn btn-sm btn-outline-primary btn-edit">
+                    <i class="fa fa-edit"></i> Edit
+                  </button>
+                  <button class="btn btn-sm btn-success btn-save d-none">
+                    <i class="fa fa-save"></i> Save
+                  </button>
+                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+              <div class="card-body small">
+                <div class="row g-2">
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Board Salary</label>
+                    <div class="form-view fst-italic">USD 2,500</div>
+                    <input type="text" class="form-control form-edit d-none" value="2500">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Percentage</label>
+                    <div class="form-view fst-italic">40 %</div>
+                    <input type="number" class="form-control form-edit d-none" value="40">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Bank Name</label>
+                    <div class="form-view fst-italic">Mandiri</div>
+                    <input type="text" class="form-control form-edit d-none" value="Mandiri">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Account Number</label>
+                    <div class="form-view fst-italic">9876543210</div>
+                    <input type="text" class="form-control form-edit d-none" value="9876543210">
+                  </div>
+
+                  <div class="col-12">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Account Name</label>
+                    <div class="form-view fst-italic">A LOLO GADING</div>
+                    <input type="text" class="form-control form-edit d-none" value="A LOLO GADING">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
 
-<!-- PAGINATION -->
-<nav class="mt-3 ms-3">
-  <ul class="pagination flex-wrap" id="crewPagination"></ul>
-</nav>
-
-<style>
-  #crewPagination {
-    row-gap: 6px;
-  }
-
-  @media (max-width: 576px) {
-    #crewPagination {
-      justify-content: center;
-    }
-  }
-</style>
 
 
+          <div class="col-6 mb-4">
+            <div class="card shadow-sm">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fw-semibold fst-italic">📎 Attachments</span>
 
-<!-- PAGINATION -->
+                <div class="action-btn">
+                  <button class="btn btn-sm btn-outline-primary btn-edit">
+                    <i class="fa fa-upload"></i> Upload
+                  </button>
+                </div>
+              </div>
 
-</div>
+              <div class="card-body small">
+                <div class="row g-2">
 
-<!-- <script>
-  $(document).ready(function () {
-    loadCrew(1);
-    $('#loginLoading').hide();
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Statement of Wages</label>
+                    <input type="file" class="form-control form-control-sm">
+                  </div>
 
-    $('.status-tabs button').click(function () {
-      $('.status-tabs button').removeClass('btn-info active').addClass('btn-light');
-      $(this).addClass('btn-info active').removeClass('btn-light');
-      loadCrew(1);
-    });
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Statement</label>
+                    <input type="file" class="form-control form-control-sm">
+                  </div>
 
-      // $('.status-tabs button').on('click', function () {
-      //   $('.status-tabs button')
-      //     .removeClass('btn-info active')
-      //     .addClass('btn-light');
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Interview File</label>
+                    <input type="file" class="form-control form-control-sm">
+                  </div>
 
-      //   $(this)
-      //     .addClass('btn-info active')
-      //     .removeClass('btn-light');
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Evaluation File</label>
+                    <input type="file" class="form-control form-control-sm">
+                  </div>
 
-      //   loadCrew(1);
-      //   $('#menuMasterPersonal').addClass('active');
-      // });
+                </div>
+              </div>
+            </div>
+          </div>
 
+          <div class="col-6 mb-4">
+            <div class="card shadow-sm h-100">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fw-semibold fst-italic">Declaration & Signature</span>
 
-    $('#button-addon2').click(function () {
-      loadCrew(1);
-    });
+                <div class="action-btn">
+                  <button class="btn btn-sm btn-outline-primary btn-edit">
+                    <i class="fa fa-edit"></i> Edit
+                  </button>
+                  <button class="btn btn-sm btn-success btn-save d-none">
+                    <i class="fa fa-save"></i> Save
+                  </button>
+                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                    Cancel
+                  </button>
+                </div>
+              </div>
 
-    $(document).on('click', '.filter-item', function (e) {
-      e.preventDefault();
+              <div class="card-body small">
+                <div class="row g-2">
 
-      let type = $(this).data('value');
-      let label = $(this).text();
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Sign Place</label>
+                    <div class="form-view fst-italic">Jakarta</div>
+                    <input type="text" class="form-control form-edit d-none" value="Jakarta">
+                  </div>
 
-      $('#typeSearch').val(type);
-      $('.dropdown-toggle').text(label);
-    });
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Sign Date</label>
+                    <div class="form-view fst-italic">2024-10-01</div>
+                    <input type="date" class="form-control form-edit d-none" value="2024-10-01">
+                  </div>
 
+                  <div class="col-12">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Additional Remarks</label>
+                    <div class="form-view fst-italic">
+                      I hereby declare that all information provided is true and correct.
+                    </div>
+                    <textarea class="form-control form-edit d-none" rows="3">
+I hereby declare that all information provided is true and correct.
+              </textarea>
+                  </div>
 
-  });
-
-  function renderPagination(total, page, limit) {
-    let totalPage = Math.ceil(total / limit);
-    let maxVisible = 10;
-    let html = '';
-
-    if (totalPage <= 1) {
-      $('#crewPagination').html('');
-      return;
-    }
-
-    let startPage = Math.floor((page - 1) / maxVisible) * maxVisible + 1;
-    let endPage = startPage + maxVisible - 1;
-
-    if (endPage > totalPage) {
-      endPage = totalPage;
-    }
-
-
-    if (page > 1) {
-      html += `
-      <li class="page-item">
-        <a class="page-link" href="javascript:void(0)" onclick="loadCrew(${page - 1})">
-          Previous
-        </a>
-      </li>
-    `;
-    }
-
-
-    if (startPage > 1) {
-      html += `
-      <li class="page-item">
-        <a class="page-link" onclick="loadCrew(1)">1</a>
-      </li>
-      <li class="page-item disabled">
-        <span class="page-link">...</span>
-      </li>
-    `;
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      html += `
-      <li class="page-item ${i === page ? 'active' : ''}">
-        <a class="page-link" onclick="loadCrew(${i})">${i}</a>
-      </li>
-    `;
-    }
-
-    if (endPage < totalPage) {
-      html += `
-      <li class="page-item disabled">
-        <span class="page-link">...</span>
-      </li>
-      <li class="page-item">
-        <a class="page-link" onclick="loadCrew(${totalPage})">${totalPage}</a>
-      </li>
-    `;
-    }
-
-    if (page < totalPage) {
-      html += `
-      <li class="page-item">
-        <a class="page-link" href="javascript:void(0)" onclick="loadCrew(${page + 1})">
-          Next
-        </a>
-      </li>
-    `;
-    }
-
-    $('#crewPagination').html(html);
-  }
+                </div>
+              </div>
+            </div>
+          </div>
 
 
-  function renderTable(data, page, limit) {
-    let html = '';
-    let no = (page - 1) * limit + 1;
+          <div class="col-6 mb-4">
+            <div class="card shadow-sm h-100">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fw-semibold fst-italic">Crew Status</span>
 
-    if (data.length === 0) {
-      html = `<tr>
-              <td colspan="9" class="text-center text-muted">No data found</td>
-            </tr>`;
-    } else {
-      $.each(data, function (i, v) {
-        html += `
-        <tr class="${i % 2 ? 'table-secondary' : ''}">
-          <td>${no++}</td>
-          <td>(${v.idperson}) ${v.fullName}</td>
-          <td>${v.applyfor}</td>
-          <td>${v.gender}</td>
-          <td>${v.religion}</td>
-          <td>${v.NmKota}, ${v.dob}</td>
-          <td>${v.statusPerson}</td>
-          <td>${v.lowerRank}</td>
-          <td>
-            <button class="btn btn-warning btn-sm btn-pill" onclick="detailCrew('${v.idperson}')">Detail</button>
-            <button class="btn btn-danger btn-sm btn-pill" onclick="deleteCrew('${v.idperson}')">Delete</button>
-          </td>
-        </tr>
-      `;
-      });
-    }
+                <div class="action-btn">
+                  <button class="btn btn-sm btn-outline-primary btn-edit">
+                    <i class="fa fa-edit"></i> Edit
+                  </button>
+                  <button class="btn btn-sm btn-success btn-save d-none">
+                    <i class="fa fa-save"></i> Save
+                  </button>
+                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                    Cancel
+                  </button>
+                </div>
+              </div>
 
-    $('#crewBody').html(html);
-  }
-
-  let currentPage = 1;
-
-  function loadCrew(page = 1) {
-    $('#loginLoading').show();
-
-    currentPage = page;
-    let status = $('.status-tabs .active').data('status') || 'All';
-    console.log('Status:', status);
-
-    let url = '';
-    if (status === 'onboard') {
-      url = "<?php echo base_url('Roster/getDataOnboard/search'); ?>";
-    } else if (status === 'onleave') {
-      url = "<?php echo base_url('Roster/getDataOnLeave/search'); ?>";
-    } else if (status === 'nonactive') {
-      url = "<?php echo base_url('Roster/getDataNonAktif/search'); ?>";
-    } else if (status === 'nonforemp') {
-      url = "<?php echo base_url('Roster/getDataNotForEmp/search'); ?>";
-    } else if (status === 'pickup') {
-      url = "<?php echo base_url('Roster/getDataPickup/search'); ?>";
-    } else if (status === 'All') {
-      url = "<?php echo base_url('Roster/getAllData_personal'); ?>";
-    }
-
-    $.ajax({
-      url: url,
-      type: 'POST',
-      dataType: 'json',
-      data: {
-        page: page,
-        txtSearch: $('#txtSearch').val(),
-        typeSearch: $('#typeSearch').val()
-      },
-      success: function (res) {
-        if (res.success) {
-          $('#loginLoading').hide();
-          if (status === "All") {
-            renderTable(res.data, res.page || 1, res.limit || 30);
-            renderPagination(res.total || 0, res.page || 1, res.limit || 30);
-          } else {
-            renderTable(res.data, 1, res.data.length);
-            $('#paginationNav').hide();
-            $('#crewPagination').empty();
-          }
+              <div class="card-body small">
+                <div class="row g-2">
+                  <div class="col-12">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Crew Status</label>
+                    <div class="form-view fst-italic">New Applicant</div>
+                    <select class="form-select form-edit d-none">
+                      <option selected>New Applicant</option>
+                      <option>Non Aktif</option>
+                      <option>Not for Employed</option>
+                      <option>Non Crew</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
 
 
-        } else {
-          $('#crewBody').html(
-            `<tr><td colspan="9" class="text-center text-muted">No data</td></tr>`
-          );
-          $('#paginationContainer').html('');
-        }
-      },
-      error: function (xhr) {
-        console.error(xhr.responseText);
-        $('#crewBody').html(
-          `<tr><td colspan="9" class="text-center text-danger">
-                      Error loading data
-                  </td></tr>`
-        );
+
+
+
+
+
+    <!-- </div> -->
+
+
+    <style>
+      /* KHUSUS PROFILE */
+      .profile-content {
+        font-size: 13px;
       }
-    });
-  }
-</script> -->
+
+      .profile-content .card-header {
+        font-size: 13px;
+      }
+
+      .profile-content strong {
+        font-size: 12.5px;
+      }
+
+      .profile-content small {
+        font-size: 12px;
+      }
+
+      .profile-content .form-label {
+        font-size: 12.5px;
+      }
+
+      .profile-content input,
+      .profile-content select {
+        font-size: 13px;
+      }
+    </style>
+
+    <script>
+      $(document).on('click', '.btn-edit', function () {
+        const card = $(this).closest('.card');
+
+        card.find('.form-view').addClass('d-none');
+        card.find('.form-edit').removeClass('d-none');
+
+        card.find('.btn-edit').addClass('d-none');
+        card.find('.btn-save, .btn-cancel').removeClass('d-none');
+      });
+
+      $(document).on('click', '.btn-cancel', function () {
+        const card = $(this).closest('.card');
+
+        card.find('.form-view').removeClass('d-none');
+        card.find('.form-edit').addClass('d-none');
+
+        card.find('.btn-edit').removeClass('d-none');
+        card.find('.btn-save, .btn-cancel').addClass('d-none');
+      });
+    </script>
