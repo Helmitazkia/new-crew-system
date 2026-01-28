@@ -19,15 +19,20 @@ class MasterPersonal extends CI_Controller {
         }
     }
     
-    public function getCrewRoster()
+    public function index()
     {
         $data = array(
-            'title' => 'Crew Roster',
-            'active_menu' => 'crew_roster',
+            'title'   => 'Crew Roster',
             'content' => 'Roster/MasterPersonal/master_personal'
         );
 
         $this->load->view('menu/main_CrewLifecycle', $data);
+    }
+
+    // KHUSUS AJAX
+    public function getCrewRoster()
+    {
+        $this->load->view('Roster/MasterPersonal/master_personal');
     }
 
    

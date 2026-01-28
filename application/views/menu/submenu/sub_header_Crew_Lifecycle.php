@@ -17,7 +17,7 @@
 
       </hr>
 
-      <script>
+      <!-- <script>
         /*Master Personal Menu Tab Active*/
         $(document).ready(function () {
 
@@ -125,4 +125,89 @@
 
 
         });
-      </script>
+      </script> -->
+      <script>
+$(document).ready(function () {
+
+  function setActiveTab(btn) {
+    $('.main-tabs button')
+      .removeClass('btn-primary active')
+      .addClass('btn-light');
+
+    btn
+      .addClass('btn-primary active')
+      .removeClass('btn-light');
+  }
+
+  // ================= ACTIVE ROSTER =================
+  $('#activeRoster').on('click', function () {
+    setActiveTab($(this));
+    $('#loginLoading').show();
+
+    $.ajax({
+      url: "<?php echo base_url('ActiveRoster/ActiveRoster/getActiveRoster'); ?>",
+      type: 'GET',
+      success: function (html) {
+        $('#contentArea').html(html);
+
+        // optional: reset status tab
+        $('.status-tabs button')
+          .removeClass('btn-info active')
+          .addClass('btn-light');
+        $('.status-tabs button[data-status="All"]')
+          .addClass('btn-info active')
+          .removeClass('btn-light');
+
+        loadCrew(1);
+      },
+      error: function () {
+        alert('Gagal membuka Active Roster');
+      },
+      complete: function () {
+        $('#loginLoading').hide();
+      }
+    });
+  });
+
+  // ================= CREW ROTATION =================
+  $('#menuCrewRotation').on('click', function () {
+    setActiveTab($(this));
+    $('#loginLoading').show();
+
+    $.ajax({
+      url: "<?php echo base_url('CrewRotation/CrewRotation/ajaxCrewRotation'); ?>",
+      type: 'GET',
+      success: function (html) {
+        $('#contentArea').html(html);
+      },
+      error: function () {
+        alert('Gagal membuka Crew Rotation');
+      },
+      complete: function () {
+        $('#loginLoading').hide();
+      }
+    });
+  });
+
+  // ================= MASTER PERSONAL =================
+  $('#menuMasterPersonal').on('click', function () {
+    setActiveTab($(this));
+    $('#loginLoading').show();
+
+    $.ajax({
+      url: "<?php echo base_url('MasterPersonal/MasterPersonal/getCrewRoster'); ?>",
+      type: 'GET',
+      success: function (html) {
+        $('#contentArea').html(html);
+      },
+      error: function () {
+        alert('Gagal membuka Master Personal');
+      },
+      complete: function () {
+        $('#loginLoading').hide();
+      }
+    });
+  });
+
+});
+</script>

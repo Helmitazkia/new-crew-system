@@ -19,24 +19,21 @@ class CrewRotation extends CI_Controller {
         }
     }
     
-    // public function getCrew_rotation()
-    // {
-    //     $data = array(
-    //         'title' => 'Crew Rotation',
-    //         'active_menu' => 'crew_roster',
-    //         'content' => 'Roster/CrewRotation/crew_rotation'
-    //     );
+    public function index()
+    {
+        $data = array(
+            'title'   => 'Crew Rotation',
+            'content' => 'Roster/CrewRotation/crew_rotation'
+        );
 
-    //     // echo "Halaman Crew Rotation";exit;
+        $this->load->view('menu/main_CrewLifecycle', $data);
+    }
 
-    //     $this->load->view('menu/main_CrewLifecycle', $data);
-    // }
-
-
-        public function ajaxCrewRotation()
-        {
-            $this->load->view('Roster/CrewRotation/crew_rotation');
-        }
-
-
+    public function ajaxCrewRotation()
+    {
+        $this->load->view('Roster/CrewRotation/crew_rotation');
+    }
 }
+
+
+

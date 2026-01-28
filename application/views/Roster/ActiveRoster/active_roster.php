@@ -280,7 +280,7 @@
     var currentPage = 1;
     currentPage = page;
     let status = $('.status-tabs .active').data('status') || 'All';
-    console.log('Status:', status);
+    // console.log('Status:', status);
 
     let url = '';
     if (status === 'onboard') {

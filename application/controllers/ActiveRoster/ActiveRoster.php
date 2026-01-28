@@ -21,15 +21,30 @@ class ActiveRoster extends CI_Controller {
         }
     }
 
-    public function getActiveRoster()
+    // public function getActiveRoster()
+    // {
+    //     $data = array(
+    //         'title' => 'Active Roster',
+    //         'active_menu' => 'crew_roster',
+    //         'content' => 'Roster/ActiveRoster/active_roster'
+    //     );
+
+    //     $this->load->view('menu/main_CrewLifecycle', $data);
+    // }
+
+    public function index()
     {
         $data = array(
-            'title' => 'Active Roster',
-            'active_menu' => 'crew_roster',
+            'title'   => 'Active Roster',
             'content' => 'Roster/ActiveRoster/active_roster'
         );
 
         $this->load->view('menu/main_CrewLifecycle', $data);
+    }
+
+    public function getActiveRoster()
+    {
+        $this->load->view('Roster/ActiveRoster/active_roster');
     }
 
 }
