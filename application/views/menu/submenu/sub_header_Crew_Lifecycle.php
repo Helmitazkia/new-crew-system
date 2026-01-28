@@ -1,7 +1,6 @@
-    <!-- <div class="row align-items-center mb-4 ms-2"> -->
+<!-- sub header for Crew Lifecycle menu -->
     <div class="container-fluid content-wrapper">
       <div class="row align-items-center mb-4 ms-2">
-        <!-- RIGHT : STATUS TABS -->
         <div class="col-md-8 d-flex justify-content-end gap-1 main-tabs">
           <button class="btn btn-primary  rounded-pill fst-italic fw-semibold active" id="activeRoster">
             Active Roster
@@ -32,6 +31,10 @@
               .removeClass('btn-light');
           });
 
+          $('#menuCrewRotation')
+          .addClass('btn-primary active')
+          .removeClass('btn-light');
+
           $('#activeRoster').on('click', function () {
             $('.status-tabs button')
               .removeClass('btn-info active')
@@ -45,14 +48,14 @@
           $('#menuMasterPersonal').on('click', function () {
             $('#loginLoading').show();
             $.ajax({
-              url: "<?= base_url('ActiveRoster/ActiveRoster/getActiveRoster'); ?>",
+              url: "<?php echo base_url('MasterPersonal/MasterPersonal/getCrewRoster'); ?>",
               type: 'GET',
               success: function (html) {
                 let content = $(html).find('#contentArea').html();
                 $('#contentArea').html(content);
               },
               error: function (xhr) {
-                alert('Gagal membuka Active Roster');
+                alert('Gagal membuka Master Personal');
                 console.error(xhr.responseText);
               },
               complete: function () {
@@ -79,6 +82,45 @@
               }
             });
           });
+
+
+          // $('#menuCrewRotation').on('click', function () {
+          //   console.log('Crew Rotation clicked');
+          //   $('#loginLoading').show();
+          //   window.location.href =
+          //     "<?php echo base_url('CrewRotation/CrewRotation/getCrew_rotation'); ?>";
+          //   $('#loginLoading').hide();
+
+          // });
+
+
+          $('#menuCrewRotation').on('click', function () {
+            console.log('Crew Rotation clicked');
+            $('#loginLoading').show();
+
+            $.ajax({
+              url: "<?php echo base_url('CrewRotation/CrewRotation/ajaxCrewRotation'); ?>",
+              type: 'GET',
+              success: function (html) {
+                let content = $(html).find('#contentArea').html();
+                $('#contentArea').html(content);
+                console.log('Crew Rotation content loaded');
+              },
+              error: function (xhr) {
+                alert('Gagal membuka Crew Rotation');
+                console.error(xhr.responseText);
+              },
+              complete: function () {
+                $('#loginLoading').hide();
+              }
+            });
+          });
+
+
+          // function detailCrew(idperson) {
+          //   window.location.href =
+          //     "<?php echo base_url('PersonDetail/index'); ?>/" + idperson;
+          // }
 
 
 

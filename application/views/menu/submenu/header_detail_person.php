@@ -15,7 +15,7 @@
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Contract</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Medical</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Next Plan</button>
-        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Performance</button>
+        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Performance & Tranning</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Competence</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">List Report</button>
       </div>
@@ -92,3 +92,8 @@
 }
 
 </style>
+
+
+<script>
+
+</script>

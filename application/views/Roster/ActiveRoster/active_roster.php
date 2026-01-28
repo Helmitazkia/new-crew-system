@@ -3,11 +3,7 @@
     <div class="row align-items-center">
       <!-- DROPDOWN FILTER -->
       <div class="col-md-6 d-flex gap-2 compact-form">
-        <button class="btn btn-dark btn-pill rounded-pill ms-3">
-          New
-        </button>
-        <div class="input-group">
-
+        <div class="input-group  ms-3">
           <button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown"
             aria-expanded="false">
             Filter
@@ -49,7 +45,7 @@
           All
         </button>
         <button class="btn btn-light btn-pill rounded-pill fst-italic fw-semibold" data-status="pickup">
-          Data Pickup
+          Stanby
         </button>
         <button class="btn btn-light rounded-pill fst-italic fw-semibold" data-status="onboard">
           On Board
@@ -68,17 +64,7 @@
   </div>
 
 
-  <style>
-    .table-header-blue th {
-      background: #000099 !important;
-      color: #ffffff !important;
-      text-align: center;
-      vertical-align: middle;
-      font-weight: 600;
-    }
-  </style>
-  <!-- TABLE -->
-  <!-- TABLE -->
+
   <div class="table-responsive ms-3 me-md-3 pt-3">
     <table class="table table-bordered crew-table">
       <thead class="table-header-blue">
@@ -99,63 +85,56 @@
       </tbody>
     </table>
   </div>
-
-
-  <div id="loginLoading" class="text-center mt-3">
-    <img src="<?php echo base_url('assets/img/loading-new.gif'); ?>" width="60" alt="Loading">
-  </div>
-
-  <style>
-    #loginLoading {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 9999;
-    }
-  </style>
-
-  <style>
-    .crew-table th,
-    .crew-table td {
-      font-size: 12px;
-      /* default kecil & nyaman */
-      vertical-align: middle;
-    }
-
-    .crew-table th {
-      font-weight: 600;
-    }
-
-    .crew-table .btn {
-      font-size: 11px;
-      padding: 2px 6px;
-    }
-  </style>
-
-
-  <!-- PAGINATION -->
-  <nav class="mt-3 ms-3">
-    <ul class="pagination flex-wrap" id="crewPagination"></ul>
-  </nav>
-
-  <style>
-    #crewPagination {
-      row-gap: 6px;
-    }
-
-    @media (max-width: 576px) {
-      #crewPagination {
-        justify-content: center;
-      }
-    }
-  </style>
-
-
-
-  <!-- PAGINATION -->
-
 </div>
+
+
+<!-- PAGINATION -->
+<nav class="mt-3 ms-3">
+  <ul class="pagination flex-wrap" id="crewPagination"></ul>
+</nav>
+
+
+<style>
+  .crew-table th,
+  .crew-table td {
+    font-size: 12px;
+    vertical-align: middle;
+  }
+
+  .crew-table th {
+    font-weight: 600;
+  }
+
+  .crew-table .btn {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+</style>
+
+
+<style>
+  .table-header-blue th {
+    background: #000099 !important;
+    color: #ffffff !important;
+    text-align: center;
+    vertical-align: middle;
+    font-weight: 600;
+  }
+</style>
+
+
+
+<style>
+  #crewPagination {
+    row-gap: 6px;
+  }
+
+  @media (max-width: 576px) {
+    #crewPagination {
+      justify-content: center;
+    }
+  }
+</style>
 
 
 <script>
@@ -291,41 +270,10 @@
     $('#crewBody').html(html);
   }
 
-
-
   function detailCrew(idperson) {
-    $('#loginLoading').show();
-
-    window.location.href = "<?php echo base_url('PersonDetail'); ?>";
-      setTimeout(function () {
-        $('#loginLoading').hide();
-    }, 5000); // 5000ms = 5 detik
-
-    $('#loginLoading').hide();
-
-    // $.ajax({
-    //   url: '<?php echo base_url("Profile/getProfileAjax"); ?>/' + idperson,
-    //   type: 'GET',
-    //   success: function (html) {
-    //     // $('#contentArea').html(html);
-    //     console.log('Loaded Profile layout successfully');
-    //   },
-    //   error: function (xhr) {
-    //     console.log(xhr.responseText);
-    //     alert('Gagal load layout Profile');
-    //   },
-    //   complete: function () {
-    //     $('#loginLoading').hide();
-    //   }
-    // });
+    window.location.href =
+      "<?php echo base_url('PersonDetail/index'); ?>/" + idperson;
   }
-
-
-
-
-
-
-
 
   function loadCrew(page = 1) {
     $('#loginLoading').show();

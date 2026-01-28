@@ -10,17 +10,18 @@
           <div class="card-body">
             <img src="<?php echo base_url('assets/img/banner/andhika-lines.png'); ?>" class="img-fluid rounded mb-3"
               alt="Crew Photo">
-            <h6 class="fw-bold mb-0">A. LOLO</h6>
-            <small class="text-muted">ID : 004059</small>
+            <h6 class="fw-bold mb-0 crew-name" data-field="identity.fullName">A. LOLO</h6>
+            <small class="text-muted crew-id" data-field="identity.idperson">ID : 004059</small>
+
           </div>
         </div>
       </div>
 
       <!-- BASIC IDENTITY -->
-      <div class="col-lg-9 col-md-8 col-sm-12">
+      <div class="col-lg-7 col-md-8 col-sm-12">
         <div class="card shadow-sm h-100">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <span class="fw-semibold fst-italic">Basic Identity</span>
+            <span class="fw-semibold fst-italic">🪪 Basic Identity</span>
 
             <div class="action-btn">
               <button class="btn btn-sm btn-outline-primary btn-edit">
@@ -37,99 +38,108 @@
 
           <div class="card-body small">
             <div class="row g-2">
+
               <!-- Old Crew ID -->
               <div class="col-md-4">
                 <label class="form-label mb-0 fst-italic fw-semibold">Old Crew ID</label>
-                <div class="form-view fst-italic">004059</div>
-                <input type="text" class="form-control form-edit d-none" value="004059">
+                <div class="form-view fst-italic" data-field="identity.oldCrewId"></div>
+                <input type="text" class="form-control form-edit d-none" data-field="identity.oldCrewId">
               </div>
 
               <!-- Old Contract Number -->
               <div class="col-md-4">
                 <label class="form-label mb-0 fst-italic fw-semibold">Old Contract Number</label>
-                <div class="form-view fst-italic">CTR-2023-0098</div>
-                <input type="text" class="form-control form-edit d-none" value="CTR-2023-0098">
+                <div class="form-view fst-italic" data-field="identity.oldContractNo"></div>
+                <input type="text" class="form-control form-edit d-none" data-field="identity.oldContractNo">
               </div>
 
               <!-- Seafarer Code -->
               <div class="col-md-4">
                 <label class="form-label mb-0 fst-italic fw-semibold">Seafarer Code</label>
-                <div class="form-view fst-italic">SEA-2024-001</div>
-                <input type="text" class="form-control form-edit d-none" value="SEA-2024-001">
+                <div class="form-view fst-italic" data-field="identity.seafarerCode"></div>
+                <input type="text" class="form-control form-edit d-none" data-field="identity.seafarerCode">
               </div>
 
               <!-- First Name -->
               <div class="col-md-4">
                 <label class="form-label mb-0 fst-italic fw-semibold">First Name</label>
-                <div class="form-view fst-italic">A</div>
-                <input type="text" class="form-control form-edit d-none" value="A">
+                <div class="form-view fst-italic" data-field="identity.firstName"></div>
+                <input type="text" class="form-control form-edit d-none" data-field="identity.firstName">
               </div>
 
               <!-- Middle Name -->
               <div class="col-md-4">
                 <label class="form-label mb-0 fst-italic fw-semibold">Middle Name</label>
-                <div class="form-view fst-italic">Lolo</div>
-                <input type="text" class="form-control form-edit d-none" value="Lolo">
+                <div class="form-view fst-italic" data-field="identity.middleName"></div>
+                <input type="text" class="form-control form-edit d-none" data-field="identity.middleName">
               </div>
 
               <!-- Last Name -->
               <div class="col-md-4">
                 <label class="form-label mb-0 fst-italic fw-semibold">Last Name</label>
-                <div class="form-view fst-italic">Gading</div>
-                <input type="text" class="form-control form-edit d-none" value="Gading">
+                <div class="form-view fst-italic" data-field="identity.lastName"></div>
+                <input type="text" class="form-control form-edit d-none" data-field="identity.lastName">
               </div>
 
               <!-- Gender -->
               <div class="col-md-4">
                 <label class="form-label mb-0 fst-italic fw-semibold">Gender</label>
-                <div class="form-view fst-italic">Male</div>
-                <select class="form-select form-edit d-none">
-                  <option>Male</option>
-                  <option>Female</option>
+                <div class="form-view fst-italic" data-field="identity.gender"></div>
+                <select class="form-select form-edit d-none" data-field="identity.gender">
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
                 </select>
               </div>
 
               <!-- Nationality -->
               <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">Nationality (Citizenship)</label>
-                <div class="form-view fst-italic">Indonesia</div>
-                <select class="form-select form-edit d-none">
-                  <option>Indonesia</option>
-                  <option>Philippines</option>
-                  <option>India</option>
+                <label class="form-label mb-0 fst-italic fw-semibold">
+                  Nationality (Citizenship)
+                </label>
+                <div class="form-view fst-italic" data-field="identity.nationality"></div>
+                <select class="form-select form-edit d-none" data-field="identity.nationality">
+                  <?php echo $optCountry; ?>
+                  <!-- <option value="ID">Indonesia</option>
+                  <option value="PH">Philippines</option>
+                  <option value="IN">India</option> -->
                 </select>
               </div>
 
               <!-- Country of Origin -->
               <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">Country of Origin</label>
-                <div class="form-view fst-italic">Indonesia</div>
-                <select class="form-select form-edit d-none">
-                  <option>Indonesia</option>
-                  <option>Philippines</option>
-                  <option>India</option>
+                <label class="form-label mb-0 fst-italic fw-semibold">
+                  Country of Origin
+                </label>
+                <div class="form-view fst-italic" data-field="identity.countryOrigin"></div>
+                <select class="form-select form-edit d-none" data-field="identity.countryOrigin">
+                  <!-- <option value="ID">Indonesia</option>
+                  <option value="PH">Philippines</option>
+                  <option value="IN">India</option> -->
+                  <?php echo $optCountry; ?>
                 </select>
               </div>
 
               <!-- Date of Birth -->
               <div class="col-md-4">
                 <label class="form-label mb-0 fst-italic fw-semibold">Date of Birth</label>
-                <div class="form-view fst-italic">22 Nov 1972</div>
-                <input type="date" class="form-control form-edit d-none" value="1972-11-22">
+                <div class="form-view fst-italic" data-field="identity.dob"></div>
+                <input type="date" class="form-control form-edit d-none" data-field="identity.dob">
               </div>
 
               <!-- Place of Birth -->
               <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">Place / City of Birth</label>
-                <div class="form-view fst-italic">Jakarta</div>
-                <input type="text" class="form-control form-edit d-none" value="Jakarta">
+                <label class="form-label mb-0 fst-italic fw-semibold">
+                  Place / City of Birth
+                </label>
+                <div class="form-view fst-italic" data-field="identity.pob"></div>
+                <input type="text" class="form-control form-edit d-none" data-field="identity.pob">
               </div>
 
               <!-- Religion -->
               <div class="col-md-4">
                 <label class="form-label mb-0 fst-italic fw-semibold">Religion</label>
-                <div class="form-view fst-italic">Islam</div>
-                <select class="form-select form-edit d-none">
+                <div class="form-view fst-italic" data-field="identity.religion"></div>
+                <select class="form-select form-edit d-none" data-field="identity.religion">
                   <option>Islam</option>
                   <option>Christian</option>
                   <option>Catholic</option>
@@ -140,12 +150,50 @@
 
               <!-- Marital Status -->
               <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">Marital Status</label>
-                <div class="form-view fst-italic">Married</div>
-                <select class="form-select form-edit d-none">
+                <label class="form-label mb-0 fst-italic fw-semibold">
+                  Marital Status
+                </label>
+                <div class="form-view fst-italic" data-field="identity.maritalStatus"></div>
+                <select class="form-select form-edit d-none" data-field="identity.maritalStatus">
                   <option>Single</option>
                   <option>Married</option>
                   <option>Divorced</option>
+                </select>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-2 col-xs-12">
+        <div class="card shadow-sm h-100">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="fw-semibold fst-italic">🟢 Crew Status</span>
+
+            <div class="action-btn">
+              <button class="btn btn-sm btn-outline-primary btn-edit">
+                <i class="fa fa-edit"></i> Edit
+              </button>
+              <button class="btn btn-sm btn-success btn-save d-none">
+                <i class="fa fa-save"></i> Save
+              </button>
+              <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <div class="card-body small">
+            <div class="row g-2">
+              <div class="col-12">
+                <label class="form-label mb-0 fst-italic fw-semibold">Crew Status</label>
+                <div class="form-view fst-italic">New Applicant</div>
+                <select class="form-select form-edit d-none">
+                  <option selected>New Applicant</option>
+                  <option>Non Aktif</option>
+                  <option>Not for Employed</option>
+                  <option>Non Crew</option>
                 </select>
               </div>
             </div>
@@ -160,7 +208,7 @@
       <div class="col-6 mb-4">
         <div class="card shadow-sm h-100">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <span class="fw-semibold fst-italic">Family Information</span>
+            <span class="fw-semibold fst-italic">👨‍👩‍👧 Family Information</span>
 
             <div class="action-btn">
               <button class="btn btn-sm btn-outline-primary btn-edit">
@@ -210,7 +258,7 @@
       <div class="col-6 mb-4">
         <div class="card shadow-sm h-100">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <span class="fw-semibold fst-italic">Tax & Social Security</span>
+            <span class="fw-semibold fst-italic">💼 Tax & Social Security</span>
 
             <div class="action-btn">
               <button class="btn btn-sm btn-outline-primary btn-edit">
@@ -282,7 +330,7 @@
           <div class="col-6 mb-4">
             <div class="card shadow-sm h-100">
               <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="fw-semibold fst-italic">Contact & Address</span>
+                <span class="fw-semibold fst-italic">📞 Contact & Address</span>
 
                 <div class="action-btn">
                   <button class="btn btn-sm btn-outline-primary btn-edit">
@@ -400,7 +448,7 @@
           <div class="col-6 mb-4">
             <div class="card shadow-sm h-100">
               <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="fw-semibold fst-italic">Physical & Medical</span>
+                <span class="fw-semibold fst-italic">🩺 Physical & Medical</span>
 
                 <div class="action-btn">
                   <button class="btn btn-sm btn-outline-primary btn-edit">
@@ -533,7 +581,7 @@
           <div class="col-6 mb-4">
             <div class="card shadow-sm h-100">
               <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="fw-semibold fst-italic">Assessment & Training</span>
+                <span class="fw-semibold fst-italic">📋 Assessment & Training</span>
 
                 <div class="action-btn">
                   <button class="btn btn-sm btn-outline-primary btn-edit">
@@ -588,7 +636,7 @@
           <div class="col-6 mb-4">
             <div class="card shadow-sm h-100">
               <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="fw-semibold fst-italic">Career & Placement</span>
+                <span class="fw-semibold fst-italic">🧭 Career & Placement</span>
 
                 <div class="action-btn">
                   <button class="btn btn-sm btn-outline-primary btn-edit">
@@ -808,7 +856,7 @@
           <div class="col-6 mb-4">
             <div class="card shadow-sm h-100">
               <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="fw-semibold fst-italic">Declaration & Signature</span>
+                <span class="fw-semibold fst-italic">✍️ Declaration & Signature</span>
 
                 <div class="action-btn">
                   <button class="btn btn-sm btn-outline-primary btn-edit">
@@ -854,41 +902,8 @@ I hereby declare that all information provided is true and correct.
           </div>
 
 
-          <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100">
-              <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="fw-semibold fst-italic">Crew Status</span>
 
-                <div class="action-btn">
-                  <button class="btn btn-sm btn-outline-primary btn-edit">
-                    <i class="fa fa-edit"></i> Edit
-                  </button>
-                  <button class="btn btn-sm btn-success btn-save d-none">
-                    <i class="fa fa-save"></i> Save
-                  </button>
-                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
-                    Cancel
-                  </button>
-                </div>
-              </div>
 
-              <div class="card-body small">
-                <div class="row g-2">
-                  <div class="col-12">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Crew Status</label>
-                    <div class="form-view fst-italic">New Applicant</div>
-                    <select class="form-select form-edit d-none">
-                      <option selected>New Applicant</option>
-                      <option>Non Aktif</option>
-                      <option>Not for Employed</option>
-                      <option>Non Crew</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
         </div>
       </div>
     </div>
@@ -950,4 +965,89 @@ I hereby declare that all information provided is true and correct.
         card.find('.btn-edit').removeClass('d-none');
         card.find('.btn-save, .btn-cancel').addClass('d-none');
       });
+    </script>
+
+    <script>
+      $(document).ready(function () {
+        var id_person = "<?php echo $idperson; ?>";
+        loadProfile(id_person);
+      });
+
+      function loadProfile(id_person) {
+        $.ajax({
+          url: "<?php echo base_url('PersonDetail/getDataProses'); ?>",
+          type: "POST",
+          dataType: "json",
+          data: {
+            id: id_person,
+            type: "editProses"
+          },
+          success: function (res) {
+            if (!res.status) return alert(res.message);
+            renderProfile(res.data);
+          }
+        });
+      }
+    </script>
+
+
+
+    <script>
+      function renderProfile(data) {
+
+        // VIEW MODE
+        $('.form-view').each(function () {
+          var field = $(this).data('field');
+          if (!field) return;
+
+          var value = getValueByPath(data, field);
+          $(this).text(
+            value !== undefined && value !== null && value !== '' ? value : '-'
+          );
+        });
+
+        // EDIT MODE
+        $('.form-edit').each(function () {
+          var field = $(this).data('field');
+          if (!field) return;
+
+          var value = getValueByPath(data, field);
+
+          if ($(this).is('input, textarea, select')) {
+            $(this).val(value);
+          }
+        });
+
+        // FOTO
+        if (data.files && data.files.photo) {
+          $('#crewPhoto').attr(
+            'src',
+            "<?php echo base_url('uploads/crew/'); ?>" + data.files.photo
+          );
+        }
+
+        // HEADER
+        if (data.identity) {
+          $('.crew-name').text(data.identity.fullName);
+          $('.crew-id').text(data.identity.idperson);
+        }
+      }
+    </script>
+
+    <script>
+      function getValueByPath(obj, path) {
+        if (!obj || !path) return '';
+
+        var parts = path.split('.');
+        var result = obj;
+
+        for (var i = 0; i < parts.length; i++) {
+          if (result[parts[i]] === undefined) {
+            return '';
+          }
+          result = result[parts[i]];
+        }
+
+        return result;
+      }
     </script>

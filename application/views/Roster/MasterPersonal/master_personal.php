@@ -67,17 +67,6 @@
     </div>
   </div>
 
-
-  <style>
-    .table-header-blue th {
-      background: #000099 !important;
-      color: #ffffff !important;
-      text-align: center;
-      vertical-align: middle;
-      font-weight: 600;
-    }
-  </style>
-  <!-- TABLE -->
   <!-- TABLE -->
   <div class="table-responsive ms-3 me-md-3 pt-3">
     <table class="table table-bordered crew-table">
@@ -100,62 +89,54 @@
     </table>
   </div>
 
-
-  <div id="loginLoading" class="text-center mt-3">
-    <img src="<?php echo base_url('assets/img/loading-new.gif'); ?>" width="60" alt="Loading">
-  </div>
-
-  <style>
-    #loginLoading {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 9999;
-    }
-  </style>
-
-  <style>
-    .crew-table th,
-    .crew-table td {
-      font-size: 12px;
-      /* default kecil & nyaman */
-      vertical-align: middle;
-    }
-
-    .crew-table th {
-      font-weight: 600;
-    }
-
-    .crew-table .btn {
-      font-size: 11px;
-      padding: 2px 6px;
-    }
-  </style>
-
-
-  <!-- PAGINATION -->
-  <nav class="mt-3 ms-3">
-    <ul class="pagination flex-wrap" id="crewPagination"></ul>
-  </nav>
-
-  <style>
-    #crewPagination {
-      row-gap: 6px;
-    }
-
-    @media (max-width: 576px) {
-      #crewPagination {
-        justify-content: center;
-      }
-    }
-  </style>
-
-
-
-  <!-- PAGINATION -->
-
 </div>
+
+<!-- PAGINATION -->
+<nav class="mt-3 ms-3">
+  <ul class="pagination flex-wrap" id="crewPagination"></ul>
+</nav>
+
+
+
+<style>
+  .crew-table th,
+  .crew-table td {
+    font-size: 12px;
+    vertical-align: middle;
+  }
+
+  .crew-table th {
+    font-weight: 600;
+  }
+
+  .crew-table .btn {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+</style>
+
+<style>
+  .table-header-blue th {
+    background: #000099 !important;
+    color: #ffffff !important;
+    text-align: center;
+    vertical-align: middle;
+    font-weight: 600;
+  }
+</style>
+
+
+<style>
+  #crewPagination {
+    row-gap: 6px;
+  }
+
+  @media (max-width: 576px) {
+    #crewPagination {
+      justify-content: center;
+    }
+  }
+</style>
 
 
 <script>
@@ -291,34 +272,10 @@
     $('#crewBody').html(html);
   }
 
-
-
   function detailCrew(idperson) {
-    $('#loginLoading').show();
-
-    $.ajax({
-      url: '<?php echo base_url("Profile/getProfileAjax"); ?>/' + idperson,
-      type: 'GET',
-      success: function (html) {
-        // $('#contentArea').html(html);
-        console.log('Loaded Profile layout successfully');
-      },
-      error: function (xhr) {
-        console.log(xhr.responseText);
-        alert('Gagal load layout Profile');
-      },
-      complete: function () {
-        $('#loginLoading').hide();
-      }
-    });
+    window.location.href =
+      "<?php echo base_url('PersonDetail/index'); ?>/" + idperson;
   }
-
-
-
-
-
-
-
 
   function loadCrew(page = 1) {
     $('#loginLoading').show();
@@ -329,17 +286,17 @@
 
     let url = '';
     if (status === 'onboard') {
-      url = "<?php echo base_url('MasterPersonal/getDataOnboard/search'); ?>";
+      url = "<?php echo base_url('MasterPersonal/MasterPersonal/getDataOnboard/search'); ?>";
     } else if (status === 'onleave') {
-      url = "<?php echo base_url('MasterPersonal/getDataOnLeave/search'); ?>";
+      url = "<?php echo base_url('MasterPersonal/MasterPersonal/getDataOnLeave/search'); ?>";
     } else if (status === 'nonactive') {
-      url = "<?php echo base_url('MasterPersonal/getDataNonAktif/search'); ?>";
+      url = "<?php echo base_url('MasterPersonal/MasterPersonal/getDataNonAktif/search'); ?>";
     } else if (status === 'nonforemp') {
-      url = "<?php echo base_url('MasterPersonal/getDataNotForEmp/search'); ?>";
+      url = "<?php echo base_url('MasterPersonal/MasterPersonal/getDataNotForEmp/search'); ?>";
     } else if (status === 'pickup') {
-      url = "<?php echo base_url('MasterPersonal/getDataPickup/search'); ?>";
+      url = "<?php echo base_url('MasterPersonal/MasterPersonal/getDataPickup/search'); ?>";
     } else if (status === 'All') {
-      url = "<?php echo base_url('MasterPersonal/getAllData_personal'); ?>";
+      url = "<?php echo base_url('MasterPersonal/MasterPersonal/getAllData_personal'); ?>";
     }
 
     $.ajax({
