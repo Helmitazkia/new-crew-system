@@ -112,9 +112,6 @@
                 </label>
                 <div class="form-view fst-italic" data-field="identity.countryOrigin"></div>
                 <select class="form-select form-edit d-none" data-field="identity.countryOrigin">
-                  <!-- <option value="ID">Indonesia</option>
-                  <option value="PH">Philippines</option>
-                  <option value="IN">India</option> -->
                   <?php echo $optCountry; ?>
                 </select>
               </div>
@@ -1022,7 +1019,7 @@
 
             const value = getValueByPath(data, field);
 
-            console.log('CHECKBOX', field, '=>', value);
+            // console.log('CHECKBOX', field, '=>', value);
 
             $(this).prop('checked', value == 1);
 

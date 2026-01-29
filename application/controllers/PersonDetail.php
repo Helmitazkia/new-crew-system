@@ -53,8 +53,6 @@ class PersonDetail extends CI_Controller {
             
         );
 
-        // var_dump($data); exit;
-
         $this->load->view('menu/main_detail_person', $data);
     }
 
@@ -106,7 +104,6 @@ class PersonDetail extends CI_Controller {
         $id   = $this->input->post('id', true);
         $type = $this->input->post('type', true);
 
-        // print_r($type,$id); exit;
 
         $this->output->set_content_type('application/json');
 
