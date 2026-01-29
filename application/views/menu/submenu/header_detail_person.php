@@ -4,11 +4,18 @@
 
       <!-- TABS -->
       <div class="d-flex flex-wrap justify-content-center gap-2 main-tabs flex-grow-1">
-        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">
+        <button id="btnBack" class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">
           <i class="fa fa-arrow-left"></i> Back
         </button>
-        <button class="btn btn-primary rounded-pill px-3 active fst-italic fw-semibold">Profile</button>
-        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Family</button>
+
+        <button id="tabProfile" class="btn btn-primary rounded-pill px-3 fst-italic fw-semibold active">
+          Profile
+        </button>
+
+        <button id="tabFamily" class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">
+          Family
+        </button>
+
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Certificates</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Experience</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Education</button>
@@ -92,26 +99,62 @@
   }
 </style>
 
+
+
 <script>
-$(document).ready(function () {
+  $(document).ready(function () {
 
-  function setActiveTab(btn) {
-    $('.main-tabs button')
-      .removeClass('btn-primary active')
-      .addClass('btn-light');
+    // ================= TAB CLICK =================
+    $('#tabProfile').on('click', function () {
+      setActiveTab('tabProfile');
+      loadProfileTab();
+    });
 
-    btn
-      .addClass('btn-primary active')
-      .removeClass('btn-light');
-  }
+    $('#tabFamily').on('click', function () {
+      setActiveTab('tabFamily');
+      loadFamilyTab();
+    });
 
-  $('.main-tabs button').not(':first').on('click', function () {
-    setActiveTab($(this));
+    // ================= SET ACTIVE TAB =================
+    function setActiveTab(activeBtnId) {
+      $('.main-tabs button')
+        .removeClass('btn-primary active')
+        .addClass('btn-light');
+
+      $('#' + activeBtnId)
+        .addClass('btn-primary active')
+        .removeClass('btn-light');
+    }
+
+  
+    function loadProfileTab() {
+      $('#loginLoading').show();
+      var idperson = "<?php echo $idperson ?>";
+      window.location.href =
+        "<?php echo base_url('PersonDetail/index'); ?>/" + idperson;
+      $('#loginLoading').hide();
+
+    }
+
+
+    function loadFamilyTab() {
+      $('#loginLoading').show();
+      $.ajax({
+        url: "<?php echo base_url('CrewDetail/Family'); ?>",
+        type: "GET",
+        success: function (html) {
+          $('#contentArea').html(html);
+        },
+        error: function () {
+          $('#contentArea').html(
+            '<div class="text-danger">Failed load family</div>'
+          );
+        },
+        complete: function () {
+          $('#loginLoading').hide();
+        }
+      });
+    }
+
   });
-
-  $('.main-tabs button:first').on('click', function () {
-    window.history.back();
-  });
-
-});
 </script>
