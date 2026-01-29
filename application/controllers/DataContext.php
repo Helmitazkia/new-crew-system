@@ -132,6 +132,23 @@ class DataContext extends CI_Controller {
 		}
 	}
 
+
+	function getCityNameById($id)
+	{
+			if (empty($id)) return '';
+			
+			$this->db->select('NmKota');
+			$this->db->from('tblkota');
+			$this->db->where('Deletests', '0');
+			$this->db->where('KdKota', $id);
+			$this->db->limit(1);
+			
+			$query = $this->db->get();
+			$result = $query->row();
+			
+			return $result ? $result->NmKota : '';
+	}
+
 	function getCountryByOption($return = "",$typeVal = "")
 	{
 		$opt = "";
@@ -171,6 +188,22 @@ class DataContext extends CI_Controller {
 		} else {
 			print json_encode($opt);
 		}
+	}
+
+
+	function getTaxStatusById($id)
+	{
+			if (empty($id)) return '';
+			
+			$this->db->select('stsnm');
+			$this->db->from('tbltaxsts');
+			$this->db->where('id', $id);
+			$this->db->limit(1);
+			
+			$query = $this->db->get();
+			$result = $query->row();
+			
+			return $result ? $result->stsnm : '';
 	}
 
 	

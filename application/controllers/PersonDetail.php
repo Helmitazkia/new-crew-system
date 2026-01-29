@@ -30,6 +30,12 @@ class PersonDetail extends CI_Controller {
         $dataContext = new DataContext();
         $optCountry  = $dataContext->getCountryByOption("", "kode");
         $optCity     = $dataContext->getCityByOption("", "kode");
+        $optTax = $dataContext->getTaxByOption();
+        $optBlood = $dataContext->getBloodType();
+        $optSize= $dataContext->getUkuran();
+		$optVessel= $dataContext->getVesselType("");
+        $vesselname = $dataContext->getVesselByOption("","name","");
+        $optRank = $dataContext->getMstRankByOptionWithSelected("","");
 
         $data = array(
             'title'        => 'Active Roster',
@@ -37,8 +43,17 @@ class PersonDetail extends CI_Controller {
             'content'      => 'CrewDetail/profile',
             'idperson'     => $idperson,
             'optCountry'   => $optCountry,
-            'optCity'      => $optCity
+            'optCity'      => $optCity,
+            'optTax'       => $optTax,
+            'optBlood'     => $optBlood,
+            'optSize'      => $optSize,
+            'optVessel' => $optVessel,
+            'optRank'      => $optRank,
+            'vesselname'   => $vesselname
+            
         );
+
+        // var_dump($data); exit;
 
         $this->load->view('menu/main_detail_person', $data);
     }
@@ -87,6 +102,7 @@ class PersonDetail extends CI_Controller {
 
  public function getDataProses()
     {
+        $dataContext = new DataContext();
         $id   = $this->input->post('id', true);
         $type = $this->input->post('type', true);
 
@@ -138,7 +154,7 @@ class PersonDetail extends CI_Controller {
                 'dob' => !empty($row->dob)
                     ? date('d M Y', strtotime($row->dob))
                     : '0000-00-00',
-                'pob'           => $row->pob,
+                'pob'           => $dataContext->getCityNameById($row->pob),
                 'religion'      => $row->religion,
                 'maritalStatus' => $row->maritalstsid
             ),
@@ -154,10 +170,43 @@ class PersonDetail extends CI_Controller {
             /* ================= LEGAL & TAX ================= */
             'legal' => array(
                 'ssn'        => $row->ssn,
-                'ssnCountry' => $row->ssnctryid,
+                'ssnCountry' =>  $this->getCountryNameById($row->ssnctryid),
                 'taxNumber'  => $row->ptn,
-                'taxCountry' => $row->ptnctryid,
-                'taxStatus'  => $row->taxstsid
+                'taxCountry' => $this->getCountryNameById($row->ptnctryid),
+                'taxStatus'  => $dataContext->getTaxStatusById($row->taxstsid)
+            ),
+
+            /* ================= CONTACT ================= */
+            'contact' => array(
+                'address'  => $row->paddress,
+                'city'     => $dataContext->getCityNameById($row->pcity),
+                'postcode' => $row->ppostcode,
+                'country'  =>  $this->getCountryNameById($row->pctryid),
+                'airport'  => $dataContext->getCityNameById($row->pnrstport),
+                'mobile'   => $row->mobileno,
+                'home'     => $row->telpno,
+                'fax'      => $row->faxno,
+                'email'    => $row->email
+            ),
+
+             /* ================= PHYSICAL ================= */
+            'physical' => array(
+                'bloodType'    => $row->golDrh,
+                'eyeColor'     => $row->eyecol,
+                'weight'       => $row->wght,
+                'height'       => $row->hght,
+                'shoe'         => $row->shoesz,
+                'collar'       => $row->collar,
+                'chest'        => $row->chest,
+                'waist'        => $row->waist,
+                'insideLeg'    => $row->Insdleg,
+                'cap'          => $row->cap,
+                'clothesSize'  => $row->clothszid,
+                'sweaterSize'  => $row->sweaterszid,
+                'boilerSize'   => $row->boilerszid,
+                'allergy'      => $row->alergy,
+                'heightPhobia' => (strtolower($row->heightphob) == 'y') ? 'Yes' : 'No',
+                'claustrophob' => (strtolower($row->claustrophob) == 'y') ? 'Yes' : 'No',
             ),
 
             /* ================= ASSESSMENT ================= */
@@ -174,40 +223,12 @@ class PersonDetail extends CI_Controller {
                 'vesselApply'   => $row->vesselfor,
                 'vesselType'    => $row->crew_vessel_type,
                 'availableDate' => $row->availdt,
-                'lowerRank'     => ($row->lower_rank == "1")
+                'lowerRank'     => (strtolower($row->lower_rank) == 'y') ? 'Yes' : 'No',
             ),
 
-            /* ================= CONTACT ================= */
-            'contact' => array(
-                'address'  => $row->paddress,
-                'city'     => $row->pcity,
-                'postcode' => $row->ppostcode,
-                'country'  => $row->pctryid,
-                'airport'  => $row->pnrstport,
-                'mobile'   => $row->mobileno,
-                'home'     => $row->telpno,
-                'fax'      => $row->faxno,
-                'email'    => $row->email
-            ),
+            
 
-            /* ================= PHYSICAL ================= */
-            'physical' => array(
-                'bloodType'    => $row->golDrh,
-                'eyeColor'     => $row->eyecol,
-                'weight'       => $row->wght,
-                'height'       => $row->hght,
-                'shoe'         => $row->shoesz,
-                'collar'       => $row->collar,
-                'chest'        => $row->chest,
-                'waist'        => $row->waist,
-                'insideLeg'    => $row->Insdleg,
-                'cap'          => $row->cap,
-                'clothesSize'  => $row->clothszid,
-                'sweaterSize'  => $row->sweaterszid,
-                'boilerSize'   => $row->boilerszid,
-                'allergy'      => $row->alergy,
-                'heightPhobia' => ($row->heightphob == 'y')
-            ),
+           
 
             /* ================= SALARY ================= */
             'salary' => array(
@@ -244,11 +265,11 @@ class PersonDetail extends CI_Controller {
 
             /* ================= CONTACT METHOD ================= */
             'contactMethod' => array(
-                'email'  => ($row->conmthEmail == "1"),
-                'fax'    => ($row->conmthFax == "1"),
-                'mobile' => ($row->conmthMob == "1"),
-                'home'   => ($row->conmthHom == "1"),
-                'post'   => ($row->conmthPost == "1")
+                'email'  => ($row->conmthEmail),
+                'fax'    => ($row->conmthFax),
+                'mobile' => ($row->conmthMob),
+                'home'   => ($row->conmthHom),
+                'post'   => ($row->conmthPost)
             ),
 
             /* ================= DECLARATION ================= */

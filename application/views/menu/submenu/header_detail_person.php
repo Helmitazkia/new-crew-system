@@ -37,63 +37,81 @@
 
 <style>
   /* posisi kanan bawah tab */
-.crew-ribbon-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  margin-right: 16px;
-  margin-top: 6px;
-}
-
-/* main ribbon */
-.crew-ribbon-triangle {
-  position: relative;
-  background: linear-gradient(135deg, #4b3cff, #6f5cff);
-  color: #fff;
-  padding: 6px 18px 6px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: 16px 0 0 16px;
-  white-space: nowrap;
-}
-
-/* segitiga kanan */
-.crew-ribbon-triangle::after {
-  content: '';
-  position: absolute;
-  right: -18px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-top: 14px solid transparent;
-  border-bottom: 14px solid transparent;
-  border-left: 18px solid #6f5cff;
-}
-
-/* text */
-.crew-id {
-  font-size: 12px;
-  opacity: 0.85;
-}
-
-.crew-name {
-  white-space: nowrap;
-}
-
-/* mobile */
-@media (max-width: 576px) {
-  .crew-ribbon-triangle {
-    font-size: 11px;
-    padding: 5px 14px 5px 10px;
+  .crew-ribbon-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 16px;
+    margin-top: 6px;
   }
-}
 
+  /* main ribbon */
+  .crew-ribbon-triangle {
+    position: relative;
+    background: linear-gradient(135deg, #4b3cff, #6f5cff);
+    color: #fff;
+    padding: 6px 18px 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 16px 0 0 16px;
+    white-space: nowrap;
+  }
+
+  /* segitiga kanan */
+  .crew-ribbon-triangle::after {
+    content: '';
+    position: absolute;
+    right: -18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 14px solid transparent;
+    border-bottom: 14px solid transparent;
+    border-left: 18px solid #6f5cff;
+  }
+
+  /* text */
+  .crew-id {
+    font-size: 12px;
+    opacity: 0.85;
+  }
+
+  .crew-name {
+    white-space: nowrap;
+  }
+
+  /* mobile */
+  @media (max-width: 576px) {
+    .crew-ribbon-triangle {
+      font-size: 11px;
+      padding: 5px 14px 5px 10px;
+    }
+  }
 </style>
 
-
 <script>
+$(document).ready(function () {
 
+  function setActiveTab(btn) {
+    $('.main-tabs button')
+      .removeClass('btn-primary active')
+      .addClass('btn-light');
+
+    btn
+      .addClass('btn-primary active')
+      .removeClass('btn-light');
+  }
+
+  $('.main-tabs button').not(':first').on('click', function () {
+    setActiveTab($(this));
+  });
+
+  $('.main-tabs button:first').on('click', function () {
+    window.history.back();
+  });
+
+});
 </script>
