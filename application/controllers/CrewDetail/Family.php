@@ -120,93 +120,189 @@ class Family extends CI_Controller {
         ));
     }
 
-    // public function getFamilyData()
-    // {
-    //     $idPerson = $this->input->post('idperson');
-
-    //     if (!$idPerson) {
-    //         echo json_encode(array(
-    //             'status' => false,
-    //             'message' => 'ID Person not found'
-    //         ));
-    //         return;
-    //     }
-
-    //     $sql = "
-    //         SELECT 
-    //             idfm, idperson, fmrel,
-    //             CASE 
-    //                 WHEN fmsex = '1' THEN 'Male'
-    //                 WHEN fmsex = '2' THEN 'Female'
-    //             END AS gender,
-    //             fmfname, fmlname, fmdob,
-    //             fmpassno, fmissdt, fmplc, fmexpdt, fmvisa
-    //         FROM tblfamily
-    //         WHERE idperson = '".$idPerson."'
-    //         AND Deletests = '0'
-    //         ORDER BY fmrel, fmfname ASC
-    //     ";
-
-    //     $result = $this->MCrewscv->getDataQuery($sql);
-
+public function saveChild() {
+    $idfm = $this->input->post('idfm');
+    $idperson = $this->input->post('idperson');
+    $fmrel = $this->input->post('fmrel');
+    $fmsex = $this->input->post('fmsex');
+    $fmfname = $this->input->post('fmfname');
+    $fmlname = $this->input->post('fmlname');
+    $fmdob = $this->input->post('fmdob');
+    $fmpassno = $this->input->post('fmpassno');
+    $fmissdt = $this->input->post('fmissdt');
+    $fmplc = $this->input->post('fmplc');
+    $fmexpdt = $this->input->post('fmexpdt');
+    $fmvisa = $this->input->post('fmvisa');
+    
+    // Validasi required fields
+    // if (empty($idperson) || empty($fmfname) || empty($fmsex)) {
     //     echo json_encode(array(
-    //         'status' => true,
-    //         'data'   => $result
+    //         'status' => false,
+    //         'message' => 'Required fields are missing'
     //     ));
+    //     return;
     // }
+    
+    // Ambil username dari session atau default
+    $username = $this->session->userdata('userName') ?: 'system';
 
-
-    // public function getDataProses()
-    // {
-    //     $dataContext = new DataContext();
-    //     $id   = $this->input->post('id', true);
-    //     $type = $this->input->post('type', true);
-
-
-    //     $this->output->set_content_type('application/json');
-
-    //     if ($type != 'editProses' || empty($id)) {
-    //         echo json_encode(array(
-    //             'status'  => false,
-    //             'message' => 'Invalid parameter'
-    //         ));
-    //         return;
-    //     }
-
-    //     $sql = "SELECT * FROM mstpersonal 
-    //             WHERE deletests = '0' 
-    //             AND idperson = ?";
+    $currentDate = date('Y-m-d H:i:s');
+    
+    $data = array(
+        'idperson' => $idperson,
+        'fmrel' => !empty($fmrel) ? strtoupper($fmrel) : 'CHILD',
+        'fmsex' => $fmsex,
+        'fmfname' => $fmfname,
+        'fmlname' => $fmlname,
+        'fmdob' => !empty($fmdob) ? $fmdob : '',
+        'fmpassno' => $fmpassno,
+        'fmissdt' => !empty($fmissdt) ? $fmissdt : '',
+        'fmplc' => $fmplc,
+        'fmexpdt' => !empty($fmexpdt) ? $fmexpdt : '',
+        'fmvisa' => $fmvisa,
+        'deletests' => '0'
+    );
+    
+    if (empty($idfm)) {
+        // CREATE NEW
+        // Generate ID (contoh: CH + timestamp + random)
+        $newId = 'CH' . date('YmdHis') . rand(100, 999);
+        $data['idfm'] = $newId;
         
-    //     $rsl = $this->db->query($sql, array($id))->result();
+        // Tambahkan field untuk create
+        $data['addusrdt'] = $currentDate;
+        // Jika ada field untuk user yang create, tambahkan:
+        // $data['addusr'] = $username;
+        
+        $this->db->insert('tblfamily', $data);
+        $insertId = $newId;
+        
+        $message = 'Child added successfully';
+    } else {
+        // UPDATE EXISTING
+        // Hapus field create jika ada
+        unset($data['addusrdt']);
+        // unset($data['addusr']);
+        
+        // Tambahkan field untuk update
+        $data['updusrdt'] = $username . '-' . $currentDate;
+        // Jika ada field untuk user yang update, tambahkan:
+        // $data['updusr'] = $username;
 
-    //     if (count($rsl) == 0) {
-    //         echo json_encode(array(
-    //             'status'  => false,
-    //             'message' => 'Data not found'
-    //         ));
-    //         return;
-    //     }
-
-    //     $row = $rsl[0];
-    //     $dataContext = new DataContext();
-
-    //     $data = array(
-    //         'family' => array(
-    //             'fatherName' => $row->fathernm,
-    //             'motherName' => $row->mothernm,
-    //             'wifeName'   => $row->wname,
-    //             'nextOfKin'  => $row->next_of_kin,
-    //             'paddress'  => $row->paddress,
-    //             'pcity'     => $row->pcity,
-    //         )
-    //     );
-    //     echo json_encode(array(
-    //         'status' => true,
-    //         'data'   => $data
-    //     ));
+        //var_dump($data); // Debugging line to check data being updated
+        
+        $this->db->where('idfm', $idfm);
+        $this->db->update('tblfamily', $data);
+        $insertId = $idfm;
+        
+        $message = 'Child updated successfully';
+    }
+    
+    if ($this->db->affected_rows() > 0) {
+        echo json_encode(array(
+            'status' => true,
+            'message' => $message,
+            'data' => array('idfm' => $insertId)
+        ));
+    } else {
+        echo json_encode(array(
+            'status' => false,
+            'message' => 'No changes made or failed to save child data'
+        ));
+    }
+}
 
 
-    // }
+// Method untuk get data child (untuk edit)
+public function getChildData() {
+    $idfm = $this->input->post('idfm');
+    
+    if (!$idfm) {
+        echo json_encode(array(
+            'status' => false,
+            'message' => 'Child ID not found'
+        ));
+        return;
+    }
+    
+    $sql = "SELECT 
+                idfm, idperson, fmrel, fmsex,
+                fmfname, fmlname, fmdob,
+                fmpassno, fmissdt, fmplc, fmexpdt, fmvisa
+            FROM tblfamily
+            WHERE idfm = ?
+            AND deletests = '0'";
+    
+    $query = $this->db->query($sql, array($idfm));
+    
+    if ($query->num_rows() > 0) {
+        $row = $query->row();
+        
+        // Format tanggal untuk ditampilkan di input date
+        $fmdob_formatted = (!empty($row->fmdob) && $row->fmdob != '0000-00-00') ? $row->fmdob : '';
+        $fmissdt_formatted = (!empty($row->fmissdt) && $row->fmissdt != '0000-00-00') ? $row->fmissdt : '';
+        $fmexpdt_formatted = (!empty($row->fmexpdt) && $row->fmexpdt != '0000-00-00') ? $row->fmexpdt : '';
+        
+        echo json_encode(array(
+            'status' => true,
+            'data' => array(
+                'idfm' => $row->idfm,
+                'idperson' => $row->idperson,
+                'fmrel' => $row->fmrel,
+                'fmsex' => $row->fmsex,
+                'fmfname' => $row->fmfname,
+                'fmlname' => $row->fmlname,
+                'fmdob' => $fmdob_formatted,
+                'fmpassno' => $row->fmpassno,
+                'fmissdt' => $fmissdt_formatted,
+                'fmplc' => $row->fmplc,
+                'fmexpdt' => $fmexpdt_formatted,
+                'fmvisa' => $row->fmvisa
+            )
+        ));
+    } else {
+        echo json_encode(array(
+            'status' => false,
+            'message' => 'Child data not found'
+        ));
+    }
+}
+
+// Method untuk delete child
+public function deleteChild() {
+    $idfm = $this->input->post('idfm');
+    
+    if (!$idfm) {
+        echo json_encode(array(
+            'status' => false,
+            'message' => 'Child ID not found'
+        ));
+        return;
+    }
+    
+    // Soft delete
+    $data = array(
+        'deletests' => '1',
+        'delusrdt' => date('Y-m-d H:i:s'),
+        // Jika ada field untuk user yang delete, tambahkan:
+        // 'delusr' => $this->session->userdata('username') ?: 'system'
+    );
+    
+    $this->db->where('idfm', $idfm);
+    $this->db->update('tblfamily', $data);
+    
+    if ($this->db->affected_rows() > 0) {
+        echo json_encode(array(
+            'status' => true,
+            'message' => 'Child deleted successfully'
+        ));
+    } else {
+        echo json_encode(array(
+            'status' => false,
+            'message' => 'Failed to delete child or child already deleted'
+        ));
+    }
+}
 
 }
 ?>
