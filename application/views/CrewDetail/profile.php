@@ -227,7 +227,7 @@
 
   <div class="container-fluid mb-4">
     <div class="row">
-      <div class="col-6 mb-4">
+      <div class="col-6 mb-4 col-xs-12">
         <div class="card shadow-sm h-100" id="familyinformation">
           <div
             class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
@@ -303,7 +303,31 @@
       </div>
 
       <div class="col-6 mb-4">
-        <div class="card shadow-sm h-100">
+        <div class="card shadow-sm h-100" id="legalTaxCard">
+          <div
+            class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+            role="alert" id="tax-success-alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+              <use xlink:href="#check-circle-fill" />
+            </svg>
+            <div class="flex-grow-1">
+              <span id="tax-success-message"></span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+
+          <!-- Alert wrong Message  -->
+          <div
+            class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+            role="alert" id="tax-error-alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+              <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div class="flex-grow-1">
+              <span id="tax-error-message"></span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
           <div class="card-header d-flex justify-content-between align-items-center">
             <span class="fw-semibold fst-italic">💼 Tax & Social Security</span>
 
@@ -368,7 +392,31 @@
       <div class="container-fluid mb-4">
         <div class="row">
           <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-sm h-100" id="contactAddressCard">
+              <div
+                class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="contact-success-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                  <use xlink:href="#check-circle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="contact-success-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+
+              <!-- Alert wrong Message  -->
+              <div
+                class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="contact-error-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+                  <use xlink:href="#exclamation-triangle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="contact-error-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
               <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="fw-semibold fst-italic">📞 Contact & Address</span>
 
@@ -419,7 +467,10 @@
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Nearest Airport</label>
                     <div class="form-view fst-italic" data-field="contact.airport"></div>
-                    <input type="text" class="form-control form-edit d-none" data-field="contact.airport">
+                    <!-- <input type="text" class="form-control form-edit d-none" data-field="contact.airport"> -->
+                    <select class="form-select form-edit d-none" data-field="contact.airport">
+                      <?php echo $optCity; ?>
+                    </select>
                   </div>
 
                   <div class="col-md-6">
@@ -1297,4 +1348,156 @@
           });
         }
       });
+    </script>
+
+    <script>
+      /* Tax & Social Security */
+      var alert_success = $('#tax-success-alert');
+      var success_message = $('#tax-success-message');
+      var error_message = $('#tax-error-message');
+      var alert_error = $('#tax-error-alert');
+
+      $(document).ready(function () {
+        var id_person = "<?php echo $idperson; ?>";
+        $('#legalTaxCard .btn-save').click(function () {
+          saveLegalTax(id_person);
+          console.log('Save Legal & Tax clicked');
+        });
+
+      });
+
+      function saveLegalTax(id_person) {
+        var idperson = id_person;
+        alert_error.addClass('d-none');
+        alert_success.addClass('d-none');
+
+        // Ambil data dari input fields
+        var data = {
+          idperson: idperson,
+          ssn: $('input[data-field="legal.ssn"]').val(),
+          ssnCountry: $('select[data-field="legal.ssnCountry"]').val(),
+          taxNumber: $('input[data-field="legal.taxNumber"]').val(),
+          taxCountry: $('select[data-field="legal.taxCountry"]').val(),
+          taxStatus: $('select[data-field="legal.taxStatus"]').val()
+        };
+
+        // console.log('Saving legal & tax data:', data);
+        // return false;
+        $.ajax({
+          url: "<?php echo base_url('PersonDetail/updateLegalTax'); ?>",
+          type: "POST",
+          dataType: "json",
+          data: data,
+          success: function (res) {
+            if (res.status) {
+              loadProfile(id_person);
+              success_message.text(res.message);
+              alert_success.removeClass('d-none');
+              setTimeout(function () {
+                alert_success.addClass('d-none');
+              }, 3000);
+
+              const card = $('#legalTaxCard');
+              card.find('.form-view').removeClass('d-none');
+              card.find('.form-edit').addClass('d-none');
+              card.find('.btn-edit').removeClass('d-none');
+              card.find('.btn-save, .btn-cancel').addClass('d-none');
+            } else {
+              error_message.text(res.message || 'Failed to update legal & tax information');
+              alert_error.removeClass('d-none');
+              setTimeout(function () {
+                alert_error.addClass('d-none');
+              }, 5000);
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error('AJAX Error:', xhr.responseText);
+            error_message.text('Failed to update legal & tax information');
+            alert_error.removeClass('d-none');
+            setTimeout(function () {
+              alert_error.addClass('d-none');
+            }, 5000);
+          }
+        });
+      }
+    </script>
+
+    <script>
+      /* Contact & Address */
+      var alert_success = $('#contact-success-alert');
+      var success_message = $('#contact-success-message');
+      var error_message = $('#contact-error-message');
+      var alert_error = $('#contact-error-alert');
+      $(document).ready(function () {
+        var id_person = "<?php echo $idperson; ?>";
+        $('#contactAddressCard .btn-save').click(function () {
+          saveContactAddress(id_person);
+          console.log('Save Contact & Address clicked');
+        });
+
+      });
+
+      function saveContactAddress(id_person) {
+        var idperson = id_person;
+        alert_error.addClass('d-none');
+        alert_success.addClass('d-none');
+
+        // Ambil data dari input fields
+        var data = {
+          idperson: idperson,
+          address: $('textarea[data-field="contact.address"]').val(),
+          city: $('select[data-field="contact.city"]').val(),
+          postcode: $('input[data-field="contact.postcode"]').val(),
+          country: $('select[data-field="contact.country"]').val(),
+          airport: $('select[data-field="contact.airport"]').val(),
+          mobile: $('input[data-field="contact.mobile"]').val(),
+          home: $('input[data-field="contact.home"]').val(),
+          fax: $('input[data-field="contact.fax"]').val(),
+          email: $('input[data-field="contact.email"]').val(),
+
+          conmthEmail: $('input[data-field="contactMethod.email"]').is(':checked') ? 1 : 0,
+          conmthFax: $('input[data-field="contactMethod.fax"]').is(':checked') ? 1 : 0,
+          conmthMob: $('input[data-field="contactMethod.mobile"]').is(':checked') ? 1 : 0,
+          conmthHom: $('input[data-field="contactMethod.home"]').is(':checked') ? 1 : 0,
+          conmthPost: $('input[data-field="contactMethod.post"]').is(':checked') ? 1 : 0
+        
+      };
+
+      $.ajax({
+        url: "<?php echo base_url('PersonDetail/updateContact'); ?>",
+        type: "POST",
+        dataType: "json",
+        data: data,
+        success: function (res) {
+          if (res.status) {
+            loadProfile(id_person);
+            success_message.text(res.message);
+            alert_success.removeClass('d-none');
+            setTimeout(function () {
+              alert_success.addClass('d-none');
+            }, 3000);
+
+            const card = $('#contactAddressCard');
+            card.find('.form-view').removeClass('d-none');
+            card.find('.form-edit').addClass('d-none');
+            card.find('.btn-edit').removeClass('d-none');
+            card.find('.btn-save, .btn-cancel').addClass('d-none');
+          } else {
+            error_message.text(res.message || 'Failed to update legal & tax information');
+            alert_error.removeClass('d-none');
+            setTimeout(function () {
+              alert_error.addClass('d-none');
+            }, 5000);
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error('AJAX Error:', xhr.responseText);
+          error_message.text('Failed to update legal & tax information');
+          alert_error.removeClass('d-none');
+          setTimeout(function () {
+            alert_error.addClass('d-none');
+          }, 5000);
+        }
+      });
+      }
     </script>
