@@ -135,13 +135,13 @@ public function saveChild() {
     $fmvisa = $this->input->post('fmvisa');
     
     // Validasi required fields
-    // if (empty($idperson) || empty($fmfname) || empty($fmsex)) {
-    //     echo json_encode(array(
-    //         'status' => false,
-    //         'message' => 'Required fields are missing'
-    //     ));
-    //     return;
-    // }
+    if (empty($idperson) || empty($fmfname) || empty($fmsex)) {
+        echo json_encode(array(
+            'status' => false,
+            'message' => 'Required fields are missing'
+        ));
+        return;
+    }
     
     // Ambil username dari session atau default
     $username = $this->session->userdata('userName') ?: 'system';
@@ -301,6 +301,66 @@ public function deleteChild() {
             'status' => false,
             'message' => 'Failed to delete child or child already deleted'
         ));
+    }
+}
+
+public function updateFamilyInfo() {
+    $idperson = $this->input->post('idperson');
+    $fatherName = $this->input->post('fatherName');
+    $motherName = $this->input->post('motherName');
+    $wifeName = $this->input->post('wifeName');
+    $address = $this->input->post('address');
+    
+    // Validasi
+    if (!$idperson) {
+        echo json_encode(array(
+            'status' => false,
+            'message' => 'ID Person is required'
+        ));
+        return;
+    }
+    
+    // Ambil username dan timestamp
+    $username = $this->session->userdata('username') ?: 'system';
+    $currentDate = date('Y-m-d H:i:s');
+    
+    // Data untuk update
+    $data = array(
+        'fathernm' => $fatherName,
+        'mothernm' => $motherName,
+        'wname' => $wifeName,
+        'famaddrs' => $address,
+        'updusrdt' => $currentDate . ' - ' . $username // Format sesuai request Anda
+    );
+    
+    // Update data di mstpersonal
+    $this->db->where('idperson', $idperson);
+    $this->db->where('deletests', '0');
+    $this->db->update('mstpersonal', $data);
+    
+    if ($this->db->affected_rows() > 0) {
+        echo json_encode(array(
+            'status' => true,
+            'message' => 'Family information updated successfully'
+        ));
+    } else {
+        // Cek apakah data person exists
+        $checkPerson = $this->db->get_where('mstpersonal', array(
+            'idperson' => $idperson,
+            'deletests' => '0'
+        ))->row();
+        
+        if (!$checkPerson) {
+            echo json_encode(array(
+                'status' => false,
+                'message' => 'Person data not found'
+            ));
+        } else {
+            echo json_encode(array(
+                'status' => true,
+                'message' => 'No changes made (data already up to date)'
+            ));
+        }
     }
 }
 

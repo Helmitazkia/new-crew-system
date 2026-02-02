@@ -12,9 +12,9 @@
     }
   </style>
 
-<div id="idSuccess" class="text-center mt-3" style="background-color: transparent;">
+<!-- <div id="idSuccess" class="text-center mt-3" style="background-color: transparent;">
     <img src="<?php echo base_url('assets/img/sama.gif'); ?>" width="30%" alt="Loading" style="background-color: transparent;">
-</div>
+</div> -->
 
   <style>
     #idSuccess {
@@ -58,6 +58,6 @@
   <script>
     $(document).ready(function () {
       $('#loginLoading').hide();
-      $('#idSuccess').hide();
+      // $('#idSuccess').hide();
     });
   </script>
