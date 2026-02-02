@@ -18,7 +18,8 @@
       <div class="col-lg-7 col-md-8 col-sm-12">
 
         <div class="card shadow-sm h-100" id="basicIdentityCard">
-          <div class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+          <div
+            class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
             role="alert" id="basic-success-alert">
             <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
               <use xlink:href="#check-circle-fill" />
@@ -227,7 +228,32 @@
   <div class="container-fluid mb-4">
     <div class="row">
       <div class="col-6 mb-4">
-        <div class="card shadow-sm h-100">
+        <div class="card shadow-sm h-100" id="familyinformation">
+          <div
+            class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+            role="alert" id="family-success-alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+              <use xlink:href="#check-circle-fill" />
+            </svg>
+            <div class="flex-grow-1">
+              <span id="family-success-message"></span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+
+          <!-- Alert wrong Message  -->
+          <div
+            class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+            role="alert" id="family-error-alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+              <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div class="flex-grow-1">
+              <span id="family-error-message"></span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          <br>
           <div class="card-header d-flex justify-content-between align-items-center">
             <span class="fw-semibold fst-italic">👨‍👩‍👧 Family Information</span>
 
@@ -1157,5 +1183,118 @@
           });
         }
 
+      });
+    </script>
+
+    <script>
+      /* Family Information actions start*/
+      $(document).ready(function () {
+        var id_person = "<?php echo $idperson; ?>";
+        var alert_success = $('#family-success-alert');
+        var success_message = $('#family-success-message');
+
+        var error_message = $('#family-error-message');
+        var alert_error = $('#family-error-alert');
+
+
+        $('.btn-close').on('click', function () {
+          $(this).closest('.alert').addClass('d-none');
+        });
+
+        $('#familyinformation .btn-save').click(function () {
+          saveFamilyInfo();
+        });
+
+
+        function saveFamilyInfo() {
+          var idperson = $('#contentArea').data('idperson');
+          // Reset alert terlebih dahulu
+          alert_error.addClass('d-none');
+          alert_success.addClass('d-none');
+
+          var data = {
+            idperson: idperson,
+            fatherName: $('input[data-field="family.fatherName"]').val(), // fatherName bukan father.name
+            motherName: $('input[data-field="family.motherName"]').val(), // motherName bukan mother.name
+            wifeName: $('input[data-field="family.wifeName"]').val(), // wifeName bukan wife.name
+            nextOfKin: $('input[data-field="family.nextOfKin"]').val() // Tambah nextOfKin
+          };
+          // let isFatherNameValid = validateChildField(
+          //   'fatherName',
+          //   'fatherNameFeedback'
+          // );
+
+          // let isMotherNameValid = validateChildField(
+          //   'motherName',
+          //   'motherNameFeedback'
+          // );
+
+          // let isAddressValid = validateChildField(
+          //   'address',
+          //   'addressFeedback'
+          // );
+
+          // if (!isFatherNameValid || !isMotherNameValid || !isAddressValid) {
+          //   return false;
+          // }
+
+          // var data = {
+          //   idperson: idperson,
+          //   fatherName: fatherName,
+          //   motherName: motherName,
+          //   wifeName: $('input[data-field="family.wife.name"]').val(),
+          // };
+
+          console.log('Saving family data:', data);
+          // return false;
+
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/updateFamilyInfo'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+              // console.log('Response:', res);
+              if (res.status) {
+                loadProfile(id_person);
+                success_message.text(res.message);
+                alert_success.removeClass('d-none');
+                setTimeout(function () {
+                  alert_success.addClass('d-none');
+                }, 3000);
+
+                // Switch back to view mode
+                const card = $('.btn-save').closest('.card');
+                card.find('.form-view').removeClass('d-none');
+                card.find('.form-edit').addClass('d-none');
+                card.find('.btn-edit').removeClass('d-none');
+                card.find('.btn-save, .btn-cancel').addClass('d-none');
+
+                // Update view dengan data baru
+                $('.form-view[data-field="family.father.name"]').text(data.fatherName || '');
+                $('.form-view[data-field="family.mother.name"]').text(data.motherName || '');
+                $('.form-view[data-field="family.wife.name"]').text(data.wifeName || '');
+                $('.form-view[data-field="family.address"]').text(data.address || '');
+
+              } else {
+                error_message.text(res.message || 'Failed to update family information');
+                alert_error.removeClass('d-none');
+                setTimeout(function () {
+                  alert_error.addClass('d-none');
+                }, 5000);
+              }
+            },
+            error: function (xhr, status, error) {
+              $('.btn-save').prop('disabled', false).html('<i class="fa fa-save"></i> Save');
+              console.error('AJAX Error:', xhr.responseText);
+
+              error_message.text('Failed to update family information: ' + error);
+              alert_error.removeClass('d-none');
+              setTimeout(function () {
+                alert_error.addClass('d-none');
+              }, 5000);
+            }
+          });
+        }
       });
     </script>

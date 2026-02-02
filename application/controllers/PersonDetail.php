@@ -419,5 +419,68 @@ public function updateBasicIdentity() {
 }
 
 
+public function updateFamilyInfo() {
+    $idperson = $this->input->post('idperson');
+    $fatherName = $this->input->post('fatherName');
+    $motherName = $this->input->post('motherName');
+    $wifeName = $this->input->post('wifeName');
+    $address = $this->input->post('address');
+    $nextOfKin = $this->input->post('nextOfKin');
+    
+    // Validasi
+    if (!$idperson) {
+        echo json_encode(array(
+            'status' => false,
+            'message' => 'ID Person is required'
+        ));
+        return;
+    }
+    
+    // Ambil username dan timestamp
+    $username = $this->session->userdata('username') ?: 'system';
+    $currentDate = date('Y-m-d H:i:s');
+    
+    // Data untuk update
+    $data = array(
+        'fathernm' => $fatherName,
+        'mothernm' => $motherName,
+        'wname' => $wifeName,
+        'next_of_kin' => $nextOfKin,
+        'famaddrs' => $address,
+        'updusrdt' => $currentDate . ' - ' . $username // Format sesuai request Anda
+    );
+    
+    // Update data di mstpersonal
+    $this->db->where('idperson', $idperson);
+    $this->db->where('deletests', '0');
+    $this->db->update('mstpersonal', $data);
+    
+    if ($this->db->affected_rows() > 0) {
+        echo json_encode(array(
+            'status' => true,
+            'message' => 'Family information updated successfully'
+        ));
+    } else {
+        // Cek apakah data person exists
+        $checkPerson = $this->db->get_where('mstpersonal', array(
+            'idperson' => $idperson,
+            'deletests' => '0'
+        ))->row();
+        
+        if (!$checkPerson) {
+            echo json_encode(array(
+                'status' => false,
+                'message' => 'Person data not found'
+            ));
+        } else {
+            echo json_encode(array(
+                'status' => true,
+                'message' => 'No changes made (data already up to date)'
+            ));
+        }
+    }
+}
+
+
 
 }
