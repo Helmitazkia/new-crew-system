@@ -1,9 +1,7 @@
-<!-- main crewLifecycle view -->
-
 <?php $this->load->view('layout/header'); ?>
-<?php $this->load->view('menu/submenu/sub_header_Crew_Lifecycle'); ?>
+<?php $this->load->view('menu/submenu/header_detail_person'); ?>
 
-<div id="contentArea">
+<div id="contentArea" data-idperson="<?php echo $idperson; ?>">
     <?php $this->load->view($content); ?>
 </div>
 

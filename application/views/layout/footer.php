@@ -1,3 +1,32 @@
+  <div id="loginLoading" class="text-center mt-3">
+    <img src="<?php echo base_url('assets/img/loading-new.gif'); ?>" width="60" alt="Loading">
+  </div>
+
+  <style>
+    #loginLoading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+    }
+  </style>
+
+<!-- <div id="idSuccess" class="text-center mt-3" style="background-color: transparent;">
+    <img src="<?php echo base_url('assets/img/sama.gif'); ?>" width="30%" alt="Loading" style="background-color: transparent;">
+</div> -->
+
+  <style>
+    #idSuccess {
+      position: fixed;
+      top: 70%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+    } 
+  </style>
+
+
   <footer class="footer text-center text-white py-3" style="background-color: #000099;">
     <h6 class="mb-3 fw-semibold">Find Us</h6>
     <div class="d-flex justify-content-center gap-4 my-3">
@@ -24,3 +53,11 @@
   </body>
 
   </html>
+
+
+  <script>
+    $(document).ready(function () {
+      $('#loginLoading').hide();
+      // $('#idSuccess').hide();
+    });
+  </script>

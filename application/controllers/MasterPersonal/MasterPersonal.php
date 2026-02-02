@@ -19,49 +19,23 @@ class MasterPersonal extends CI_Controller {
         }
     }
     
-    // public function getCrewRoster()
-    // {
-    //     $data['title'] = 'Crew Roster';
-    //     $data['active_menu'] = 'crew_roster';
-    //     $this->load->view('menu/header',$data); 
-    //     $this->load->view('menu/sub_header_Crew_Lifecycle');
-    //     $this->load->view('Roster/index_crewRoster');
-    //     $this->load->view('menu/footer');
-    // }
+    public function index()
+    {
+        $data = array(
+            'title'   => 'Crew Roster',
+            'content' => 'Roster/MasterPersonal/master_personal'
+        );
 
-    // public function getActiveRoster()
-    // {
-    //     $data['title'] = 'Crew Roster';
-    //     $data['active_menu'] = 'crew_roster';
-    //     $this->load->view('menu/header',$data); 
-    //     $this->load->view('menu/sub_header_Crew_Lifecycle');
-    //     $this->load->view('Roster/ActiveRoster/active_roster');
-    //     $this->load->view('menu/footer');
-    // }
+        $this->load->view('menu/main_CrewLifecycle', $data);
+    }
 
+    // KHUSUS AJAX
     public function getCrewRoster()
     {
-        $data = array(
-            'title' => 'Crew Roster',
-            'active_menu' => 'crew_roster',
-            'content' => 'Roster/index_crewRoster'
-        );
-
-        $this->load->view('menu/main_CrewLifecycle', $data);
+        $this->load->view('Roster/MasterPersonal/master_personal');
     }
 
-    public function getActiveRoster()
-    {
-        $data = array(
-            'title' => 'Active Roster',
-            'active_menu' => 'crew_roster',
-            'content' => 'Roster/ActiveRoster/active_roster'
-        );
-
-        $this->load->view('menu/main_CrewLifecycle', $data);
-    }
-
-    
+   
     public function getAllData_personal()
     {
         $txtSearch  = $this->input->post('txtSearch', true);

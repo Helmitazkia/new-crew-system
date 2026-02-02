@@ -1,6 +1,9 @@
 <div class="profile-content">
+  <!-- SEMUA CONTENT PROFILE MASUK SINI -->
+
   <div class="container-fluid mb-4">
     <div class="row g-3 mb-4">
+
       <!-- FOTO -->
       <div class="col-lg-3 col-md-4 col-sm-12 text-center">
         <div class="card shadow-sm h-100">
@@ -16,33 +19,7 @@
 
       <!-- BASIC IDENTITY -->
       <div class="col-lg-7 col-md-8 col-sm-12">
-
-        <div class="card shadow-sm h-100" id="basicIdentityCard">
-          <div class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-            role="alert" id="basic-success-alert">
-            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
-              <use xlink:href="#check-circle-fill" />
-            </svg>
-            <div class="flex-grow-1">
-              <span id="basic-success-message"></span>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-
-          <!-- Alert wrong Message  -->
-          <div
-            class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-            role="alert" id="basic-danger-alert">
-            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
-              <use xlink:href="#exclamation-triangle-fill" />
-            </svg>
-            <div class="flex-grow-1">
-              <span id="basic-error-message"></span>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-          <br>
-
+        <div class="card shadow-sm h-100">
           <div class="card-header d-flex justify-content-between align-items-center">
             <span class="fw-semibold fst-italic">🪪 Basic Identity</span>
 
@@ -122,6 +99,9 @@
                 <div class="form-view fst-italic" data-field="identity.nationality"></div>
                 <select class="form-select form-edit d-none" data-field="identity.nationality">
                   <?php echo $optCountry; ?>
+                  <!-- <option value="ID">Indonesia</option>
+                  <option value="PH">Philippines</option>
+                  <option value="IN">India</option> -->
                 </select>
               </div>
 
@@ -132,6 +112,9 @@
                 </label>
                 <div class="form-view fst-italic" data-field="identity.countryOrigin"></div>
                 <select class="form-select form-edit d-none" data-field="identity.countryOrigin">
+                  <!-- <option value="ID">Indonesia</option>
+                  <option value="PH">Philippines</option>
+                  <option value="IN">India</option> -->
                   <?php echo $optCountry; ?>
                 </select>
               </div>
@@ -140,7 +123,7 @@
               <div class="col-md-4">
                 <label class="form-label mb-0 fst-italic fw-semibold">Date of Birth</label>
                 <div class="form-view fst-italic" data-field="identity.dob"></div>
-                <input type="date" class="form-control form-edit d-none" data-field="identity.dobForEdit">
+                <input type="date" class="form-control form-edit d-none" data-field="identity.dob">
               </div>
 
               <!-- Place of Birth -->
@@ -149,9 +132,7 @@
                   Place / City of Birth
                 </label>
                 <div class="form-view fst-italic" data-field="identity.pob"></div>
-                <select class="form-select form-edit d-none" data-field="identity.pob">
-                  <?php echo $optCity; ?>
-                </select>
+                <input type="text" class="form-control form-edit d-none" data-field="identity.pob">
               </div>
 
               <!-- Religion -->
@@ -159,11 +140,11 @@
                 <label class="form-label mb-0 fst-italic fw-semibold">Religion</label>
                 <div class="form-view fst-italic" data-field="identity.religion"></div>
                 <select class="form-select form-edit d-none" data-field="identity.religion">
-                  <option value="Moeslem">Moeslem</option>
-                  <option value="Christian">Christian</option>
-                  <option value="Catholic">Catholic</option>
-                  <option value="Hindu">Hindu</option>
-                  <option value="Buddha">Buddha</option>
+                  <option>Islam</option>
+                  <option>Christian</option>
+                  <option>Catholic</option>
+                  <option>Hindu</option>
+                  <option>Buddha</option>
                 </select>
               </div>
 
@@ -174,14 +155,12 @@
                 </label>
                 <div class="form-view fst-italic" data-field="identity.maritalStatus"></div>
                 <select class="form-select form-edit d-none" data-field="identity.maritalStatus">
-                  <option value="Married">Married</option>
-                  <option value="Single">Single</option>
-                  <option value="Divorced">Divorced</option>
-                  <option value="Commond Law Partner">Commond Law Partner</option>
-                  <option value="Widowed">Widowed</option>
-                  <option value="Separated">Separated</option>
+                  <option>Single</option>
+                  <option>Married</option>
+                  <option>Divorced</option>
                 </select>
               </div>
+
             </div>
           </div>
         </div>
@@ -249,26 +228,26 @@
 
               <div class="col-12">
                 <label class="form-label mb-0 fst-italic fw-semibold">Father Name</label>
-                <div class="form-view fst-italic" data-field="family.fatherName"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="family.fatherName">
+                <div class="form-view fst-italic">Ahmad</div>
+                <input type="text" class="form-control form-edit d-none" value="Ahmad">
               </div>
 
               <div class="col-12">
                 <label class="form-label mb-0 fst-italic fw-semibold">Mother Name</label>
-                <div class="form-view fst-italic" data-field="family.motherName"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="family.motherName">
+                <div class="form-view fst-italic">Siti</div>
+                <input type="text" class="form-control form-edit d-none" value="Siti">
               </div>
 
               <div class="col-12">
                 <label class="form-label mb-0 fst-italic fw-semibold">Wife Name</label>
-                <div class="form-view fst-italic" data-field="family.wifeName"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="family.wifeName">
+                <div class="form-view fst-italic">Aisyah</div>
+                <input type="text" class="form-control form-edit d-none" value="Aisyah">
               </div>
 
               <div class="col-12">
                 <label class="form-label mb-0 fst-italic fw-semibold">Next of Kin</label>
-                <div class="form-view fst-italic" data-field="family.nextOfKin"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="family.nextOfKin">
+                <div class="form-view fst-italic">Aisyah (Wife)</div>
+                <input type="text" class="form-control form-edit d-none" value="Aisyah (Wife)">
               </div>
 
             </div>
@@ -299,37 +278,44 @@
 
               <div class="col-md-6">
                 <label class="form-label mb-0 fst-italic fw-semibold">Social Security Number</label>
-                <div class="form-view fst-italic" data-field="legal.ssn"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="legal.ssn">
+                <div class="form-view fst-italic">SSN-998877</div>
+                <input type="text" class="form-control form-edit d-none" value="SSN-998877">
               </div>
 
               <div class="col-md-6">
                 <label class="form-label mb-0 fst-italic fw-semibold">SS Issuing Country</label>
-                <div class="form-view fst-italic" data-field="legal.ssnCountry"></div>
-                <select class="form-select form-edit d-none" data-field="legal.ssnCountry">
-                  <?php echo $optCountry; ?>
+                <div class="form-view fst-italic">Indonesia</div>
+                <select class="form-select form-edit d-none">
+                  <option>Indonesia</option>
+                  <option>Philippines</option>
+                  <option>India</option>
                 </select>
               </div>
 
               <div class="col-md-6">
                 <label class="form-label mb-0 fst-italic fw-semibold">Personal Tax Number</label>
-                <div class="form-view fst-italic" data-field="legal.taxNumber"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="legal.taxNumber">
+                <div class="form-view fst-italic">12.345.678.9-012.000</div>
+                <input type="text" class="form-control form-edit d-none" value="12.345.678.9-012.000">
               </div>
 
               <div class="col-md-6">
                 <label class="form-label mb-0 fst-italic fw-semibold">Tax Issuing Country</label>
-                <div class="form-view fst-italic" data-field="legal.taxCountry"></div>
-                <select class="form-select form-edit d-none" data-field="legal.taxCountry">
-                  <?php echo $optCountry; ?>
+                <div class="form-view fst-italic">Indonesia</div>
+                <select class="form-select form-edit d-none">
+                  <option>Indonesia</option>
+                  <option>Philippines</option>
+                  <option>India</option>
                 </select>
               </div>
 
               <div class="col-md-6">
                 <label class="form-label mb-0 fst-italic fw-semibold">Tax Status</label>
-                <div class="form-view fst-italic" data-field="legal.taxStatus"></div>
-                <select class="form-select form-edit d-none" data-field="legal.taxStatus">
-                  <?php echo $optTax; ?>
+                <div class="form-view fst-italic">Married - K/1</div>
+                <select class="form-select form-edit d-none">
+                  <option>Single</option>
+                  <option>Married - K/0</option>
+                  <option>Married - K/1</option>
+                  <option>Married - K/2</option>
                 </select>
               </div>
 
@@ -364,60 +350,60 @@
 
                   <div class="col-12">
                     <label class="form-label mb-0 fst-italic fw-semibold">Primary / Permanent Address</label>
-                    <div class="form-view fst-italic" data-field="contact.address"></div>
-                    <textarea class="form-control form-edit d-none" data-field="contact.address"></textarea>
+                    <div class="form-view fst-italic">Jl. Merdeka No. 10</div>
+                    <textarea class="form-control form-edit d-none">Jl. Merdeka No. 10</textarea>
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">City</label>
-                    <div class="form-view fst-italic" data-field="contact.city"></div>
-                    <select class="form-select form-edit d-none" data-field="contact.city">
-                      <?php echo $optCity; ?>
-                    </select>
+                    <div class="form-view fst-italic">Jakarta</div>
+                    <input type="text" class="form-control form-edit d-none" value="Jakarta">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Post Code</label>
-                    <div class="form-view fst-italic" data-field="contact.postcode"></div>
-                    <input type="text" class="form-control form-edit d-none" data-field="contact.postcode">
+                    <div class="form-view fst-italic">10110</div>
+                    <input type="text" class="form-control form-edit d-none" value="10110">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Country</label>
-                    <div class="form-view fst-italic" data-field="contact.country"></div>
-                    <select class="form-select form-edit d-none" data-field="contact.country">
-                      <?php echo $optCountry; ?>
+                    <div class="form-view fst-italic">Indonesia</div>
+                    <select class="form-select form-edit d-none">
+                      <option>Indonesia</option>
+                      <option>Philippines</option>
+                      <option>India</option>
                     </select>
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Nearest Airport</label>
-                    <div class="form-view fst-italic" data-field="contact.airport"></div>
-                    <input type="text" class="form-control form-edit d-none" data-field="contact.airport">
+                    <div class="form-view fst-italic">CGK</div>
+                    <input type="text" class="form-control form-edit d-none" value="CGK">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Mobile Tel.</label>
-                    <div class="form-view fst-italic" data-field="contact.mobile"></div>
-                    <input type="text" class="form-control form-edit d-none" data-field="contact.mobile">
+                    <div class="form-view fst-italic">+62 812 3456 7890</div>
+                    <input type="text" class="form-control form-edit d-none" value="+62 812 3456 7890">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Home Tel.</label>
-                    <div class="form-view fst-italic" data-field="contact.home"></div>
-                    <input type="text" class="form-control form-edit d-none" data-field="contact.home">
+                    <div class="form-view fst-italic">021-555666</div>
+                    <input type="text" class="form-control form-edit d-none" value="021-555666">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Fax</label>
-                    <div class="form-view fst-italic" data-field="contact.fax"></div>
-                    <input type="text" class="form-control form-edit d-none" data-field="contact.fax">
+                    <div class="form-view fst-italic">021-777888</div>
+                    <input type="text" class="form-control form-edit d-none" value="021-777888">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Email</label>
-                    <div class="form-view fst-italic" data-field="contact.email"></div>
-                    <input type="email" class="form-control form-edit d-none" data-field="contact.email">
+                    <div class="form-view fst-italic">crew@mail.com</div>
+                    <input type="email" class="form-control form-edit d-none" value="crew@mail.com">
                   </div>
 
                   <!-- CONTACT METHOD -->
@@ -426,29 +412,29 @@
 
                     <!-- VIEW -->
                     <div class="form-view fst-italic">
-                      Email, Fax, Mobile Phone, Home Phone, Post
+                      Email, Mobile Phone
                     </div>
 
                     <!-- EDIT -->
                     <div class="form-edit d-none">
                       <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" data-field="contactMethod.email">
+                        <input class="form-check-input" type="checkbox" checked>
                         <label class="form-check-label">Email</label>
                       </div>
                       <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" data-field="contactMethod.fax">
+                        <input class="form-check-input" type="checkbox">
                         <label class="form-check-label">Fax</label>
                       </div>
                       <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" data-field="contactMethod.mobile">
+                        <input class="form-check-input" type="checkbox" checked>
                         <label class="form-check-label">Mobile Phone</label>
                       </div>
                       <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" data-field="contactMethod.home">
+                        <input class="form-check-input" type="checkbox">
                         <label class="form-check-label">Home Phone</label>
                       </div>
                       <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" data-field="contactMethod.post">
+                        <input class="form-check-input" type="checkbox">
                         <label class="form-check-label">Post</label>
                       </div>
                     </div>
@@ -482,99 +468,107 @@
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Blood Type</label>
-                    <div class="form-view fst-italic" data-field="physical.bloodType"></div>
-                    <select class="form-select form-edit d-none" data-field="physical.bloodType">
-                      <?php echo $optBlood; ?>
+                    <div class="form-view fst-italic">O</div>
+                    <select class="form-select form-edit d-none">
+                      <option>A</option>
+                      <option>B</option>
+                      <option>AB</option>
+                      <option selected>O</option>
                     </select>
                   </div>
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Eye Color</label>
-                    <div class="form-view fst-italic" data-field="physical.eyeColor"></div>
-                    <input type="text" class="form-control form-edit d-none" data-field="physical.eyeColor"
-                      value="Brown">
+                    <div class="form-view fst-italic">Brown</div>
+                    <input type="text" class="form-control form-edit d-none" value="Brown">
                   </div>
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Weight (kg)</label>
-                    <div class="form-view fst-italic" data-field="physical.weight"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.weight" value="70">
+                    <div class="form-view fst-italic">70</div>
+                    <input type="number" class="form-control form-edit d-none" value="70">
                   </div>
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Height (cm)</label>
-                    <div class="form-view fst-italic" data-field="physical.height"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.height" value="175">
+                    <div class="form-view fst-italic">175</div>
+                    <input type="number" class="form-control form-edit d-none" value="175">
                   </div>
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Shoes (mm)</label>
-                    <div class="form-view fst-italic" data-field="physical.shoes"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.shoes" value="270">
+                    <div class="form-view fst-italic">270</div>
+                    <input type="number" class="form-control form-edit d-none" value="270">
                   </div>
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Collar (cm)</label>
-                    <div class="form-view fst-italic" data-field="physical.collar"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.collar" value="40">
+                    <div class="form-view fst-italic">40</div>
+                    <input type="number" class="form-control form-edit d-none" value="40">
                   </div>
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Chest (cm)</label>
-                    <div class="form-view fst-italic" data-field="physical.chest"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.chest" value="98">
+                    <div class="form-view fst-italic">98</div>
+                    <input type="number" class="form-control form-edit d-none" value="98">
                   </div>
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Waist (cm)</label>
-                    <div class="form-view fst-italic" data-field="physical.waist"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.waist" value="82">
+                    <div class="form-view fst-italic">82</div>
+                    <input type="number" class="form-control form-edit d-none" value="82">
                   </div>
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Ins. Leg (cm)</label>
-                    <div class="form-view fst-italic" data-field="physical.insLeg"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.insLeg" value="78">
+                    <div class="form-view fst-italic">78</div>
+                    <input type="number" class="form-control form-edit d-none" value="78">
                   </div>
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Clothes Size</label>
-                    <div class="form-view fst-italic" data-field="physical.clothesSize"></div>
-                    <select class="form-select form-edit d-none" data-field="physical.clothesSize">
-                      <?php echo $optSize; ?>
+                    <div class="form-view fst-italic">L</div>
+                    <select class="form-select form-edit d-none">
+                      <option>S</option>
+                      <option>M</option>
+                      <option selected>L</option>
+                      <option>XL</option>
                     </select>
                   </div>
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Boilersuit Size</label>
-                    <div class="form-view fst-italic" data-field="physical.boilersuitSize"></div>
-                    <select class="form-select form-edit d-none" data-field="physical.boilersuitSize">
-                      <?php echo $optSize; ?>
+                    <div class="form-view fst-italic">L</div>
+                    <select class="form-select form-edit d-none">
+                      <option>S</option>
+                      <option>M</option>
+                      <option selected>L</option>
+                      <option>XL</option>
                     </select>
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Height Phobia</label>
-                    <div class="form-view fst-italic" data-field="physical.heightPhobia"></div>
-                    <select class="form-select form-edit d-none" data-field="physical.heightPhobia">
-                      <option value="No">No</option>
-                      <option value="Yes">Yes</option>
+                    <div class="form-view fst-italic">No</div>
+                    <select class="form-select form-edit d-none">
+                      <option>No</option>
+                      <option>Yes</option>
                     </select>
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Feel Claustrophobic</label>
-                    <div class="form-view fst-italic" data-field="physical.claustrophobic"></div>
-                    <select class="form-select form-edit d-none" data-field="physical.claustrophobic">
-                      <option value="No">No</option>
-                      <option value="Yes">Yes</option>
+                    <div class="form-view fst-italic">No</div>
+                    <select class="form-select form-edit d-none">
+                      <option>No</option>
+                      <option>Yes</option>
                     </select>
                   </div>
 
                   <div class="col-12">
                     <label class="form-label mb-0 fst-italic fw-semibold">Any Allergy</label>
-                    <div class="form-view fst-italic" data-field="physical.allergy"></div>
-                    <textarea class="form-control form-edit d-none" data-field="physical.allergy">None</textarea>
+                    <div class="form-view fst-italic">None</div>
+                    <textarea class="form-control form-edit d-none">None</textarea>
                   </div>
 
                 </div>
@@ -607,32 +601,29 @@
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">CES Score</label>
-                    <div class="form-view fst-italic" data-field="assessment.cesScore"></div>
-                    <input type="number" class="form-control form-edit d-none" value="85"
-                      data-field="assessment.cesScore">
+                    <div class="form-view fst-italic">85</div>
+                    <input type="number" class="form-control form-edit d-none" value="85">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Marlin Test Score</label>
-                    <div class="form-view fst-italic" data-field="assessment.marlinScore"></div>
-                    <input type="number" class="form-control form-edit d-none" value="78"
-                      data-field="assessment.marlinScore">
+                    <div class="form-view fst-italic">78</div>
+                    <input type="number" class="form-control form-edit d-none" value="78">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Training Date</label>
-                    <div class="form-view fst-italic" data-field="assessment.trainingDate"></div>
-                    <input type="date" class="form-control form-edit d-none" value="2024-08-15"
-                      data-field="assessment.trainingDate">
+                    <div class="form-view fst-italic">2024-08-15</div>
+                    <input type="date" class="form-control form-edit d-none" value="2024-08-15">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Evaluation</label>
-                    <div class="form-view fst-italic" data-field="assessment.evaluation"></div>
-                    <select class="form-select form-edit d-none" data-field="assessment.evaluation">
-                      <option value="Recommended">Recommended</option>
-                      <option value="Need Improvement">Need Improvement</option>
-                      <option value="Not Recommended">Not Recommended</option>
+                    <div class="form-view fst-italic">Recommended</div>
+                    <select class="form-select form-edit d-none">
+                      <option>Recommended</option>
+                      <option>Need Improvement</option>
+                      <option>Not Recommended</option>
                     </select>
                   </div>
 
@@ -665,25 +656,28 @@
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Rank Applied For</label>
-                    <div class="form-view fst-italic" data-field="career.rankApply"></div>
-                    <select class="form-select form-edit d-none" data-field="career.rankApply">
-                      <?php echo $optRank; ?>
+                    <div class="form-view fst-italic">Chief Officer</div>
+                    <select class="form-select form-edit d-none">
+                      <option>Master</option>
+                      <option selected>Chief Officer</option>
+                      <option>Second Officer</option>
                     </select>
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Vessel Applied For</label>
-                    <div class="form-view fst-italic" data-field="career.vesselfor"></div>
-                    <select class="form-select form-edit d-none" data-field="career.vesselfor">
-                      <?php echo $vesselname; ?>
-                    </select>
+                    <div class="form-view fst-italic">MT. ANDHIKA VIDYANATA</div>
+                    <input type="text" class="form-control form-edit d-none" value="MT. ANDHIKA VIDYANATA">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Crew Vessel Type</label>
-                    <div class="form-view fst-italic" data-field="career.vesselType"></div>
-                    <select class="form-select form-edit d-none" data-field="career.vesselType">
-                      <?php echo $optVessel; ?>
+                    <div class="form-view fst-italic">Oil Tanker</div>
+                    <select class="form-select form-edit d-none">
+                      <option>Oil Tanker</option>
+                      <option>Chemical Tanker</option>
+                      <option>Bulk Carrier</option>
+                      <option>Container</option>
                     </select>
                   </div>
 
@@ -691,18 +685,17 @@
                     <label class="form-label mb-0 fst-italic fw-semibold">
                       Willing to Accept Lower Rank
                     </label>
-                    <div class="form-view fst-italic" data-field="career.lowerRank"></div>
-                    <select class="form-select form-edit d-none" data-field="career.lowerRank">
-                      <option value="Yes">Yes</option>
-                      <option value="No">No</option>
+                    <div class="form-view fst-italic">Yes</div>
+                    <select class="form-select form-edit d-none">
+                      <option>Yes</option>
+                      <option>No</option>
                     </select>
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Available From</label>
-                    <div class="form-view fst-italic" data-field="career.availableDate"></div>
-                    <input type="date" class="form-control form-edit d-none" value="2024-10-01"
-                      data-field="career.availableDate">
+                    <div class="form-view fst-italic">2024-10-01</div>
+                    <input type="date" class="form-control form-edit d-none" value="2024-10-01">
                   </div>
                 </div>
               </div>
@@ -729,37 +722,34 @@
               </div>
               <div class="card-body small">
                 <div class="row g-2">
-                  <!-- <div class="col-md-6">
-                      <label class="form-label mb-0 fst-italic fw-semibold">Home Salary</label>
-                      <div class="form-view fst-italic" data-field="salary.home.percentage_home_salary"></div>
-                      <input type="text" class="form-control form-edit d-none" value="1500">
-                    </div> -->
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Home Salary</label>
+                    <div class="form-view fst-italic">USD 1,500</div>
+                    <input type="text" class="form-control form-edit d-none" value="1500">
+                  </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Percentage</label>
-                    <div class="form-view fst-italic" data-field="salary.home.percentage"></div>
-                    <input type="number" class="form-control form-edit d-none" value="60"
-                      data-field="salary.home.percentage">
+                    <div class="form-view fst-italic">60 %</div>
+                    <input type="number" class="form-control form-edit d-none" value="60">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Bank Name</label>
-                    <div class="form-view fst-italic" data-field="salary.home.bank"></div>
-                    <input type="text" class="form-control form-edit d-none" value="BNI" data-field="salary.home.bank">
+                    <div class="form-view fst-italic">BNI</div>
+                    <input type="text" class="form-control form-edit d-none" value="BNI">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Account Number</label>
-                    <div class="form-view fst-italic" data-field="salary.home.accountNo"></div>
-                    <input type="text" class="form-control form-edit d-none" value="1234567890"
-                      data-field="salary.home.accountNo">
+                    <div class="form-view fst-italic">1234567890</div>
+                    <input type="text" class="form-control form-edit d-none" value="1234567890">
                   </div>
 
                   <div class="col-12">
                     <label class="form-label mb-0 fst-italic fw-semibold">Account Name</label>
-                    <div class="form-view fst-italic" data-field="salary.home.accountName"></div>
-                    <input type="text" class="form-control form-edit d-none" value="A LOLO GADING"
-                      data-field="salary.home.accountName">
+                    <div class="form-view fst-italic">A LOLO GADING</div>
+                    <input type="text" class="form-control form-edit d-none" value="A LOLO GADING">
                   </div>
                 </div>
               </div>
@@ -786,45 +776,43 @@
               </div>
               <div class="card-body small">
                 <div class="row g-2">
-                  <!-- <div class="col-md-6">
+                  <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Board Salary</label>
-                    <div class="form-view fst-italic" data-field="salary.board.salary"></div>
+                    <div class="form-view fst-italic">USD 2,500</div>
                     <input type="text" class="form-control form-edit d-none" value="2500">
-                  </div> -->
+                  </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Percentage</label>
-                    <div class="form-view fst-italic" data-field="salary.board.percentage"></div>
-                    <input type="number" class="form-control form-edit d-none" value="40"
-                      data-field="salary.board.percentage">
+                    <div class="form-view fst-italic">40 %</div>
+                    <input type="number" class="form-control form-edit d-none" value="40">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Bank Name</label>
-                    <div class="form-view fst-italic" data-field="salary.board.bank"></div>
-                    <input type="text" class="form-control form-edit d-none" value="Mandiri"
-                      data-field="salary.board.bank">
+                    <div class="form-view fst-italic">Mandiri</div>
+                    <input type="text" class="form-control form-edit d-none" value="Mandiri">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Account Number</label>
-                    <div class="form-view fst-italic" data-field="salary.board.accountNo"></div>
-                    <input type="text" class="form-control form-edit d-none" value="9876543210"
-                      data-field="salary.board.accountNo">
+                    <div class="form-view fst-italic">9876543210</div>
+                    <input type="text" class="form-control form-edit d-none" value="9876543210">
                   </div>
 
                   <div class="col-12">
                     <label class="form-label mb-0 fst-italic fw-semibold">Account Name</label>
-                    <div class="form-view fst-italic" data-field="salary.board.accountName"></div>
-                    <input type="text" class="form-control form-edit d-none" value="A LOLO GADING"
-                      data-field="salary.board.accountName">
+                    <div class="form-view fst-italic">A LOLO GADING</div>
+                    <input type="text" class="form-control form-edit d-none" value="A LOLO GADING">
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Attachments -->
+
+
+
           <div class="col-6 mb-4">
             <div class="card shadow-sm">
               <div class="card-header d-flex justify-content-between align-items-center">
@@ -888,24 +876,23 @@
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Sign Place</label>
-                    <div class="form-view fst-italic" data-field="signature.place"></div>
-                    <input type="text" class="form-control form-edit d-none" value="Jakarta"
-                      data-field="signature.place">
+                    <div class="form-view fst-italic">Jakarta</div>
+                    <input type="text" class="form-control form-edit d-none" value="Jakarta">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Sign Date</label>
-                    <div class="form-view fst-italic" data-field="signature.date"></div>
-                    <input type="date" class="form-control form-edit d-none" value="2024-10-01"
-                      data-field="signature.date">
+                    <div class="form-view fst-italic">2024-10-01</div>
+                    <input type="date" class="form-control form-edit d-none" value="2024-10-01">
                   </div>
 
                   <div class="col-12">
                     <label class="form-label mb-0 fst-italic fw-semibold">Additional Remarks</label>
-                    <div class="form-view fst-italic" data-field="signature.remarks">
+                    <div class="form-view fst-italic">
+                      I hereby declare that all information provided is true and correct.
                     </div>
-                    <textarea class="form-control form-edit d-none" rows="3" data-field="signature.remarks">
-
+                    <textarea class="form-control form-edit d-none" rows="3">
+I hereby declare that all information provided is true and correct.
               </textarea>
                   </div>
 
@@ -920,6 +907,14 @@
         </div>
       </div>
     </div>
+
+
+
+
+
+
+
+    <!-- </div> -->
 
 
     <style>
@@ -959,7 +954,6 @@
 
         card.find('.btn-edit').addClass('d-none');
         card.find('.btn-save, .btn-cancel').removeClass('d-none');
-
       });
 
       $(document).on('click', '.btn-cancel', function () {
@@ -1022,23 +1016,6 @@
           if ($(this).is('input, textarea, select')) {
             $(this).val(value);
           }
-
-          /*Contact Method Validate */
-          $('.form-edit input[type="checkbox"]').each(function () {
-
-            const field = $(this).data('field'); // contactMethod.email
-            if (!field) return;
-
-            const value = getValueByPath(data, field);
-
-            // console.log('CHECKBOX', field, '=>', value);
-
-            $(this).prop('checked', value == 1);
-
-          });
-
-
-
         });
 
         // FOTO
@@ -1073,89 +1050,4 @@
 
         return result;
       }
-    </script>
-
-
-    <script>
-      /*Actin Basic Identity Save*/
-      $(document).ready(function () {
-
-        var id_person = "<?php echo $idperson; ?>";
-        var alert_success = $('#basic-success-alert');
-        var alert_error = $('#basic-danger-alert');
-        var success_message = $('#basic-success-message');
-        var error_message = $('#basic-error-message');
-
-        $('#basicIdentityCard .btn-save').click(function () {
-          saveBasicIdentity();
-        });
-
-        function saveBasicIdentity() {
-          // Reset
-          alert_success.addClass('d-none');
-          alert_error.addClass('d-none');
-
-          var idperson = $('#contentArea').data('idperson');
-          var data = {
-            idperson: idperson,
-            oldCrewId: $('input[data-field="identity.oldCrewId"]').val(),
-            oldContractNo: $('input[data-field="identity.oldContractNo"]').val(),
-            seafarerCode: $('input[data-field="identity.seafarerCode"]').val(),
-            firstName: $('input[data-field="identity.firstName"]').val(),
-            middleName: $('input[data-field="identity.middleName"]').val(),
-            lastName: $('input[data-field="identity.lastName"]').val(),
-            gender: $('select[data-field="identity.gender"]').val(),
-            nationality: $('select[data-field="identity.nationality"]').val(),
-            countryOrigin: $('select[data-field="identity.countryOrigin"]').val(),
-            dob: $('input[data-field="identity.dobForEdit"]').val(),
-            pob: $('select[data-field="identity.pob"]').val(),
-            religion: $('select[data-field="identity.religion"]').val(),
-            maritalStatus: $('select[data-field="identity.maritalStatus"]').val()
-          };
-
-          // console.log('Saving basic identity data:', data);
-
-          $.ajax({
-            url: "<?php echo base_url('PersonDetail/updateBasicIdentity'); ?>",
-            type: "POST",
-            dataType: "json",
-            data: data,
-            success: function (res) {
-              if (res.status) {
-                loadProfile(id_person);
-
-                success_message.text(res.message);
-                alert_success.removeClass('d-none');
-                setTimeout(function () {
-                  alert_success.addClass('d-none');
-                }, 3000);
-
-                // Switch back to view mode
-                const card = $('.btn-save').closest('.card');
-                card.find('.form-view').removeClass('d-none');
-                card.find('.form-edit').addClass('d-none');
-                card.find('.btn-edit').removeClass('d-none');
-                card.find('.btn-save, .btn-cancel').addClass('d-none');
-
-              } else {
-                // Tampilkan ERROR message - hanya ubah teks
-                error_message.text(res.message || 'Failed to update basic identity'); // ← Ini yang benar!
-                alert_error.removeClass('d-none');
-                setTimeout(function () {
-                  alert_error.addClass('d-none');
-                }, 5000);
-              }
-            },
-            error: function (xhr, status, error) {
-              console.error('AJAX Error:', xhr.responseText);
-              error_message.text('Failed to update basic identity: ' + error);
-              alert_error.removeClass('d-none');
-              setTimeout(function () {
-                alert_error.addClass('d-none');
-              }, 5000);
-            }
-          });
-        }
-
-      });
     </script>

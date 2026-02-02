@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class ActiveRoster extends CI_Controller {
+class CrewLifecycle extends CI_Controller {
 
   function __construct()
     {
@@ -21,30 +21,15 @@ class ActiveRoster extends CI_Controller {
         }
     }
 
-    // public function getActiveRoster()
-    // {
-    //     $data = array(
-    //         'title' => 'Active Roster',
-    //         'active_menu' => 'crew_roster',
-    //         'content' => 'Roster/ActiveRoster/active_roster'
-    //     );
-
-    //     $this->load->view('menu/main_CrewLifecycle', $data);
-    // }
-
     public function index()
     {
         $data = array(
-            'title'   => 'Active Roster',
+            'title' => 'Active Roster',
+            'active_menu' => 'crew_roster',
             'content' => 'Roster/ActiveRoster/active_roster'
         );
 
         $this->load->view('menu/main_CrewLifecycle', $data);
-    }
-
-    public function getActiveRoster()
-    {
-        $this->load->view('Roster/ActiveRoster/active_roster');
     }
 
 }
