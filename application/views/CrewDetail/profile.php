@@ -1,9 +1,6 @@
 <div class="profile-content">
-  <!-- SEMUA CONTENT PROFILE MASUK SINI -->
-
   <div class="container-fluid mb-4">
     <div class="row g-3 mb-4">
-
       <!-- FOTO -->
       <div class="col-lg-3 col-md-4 col-sm-12 text-center">
         <div class="card shadow-sm h-100">
@@ -19,7 +16,33 @@
 
       <!-- BASIC IDENTITY -->
       <div class="col-lg-7 col-md-8 col-sm-12">
-        <div class="card shadow-sm h-100">
+
+        <div class="card shadow-sm h-100" id="basicIdentityCard">
+          <div class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+            role="alert" id="basic-success-alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+              <use xlink:href="#check-circle-fill" />
+            </svg>
+            <div class="flex-grow-1">
+              <span id="basic-success-message"></span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+
+          <!-- Alert wrong Message  -->
+          <div
+            class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+            role="alert" id="basic-danger-alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+              <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div class="flex-grow-1">
+              <span id="basic-error-message"></span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          <br>
+
           <div class="card-header d-flex justify-content-between align-items-center">
             <span class="fw-semibold fst-italic">🪪 Basic Identity</span>
 
@@ -99,9 +122,6 @@
                 <div class="form-view fst-italic" data-field="identity.nationality"></div>
                 <select class="form-select form-edit d-none" data-field="identity.nationality">
                   <?php echo $optCountry; ?>
-                  <!-- <option value="ID">Indonesia</option>
-                  <option value="PH">Philippines</option>
-                  <option value="IN">India</option> -->
                 </select>
               </div>
 
@@ -120,7 +140,7 @@
               <div class="col-md-4">
                 <label class="form-label mb-0 fst-italic fw-semibold">Date of Birth</label>
                 <div class="form-view fst-italic" data-field="identity.dob"></div>
-                <input type="date" class="form-control form-edit d-none" data-field="identity.dob">
+                <input type="date" class="form-control form-edit d-none" data-field="identity.dobForEdit">
               </div>
 
               <!-- Place of Birth -->
@@ -902,14 +922,6 @@
     </div>
 
 
-
-
-
-
-
-    <!-- </div> -->
-
-
     <style>
       /* KHUSUS PROFILE */
       .profile-content {
@@ -1061,4 +1073,89 @@
 
         return result;
       }
+    </script>
+
+
+    <script>
+      /*Actin Basic Identity Save*/
+      $(document).ready(function () {
+
+        var id_person = "<?php echo $idperson; ?>";
+        var alert_success = $('#basic-success-alert');
+        var alert_error = $('#basic-danger-alert');
+        var success_message = $('#basic-success-message');
+        var error_message = $('#basic-error-message');
+
+        $('#basicIdentityCard .btn-save').click(function () {
+          saveBasicIdentity();
+        });
+
+        function saveBasicIdentity() {
+          // Reset
+          alert_success.addClass('d-none');
+          alert_error.addClass('d-none');
+
+          var idperson = $('#contentArea').data('idperson');
+          var data = {
+            idperson: idperson,
+            oldCrewId: $('input[data-field="identity.oldCrewId"]').val(),
+            oldContractNo: $('input[data-field="identity.oldContractNo"]').val(),
+            seafarerCode: $('input[data-field="identity.seafarerCode"]').val(),
+            firstName: $('input[data-field="identity.firstName"]').val(),
+            middleName: $('input[data-field="identity.middleName"]').val(),
+            lastName: $('input[data-field="identity.lastName"]').val(),
+            gender: $('select[data-field="identity.gender"]').val(),
+            nationality: $('select[data-field="identity.nationality"]').val(),
+            countryOrigin: $('select[data-field="identity.countryOrigin"]').val(),
+            dob: $('input[data-field="identity.dobForEdit"]').val(),
+            pob: $('select[data-field="identity.pob"]').val(),
+            religion: $('select[data-field="identity.religion"]').val(),
+            maritalStatus: $('select[data-field="identity.maritalStatus"]').val()
+          };
+
+          // console.log('Saving basic identity data:', data);
+
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/updateBasicIdentity'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+              if (res.status) {
+                loadProfile(id_person);
+
+                success_message.text(res.message);
+                alert_success.removeClass('d-none');
+                setTimeout(function () {
+                  alert_success.addClass('d-none');
+                }, 3000);
+
+                // Switch back to view mode
+                const card = $('.btn-save').closest('.card');
+                card.find('.form-view').removeClass('d-none');
+                card.find('.form-edit').addClass('d-none');
+                card.find('.btn-edit').removeClass('d-none');
+                card.find('.btn-save, .btn-cancel').addClass('d-none');
+
+              } else {
+                // Tampilkan ERROR message - hanya ubah teks
+                error_message.text(res.message || 'Failed to update basic identity'); // ← Ini yang benar!
+                alert_error.removeClass('d-none');
+                setTimeout(function () {
+                  alert_error.addClass('d-none');
+                }, 5000);
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error('AJAX Error:', xhr.responseText);
+              error_message.text('Failed to update basic identity: ' + error);
+              alert_error.removeClass('d-none');
+              setTimeout(function () {
+                alert_error.addClass('d-none');
+              }, 5000);
+            }
+          });
+        }
+
+      });
     </script>

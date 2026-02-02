@@ -151,6 +151,9 @@ class PersonDetail extends CI_Controller {
                 'dob' => !empty($row->dob)
                     ? date('d M Y', strtotime($row->dob))
                     : '0000-00-00',
+                'dobForEdit' => !empty($row->dob)  // Tambah field ini
+                ? date('Y-m-d', strtotime($row->dob))
+                : '',
                 'pob'           => $dataContext->getCityNameById($row->pob),
                 'religion'      => $row->religion,
                 'maritalStatus' => $row->maritalstsid
@@ -286,6 +289,134 @@ class PersonDetail extends CI_Controller {
 
 
     }
+
+
+public function updateBasicIdentity() {
+    $idperson = $this->input->post('idperson');
+    
+    // Get all post data
+    $oldCrewId = $this->input->post('oldCrewId');
+    $oldContractNo = $this->input->post('oldContractNo');
+    $seafarerCode = $this->input->post('seafarerCode');
+    $firstName = $this->input->post('firstName');
+    $middleName = $this->input->post('middleName');
+    $lastName = $this->input->post('lastName');
+    $gender = $this->input->post('gender');
+    $nationality = $this->input->post('nationality'); // Ini ID negara
+    $countryOrigin = $this->input->post('countryOrigin'); // Ini ID negara
+    $dob = $this->input->post('dob');
+    $pob = $this->input->post('pob'); // Ini ID kota
+    $religion = $this->input->post('religion');
+    $maritalStatus = $this->input->post('maritalStatus');
+    
+    // Validasi required fields
+    if (!$idperson || !$firstName || !$lastName || !$gender) {
+        echo json_encode(array(
+            'status' => false,
+            'message' => 'Required fields are missing'
+        ));
+        return;
+    }
+    
+    // Ambil username dan timestamp
+    $username = $this->session->userdata('username') ?: 'system';
+    $currentDate = date('Y-m-d H:i:s');
+    
+    // Prepare data untuk update
+    $data = array(
+        'oldcrewid' => $oldCrewId,
+        'oldcontno' => $oldContractNo,
+        'kodepelaut' => $seafarerCode,
+        'fname' => $firstName,
+        'mname' => $middleName,
+        'lname' => $lastName,
+        'gender' => $gender,
+        'dob' => $dob,
+        'religion' => $religion,
+        'maritalstsid' => $maritalStatus,
+        'updusrdt' => $currentDate . ' - ' . $username
+    );
+
+    // var_dump($data);exit;
+    
+    // Handle nationality (convert dari nama negara ke ID jika perlu)
+    if (!empty($nationality)) {
+        // Jika $nationality adalah nama negara, cari ID-nya
+        // Jika sudah ID, langsung assign
+        if (is_numeric($nationality)) {
+            $data['nationalid'] = $nationality;
+        } else {
+            // Cari ID berdasarkan nama negara
+            $country = $this->db->get_where('tblnegara', array(
+                'NmNegara' => $nationality,
+                'Deletests' => '0'
+            ))->row();
+            if ($country) {
+                $data['nationalid'] = $country->KdNegara;
+            }
+        }
+    }
+    
+    // Handle country of origin (sama seperti nationality)
+    if (!empty($countryOrigin)) {
+        if (is_numeric($countryOrigin)) {
+            $data['ctryOfOrgn'] = $countryOrigin;
+        } else {
+            $country = $this->db->get_where('tblnegara', array(
+                'NmNegara' => $countryOrigin,
+                'Deletests' => '0'
+            ))->row();
+            if ($country) {
+                $data['ctryOfOrgn'] = $country->KdNegara;
+            }
+        }
+    }
+    
+    // Handle place of birth (kota)
+    if (!empty($pob)) {
+        if (is_numeric($pob)) {
+            $data['pob'] = $pob;
+        } else {
+            $city = $this->db->get_where('tblkota', array(
+                'NmKota' => $pob,
+                'Deletests' => '0'
+            ))->row();
+            if ($city) {
+                $data['pob'] = $city->KdKota;
+            }
+        }
+    }
+    
+    // Update data
+    $this->db->where('idperson', $idperson);
+    $this->db->where('deletests', '0');
+    $this->db->update('mstpersonal', $data);
+    
+    if ($this->db->affected_rows() > 0) {
+        echo json_encode(array(
+            'status' => true,
+            'message' => 'Basic identity updated successfully'
+        ));
+    } else {
+        // Cek apakah data person exists
+        $checkPerson = $this->db->get_where('mstpersonal', array(
+            'idperson' => $idperson,
+            'deletests' => '0'
+        ))->row();
+        
+        if (!$checkPerson) {
+            echo json_encode(array(
+                'status' => false,
+                'message' => 'Person data not found'
+            ));
+        } else {
+            echo json_encode(array(
+                'status' => true,
+                'message' => 'No changes made (data already up to date)'
+            ));
+        }
+    }
+}
 
 
 
