@@ -195,15 +195,15 @@ class PersonDetail extends CI_Controller {
                 'eyeColor'     => $row->eyecol,
                 'weight'       => $row->wght,
                 'height'       => $row->hght,
-                'shoe'         => $row->shoesz,
+                'shoesz'         => $row->shoesz,
                 'collar'       => $row->collar,
                 'chest'        => $row->chest,
                 'waist'        => $row->waist,
-                'insideLeg'    => $row->Insdleg,
+                'Insdleg'    => $row->Insdleg,
                 'cap'          => $row->cap,
                 'clothesSize'  => $row->clothszid,
                 'sweaterSize'  => $row->sweaterszid,
-                'boilerSize'   => $row->boilerszid,
+                'boilerszid'   => $row->boilerszid,
                 'allergy'      => $row->alergy,
                 'heightPhobia' => (strtolower($row->heightphob) == 'y') ? 'Yes' : 'No',
                 'claustrophob' => (strtolower($row->claustrophob) == 'y') ? 'Yes' : 'No',
@@ -805,6 +805,57 @@ public function updateContact()
             : 'Failed to update contact & address'
     ));
 }
+
+public function updatePhysicalMedical()
+{
+    $idperson = $this->input->post('idperson');
+
+    $username    = $this->session->userdata('username');
+    $currentDate = date('Y-m-d H:i:s');
+
+    if (!$idperson) {
+        echo json_encode(array(
+            'status' => false,
+            'message' => 'Invalid person ID'
+        ));
+        return;
+    }
+
+    $data = array(
+        'golDrh'       => $this->input->post('bloodType'),
+        'eyecol'       => $this->input->post('eyeColor'),
+        'wght'         => $this->input->post('weight'),
+        'hght'         => $this->input->post('height'),
+        'shoesz'       => $this->input->post('shoes'),
+        'collar'       => $this->input->post('collar'),
+        'chest'        => $this->input->post('chest'),
+        'waist'        => $this->input->post('waist'),
+        'Insdleg'      => $this->input->post('insideLeg'),
+        'clothszid'    => $this->input->post('clothesSize'),
+        'boilerszid'   => $this->input->post('boilerSize'),
+        'alergy'       => $this->input->post('allergy'),
+
+        // Yes / No -> Y / N
+        'heightphob'   => ($this->input->post('heightPhobia') == 'Yes') ? 'Y' : 'N',
+        'claustrophob' => ($this->input->post('claustrophob') == 'Yes') ? 'Y' : 'N',
+
+        // audit
+        'updusrdt'     => $currentDate . ' - ' . $username
+    );
+
+    $this->db->where('idperson', $idperson);
+    $this->db->where('deletests', '0');
+    $update = $this->db->update('mstpersonal', $data);
+
+    echo json_encode(array(
+        'status'  => $update ? true : false,
+        'message' => $update
+            ? 'Physical & medical data updated successfully'
+            : 'Failed to update physical & medical data'
+    ));
+}
+
+
 
 
 

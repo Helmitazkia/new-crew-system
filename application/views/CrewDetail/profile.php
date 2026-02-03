@@ -537,7 +537,31 @@
           </div>
 
           <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-sm h-100" id="physicalMedicalCard">
+              <div
+                class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="physical-success-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                  <use xlink:href="#check-circle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="physical-success-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+
+              <!-- Alert wrong Message  -->
+              <div
+                class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="physical-error-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+                  <use xlink:href="#exclamation-triangle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="physical-error-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
               <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="fw-semibold fst-italic">🩺 Physical & Medical</span>
 
@@ -586,8 +610,8 @@
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Shoes (mm)</label>
-                    <div class="form-view fst-italic" data-field="physical.shoes"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.shoes" value="270">
+                    <div class="form-view fst-italic" data-field="physical.shoesz"></div>
+                    <input type="number" class="form-control form-edit d-none" data-field="physical.shoesz" value="270">
                   </div>
 
                   <div class="col-md-4">
@@ -610,8 +634,8 @@
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Ins. Leg (cm)</label>
-                    <div class="form-view fst-italic" data-field="physical.insLeg"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.insLeg" value="78">
+                    <div class="form-view fst-italic" data-field="physical.Insdleg"></div>
+                    <input type="number" class="form-control form-edit d-none" data-field="physical.Insdleg" value="78">
                   </div>
 
                   <div class="col-md-4">
@@ -624,8 +648,8 @@
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Boilersuit Size</label>
-                    <div class="form-view fst-italic" data-field="physical.boilersuitSize"></div>
-                    <select class="form-select form-edit d-none" data-field="physical.boilersuitSize">
+                    <div class="form-view fst-italic" data-field="physical.boilerszid"></div>
+                    <select class="form-select form-edit d-none" data-field="physical.boilerszid">
                       <?php echo $optSize; ?>
                     </select>
                   </div>
@@ -641,8 +665,8 @@
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Feel Claustrophobic</label>
-                    <div class="form-view fst-italic" data-field="physical.claustrophobic"></div>
-                    <select class="form-select form-edit d-none" data-field="physical.claustrophobic">
+                    <div class="form-view fst-italic" data-field="physical.claustrophob"></div>
+                    <select class="form-select form-edit d-none" data-field="physical.claustrophob">
                       <option value="No">No</option>
                       <option value="Yes">Yes</option>
                     </select>
@@ -902,7 +926,7 @@
           </div>
 
           <!-- Attachments -->
-          <div class="col-6 mb-4">
+          <!-- <div class="col-6 mb-4">
             <div class="card shadow-sm">
               <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="fw-semibold fst-italic">📎 Attachments</span>
@@ -940,7 +964,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
 
           <div class="col-6 mb-4">
             <div class="card shadow-sm h-100">
@@ -1352,152 +1376,224 @@
 
     <script>
       /* Tax & Social Security */
-      var alert_success = $('#tax-success-alert');
-      var success_message = $('#tax-success-message');
-      var error_message = $('#tax-error-message');
-      var alert_error = $('#tax-error-alert');
-
       $(document).ready(function () {
+        var alert_success = $('#tax-success-alert');
+        var success_message = $('#tax-success-message');
+        var error_message = $('#tax-error-message');
+        var alert_error = $('#tax-error-alert');
         var id_person = "<?php echo $idperson; ?>";
+
         $('#legalTaxCard .btn-save').click(function () {
           saveLegalTax(id_person);
           console.log('Save Legal & Tax clicked');
         });
 
-      });
+        function saveLegalTax(id_person) {
+          var idperson = id_person;
+          alert_error.addClass('d-none');
+          alert_success.addClass('d-none');
 
-      function saveLegalTax(id_person) {
-        var idperson = id_person;
-        alert_error.addClass('d-none');
-        alert_success.addClass('d-none');
+          // Ambil data dari input fields
+          var data = {
+            idperson: idperson,
+            ssn: $('input[data-field="legal.ssn"]').val(),
+            ssnCountry: $('select[data-field="legal.ssnCountry"]').val(),
+            taxNumber: $('input[data-field="legal.taxNumber"]').val(),
+            taxCountry: $('select[data-field="legal.taxCountry"]').val(),
+            taxStatus: $('select[data-field="legal.taxStatus"]').val()
+          };
 
-        // Ambil data dari input fields
-        var data = {
-          idperson: idperson,
-          ssn: $('input[data-field="legal.ssn"]').val(),
-          ssnCountry: $('select[data-field="legal.ssnCountry"]').val(),
-          taxNumber: $('input[data-field="legal.taxNumber"]').val(),
-          taxCountry: $('select[data-field="legal.taxCountry"]').val(),
-          taxStatus: $('select[data-field="legal.taxStatus"]').val()
-        };
+          // console.log('Saving legal & tax data:', data);
+          // return false;
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/updateLegalTax'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+              if (res.status) {
+                loadProfile(id_person);
+                success_message.text(res.message);
+                alert_success.removeClass('d-none');
+                setTimeout(function () {
+                  alert_success.addClass('d-none');
+                }, 3000);
 
-        // console.log('Saving legal & tax data:', data);
-        // return false;
-        $.ajax({
-          url: "<?php echo base_url('PersonDetail/updateLegalTax'); ?>",
-          type: "POST",
-          dataType: "json",
-          data: data,
-          success: function (res) {
-            if (res.status) {
-              loadProfile(id_person);
-              success_message.text(res.message);
-              alert_success.removeClass('d-none');
-              setTimeout(function () {
-                alert_success.addClass('d-none');
-              }, 3000);
-
-              const card = $('#legalTaxCard');
-              card.find('.form-view').removeClass('d-none');
-              card.find('.form-edit').addClass('d-none');
-              card.find('.btn-edit').removeClass('d-none');
-              card.find('.btn-save, .btn-cancel').addClass('d-none');
-            } else {
-              error_message.text(res.message || 'Failed to update legal & tax information');
+                const card = $('#legalTaxCard');
+                card.find('.form-view').removeClass('d-none');
+                card.find('.form-edit').addClass('d-none');
+                card.find('.btn-edit').removeClass('d-none');
+                card.find('.btn-save, .btn-cancel').addClass('d-none');
+              } else {
+                error_message.text(res.message || 'Failed to update legal & tax information');
+                alert_error.removeClass('d-none');
+                setTimeout(function () {
+                  alert_error.addClass('d-none');
+                }, 5000);
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error('AJAX Error:', xhr.responseText);
+              error_message.text('Failed to update legal & tax information');
               alert_error.removeClass('d-none');
               setTimeout(function () {
                 alert_error.addClass('d-none');
               }, 5000);
             }
-          },
-          error: function (xhr, status, error) {
-            console.error('AJAX Error:', xhr.responseText);
-            error_message.text('Failed to update legal & tax information');
-            alert_error.removeClass('d-none');
-            setTimeout(function () {
-              alert_error.addClass('d-none');
-            }, 5000);
-          }
-        });
-      }
+          });
+        }
+
+      });
     </script>
 
     <script>
       /* Contact & Address */
-      var alert_success = $('#contact-success-alert');
-      var success_message = $('#contact-success-message');
-      var error_message = $('#contact-error-message');
-      var alert_error = $('#contact-error-alert');
       $(document).ready(function () {
-        var id_person = "<?php echo $idperson; ?>";
+        var alert_success = $('#contact-success-alert');
+        var success_message = $('#contact-success-message');
+        var error_message = $('#contact-error-message');
+        var alert_error = $('#contact-error-alert');
+
         $('#contactAddressCard .btn-save').click(function () {
-          saveContactAddress(id_person);
+          saveContactAddress();
           console.log('Save Contact & Address clicked');
         });
 
-      });
+        function saveContactAddress() {
+          var idperson = $('#contentArea').data('idperson');
+          alert_error.addClass('d-none');
+          alert_success.addClass('d-none');
 
-      function saveContactAddress(id_person) {
-        var idperson = id_person;
-        alert_error.addClass('d-none');
-        alert_success.addClass('d-none');
+          var data = {
+            idperson: idperson,
+            address: $('textarea[data-field="contact.address"]').val(),
+            city: $('select[data-field="contact.city"]').val(),
+            postcode: $('input[data-field="contact.postcode"]').val(),
+            country: $('select[data-field="contact.country"]').val(),
+            airport: $('select[data-field="contact.airport"]').val(),
+            mobile: $('input[data-field="contact.mobile"]').val(),
+            home: $('input[data-field="contact.home"]').val(),
+            fax: $('input[data-field="contact.fax"]').val(),
+            email: $('input[data-field="contact.email"]').val(),
 
-        // Ambil data dari input fields
-        var data = {
-          idperson: idperson,
-          address: $('textarea[data-field="contact.address"]').val(),
-          city: $('select[data-field="contact.city"]').val(),
-          postcode: $('input[data-field="contact.postcode"]').val(),
-          country: $('select[data-field="contact.country"]').val(),
-          airport: $('select[data-field="contact.airport"]').val(),
-          mobile: $('input[data-field="contact.mobile"]').val(),
-          home: $('input[data-field="contact.home"]').val(),
-          fax: $('input[data-field="contact.fax"]').val(),
-          email: $('input[data-field="contact.email"]').val(),
+            conmthEmail: $('input[data-field="contactMethod.email"]').is(':checked') ? 1 : 0,
+            conmthFax: $('input[data-field="contactMethod.fax"]').is(':checked') ? 1 : 0,
+            conmthMob: $('input[data-field="contactMethod.mobile"]').is(':checked') ? 1 : 0,
+            conmthHom: $('input[data-field="contactMethod.home"]').is(':checked') ? 1 : 0,
+            conmthPost: $('input[data-field="contactMethod.post"]').is(':checked') ? 1 : 0
 
-          conmthEmail: $('input[data-field="contactMethod.email"]').is(':checked') ? 1 : 0,
-          conmthFax: $('input[data-field="contactMethod.fax"]').is(':checked') ? 1 : 0,
-          conmthMob: $('input[data-field="contactMethod.mobile"]').is(':checked') ? 1 : 0,
-          conmthHom: $('input[data-field="contactMethod.home"]').is(':checked') ? 1 : 0,
-          conmthPost: $('input[data-field="contactMethod.post"]').is(':checked') ? 1 : 0
-        
-      };
+          };
 
-      $.ajax({
-        url: "<?php echo base_url('PersonDetail/updateContact'); ?>",
-        type: "POST",
-        dataType: "json",
-        data: data,
-        success: function (res) {
-          if (res.status) {
-            loadProfile(id_person);
-            success_message.text(res.message);
-            alert_success.removeClass('d-none');
-            setTimeout(function () {
-              alert_success.addClass('d-none');
-            }, 3000);
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/updateContact'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+              if (res.status) {
+                loadProfile(idperson);
+                success_message.text(res.message);
+                alert_success.removeClass('d-none');
+                setTimeout(function () {
+                  alert_success.addClass('d-none');
+                }, 3000);
 
-            const card = $('#contactAddressCard');
-            card.find('.form-view').removeClass('d-none');
-            card.find('.form-edit').addClass('d-none');
-            card.find('.btn-edit').removeClass('d-none');
-            card.find('.btn-save, .btn-cancel').addClass('d-none');
-          } else {
-            error_message.text(res.message || 'Failed to update legal & tax information');
-            alert_error.removeClass('d-none');
-            setTimeout(function () {
-              alert_error.addClass('d-none');
-            }, 5000);
-          }
-        },
-        error: function (xhr, status, error) {
-          console.error('AJAX Error:', xhr.responseText);
-          error_message.text('Failed to update legal & tax information');
-          alert_error.removeClass('d-none');
-          setTimeout(function () {
-            alert_error.addClass('d-none');
-          }, 5000);
+                const card = $('#contactAddressCard');
+                card.find('.form-view').removeClass('d-none');
+                card.find('.form-edit').addClass('d-none');
+                card.find('.btn-edit').removeClass('d-none');
+                card.find('.btn-save, .btn-cancel').addClass('d-none');
+              } else {
+                error_message.text(res.message || 'Failed to update legal & tax information');
+                alert_error.removeClass('d-none');
+                setTimeout(function () {
+                  alert_error.addClass('d-none');
+                }, 5000);
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error('AJAX Error:', xhr.responseText);
+              error_message.text('Failed to update legal & tax information');
+              alert_error.removeClass('d-none');
+              setTimeout(function () {
+                alert_error.addClass('d-none');
+              }, 5000);
+            }
+          });
         }
       });
-      }
+    </script>
+
+    <script>
+      $(document).ready(function () {
+        var alert_success = $('#physical-success-alert');
+        var success_message = $('#physical-success-message');
+        var error_message = $('#physical-error-message');
+        var alert_error = $('#physical-error-alert');
+
+        $('#physicalMedicalCard .btn-save').on('click', function () {
+          savePhysicalMedical();
+        });
+
+        function savePhysicalMedical() {
+          var id_person = $('#contentArea').data('idperson');
+          alert_error.addClass('d-none');
+          alert_success.addClass('d-none');
+
+          var data = {
+            idperson: id_person,
+            bloodType: $('select[data-field="physical.bloodType"]').val(),
+            eyeColor: $('input[data-field="physical.eyeColor"]').val(),
+            weight: $('input[data-field="physical.weight"]').val(),
+            height: $('input[data-field="physical.height"]').val(),
+            shoes: $('input[data-field="physical.shoesz"]').val(),
+            collar: $('input[data-field="physical.collar"]').val(),
+            chest: $('input[data-field="physical.chest"]').val(),
+            waist: $('input[data-field="physical.waist"]').val(),
+            insideLeg: $('input[data-field="physical.Insdleg"]').val(),
+            clothesSize: $('select[data-field="physical.clothesSize"]').val(),
+            boilerSize: $('select[data-field="physical.boilerszid"]').val(),
+            heightPhobia: $('select[data-field="physical.heightPhobia"]').val(),
+            claustrophob: $('select[data-field="physical.claustrophob"]').val(),
+            allergy: $('textarea[data-field="physical.allergy"]').val()
+          };
+
+          // console.log('Saving physical & medical data:', data);
+          // return false;
+
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/updatePhysicalMedical'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+              if (res.status) {
+                loadProfile(id_person);
+
+                success_message.text(res.message);
+                alert_success.removeClass('d-none');
+
+                setTimeout(function () {
+                  alert_success.addClass('d-none');
+                }, 3000);
+
+                const card = $('#physicalMedicalCard');
+                card.find('.form-view').removeClass('d-none');
+                card.find('.form-edit').addClass('d-none');
+                card.find('.btn-edit').removeClass('d-none');
+                card.find('.btn-save, .btn-cancel').addClass('d-none');
+
+              } else {
+                error_message.text(res.message || 'Failed to update physical data');
+                alert_error.removeClass('d-none');
+              }
+            },
+            error: function () {
+              error_message.text('Server error');
+              alert_error.removeClass('d-none');
+            }
+          });
+        }
+
+      });
     </script>
