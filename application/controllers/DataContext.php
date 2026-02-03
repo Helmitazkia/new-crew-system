@@ -706,7 +706,7 @@ class DataContext extends CI_Controller {
 			{
 				$selected = " selected=\"selected\"";
 			}
-			$opt .= "<option value=\"".$val->kdrank."\"".$selected.">".$val->nmrank."</option>";
+			$opt .= "<option value=\"".$val->nmrank."\"".$selected.">".$val->nmrank."</option>";
 		}
 
 		if($return == "")
