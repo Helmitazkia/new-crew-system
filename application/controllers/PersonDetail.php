@@ -98,7 +98,7 @@ class PersonDetail extends CI_Controller {
 
 
 
- public function getDataProses()
+    public function getDataProses()
     {
         $dataContext = new DataContext();
         $id   = $this->input->post('id', true);
@@ -195,15 +195,15 @@ class PersonDetail extends CI_Controller {
                 'eyeColor'     => $row->eyecol,
                 'weight'       => $row->wght,
                 'height'       => $row->hght,
-                'shoe'         => $row->shoesz,
+                'shoesz'         => $row->shoesz,
                 'collar'       => $row->collar,
                 'chest'        => $row->chest,
                 'waist'        => $row->waist,
-                'insideLeg'    => $row->Insdleg,
+                'Insdleg'    => $row->Insdleg,
                 'cap'          => $row->cap,
                 'clothesSize'  => $row->clothszid,
                 'sweaterSize'  => $row->sweaterszid,
-                'boilerSize'   => $row->boilerszid,
+                'boilerszid'   => $row->boilerszid,
                 'allergy'      => $row->alergy,
                 'heightPhobia' => (strtolower($row->heightphob) == 'y') ? 'Yes' : 'No',
                 'claustrophob' => (strtolower($row->claustrophob) == 'y') ? 'Yes' : 'No',
@@ -222,8 +222,9 @@ class PersonDetail extends CI_Controller {
                 'rankApply'     => $row->applyfor,
                 'vesselApply'   => $row->vesselfor,
                 'vesselType'    => $row->crew_vessel_type,
-                'availableDate' => $row->availdt,
-                'lowerRank'     => (strtolower($row->lower_rank) == 'y') ? 'Yes' : 'No',
+                'availableDate' => date("d-M-Y", strtotime($row->availdt)),
+                'edt_availableDate' => $row->availdt,
+                'lowerRank'     => (strtolower($row->lower_rank) == '1') ? 'Yes' : 'No',
             ),
 
             
@@ -275,7 +276,8 @@ class PersonDetail extends CI_Controller {
             /* ================= DECLARATION ================= */
             'declaration' => array(
                 'signPlace' => $row->signplc,
-                'signDate'  => $row->signdt,
+                'signDate'  => date("d-M-Y", strtotime($row->signdt)),
+                'edt_signDate' => $row->signdt,
                 'remarks'   => $row->remarks
             )
         );
@@ -291,133 +293,581 @@ class PersonDetail extends CI_Controller {
     }
 
 
-public function updateBasicIdentity() {
-    $idperson = $this->input->post('idperson');
-    
-    // Get all post data
-    $oldCrewId = $this->input->post('oldCrewId');
-    $oldContractNo = $this->input->post('oldContractNo');
-    $seafarerCode = $this->input->post('seafarerCode');
-    $firstName = $this->input->post('firstName');
-    $middleName = $this->input->post('middleName');
-    $lastName = $this->input->post('lastName');
-    $gender = $this->input->post('gender');
-    $nationality = $this->input->post('nationality'); // Ini ID negara
-    $countryOrigin = $this->input->post('countryOrigin'); // Ini ID negara
-    $dob = $this->input->post('dob');
-    $pob = $this->input->post('pob'); // Ini ID kota
-    $religion = $this->input->post('religion');
-    $maritalStatus = $this->input->post('maritalStatus');
-    
-    // Validasi required fields
-    if (!$idperson || !$firstName || !$lastName || !$gender) {
-        echo json_encode(array(
-            'status' => false,
-            'message' => 'Required fields are missing'
-        ));
-        return;
-    }
-    
-    // Ambil username dan timestamp
-    $username = $this->session->userdata('username') ?: 'system';
-    $currentDate = date('Y-m-d H:i:s');
-    
-    // Prepare data untuk update
-    $data = array(
-        'oldcrewid' => $oldCrewId,
-        'oldcontno' => $oldContractNo,
-        'kodepelaut' => $seafarerCode,
-        'fname' => $firstName,
-        'mname' => $middleName,
-        'lname' => $lastName,
-        'gender' => $gender,
-        'dob' => $dob,
-        'religion' => $religion,
-        'maritalstsid' => $maritalStatus,
-        'updusrdt' => $currentDate . ' - ' . $username
-    );
-
-    // var_dump($data);exit;
-    
-    // Handle nationality (convert dari nama negara ke ID jika perlu)
-    if (!empty($nationality)) {
-        // Jika $nationality adalah nama negara, cari ID-nya
-        // Jika sudah ID, langsung assign
-        if (is_numeric($nationality)) {
-            $data['nationalid'] = $nationality;
-        } else {
-            // Cari ID berdasarkan nama negara
-            $country = $this->db->get_where('tblnegara', array(
-                'NmNegara' => $nationality,
-                'Deletests' => '0'
-            ))->row();
-            if ($country) {
-                $data['nationalid'] = $country->KdNegara;
-            }
-        }
-    }
-    
-    // Handle country of origin (sama seperti nationality)
-    if (!empty($countryOrigin)) {
-        if (is_numeric($countryOrigin)) {
-            $data['ctryOfOrgn'] = $countryOrigin;
-        } else {
-            $country = $this->db->get_where('tblnegara', array(
-                'NmNegara' => $countryOrigin,
-                'Deletests' => '0'
-            ))->row();
-            if ($country) {
-                $data['ctryOfOrgn'] = $country->KdNegara;
-            }
-        }
-    }
-    
-    // Handle place of birth (kota)
-    if (!empty($pob)) {
-        if (is_numeric($pob)) {
-            $data['pob'] = $pob;
-        } else {
-            $city = $this->db->get_where('tblkota', array(
-                'NmKota' => $pob,
-                'Deletests' => '0'
-            ))->row();
-            if ($city) {
-                $data['pob'] = $city->KdKota;
-            }
-        }
-    }
-    
-    // Update data
-    $this->db->where('idperson', $idperson);
-    $this->db->where('deletests', '0');
-    $this->db->update('mstpersonal', $data);
-    
-    if ($this->db->affected_rows() > 0) {
-        echo json_encode(array(
-            'status' => true,
-            'message' => 'Basic identity updated successfully'
-        ));
-    } else {
-        // Cek apakah data person exists
-        $checkPerson = $this->db->get_where('mstpersonal', array(
-            'idperson' => $idperson,
-            'deletests' => '0'
-        ))->row();
+    public function updateBasicIdentity() {
+        $idperson = $this->input->post('idperson');
         
-        if (!$checkPerson) {
+
+        $oldCrewId = $this->input->post('oldCrewId');
+        $oldContractNo = $this->input->post('oldContractNo');
+        $seafarerCode = $this->input->post('seafarerCode');
+        $firstName = $this->input->post('firstName');
+        $middleName = $this->input->post('middleName');
+        $lastName = $this->input->post('lastName');
+        $gender = $this->input->post('gender');
+        $nationality = $this->input->post('nationality');
+        $countryOrigin = $this->input->post('countryOrigin');
+        $dob = $this->input->post('dob');
+        $pob = $this->input->post('pob'); 
+        $religion = $this->input->post('religion');
+        $maritalStatus = $this->input->post('maritalStatus');
+        
+
+        if (!$idperson || !$firstName || !$lastName || !$gender) {
             echo json_encode(array(
                 'status' => false,
-                'message' => 'Person data not found'
+                'message' => 'Required fields are missing'
             ));
-        } else {
+            return;
+        }
+        
+
+        $username = $this->session->userdata('username') ?: 'system';
+        $currentDate = date('Y-m-d H:i:s');
+        
+
+        $data = array(
+            'oldcrewid' => $oldCrewId,
+            'oldcontno' => $oldContractNo,
+            'kodepelaut' => $seafarerCode,
+            'fname' => $firstName,
+            'mname' => $middleName,
+            'lname' => $lastName,
+            'gender' => $gender,
+            'dob' => $dob,
+            'religion' => $religion,
+            'maritalstsid' => $maritalStatus,
+            'updusrdt' => $currentDate . ' - ' . $username
+        );
+ 
+        // Handle nationality (convert dari nama negara ke ID jika perlu)
+        if (!empty($nationality)) {
+            if (is_numeric($nationality)) {
+                $data['nationalid'] = $nationality;
+            } else {
+                $country = $this->db->get_where('tblnegara', array(
+                    'NmNegara' => $nationality,
+                    'Deletests' => '0'
+                ))->row();
+                if ($country) {
+                    $data['nationalid'] = $country->KdNegara;
+                }
+            }
+        }
+        
+        if (!empty($countryOrigin)) {
+            if (is_numeric($countryOrigin)) {
+                $data['ctryOfOrgn'] = $countryOrigin;
+            } else {
+                $country = $this->db->get_where('tblnegara', array(
+                    'NmNegara' => $countryOrigin,
+                    'Deletests' => '0'
+                ))->row();
+                if ($country) {
+                    $data['ctryOfOrgn'] = $country->KdNegara;
+                }
+            }
+        }
+        
+
+        if (!empty($pob)) {
+            if (is_numeric($pob)) {
+                $data['pob'] = $pob;
+            } else {
+                $city = $this->db->get_where('tblkota', array(
+                    'NmKota' => $pob,
+                    'Deletests' => '0'
+                ))->row();
+                if ($city) {
+                    $data['pob'] = $city->KdKota;
+                }
+            }
+        }
+        
+
+        $this->db->where('idperson', $idperson);
+        $this->db->where('deletests', '0');
+        $this->db->update('mstpersonal', $data);
+        
+        if ($this->db->affected_rows() > 0) {
             echo json_encode(array(
                 'status' => true,
-                'message' => 'No changes made (data already up to date)'
+                'message' => 'Basic identity updated successfully'
             ));
+        } else {
+            $checkPerson = $this->db->get_where('mstpersonal', array(
+                'idperson' => $idperson,
+                'deletests' => '0'
+            ))->row();
+            
+            if (!$checkPerson) {
+                echo json_encode(array(
+                    'status' => false,
+                    'message' => 'Person data not found'
+                ));
+            } else {
+                echo json_encode(array(
+                    'status' => true,
+                    'message' => 'No changes made (data already up to date)'
+                ));
+            }
         }
     }
-}
 
+
+    public function updateFamilyInfo() {
+        $idperson = $this->input->post('idperson');
+        $fatherName = $this->input->post('fatherName');
+        $motherName = $this->input->post('motherName');
+        $wifeName = $this->input->post('wifeName');
+        $address = $this->input->post('address');
+        $nextOfKin = $this->input->post('nextOfKin');
+        
+
+        if (!$idperson) {
+            echo json_encode(array(
+                'status' => false,
+                'message' => 'ID Person is required'
+            ));
+            return;
+        }
+        
+
+        $username = $this->session->userdata('username') ?: 'system';
+        $currentDate = date('Y-m-d H:i:s');
+        
+
+        $data = array(
+            'fathernm' => $fatherName,
+            'mothernm' => $motherName,
+            'wname' => $wifeName,
+            'next_of_kin' => $nextOfKin,
+            'famaddrs' => $address,
+            'updusrdt' => $currentDate . ' - ' . $username 
+        );
+        
+
+        $this->db->where('idperson', $idperson);
+        $this->db->where('deletests', '0');
+        $this->db->update('mstpersonal', $data);
+        
+        if ($this->db->affected_rows() > 0) {
+            echo json_encode(array(
+                'status' => true,
+                'message' => 'Family information updated successfully'
+            ));
+        } else {
+            $checkPerson = $this->db->get_where('mstpersonal', array(
+                'idperson' => $idperson,
+                'deletests' => '0'
+            ))->row();
+            
+            if (!$checkPerson) {
+                echo json_encode(array(
+                    'status' => false,
+                    'message' => 'Person data not found'
+                ));
+            } else {
+                echo json_encode(array(
+                    'status' => true,
+                    'message' => 'No changes made (data already up to date)'
+                ));
+            }
+        }
+    }
+
+    public function updateLegalTax() {
+        $idperson = $this->input->post('idperson');
+        $ssn = $this->input->post('ssn');
+        $ssnCountry = $this->input->post('ssnCountry');
+        $taxNumber = $this->input->post('taxNumber');
+        $taxCountry = $this->input->post('taxCountry');
+        $taxStatus = $this->input->post('taxStatus'); 
+        
+
+        if (!$idperson) {
+            echo json_encode(array(
+                'status' => false,
+                'message' => 'ID Person is required'
+            ));
+            return;
+        }
+        
+
+        $username = $this->session->userdata('username') ?: 'system';
+        $currentDate = date('Y-m-d H:i:s');
+        
+
+        $data = array(
+            'ssn' => $ssn,
+            'ptn' => $taxNumber,
+            'updusrdt' => $currentDate . ' - ' . $username
+        );
+        
+
+        if (!empty($ssnCountry)) {
+            if (is_numeric($ssnCountry)) {
+                $data['ssnctryid'] = $ssnCountry;
+            } else {
+                $country = $this->db->get_where('tblnegara', array(
+                    'NmNegara' => $ssnCountry,
+                    'Deletests' => '0'
+                ))->row();
+                if ($country) {
+                    $data['ssnctryid'] = $country->KdNegara;
+                }
+            }
+        }
+        
+        if (!empty($taxCountry)) {
+            if (is_numeric($taxCountry)) {
+                $data['ptnctryid'] = $taxCountry;
+            } else {
+                $country = $this->db->get_where('tblnegara', array(
+                    'NmNegara' => $taxCountry,
+                    'Deletests' => '0'
+                ))->row();
+                if ($country) {
+                    $data['ptnctryid'] = $country->KdNegara;
+                }
+            }
+        }
+        
+
+        if (!empty($taxStatus)) {
+            if (is_numeric($taxStatus)) {
+                $data['taxstsid'] = $taxStatus;
+            } else {
+                $taxStatusObj = $this->db->get_where('tbltaxsts', array(
+                    'taxstsid' => $taxStatus,
+                    'Deletests' => '0'
+                ))->row();
+                if ($taxStatusObj) {
+                    $data['taxstsid'] = $taxStatusObj->taxstsid;
+                }
+            }
+        }
+        
+
+        $this->db->where('idperson', $idperson);
+        $this->db->where('deletests', '0');
+        $this->db->update('mstpersonal', $data);
+        
+        if ($this->db->affected_rows() > 0) {
+            echo json_encode(array(
+                'status' => true,
+                'message' => 'Legal & Tax information updated successfully'
+            ));
+        } else {
+            $checkPerson = $this->db->get_where('mstpersonal', array(
+                'idperson' => $idperson,
+                'deletests' => '0'
+            ))->row();
+            
+            if (!$checkPerson) {
+                echo json_encode(array(
+                    'status' => false,
+                    'message' => 'Person data not found'
+                ));
+            } else {
+                echo json_encode(array(
+                    'status' => true,
+                    'message' => 'No changes made (data already up to date)'
+                ));
+            }
+        }
+    }
+
+    public function updateContact()
+    {
+        $idperson = $this->input->post('idperson');
+
+        if (!$idperson) {
+            echo json_encode(array(
+                'status'  => false,
+                'message' => 'Invalid person ID'
+            ));
+            return;
+        }
+
+        $username    = $this->session->userdata('username');
+        $currentDate = date('Y-m-d H:i:s');
+
+  
+        $country = trim($this->input->post('country'));
+        $city    = trim($this->input->post('city'));
+        $airport = trim($this->input->post('airport'));
+
+        $data = array(
+            'paddress'  => $this->input->post('address'),
+            'ppostcode' => $this->input->post('postcode'),
+            'mobileno'  => $this->input->post('mobile'),
+            'telpno'    => $this->input->post('home'),
+            'faxno'     => $this->input->post('fax'),
+            'email'     => $this->input->post('email'),
+
+
+            'conmthEmail' => $this->input->post('conmthEmail') ? 1 : 0,
+            'conmthFax'   => $this->input->post('conmthFax') ? 1 : 0,
+            'conmthMob'   => $this->input->post('conmthMob') ? 1 : 0,
+            'conmthHom'   => $this->input->post('conmthHom') ? 1 : 0,
+            'conmthPost'  => $this->input->post('conmthPost') ? 1 : 0,
+            'updusrdt'  => $currentDate . ' - ' . $username
+        );
+
+        if ($country !== '') {
+            if (is_numeric($country)) {
+                $data['pctryid'] = $country;
+            } else {
+                $row = $this->db->get_where(
+                    'tblnegara',
+                    array(
+                        'NmNegara'   => $country,
+                        'Deletests' => '0'
+                    )
+                )->row();
+
+                if ($row) {
+                    $data['pctryid'] = $row->KdNegara;
+                }
+            }
+        }
+
+        if ($city !== '') {
+            if (is_numeric($city)) {
+                $data['pcity'] = $city;
+            } else {
+                $row = $this->db->get_where(
+                    'tblkota',
+                    array(
+                        'NmKota'     => $city,
+                        'Deletests' => '0'
+                    )
+                )->row();
+
+                if ($row) {
+                    $data['pcity'] = $row->KdKota;
+                }
+            }
+        }
+
+        if ($airport !== '') {
+            if (is_numeric($airport)) {
+                $data['pnrstport'] = $airport;
+            } else {
+                $row = $this->db->get_where(
+                    'tblkota',
+                    array(
+                        'NmKota'     => $airport,
+                        'Deletests' => '0'
+                    )
+                )->row();
+
+                if ($row) {
+                    $data['pnrstport'] = $row->KdKota;
+                }
+            }
+        }
+
+        $this->db->where('idperson', $idperson);
+        $this->db->where('deletests', '0');
+        $update = $this->db->update('mstpersonal', $data);
+
+        echo json_encode(array(
+            'status'  => $update ? true : false,
+            'message' => $update
+                ? 'Contact & address updated successfully'
+                : 'Failed to update contact & address'
+        ));
+    }
+
+    public function updatePhysicalMedical()
+    {
+        $idperson = $this->input->post('idperson');
+
+        $username    = $this->session->userdata('username');
+        $currentDate = date('Y-m-d H:i:s');
+
+        if (!$idperson) {
+            echo json_encode(array(
+                'status' => false,
+                'message' => 'Invalid person ID'
+            ));
+            return;
+        }
+
+        $data = array(
+            'golDrh'       => $this->input->post('bloodType'),
+            'eyecol'       => $this->input->post('eyeColor'),
+            'wght'         => $this->input->post('weight'),
+            'hght'         => $this->input->post('height'),
+            'shoesz'       => $this->input->post('shoes'),
+            'collar'       => $this->input->post('collar'),
+            'chest'        => $this->input->post('chest'),
+            'waist'        => $this->input->post('waist'),
+            'Insdleg'      => $this->input->post('insideLeg'),
+            'clothszid'    => $this->input->post('clothesSize'),
+            'boilerszid'   => $this->input->post('boilerSize'),
+            'alergy'       => $this->input->post('allergy'),
+            'heightphob'   => ($this->input->post('heightPhobia') == 'Yes') ? 'Y' : 'N',
+            'claustrophob' => ($this->input->post('claustrophob') == 'Yes') ? 'Y' : 'N',
+            'updusrdt'     => $currentDate . ' - ' . $username
+        );
+
+        $this->db->where('idperson', $idperson);
+        $this->db->where('deletests', '0');
+        $update = $this->db->update('mstpersonal', $data);
+
+        echo json_encode(array(
+            'status'  => $update ? true : false,
+            'message' => $update
+                ? 'Physical & medical data updated successfully'
+                : 'Failed to update physical & medical data'
+        ));
+    }
+
+    public function updateCareerPlacement()
+    {
+        $idperson = $this->input->post('idperson');
+
+        $username    = $this->session->userdata('username');
+        $currentDate = date('Y-m-d H:i:s');
+
+        if (!$idperson) {
+            echo json_encode(array(
+                'status' => false,
+                'message' => 'Invalid person ID'
+            ));
+            return;
+        }
+
+        $data = array(
+            'applyfor'          => $this->input->post('rankApply'),
+            'vesselfor'         => $this->input->post('vesselApply'),
+            'crew_vessel_type'  => $this->input->post('vesselType'),
+            'availdt'           => $this->input->post('availableDate'),
+            'lower_rank'        => ($this->input->post('lowerRank') == 'Yes') ? '1' : '0',
+            'updusrdt'          => $currentDate . ' - ' . $username
+        );
+
+        $this->db->where('idperson', $idperson);
+        $this->db->where('deletests', '0');
+        $update = $this->db->update('mstpersonal', $data);
+
+        echo json_encode(array(
+            'status'  => $update ? true : false,
+            'message' => $update
+                ? 'Career & placement updated successfully'
+                : 'Failed to update career & placement'
+        ));
+    }
+
+    public function updateSalaryHome()
+    {
+        $idperson = $this->input->post('idperson');
+
+        if (!$idperson) {
+            echo json_encode(array(
+                'status'  => false,
+                'message' => 'Invalid person ID'
+            ));
+            return;
+        }
+
+        $username    = $this->session->userdata('username');
+        $currentDate = date('Y-m-d H:i:s');
+
+        $data = array(
+            'bank_name'              => trim($this->input->post('bank_home')),
+            'norek'                  => trim($this->input->post('norek_home')),
+            'norek_name'             => trim($this->input->post('norek_name_home')),
+            'percentage_home_salary' => trim($this->input->post('percentage_home')),
+            'updusrdt' => $currentDate . ' - ' . $username
+        );
+
+        $this->db->where('idperson', $idperson);
+        $this->db->where('deletests', '0');
+        $update = $this->db->update('mstpersonal', $data);
+
+        echo json_encode(array(
+            'status'  => $update ? true : false,
+            'message' => $update
+                ? 'Home salary updated successfully'
+                : 'Failed to update home salary'
+        ));
+    }
+
+     public function updateSalaryBoard()
+    {
+        $idperson = $this->input->post('idperson');
+
+        if (!$idperson) {
+            echo json_encode(array(
+                'status'  => false,
+                'message' => 'Invalid person ID'
+            ));
+            return;
+        }
+
+        $username    = $this->session->userdata('username');
+        $currentDate = date('Y-m-d H:i:s');
+
+        $data = array(
+            'bank_name_boat'              => trim($this->input->post('bank_board')),
+            'norek_boat'             => trim($this->input->post('norek_board')),
+            'norek_name_boat'        => trim($this->input->post('norek_name_board')),
+            'percentage_board_salary' => trim($this->input->post('percentage_board')),
+            'updusrdt' => $currentDate . ' - ' . $username
+        );
+
+        $this->db->where('idperson', $idperson);
+        $this->db->where('deletests', '0');
+        $update = $this->db->update('mstpersonal', $data);
+
+        echo json_encode(array(
+            'status'  => $update ? true : false,
+            'message' => $update
+                ? 'Board salary updated successfully'
+                : 'Failed to update board salary'
+        ));
+    }
+
+    public function updateDeclaration()
+    {
+        $idperson = $this->input->post('idperson');
+
+        if (!$idperson) {
+            echo json_encode(array(
+                'status'  => false,
+                'message' => 'Invalid person ID'
+            ));
+            return;
+        }
+
+        $username    = $this->session->userdata('username');
+        $currentDate = date('Y-m-d H:i:s');
+
+        $signPlace = trim($this->input->post('signPlace'));
+        $signDate  = trim($this->input->post('signDate'));
+        $remarks   = trim($this->input->post('remarks'));
+
+        $data = array(
+            'signplc' => $signPlace,
+            'signdt' => $signDate,
+            'remarks' => $remarks,
+            'updusrdt' => $currentDate . ' - ' . $username
+        );
+
+        $this->db->where('idperson', $idperson);
+        $this->db->where('deletests', '0');
+        $update = $this->db->update('mstpersonal', $data);
+
+        echo json_encode(array(
+            'status'  => $update ? true : false,
+            'message' => $update
+                ? 'Declaration updated successfully'
+                : 'Failed to update declaration'
+        ));
+    }
 
 
 }

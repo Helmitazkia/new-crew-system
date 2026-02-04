@@ -18,7 +18,8 @@
       <div class="col-lg-7 col-md-8 col-sm-12">
 
         <div class="card shadow-sm h-100" id="basicIdentityCard">
-          <div class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+          <div
+            class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
             role="alert" id="basic-success-alert">
             <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
               <use xlink:href="#check-circle-fill" />
@@ -226,8 +227,33 @@
 
   <div class="container-fluid mb-4">
     <div class="row">
-      <div class="col-6 mb-4">
-        <div class="card shadow-sm h-100">
+      <div class="col-6 mb-4 col-xs-12">
+        <div class="card shadow-sm h-100" id="familyinformation">
+          <div
+            class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+            role="alert" id="family-success-alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+              <use xlink:href="#check-circle-fill" />
+            </svg>
+            <div class="flex-grow-1">
+              <span id="family-success-message"></span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+
+          <!-- Alert wrong Message  -->
+          <div
+            class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+            role="alert" id="family-error-alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+              <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div class="flex-grow-1">
+              <span id="family-error-message"></span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          <br>
           <div class="card-header d-flex justify-content-between align-items-center">
             <span class="fw-semibold fst-italic">👨‍👩‍👧 Family Information</span>
 
@@ -277,7 +303,31 @@
       </div>
 
       <div class="col-6 mb-4">
-        <div class="card shadow-sm h-100">
+        <div class="card shadow-sm h-100" id="legalTaxCard">
+          <div
+            class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+            role="alert" id="tax-success-alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+              <use xlink:href="#check-circle-fill" />
+            </svg>
+            <div class="flex-grow-1">
+              <span id="tax-success-message"></span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+
+          <!-- Alert wrong Message  -->
+          <div
+            class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+            role="alert" id="tax-error-alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+              <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div class="flex-grow-1">
+              <span id="tax-error-message"></span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
           <div class="card-header d-flex justify-content-between align-items-center">
             <span class="fw-semibold fst-italic">💼 Tax & Social Security</span>
 
@@ -342,7 +392,31 @@
       <div class="container-fluid mb-4">
         <div class="row">
           <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-sm h-100" id="contactAddressCard">
+              <div
+                class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="contact-success-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                  <use xlink:href="#check-circle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="contact-success-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+
+              <!-- Alert wrong Message  -->
+              <div
+                class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="contact-error-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+                  <use xlink:href="#exclamation-triangle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="contact-error-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
               <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="fw-semibold fst-italic">📞 Contact & Address</span>
 
@@ -393,7 +467,10 @@
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Nearest Airport</label>
                     <div class="form-view fst-italic" data-field="contact.airport"></div>
-                    <input type="text" class="form-control form-edit d-none" data-field="contact.airport">
+                    <!-- <input type="text" class="form-control form-edit d-none" data-field="contact.airport"> -->
+                    <select class="form-select form-edit d-none" data-field="contact.airport">
+                      <?php echo $optCity; ?>
+                    </select>
                   </div>
 
                   <div class="col-md-6">
@@ -460,7 +537,31 @@
           </div>
 
           <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-sm h-100" id="physicalMedicalCard">
+              <div
+                class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="physical-success-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                  <use xlink:href="#check-circle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="physical-success-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+
+              <!-- Alert wrong Message  -->
+              <div
+                class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="physical-error-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+                  <use xlink:href="#exclamation-triangle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="physical-error-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
               <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="fw-semibold fst-italic">🩺 Physical & Medical</span>
 
@@ -509,8 +610,8 @@
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Shoes (mm)</label>
-                    <div class="form-view fst-italic" data-field="physical.shoes"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.shoes" value="270">
+                    <div class="form-view fst-italic" data-field="physical.shoesz"></div>
+                    <input type="number" class="form-control form-edit d-none" data-field="physical.shoesz" value="270">
                   </div>
 
                   <div class="col-md-4">
@@ -533,8 +634,8 @@
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Ins. Leg (cm)</label>
-                    <div class="form-view fst-italic" data-field="physical.insLeg"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.insLeg" value="78">
+                    <div class="form-view fst-italic" data-field="physical.Insdleg"></div>
+                    <input type="number" class="form-control form-edit d-none" data-field="physical.Insdleg" value="78">
                   </div>
 
                   <div class="col-md-4">
@@ -547,8 +648,8 @@
 
                   <div class="col-md-4">
                     <label class="form-label mb-0 fst-italic fw-semibold">Boilersuit Size</label>
-                    <div class="form-view fst-italic" data-field="physical.boilersuitSize"></div>
-                    <select class="form-select form-edit d-none" data-field="physical.boilersuitSize">
+                    <div class="form-view fst-italic" data-field="physical.boilerszid"></div>
+                    <select class="form-select form-edit d-none" data-field="physical.boilerszid">
                       <?php echo $optSize; ?>
                     </select>
                   </div>
@@ -564,8 +665,8 @@
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Feel Claustrophobic</label>
-                    <div class="form-view fst-italic" data-field="physical.claustrophobic"></div>
-                    <select class="form-select form-edit d-none" data-field="physical.claustrophobic">
+                    <div class="form-view fst-italic" data-field="physical.claustrophob"></div>
+                    <select class="form-select form-edit d-none" data-field="physical.claustrophob">
                       <option value="No">No</option>
                       <option value="Yes">Yes</option>
                     </select>
@@ -643,7 +744,31 @@
 
           <!-- Career & Placement -->
           <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-sm h-100" id="careerPlacementCard">
+              <div
+                class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="career-success-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                  <use xlink:href="#check-circle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="career-success-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+
+              <!-- Alert wrong Message  -->
+              <div
+                class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="career-error-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+                  <use xlink:href="#exclamation-triangle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="career-error-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
               <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="fw-semibold fst-italic">🧭 Career & Placement</span>
 
@@ -673,8 +798,8 @@
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Vessel Applied For</label>
-                    <div class="form-view fst-italic" data-field="career.vesselfor"></div>
-                    <select class="form-select form-edit d-none" data-field="career.vesselfor">
+                    <div class="form-view fst-italic" data-field="career.vesselApply"></div>
+                    <select class="form-select form-edit d-none" data-field="career.vesselApply">
                       <?php echo $vesselname; ?>
                     </select>
                   </div>
@@ -701,8 +826,7 @@
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Available From</label>
                     <div class="form-view fst-italic" data-field="career.availableDate"></div>
-                    <input type="date" class="form-control form-edit d-none" value="2024-10-01"
-                      data-field="career.availableDate">
+                    <input type="date" class="form-control form-edit d-none" data-field="career.edt_availableDate">
                   </div>
                 </div>
               </div>
@@ -711,7 +835,31 @@
 
           <!-- HOME SALARY -->
           <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-sm h-100" id="salaryHomeCard">
+              <div
+                class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="home-success-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                  <use xlink:href="#check-circle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="home-success-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+
+              <!-- Alert wrong Message  -->
+              <div
+                class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="home-error-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+                  <use xlink:href="#exclamation-triangle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="home-error-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
               <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="fw-semibold fst-italic">🏠 Home Salary</span>
 
@@ -768,7 +916,31 @@
 
           <!-- Board Salary -->
           <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-sm h-100" id="salaryBoardCard">
+              <div
+                class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="board-success-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                  <use xlink:href="#check-circle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="board-success-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+
+              <!-- Alert wrong Message  -->
+              <div
+                class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="board-error-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+                  <use xlink:href="#exclamation-triangle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="board-error-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
               <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="fw-semibold fst-italic">🚢 Board Salary</span>
 
@@ -825,7 +997,7 @@
           </div>
 
           <!-- Attachments -->
-          <div class="col-6 mb-4">
+          <!-- <div class="col-6 mb-4">
             <div class="card shadow-sm">
               <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="fw-semibold fst-italic">📎 Attachments</span>
@@ -863,10 +1035,34 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
 
           <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-sm h-100" id="declarationCard">
+              <div
+                class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="declaration-success-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                  <use xlink:href="#check-circle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="declaration-success-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+
+              <!-- Alert wrong Message  -->
+              <div
+                class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="decralation-error-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+                  <use xlink:href="#exclamation-triangle-fill" />
+                </svg>
+                <div class="flex-grow-1">
+                  <span id="decralation-error-message"></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
               <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="fw-semibold fst-italic">✍️ Declaration & Signature</span>
 
@@ -888,23 +1084,22 @@
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Sign Place</label>
-                    <div class="form-view fst-italic" data-field="signature.place"></div>
+                    <div class="form-view fst-italic" data-field="declaration.signPlace"></div>
                     <input type="text" class="form-control form-edit d-none" value="Jakarta"
-                      data-field="signature.place">
+                      data-field="declaration.signPlace">
                   </div>
 
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Sign Date</label>
-                    <div class="form-view fst-italic" data-field="signature.date"></div>
-                    <input type="date" class="form-control form-edit d-none" value="2024-10-01"
-                      data-field="signature.date">
+                    <div class="form-view fst-italic" data-field="declaration.signDate"></div>
+                    <input type="date" class="form-control form-edit d-none" data-field="declaration.edt_signDate">
                   </div>
 
                   <div class="col-12">
                     <label class="form-label mb-0 fst-italic fw-semibold">Additional Remarks</label>
-                    <div class="form-view fst-italic" data-field="signature.remarks">
+                    <div class="form-view fst-italic" data-field="declaration.remarks">
                     </div>
-                    <textarea class="form-control form-edit d-none" rows="3" data-field="signature.remarks">
+                    <textarea class="form-control form-edit d-none" rows="3" data-field="declaration.remarks">
 
               </textarea>
                   </div>
@@ -1157,5 +1352,570 @@
           });
         }
 
+      });
+    </script>
+
+    <script>
+      /* Family Information actions start*/
+      $(document).ready(function () {
+        var id_person = "<?php echo $idperson; ?>";
+        var alert_success = $('#family-success-alert');
+        var success_message = $('#family-success-message');
+
+        var error_message = $('#family-error-message');
+        var alert_error = $('#family-error-alert');
+
+
+        $('.btn-close').on('click', function () {
+          $(this).closest('.alert').addClass('d-none');
+        });
+
+        $('#familyinformation .btn-save').click(function () {
+          saveFamilyInfo();
+        });
+
+
+        function saveFamilyInfo() {
+          var idperson = $('#contentArea').data('idperson');
+          // Reset alert terlebih dahulu
+          alert_error.addClass('d-none');
+          alert_success.addClass('d-none');
+
+          var data = {
+            idperson: idperson,
+            fatherName: $('input[data-field="family.fatherName"]').val(), // fatherName bukan father.name
+            motherName: $('input[data-field="family.motherName"]').val(), // motherName bukan mother.name
+            wifeName: $('input[data-field="family.wifeName"]').val(), // wifeName bukan wife.name
+            nextOfKin: $('input[data-field="family.nextOfKin"]').val() // Tambah nextOfKin
+          };
+          // let isFatherNameValid = validateChildField(
+          //   'fatherName',
+          //   'fatherNameFeedback'
+          // );
+
+          // let isMotherNameValid = validateChildField(
+          //   'motherName',
+          //   'motherNameFeedback'
+          // );
+
+          // let isAddressValid = validateChildField(
+          //   'address',
+          //   'addressFeedback'
+          // );
+
+          // if (!isFatherNameValid || !isMotherNameValid || !isAddressValid) {
+          //   return false;
+          // }
+
+          // var data = {
+          //   idperson: idperson,
+          //   fatherName: fatherName,
+          //   motherName: motherName,
+          //   wifeName: $('input[data-field="family.wife.name"]').val(),
+          // };
+
+          console.log('Saving family data:', data);
+          // return false;
+
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/updateFamilyInfo'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+              // console.log('Response:', res);
+              if (res.status) {
+                loadProfile(id_person);
+                success_message.text(res.message);
+                alert_success.removeClass('d-none');
+                setTimeout(function () {
+                  alert_success.addClass('d-none');
+                }, 3000);
+
+                // Switch back to view mode
+                const card = $('.btn-save').closest('.card');
+                card.find('.form-view').removeClass('d-none');
+                card.find('.form-edit').addClass('d-none');
+                card.find('.btn-edit').removeClass('d-none');
+                card.find('.btn-save, .btn-cancel').addClass('d-none');
+
+                // Update view dengan data baru
+                $('.form-view[data-field="family.father.name"]').text(data.fatherName || '');
+                $('.form-view[data-field="family.mother.name"]').text(data.motherName || '');
+                $('.form-view[data-field="family.wife.name"]').text(data.wifeName || '');
+                $('.form-view[data-field="family.address"]').text(data.address || '');
+
+              } else {
+                error_message.text(res.message || 'Failed to update family information');
+                alert_error.removeClass('d-none');
+                setTimeout(function () {
+                  alert_error.addClass('d-none');
+                }, 5000);
+              }
+            },
+            error: function (xhr, status, error) {
+              $('.btn-save').prop('disabled', false).html('<i class="fa fa-save"></i> Save');
+              console.error('AJAX Error:', xhr.responseText);
+
+              error_message.text('Failed to update family information: ' + error);
+              alert_error.removeClass('d-none');
+              setTimeout(function () {
+                alert_error.addClass('d-none');
+              }, 5000);
+            }
+          });
+        }
+      });
+    </script>
+
+    <script>
+      /* Tax & Social Security */
+      $(document).ready(function () {
+        var alert_success = $('#tax-success-alert');
+        var success_message = $('#tax-success-message');
+        var error_message = $('#tax-error-message');
+        var alert_error = $('#tax-error-alert');
+        var id_person = "<?php echo $idperson; ?>";
+
+        $('#legalTaxCard .btn-save').click(function () {
+          saveLegalTax(id_person);
+          console.log('Save Legal & Tax clicked');
+        });
+
+        function saveLegalTax(id_person) {
+          var idperson = id_person;
+          alert_error.addClass('d-none');
+          alert_success.addClass('d-none');
+
+          // Ambil data dari input fields
+          var data = {
+            idperson: idperson,
+            ssn: $('input[data-field="legal.ssn"]').val(),
+            ssnCountry: $('select[data-field="legal.ssnCountry"]').val(),
+            taxNumber: $('input[data-field="legal.taxNumber"]').val(),
+            taxCountry: $('select[data-field="legal.taxCountry"]').val(),
+            taxStatus: $('select[data-field="legal.taxStatus"]').val()
+          };
+
+          // console.log('Saving legal & tax data:', data);
+          // return false;
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/updateLegalTax'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+              if (res.status) {
+                loadProfile(id_person);
+                success_message.text(res.message);
+                alert_success.removeClass('d-none');
+                setTimeout(function () {
+                  alert_success.addClass('d-none');
+                }, 3000);
+
+                const card = $('#legalTaxCard');
+                card.find('.form-view').removeClass('d-none');
+                card.find('.form-edit').addClass('d-none');
+                card.find('.btn-edit').removeClass('d-none');
+                card.find('.btn-save, .btn-cancel').addClass('d-none');
+              } else {
+                error_message.text(res.message || 'Failed to update legal & tax information');
+                alert_error.removeClass('d-none');
+                setTimeout(function () {
+                  alert_error.addClass('d-none');
+                }, 5000);
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error('AJAX Error:', xhr.responseText);
+              error_message.text('Failed to update legal & tax information');
+              alert_error.removeClass('d-none');
+              setTimeout(function () {
+                alert_error.addClass('d-none');
+              }, 5000);
+            }
+          });
+        }
+
+      });
+    </script>
+
+    <script>
+      /* Contact & Address */
+      $(document).ready(function () {
+        var alert_success = $('#contact-success-alert');
+        var success_message = $('#contact-success-message');
+        var error_message = $('#contact-error-message');
+        var alert_error = $('#contact-error-alert');
+
+        $('#contactAddressCard .btn-save').click(function () {
+          saveContactAddress();
+          console.log('Save Contact & Address clicked');
+        });
+
+        function saveContactAddress() {
+          var idperson = $('#contentArea').data('idperson');
+          alert_error.addClass('d-none');
+          alert_success.addClass('d-none');
+
+          var data = {
+            idperson: idperson,
+            address: $('textarea[data-field="contact.address"]').val(),
+            city: $('select[data-field="contact.city"]').val(),
+            postcode: $('input[data-field="contact.postcode"]').val(),
+            country: $('select[data-field="contact.country"]').val(),
+            airport: $('select[data-field="contact.airport"]').val(),
+            mobile: $('input[data-field="contact.mobile"]').val(),
+            home: $('input[data-field="contact.home"]').val(),
+            fax: $('input[data-field="contact.fax"]').val(),
+            email: $('input[data-field="contact.email"]').val(),
+
+            conmthEmail: $('input[data-field="contactMethod.email"]').is(':checked') ? 1 : 0,
+            conmthFax: $('input[data-field="contactMethod.fax"]').is(':checked') ? 1 : 0,
+            conmthMob: $('input[data-field="contactMethod.mobile"]').is(':checked') ? 1 : 0,
+            conmthHom: $('input[data-field="contactMethod.home"]').is(':checked') ? 1 : 0,
+            conmthPost: $('input[data-field="contactMethod.post"]').is(':checked') ? 1 : 0
+
+          };
+
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/updateContact'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+              if (res.status) {
+                loadProfile(idperson);
+                success_message.text(res.message);
+                alert_success.removeClass('d-none');
+                setTimeout(function () {
+                  alert_success.addClass('d-none');
+                }, 3000);
+
+                const card = $('#contactAddressCard');
+                card.find('.form-view').removeClass('d-none');
+                card.find('.form-edit').addClass('d-none');
+                card.find('.btn-edit').removeClass('d-none');
+                card.find('.btn-save, .btn-cancel').addClass('d-none');
+              } else {
+                error_message.text(res.message || 'Failed to update legal & tax information');
+                alert_error.removeClass('d-none');
+                setTimeout(function () {
+                  alert_error.addClass('d-none');
+                }, 5000);
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error('AJAX Error:', xhr.responseText);
+              error_message.text('Failed to update legal & tax information');
+              alert_error.removeClass('d-none');
+              setTimeout(function () {
+                alert_error.addClass('d-none');
+              }, 5000);
+            }
+          });
+        }
+      });
+    </script>
+
+    <script>
+      /* Physical & Medical */
+      $(document).ready(function () {
+        var alert_success = $('#physical-success-alert');
+        var success_message = $('#physical-success-message');
+        var error_message = $('#physical-error-message');
+        var alert_error = $('#physical-error-alert');
+
+        $('#physicalMedicalCard .btn-save').on('click', function () {
+          savePhysicalMedical();
+        });
+
+        function savePhysicalMedical() {
+          var id_person = $('#contentArea').data('idperson');
+          alert_error.addClass('d-none');
+          alert_success.addClass('d-none');
+
+          var data = {
+            idperson: id_person,
+            bloodType: $('select[data-field="physical.bloodType"]').val(),
+            eyeColor: $('input[data-field="physical.eyeColor"]').val(),
+            weight: $('input[data-field="physical.weight"]').val(),
+            height: $('input[data-field="physical.height"]').val(),
+            shoes: $('input[data-field="physical.shoesz"]').val(),
+            collar: $('input[data-field="physical.collar"]').val(),
+            chest: $('input[data-field="physical.chest"]').val(),
+            waist: $('input[data-field="physical.waist"]').val(),
+            insideLeg: $('input[data-field="physical.Insdleg"]').val(),
+            clothesSize: $('select[data-field="physical.clothesSize"]').val(),
+            boilerSize: $('select[data-field="physical.boilerszid"]').val(),
+            heightPhobia: $('select[data-field="physical.heightPhobia"]').val(),
+            claustrophob: $('select[data-field="physical.claustrophob"]').val(),
+            allergy: $('textarea[data-field="physical.allergy"]').val()
+          };
+
+          // console.log('Saving physical & medical data:', data);
+          // return false;
+
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/updatePhysicalMedical'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+              if (res.status) {
+                loadProfile(id_person);
+
+                success_message.text(res.message);
+                alert_success.removeClass('d-none');
+
+                setTimeout(function () {
+                  alert_success.addClass('d-none');
+                }, 3000);
+
+                const card = $('#physicalMedicalCard');
+                card.find('.form-view').removeClass('d-none');
+                card.find('.form-edit').addClass('d-none');
+                card.find('.btn-edit').removeClass('d-none');
+                card.find('.btn-save, .btn-cancel').addClass('d-none');
+
+              } else {
+                error_message.text(res.message || 'Failed to update physical data');
+                alert_error.removeClass('d-none');
+              }
+            },
+            error: function () {
+              error_message.text('Server error');
+              alert_error.removeClass('d-none');
+            }
+          });
+        }
+
+      });
+    </script>
+
+    <script>
+      /* Career & Placement */
+      $(document).ready(function () {
+        var id_person = "<?php echo $idperson; ?>";
+        var alert_success = $('#career-success-alert');
+        var success_message = $('#career-success-message');
+        var error_message = $('#career-error-message');
+        var alert_error = $('#career-error-alert');
+
+        $('#careerPlacementCard .btn-save').on('click', function () {
+          saveCareerPlacement(id_person);
+        });
+      });
+
+      function saveCareerPlacement(id_person) {
+
+        alert_error.addClass('d-none');
+        alert_success.addClass('d-none');
+
+        var data = {
+          idperson: id_person,
+          rankApply: $('select[data-field="career.rankApply"]').val(),
+          vesselApply: $('select[data-field="career.vesselApply"]').val(),
+          vesselType: $('select[data-field="career.vesselType"]').val(),
+          availableDate: $('input[data-field="career.edt_availableDate"]').val(),
+          lowerRank: $('select[data-field="career.lowerRank"]').val()
+        };
+
+        $.ajax({
+          url: "<?php echo base_url('PersonDetail/updateCareerPlacement'); ?>",
+          type: "POST",
+          dataType: "json",
+          data: data,
+          success: function (res) {
+            if (res.status) {
+              loadProfile(id_person);
+
+              success_message.text(res.message);
+              alert_success.removeClass('d-none');
+
+              setTimeout(() => alert_success.addClass('d-none'), 3000);
+
+              const card = $('#careerPlacementCard');
+              card.find('.form-view').removeClass('d-none');
+              card.find('.form-edit').addClass('d-none');
+              card.find('.btn-edit').removeClass('d-none');
+              card.find('.btn-save, .btn-cancel').addClass('d-none');
+
+            } else {
+              error_message.text(res.message || 'Failed to update career & placement');
+              alert_error.removeClass('d-none');
+            }
+          },
+          error: function () {
+            error_message.text('Server error');
+            alert_error.removeClass('d-none');
+          }
+        });
+      }
+    </script>
+
+    <script>
+      /* Home Salary */
+      $(document).ready(function () {
+        var idperson = "<?php echo $idperson; ?>";
+        var alert_success = $('#home-success-alert');
+        var success_message = $('#home-success-message');
+        var error_message = $('#home-error-message');
+        var alert_error = $('#home-error-alert');
+
+        $('#salaryHomeCard .btn-save').click(function () {
+          saveSalaryHome(idperson);
+        });
+
+        function saveSalaryHome(idperson) {
+          var data = {
+            idperson: idperson,
+            bank_home: $('input[data-field="salary.home.bank"]').val(),
+            norek_home: $('input[data-field="salary.home.accountNo"]').val(),
+            norek_name_home: $('input[data-field="salary.home.accountName"]').val(),
+            percentage_home: $('input[data-field="salary.home.percentage"]').val()
+          };
+
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/updateSalaryHome'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+              if (res.status) {
+                loadProfile(idperson);
+
+                success_message.text(res.message);
+                alert_success.removeClass('d-none');
+
+                setTimeout(() => alert_success.addClass('d-none'), 3000);
+
+                const card = $('#salaryHomeCard');
+                card.find('.form-view').removeClass('d-none');
+                card.find('.form-edit').addClass('d-none');
+                card.find('.btn-edit').removeClass('d-none');
+                card.find('.btn-save, .btn-cancel').addClass('d-none');
+              } else {
+                error_message.text(res.message || 'Failed to update home salary');
+                alert_error.removeClass('d-none');
+              }
+            },
+            error: function () {
+              error_message.text('Server error');
+              alert_error.removeClass('d-none');
+            }
+          });
+        }
+      });
+    </script>
+
+
+    <script>
+      /* Board  Salary */
+      $(document).ready(function () {
+        var idperson = "<?php echo $idperson; ?>";
+        var alert_success = $('#board-success-alert');
+        var success_message = $('#board-success-message');
+        var error_message = $('#board-error-message');
+        var alert_error = $('#board-error-alert');
+
+        $('#salaryBoardCard .btn-save').click(function () {
+          saveSalaryBoard(idperson);
+        });
+
+        function saveSalaryBoard(idperson) {
+          var data = {
+            idperson: idperson,
+            bank_board: $('input[data-field="salary.board.bank"]').val(),
+            norek_board: $('input[data-field="salary.board.accountNo"]').val(),
+            norek_name_board: $('input[data-field="salary.board.accountName"]').val(),
+            percentage_board: $('input[data-field="salary.board.percentage"]').val()
+          };
+
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/updateSalaryBoard'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+              if (res.status) {
+                loadProfile(idperson);
+
+                success_message.text(res.message);
+                alert_success.removeClass('d-none');
+
+                setTimeout(() => alert_success.addClass('d-none'), 3000);
+
+                const card = $('#salaryBoardCard');
+                card.find('.form-view').removeClass('d-none');
+                card.find('.form-edit').addClass('d-none');
+                card.find('.btn-edit').removeClass('d-none');
+                card.find('.btn-save, .btn-cancel').addClass('d-none');
+              } else {
+                error_message.text(res.message || 'Failed to update board salary');
+                alert_error.removeClass('d-none');
+              }
+            },
+            error: function () {
+              error_message.text('Server error');
+              alert_error.removeClass('d-none');
+            }
+          });
+        }
+      });
+    </script>
+
+    <script>
+      $(document).ready(function () {
+        var idperson = "<?php echo $idperson; ?>";
+        var alert_success = $('#declaration-success-alert');
+        var success_message = $('#declaration-success-message');
+        var error_message = $('#declaration-error-message');
+        var alert_error = $('#declaration-error-alert');
+
+        $('#declarationCard .btn-save').click(function () {
+          saveDeclaration(idperson);
+        });
+
+        function saveDeclaration(idperson) {
+
+          var data = {
+            idperson: idperson,
+
+            signPlace: $('input[data-field="declaration.signPlace"]').val(),
+            signDate: $('input[data-field="declaration.edt_signDate"]').val(),
+            remarks: $('textarea[data-field="declaration.remarks"]').val()
+          };
+
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/updateDeclaration'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+              if (res.status) {
+                loadProfile(idperson);
+                
+                success_message.text(res.message);
+                alert_success.removeClass('d-none');
+
+                setTimeout(() => alert_success.addClass('d-none'), 3000);
+
+                const card = $('#declarationCard');
+                card.find('.form-view').removeClass('d-none');
+                card.find('.form-edit').addClass('d-none');
+                card.find('.btn-edit').removeClass('d-none');
+                card.find('.btn-save, .btn-cancel').addClass('d-none');
+              } else {
+                error_message.text(res.message || 'Failed to update board salary');
+                alert_error.removeClass('d-none');
+              }
+            },
+            error: function () {
+                error_message.text('Server error');
+                alert_error.removeClass('d-none');
+            }
+          });
+        }
       });
     </script>
