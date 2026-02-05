@@ -721,6 +721,20 @@
                   </div>
 
                   <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">Psychometric Score</label>
+                    <div class="form-view fst-italic" data-field="assessment.cesScore"></div>
+                    <input type="number" class="form-control form-edit d-none" value="85"
+                      data-field="assessment.cesScore">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label mb-0 fst-italic fw-semibold">OTG Score</label>
+                    <div class="form-view fst-italic" data-field="assessment.cesScore"></div>
+                    <input type="number" class="form-control form-edit d-none" value="85"
+                      data-field="assessment.cesScore">
+                  </div>
+
+                  <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Training Date</label>
                     <div class="form-view fst-italic" data-field="assessment.trainingDate"></div>
                     <input type="date" class="form-control form-edit d-none" value="2024-08-15"
@@ -1895,7 +1909,7 @@
             success: function (res) {
               if (res.status) {
                 loadProfile(idperson);
-                
+
                 success_message.text(res.message);
                 alert_success.removeClass('d-none');
 
@@ -1912,8 +1926,8 @@
               }
             },
             error: function () {
-                error_message.text('Server error');
-                alert_error.removeClass('d-none');
+              error_message.text('Server error');
+              alert_error.removeClass('d-none');
             }
           });
         }
