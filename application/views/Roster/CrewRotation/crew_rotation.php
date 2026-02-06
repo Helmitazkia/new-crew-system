@@ -1,8 +1,5 @@
 <div class="crew-rotation-content">
   <div class="container-fluid">
-
-
-    </style>
     <style>
       /* ===============================
             GLOBAL TABLE STYLE – CREW PLAN

@@ -36,73 +36,132 @@ class MasterPersonal extends CI_Controller {
     }
 
    
+    // public function getAllData_personal()
+    // {
+    //     $txtSearch  = $this->input->post('txtSearch', true);
+    //     $typeSearch = $this->input->post('typeSearch', true);
+    //     $page       = (int) $this->input->post('page');
+    //     $page   = ($page <= 0) ? 1 : $page;
+    //     $limit  = 30;
+    //     $offset = ($page - 1) * $limit;
+    //     $dataContext = new DataContext();
+
+    //     $where = " WHERE A.deletests = '0'
+    //             AND (A.fname != '' OR A.mname != '' OR A.lname != '') ";
+        
+    //     $joinSea = "";
+
+    //     if (!empty($txtSearch) && !empty($typeSearch)) {
+    //         switch ($typeSearch) {
+    //             case "id":
+    //                 $where .= " AND A.idperson = '" . $this->db->escape_str($txtSearch) . "' ";
+    //                 break;
+    //             case "name":
+    //                 $where .= " AND (
+    //                     A.fname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' OR
+    //                     A.mname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' OR
+    //                     A.lname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' OR
+    //                     CONCAT(A.fname,' ',A.mname,' ',A.lname) LIKE '%" . $this->db->escape_like_str($txtSearch) . "%'
+    //                 )";
+    //                 break;
+    //             case "age":
+    //                 $where .= " AND (YEAR(CURDATE()) - YEAR(A.dob)) = '" . $this->db->escape_str($txtSearch) . "' ";
+    //                 break;
+    //             case "rank":
+    //                 $where .= " AND C.rankexp LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' ";
+    //                 $joinSea = "LEFT JOIN tblseaexp C ON C.idperson = A.idperson";
+    //                 break;
+    //             case "applied":
+    //                 $where .= " AND A.applyfor LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' ";
+    //                 break;
+    //             case "vessel":
+    //                 $where .= " AND C.vslexp LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' ";
+    //                 $joinSea = "LEFT JOIN tblseaexp C ON C.idperson = A.idperson";
+    //                 break;
+    //             case "idPerson":
+    //                 $where .= " AND A.idperson = '" . $this->db->escape_str($txtSearch) . "' ";
+    //                 break;
+    //             default:
+    //                 $where .= " AND (
+    //                     A.fname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' OR
+    //                     A.mname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' OR
+    //                     A.lname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%'
+    //                 )";
+    //                 break;
+    //         }
+    //     }
+
+    //     $sqlCount = "
+    //         SELECT COUNT(DISTINCT A.idperson) AS total
+    //         FROM mstpersonal A
+    //         LEFT JOIN tblkota B ON A.pob = B.KdKota
+    //         " . $joinSea . "
+    //         " . $where . "
+    //     ";
+
+    //     $total = (int) $this->db->query($sqlCount)->row()->total;
+
+    //     $sql = "
+    //         SELECT 
+    //             A.idperson,
+    //             TRIM(CONCAT(A.fname,' ',A.mname,' ',A.lname)) AS fullName,
+    //             A.applyfor,
+    //             A.gender,
+    //             A.religion,
+    //             A.dob,
+    //             A.inAktif,
+    //             A.lower_rank,
+    //             B.NmKota
+    //         FROM mstpersonal A
+    //         LEFT JOIN tblkota B ON A.pob = B.KdKota
+    //         " . $joinSea . "
+    //         " . $where . "
+    //         GROUP BY A.idperson
+    //         ORDER BY fullName ASC
+    //         LIMIT $limit OFFSET $offset
+    //     ";
+
+    //     $rows = $this->db->query($sql)->result_array();
+
+    //     $data = array();
+    //     foreach ($rows as $row) {
+    //         $data[] = array(
+    //             'idperson'     => $row['idperson'],
+    //             'fullName'     => $row['fullName'],
+    //             'applyfor'     => strtoupper($row['applyfor']),
+    //             'gender'       => $row['gender'],
+    //             'religion'     => $row['religion'],
+    //             'NmKota'        => $row['NmKota'],
+    //             'dob'          => $dataContext->convertReturnName($row['dob']),
+    //             'statusPerson' => ($row['inAktif'] == '0') ? 'Active' : 'Non Active',
+    //             'lowerRank'    => ($row['lower_rank'] == '1') ? 'Yes' : 'No',
+    //         );
+    //     }
+
+    //     $this->output
+    //         ->set_content_type('application/json')
+    //         ->set_output(json_encode(array(
+    //             'success' => true,
+    //             'page'    => $page,
+    //             'limit'   => $limit,
+    //             'total'   => $total,
+    //             'data'    => $data
+    //         )));
+    // }
     public function getAllData_personal()
     {
-        $txtSearch  = $this->input->post('txtSearch', true);
-        $typeSearch = $this->input->post('typeSearch', true);
-        $page       = (int) $this->input->post('page');
-        $page   = ($page <= 0) ? 1 : $page;
-        $limit  = 30;
-        $offset = ($page - 1) * $limit;
+        // $txtSearch  = $this->input->post('txtSearch', true);
+        // $typeSearch = $this->input->post('typeSearch', true);
+
         $dataContext = new DataContext();
 
         $where = " WHERE A.deletests = '0'
                 AND (A.fname != '' OR A.mname != '' OR A.lname != '') ";
-        
+
         $joinSea = "";
 
-        if (!empty($txtSearch) && !empty($typeSearch)) {
-            switch ($typeSearch) {
-                case "id":
-                    $where .= " AND A.idperson = '" . $this->db->escape_str($txtSearch) . "' ";
-                    break;
-                case "name":
-                    $where .= " AND (
-                        A.fname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' OR
-                        A.mname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' OR
-                        A.lname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' OR
-                        CONCAT(A.fname,' ',A.mname,' ',A.lname) LIKE '%" . $this->db->escape_like_str($txtSearch) . "%'
-                    )";
-                    break;
-                case "age":
-                    $where .= " AND (YEAR(CURDATE()) - YEAR(A.dob)) = '" . $this->db->escape_str($txtSearch) . "' ";
-                    break;
-                case "rank":
-                    $where .= " AND C.rankexp LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' ";
-                    $joinSea = "LEFT JOIN tblseaexp C ON C.idperson = A.idperson";
-                    break;
-                case "applied":
-                    $where .= " AND A.applyfor LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' ";
-                    break;
-                case "vessel":
-                    $where .= " AND C.vslexp LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' ";
-                    $joinSea = "LEFT JOIN tblseaexp C ON C.idperson = A.idperson";
-                    break;
-                case "idPerson":
-                    $where .= " AND A.idperson = '" . $this->db->escape_str($txtSearch) . "' ";
-                    break;
-                default:
-                    $where .= " AND (
-                        A.fname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' OR
-                        A.mname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' OR
-                        A.lname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%'
-                    )";
-                    break;
-            }
-        }
-
-        $sqlCount = "
-            SELECT COUNT(DISTINCT A.idperson) AS total
-            FROM mstpersonal A
-            LEFT JOIN tblkota B ON A.pob = B.KdKota
-            " . $joinSea . "
-            " . $where . "
-        ";
-
-        $total = (int) $this->db->query($sqlCount)->row()->total;
-
         $sql = "
-            SELECT 
+            SELECT DISTINCT
                 A.idperson,
                 TRIM(CONCAT(A.fname,' ',A.mname,' ',A.lname)) AS fullName,
                 A.applyfor,
@@ -114,12 +173,12 @@ class MasterPersonal extends CI_Controller {
                 B.NmKota
             FROM mstpersonal A
             LEFT JOIN tblkota B ON A.pob = B.KdKota
-            " . $joinSea . "
-            " . $where . "
-            GROUP BY A.idperson
+            $joinSea
+            $where
             ORDER BY fullName ASC
-            LIMIT $limit OFFSET $offset
         ";
+
+        // var_dump($sql);exit;
 
         $rows = $this->db->query($sql)->result_array();
 
@@ -131,10 +190,9 @@ class MasterPersonal extends CI_Controller {
                 'applyfor'     => strtoupper($row['applyfor']),
                 'gender'       => $row['gender'],
                 'religion'     => $row['religion'],
-                'NmKota'        => $row['NmKota'],
                 'dob'          => $dataContext->convertReturnName($row['dob']),
                 'statusPerson' => ($row['inAktif'] == '0') ? 'Active' : 'Non Active',
-                'lowerRank'    => ($row['lower_rank'] == '1') ? 'Yes' : 'No',
+                'lowerRank'    => ($row['lower_rank'] == '1') ? 'Yes' : 'No'
             );
         }
 
@@ -142,12 +200,10 @@ class MasterPersonal extends CI_Controller {
             ->set_content_type('application/json')
             ->set_output(json_encode(array(
                 'success' => true,
-                'page'    => $page,
-                'limit'   => $limit,
-                'total'   => $total,
                 'data'    => $data
             )));
     }
+
     public function getDataOnboard($searchNya = "")
     {
         $dataContext = new DataContext();
