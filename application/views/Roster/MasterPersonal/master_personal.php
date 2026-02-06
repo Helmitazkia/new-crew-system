@@ -246,9 +246,9 @@
                     <th>Rank Applied For <span class="filter-icon">☰</span></th>
                     <th>Gender <span class="filter-icon">☰</span></th>
                     <th>Religion <span class="filter-icon">☰</span></th>
-                    <th>Birth <span class="filter-icon">☰</span></th>
+                    <th>Vessel <span class="filter-icon">☰</span></th>
+                    <th>City Birth <span class="filter-icon">☰</span></th>
                     <th>Status Person <span class="filter-icon">☰</span></th>
-                    <th>Accept Lower Rank <span class="filter-icon">☰</span></th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -283,6 +283,10 @@ $(document).ready(function() {
   let table = $('#crewTable').DataTable({
     processing: true,
     serverSide: false,
+    language: {
+      lengthMenu: ' _MENU_ &nbsp; Entries',
+      loadingRecords: '',
+    },
     ajax: {
       url: "<?= base_url('MasterPersonal/MasterPersonal/getAllData_personal'); ?>",
       type: "POST",
@@ -329,33 +333,63 @@ $(document).ready(function() {
 
       // DOB
       {
+        data: 'nmvsl',
+        className: 'text-center'
+      },
+      {
         data: 'dob',
         className: 'text-center'
       },
 
-      // STATUS PERSON (FIX)
       {
         data: 'statusPerson',
         className: 'text-center',
         render: function(data, type) {
           if (type === 'display') {
-            return `<span class="badge ${data === 'Active' ? 'bg-success' : 'bg-danger'}">${data}</span>`;
+            return `<span class="badge ${data === 'On board' ? 'bg-success' : 'bg-danger'}">${data}</span>`;
           }
           return data; // <-- penting
         }
       },
 
-      // LOWER RANK (FIX)
-      {
-        data: 'lowerRank',
-        className: 'text-center',
-        render: function(data, type) {
-          if (type === 'display') {
-            return `<span class="badge ${data === 'Yes' ? 'bg-warning' : 'bg-secondary'}">${data}</span>`;
-          }
-          return data; // <-- penting
-        }
-      },
+
+      // {
+      //   data: 'statusPerson',
+      //   className: 'text-center',
+      //   render: function(data, type) {
+
+      //     // untuk kebutuhan filter / search
+      //     if (type !== 'display') {
+      //       return data;
+      //     }
+
+      //     let badgeClass = 'bg-secondary';
+
+      //     switch (data) {
+      //       case 'On board':
+      //         badgeClass = 'bg-success';
+      //         break;
+
+      //       case 'Stand By':
+      //         badgeClass = 'bg-warning text-dark';
+      //         break;
+
+      //       case 'Non Active':
+      //         badgeClass = 'bg-danger text-dark';
+      //         break;
+
+      //       case 'Pick Up':
+      //         badgeClass = 'bg-primary';
+      //         break;
+
+      //       default:
+      //         badgeClass = 'bg-secondary';
+      //     }
+
+      //     return `<span class="badge ${badgeClass}">${data}</span>`;
+      //   }
+      // },
+
 
       // ACTION (TIDAK IKUT FILTER)
       {
@@ -460,7 +494,6 @@ $(document).ready(function() {
 
       dropdown.on('change', 'input[type="checkbox"]', function() {
         let selected = [];
-
         dropdown.find('input[type="checkbox"]:checked').each(function() {
           selected.push($(this).val());
         });
@@ -474,30 +507,10 @@ $(document).ready(function() {
         } else {
           table.column(colIndex).search('').draw();
         }
-
-        dropdown.show(); // 👈 AUTO HIDE
+        dropdown.show();
+        //$('.filter-dropdown').hide();
       });
 
-
-
-      // Apply filter
-      // dropdown.on('click', '.apply-filter', function () {
-      //   let selected = [];
-      //   dropdown.find('input:checked').each(function () {
-      //     selected.push($(this).val());
-      //   });
-
-      //   if (selected.length) {
-      //     let regex = selected.map(v =>
-      //       v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      //     ).join('|');
-
-      //     table.column(colIndex).search(regex, true, false).draw();
-      //   } else {
-      //     table.column(colIndex).search('').draw();
-      //   }
-      //   dropdown.hide();
-      // });
 
       // Clear filter
       dropdown.on('click', '.btn-clear-filter', function() {
@@ -512,125 +525,6 @@ $(document).ready(function() {
   }
 
 
-
-  // Filter Dropdown Implementation
-  // $('#crewTable thead th').each(function (colIndex) {
-  //   let icon = $(this).find('.filter-icon');
-  //   if (!icon.length) return;
-
-  //   // Skip the first column (No) and Action column (index 8)
-  //   if (colIndex === 0 || colIndex === 8) return;
-
-  //   // Create dropdown
-  //   let dropdown = $(`
-  //         <div class="filter-dropdown" data-column="${colIndex}">
-  //             <input type="text" class="filter-search" placeholder="Search...">
-  //             <div class="filter-list"></div>
-  //             <hr>
-  //             <div class="d-flex gap-2">
-  //                 <button class="btn btn-sm btn-primary w-100 apply-filter">
-  //                     Apply
-  //                 </button>
-  //                 <button class="btn btn-sm btn-danger w-100 clear-filter">
-  //                     Clear
-  //                 </button>
-  //             </div>
-  //         </div>
-  //     `).appendTo('body');
-
-  //   // CLEAR FILTER
-  //   dropdown.on('click', '.clear-filter', function (e) {
-  //     e.stopPropagation();
-
-  //     // uncheck semua checkbox
-  //     dropdown.find('input[type="checkbox"]').prop('checked', false);
-
-  //     // clear search dalam dropdown
-  //     dropdown.find('.filter-search').val('');
-  //     dropdown.find('label').show();
-
-  //     // clear filter DataTable kolom ini
-  //     table.column(colIndex).search('').draw();
-  //     dropdown.hide();
-  //   });
-
-  //   let listContainer = dropdown.find('.filter-list');
-
-  //   // Get unique data for this column, using 'filter' type to get raw data
-  //   let column = table.column(colIndex);
-  //   let uniqueData = column.data('filter').unique().sort();
-
-  //   uniqueData.each(function (val) {
-  //     if (val) {
-  //       listContainer.append(`
-  //                 <label>
-  //                     <input type="checkbox" value="${val}"> ${val}
-  //                 </label>
-  //             `);
-  //     }
-  //   });
-
-  //   // Toggle dropdown
-  //   icon.on('click', function (e) {
-  //     e.stopPropagation();
-  //     $('.filter-dropdown').hide();
-
-  //     let offset = icon.offset();
-  //     dropdown.css({
-  //       top: offset.top + icon.outerHeight(),
-  //       left: offset.left
-  //     }).toggle();
-  //   });
-
-  //   // Prevent dropdown from closing when clicking inside
-  //   dropdown.on('click', function (e) {
-  //     e.stopPropagation();
-  //   });
-
-  //   // Search inside filter
-  //   dropdown.find('.filter-search').on('keyup', function () {
-  //     let keyword = $(this).val().toLowerCase();
-  //     listContainer.find('label').each(function () {
-  //       $(this).toggle($(this).text().toLowerCase().includes(keyword));
-  //     });
-  //   });
-
-  //   // Clear filter
-  //   dropdown.on('click', '.clear-filter', function (e) {
-  //     e.stopPropagation();
-  //     dropdown.find('input[type="checkbox"]').prop('checked', false);
-  //     dropdown.find('.filter-search').val('');
-  //     dropdown.find('label').show();
-
-  //     table.column(colIndex).search('').draw();
-  //   });
-
-  //   // Apply filter
-  //   dropdown.on('click', '.apply-filter', function () {
-  //     let selected = [];
-
-  //     dropdown.find('input[type="checkbox"]:checked').each(function () {
-  //       selected.push($(this).val());
-  //     });
-
-  //     if (selected.length > 0) {
-  //       // Escape regex special characters
-  //       let escapedValues = selected.map(function (value) {
-  //         return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  //       });
-  //       let regex = escapedValues.join('|');
-  //       table.column(colIndex).search(regex, true, false).draw();
-  //     } else {
-  //       table.column(colIndex).search('').draw();
-  //     }
-  //     dropdown.hide();
-  //   });
-  // });
-
-  // Close dropdown when clicking outside
-  $(document).on('click', function() {
-    $('.filter-dropdown').hide();
-  });
 
 
 
