@@ -22,13 +22,13 @@
                 <thead>
                   <tr>
                     <th></th>
-                    <th><input type="text" class="column-search" placeholder="Search Full Name"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Rank"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Gender"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Religion"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Birth"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Status"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Lower Rank"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th></th>
                   </tr>
                 </thead>
@@ -108,14 +108,49 @@ $(document).ready(function() {
         className: 'text-center'
       },
 
+      // {
+      //   data: 'statusPerson',
+      //   className: 'text-center',
+      //   render: function(data, type) {
+      //     if (type === 'display') {
+      //       return `<span class="badge ${data === 'On board' ? 'bg-success' : 'bg-danger'}">${data}</span>`;
+      //     }
+      //     return data; // <-- penting
+      //   }
+      // },
       {
         data: 'statusPerson',
         className: 'text-center',
-        render: function(data, type) {
+        render: function(data, type, row) {
           if (type === 'display') {
-            return `<span class="badge ${data === 'On board' ? 'bg-success' : 'bg-danger'}">${data}</span>`;
+            let badgeClass = 'bg-secondary'; // Warna default jika tidak cocok
+            let textColor = 'text-white';
+
+            // Validasi warna berdasarkan masing-masing status
+            switch (data) {
+              case 'On board':
+                badgeClass = 'bg-success';
+                break;
+              case 'Stand By':
+                badgeClass = 'bg-warning';
+                textColor = 'text-dark'; // Kuning biasanya lebih enak dibaca pakai teks gelap
+                break;
+              case 'Pickup':
+                badgeClass = 'bg-info';
+                break;
+              case 'Non Aktif':
+                badgeClass = 'bg-danger';
+                break;
+              case 'Not For Emp':
+                badgeClass = 'bg-dark';
+                break;
+              default:
+                badgeClass = 'bg-secondary';
+            }
+
+            return `<span class="badge ${badgeClass} ${textColor}" style="padding: 5px 10px; border-radius: 12px;">${data}</span>`;
           }
-          return data; // <-- penting
+          return data;
         }
       },
 
