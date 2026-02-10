@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= '';
+$config['base_url'] = '';
 
 
 /*
@@ -27,7 +27,7 @@ $config['base_url']	= '';
 | variable so that it is blank.
 |
 */
-$config['index_page'] = 'index.php';
+
 // application/config/config.php
 
 date_default_timezone_set('Asia/Jakarta');  // WIB (UTC+7)

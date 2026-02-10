@@ -2,17 +2,12 @@
 
 class Login extends CI_Controller {
 
-    public function index()
-    {
-        $this->load->view('auth/login');
-    }
+   public function index()
+   {
+       $this->load->view('auth/login');
+   }
 
-// public function index()
-//   {
-//     $this->load->view('menu/header');
-//     $this->load->view('Roster/index_crewRoster');
-//     $this->load->view('menu/footer');
-//   }
+
   public function do_login()
   {
       header('Content-Type: application/json');
@@ -20,7 +15,6 @@ class Login extends CI_Controller {
       $user = $this->input->post('user');
       $pass = $this->input->post('pass');
 
-      // VALIDASI POST
       if (empty($user) || empty($pass)) {
           echo json_encode(array(
               'status' => false,
@@ -29,7 +23,6 @@ class Login extends CI_Controller {
           exit;
       }
 
-      // QUERY LOGIN (PAKAI BINDING)
       $sql = "
           SELECT 
               userId,

@@ -227,8 +227,6 @@ class PersonDetail extends CI_Controller {
                 'lowerRank'     => (strtolower($row->lower_rank) == '1') ? 'Yes' : 'No',
             ),
 
-            
-
            
 
             /* ================= SALARY ================= */
@@ -288,7 +286,6 @@ class PersonDetail extends CI_Controller {
             'status' => true,
             'data'   => $data
         ));
-
 
     }
 

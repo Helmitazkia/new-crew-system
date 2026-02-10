@@ -40,8 +40,66 @@
 
 // $route['default_controller'] = "administrator";
 // $route['default_controller'] = "front";
+
 $route['default_controller'] = 'auth/login';
 $route['404_override'] = '';
+
+//route for master data (certificate)
+$route['certificate']              = 'DataContext/indexMasterCert';
+$route['certificate/json']         = 'DataContext/getDataCertificate';
+$route['certificate/search']       = 'DataContext/getDataCertificate/search';  
+$route['certificate/get-edit']     = 'DataContext/getDataEditCertificate';
+$route['certificate/save']         = 'DataContext/saveDataCertificate';
+$route['certificate/delete']       = 'DataContext/deleteData';
+
+//route for master data (city)
+$route['city'] = 'DataContext/indexMasterCity';
+$route['city/json'] = 'DataContext/getDataCity';
+$route['city/get-edit'] = 'DataContext/getDataEdit';
+$route['city/save'] = 'DataContext/saveDataCity';
+$route['city/delete'] = 'DataContext/deleteData';
+
+//route for master data (country)
+$route['country'] = 'DataContext/indexMasterCountry';
+$route['country/getDataCountry'] = 'DataContext/getDataCountry';
+$route['country/get-edit'] = 'DataContext/getDataEdit';
+$route['country/save'] = 'DataContext/saveDataCountry';
+$route['country/delete'] = 'DataContext/deleteData';
+
+
+
+$route['company'] = 'DataContext/indexMasterCompany';
+$route['company/json'] = 'DataContext/getDataCompany';
+$route['company/get-edit'] = 'DataContext/getDataEdit';
+$route['company/save'] = 'DataContext/saveDataCompany';
+$route['company/delete'] = 'DataContext/deleteData';
+
+
+
+$route['rank'] = 'DataContext/indexMasterRank';
+$route['rank/json'] = 'DataContext/getDataRankMaster';
+$route['rank/urutRank'] = 'DataContext/updateUrutRank';
+$route['rank/get-edit'] = 'DataContext/getDataEdit';
+$route['rank/save'] = 'DataContext/saveDataRank';
+$route['rank/delete'] = 'DataContext/deleteData';
+
+
+
+$route['vessel'] = 'DataContext/indexMasterVessel';
+$route['vessel/json'] = 'DataContext/getDataVessel';
+$route['vessel/get-edit'] = 'DataContext/getDataEdit';
+$route['vessel/save'] = 'DataContext/saveDataVessel';
+$route['vessel/delete'] = 'DataContext/deleteData';
+
+
+$route['vesselType'] = 'DataContext/indexMasterVesselType';
+
+
+
+$route['school'] = 'DataContext/indexMasterSchool';
+$route['school/json'] = 'DataContext/getDataMasterSchool';
+$route['school/get-edit'] = 'DataContext/getDataEdit';
+
 
 
 /* End of file routes.php */

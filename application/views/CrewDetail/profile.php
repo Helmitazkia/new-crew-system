@@ -1,1003 +1,1050 @@
 <div class="profile-content">
-  <div class="container-fluid mb-4">
-    <div class="row g-3 mb-4">
-      <!-- FOTO -->
-      <div class="col-lg-3 col-md-4 col-sm-12 text-center">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <img src="<?php echo base_url('assets/img/banner/andhika-lines.png'); ?>" class="img-fluid rounded mb-3"
-              alt="Crew Photo">
-            <h6 class="fw-bold mb-0 crew-name" data-field="identity.fullName">A. LOLO</h6>
-            <small class="text-muted crew-id" data-field="identity.idperson">ID : 004059</small>
+    <div class="container-fluid mb-4">
+        <div class="row g-3 mb-4">
+            <!-- FOTO -->
+            <div class="col-lg-3 col-md-4 col-sm-12 text-center">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <img src="<?php echo base_url('assets/img/banner/andhika-lines.png'); ?>"
+                            class="img-fluid rounded mb-3" alt="Crew Photo">
+                        <h6 class="fw-bold mb-0 crew-name" data-field="identity.fullName">A. LOLO</h6>
+                        <small class="text-muted crew-id" data-field="identity.idperson">ID : 004059</small>
 
-          </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BASIC IDENTITY -->
+            <div class="col-lg-7 col-md-8 col-sm-12">
+
+                <div class="card shadow-sm h-100" id="basicIdentityCard">
+                    <div class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                        role="alert" id="basic-success-alert">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                            <use xlink:href="#check-circle-fill" />
+                        </svg>
+                        <div class="flex-grow-1">
+                            <span id="basic-success-message"></span>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <!-- Alert wrong Message  -->
+                    <div class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                        role="alert" id="basic-danger-alert">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+                            <use xlink:href="#exclamation-triangle-fill" />
+                        </svg>
+                        <div class="flex-grow-1">
+                            <span id="basic-error-message"></span>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <br>
+
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold fst-italic">🪪 Basic Identity</span>
+
+                        <div class="action-btn">
+                            <button class="btn btn-sm btn-outline-primary btn-edit">
+                                <i class="fa fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-success btn-save d-none">
+                                <i class="fa fa-save"></i> Save
+                            </button>
+                            <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-body small">
+                        <div class="row g-2">
+
+                            <!-- Old Crew ID -->
+                            <div class="col-md-4">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Old Crew ID</label>
+                                <div class="form-view fst-italic" data-field="identity.oldCrewId"></div>
+                                <input type="text" class="form-control form-edit d-none"
+                                    data-field="identity.oldCrewId">
+                            </div>
+
+                            <!-- Old Contract Number -->
+                            <div class="col-md-4">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Old Contract Number</label>
+                                <div class="form-view fst-italic" data-field="identity.oldContractNo"></div>
+                                <input type="text" class="form-control form-edit d-none"
+                                    data-field="identity.oldContractNo">
+                            </div>
+
+                            <!-- Seafarer Code -->
+                            <div class="col-md-4">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Seafarer Code</label>
+                                <div class="form-view fst-italic" data-field="identity.seafarerCode"></div>
+                                <input type="text" class="form-control form-edit d-none"
+                                    data-field="identity.seafarerCode">
+                            </div>
+
+                            <!-- First Name -->
+                            <div class="col-md-4">
+                                <label class="form-label mb-0 fst-italic fw-semibold">First Name</label>
+                                <div class="form-view fst-italic" data-field="identity.firstName"></div>
+                                <input type="text" class="form-control form-edit d-none"
+                                    data-field="identity.firstName">
+                            </div>
+
+                            <!-- Middle Name -->
+                            <div class="col-md-4">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Middle Name</label>
+                                <div class="form-view fst-italic" data-field="identity.middleName"></div>
+                                <input type="text" class="form-control form-edit d-none"
+                                    data-field="identity.middleName">
+                            </div>
+
+                            <!-- Last Name -->
+                            <div class="col-md-4">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Last Name</label>
+                                <div class="form-view fst-italic" data-field="identity.lastName"></div>
+                                <input type="text" class="form-control form-edit d-none" data-field="identity.lastName">
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="col-md-4">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Gender</label>
+                                <div class="form-view fst-italic" data-field="identity.gender"></div>
+                                <select class="form-select form-edit d-none" data-field="identity.gender">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+
+                            <!-- Nationality -->
+                            <div class="col-md-4">
+                                <label class="form-label mb-0 fst-italic fw-semibold">
+                                    Nationality (Citizenship)
+                                </label>
+                                <div class="form-view fst-italic" data-field="identity.nationality"></div>
+                                <select class="form-select form-edit d-none" data-field="identity.nationality">
+                                    <?php echo $optCountry; ?>
+                                </select>
+                            </div>
+
+                            <!-- Country of Origin -->
+                            <div class="col-md-4">
+                                <label class="form-label mb-0 fst-italic fw-semibold">
+                                    Country of Origin
+                                </label>
+                                <div class="form-view fst-italic" data-field="identity.countryOrigin"></div>
+                                <select class="form-select form-edit d-none" data-field="identity.countryOrigin">
+                                    <?php echo $optCountry; ?>
+                                </select>
+                            </div>
+
+                            <!-- Date of Birth -->
+                            <div class="col-md-4">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Date of Birth</label>
+                                <div class="form-view fst-italic" data-field="identity.dob"></div>
+                                <input type="date" class="form-control form-edit d-none"
+                                    data-field="identity.dobForEdit">
+                            </div>
+
+                            <!-- Place of Birth -->
+                            <div class="col-md-4">
+                                <label class="form-label mb-0 fst-italic fw-semibold">
+                                    Place / City of Birth
+                                </label>
+                                <div class="form-view fst-italic" data-field="identity.pob"></div>
+                                <select class="form-select form-edit d-none" data-field="identity.pob">
+                                    <?php echo $optCity; ?>
+                                </select>
+                            </div>
+
+                            <!-- Religion -->
+                            <div class="col-md-4">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Religion</label>
+                                <div class="form-view fst-italic" data-field="identity.religion"></div>
+                                <select class="form-select form-edit d-none" data-field="identity.religion">
+                                    <option value="Moeslem">Moeslem</option>
+                                    <option value="Christian">Christian</option>
+                                    <option value="Catholic">Catholic</option>
+                                    <option value="Hindu">Hindu</option>
+                                    <option value="Buddha">Buddha</option>
+                                </select>
+                            </div>
+
+                            <!-- Marital Status -->
+                            <div class="col-md-4">
+                                <label class="form-label mb-0 fst-italic fw-semibold">
+                                    Marital Status
+                                </label>
+                                <div class="form-view fst-italic" data-field="identity.maritalStatus"></div>
+                                <select class="form-select form-edit d-none" data-field="identity.maritalStatus">
+                                    <option value="Married">Married</option>
+                                    <option value="Single">Single</option>
+                                    <option value="Divorced">Divorced</option>
+                                    <option value="Commond Law Partner">Commond Law Partner</option>
+                                    <option value="Widowed">Widowed</option>
+                                    <option value="Separated">Separated</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-xs-12">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold fst-italic">🟢 Crew Status</span>
+
+                        <div class="action-btn">
+                            <button class="btn btn-sm btn-outline-primary btn-edit">
+                                <i class="fa fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-success btn-save d-none">
+                                <i class="fa fa-save"></i> Save
+                            </button>
+                            <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-body small">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Crew Status</label>
+                                <div class="form-view fst-italic">New Applicant</div>
+                                <select class="form-select form-edit d-none">
+                                    <option selected>New Applicant</option>
+                                    <option>Non Aktif</option>
+                                    <option>Not for Employed</option>
+                                    <option>Non Crew</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <!-- BASIC IDENTITY -->
-      <div class="col-lg-7 col-md-8 col-sm-12">
-
-        <div class="card shadow-sm h-100" id="basicIdentityCard">
-          <div
-            class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-            role="alert" id="basic-success-alert">
-            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
-              <use xlink:href="#check-circle-fill" />
-            </svg>
-            <div class="flex-grow-1">
-              <span id="basic-success-message"></span>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-
-          <!-- Alert wrong Message  -->
-          <div
-            class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-            role="alert" id="basic-danger-alert">
-            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
-              <use xlink:href="#exclamation-triangle-fill" />
-            </svg>
-            <div class="flex-grow-1">
-              <span id="basic-error-message"></span>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-          <br>
-
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <span class="fw-semibold fst-italic">🪪 Basic Identity</span>
-
-            <div class="action-btn">
-              <button class="btn btn-sm btn-outline-primary btn-edit">
-                <i class="fa fa-edit"></i> Edit
-              </button>
-              <button class="btn btn-sm btn-success btn-save d-none">
-                <i class="fa fa-save"></i> Save
-              </button>
-              <button class="btn btn-sm btn-secondary btn-cancel d-none">
-                Cancel
-              </button>
-            </div>
-          </div>
-
-          <div class="card-body small">
-            <div class="row g-2">
-
-              <!-- Old Crew ID -->
-              <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">Old Crew ID</label>
-                <div class="form-view fst-italic" data-field="identity.oldCrewId"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="identity.oldCrewId">
-              </div>
-
-              <!-- Old Contract Number -->
-              <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">Old Contract Number</label>
-                <div class="form-view fst-italic" data-field="identity.oldContractNo"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="identity.oldContractNo">
-              </div>
-
-              <!-- Seafarer Code -->
-              <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">Seafarer Code</label>
-                <div class="form-view fst-italic" data-field="identity.seafarerCode"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="identity.seafarerCode">
-              </div>
-
-              <!-- First Name -->
-              <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">First Name</label>
-                <div class="form-view fst-italic" data-field="identity.firstName"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="identity.firstName">
-              </div>
-
-              <!-- Middle Name -->
-              <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">Middle Name</label>
-                <div class="form-view fst-italic" data-field="identity.middleName"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="identity.middleName">
-              </div>
-
-              <!-- Last Name -->
-              <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">Last Name</label>
-                <div class="form-view fst-italic" data-field="identity.lastName"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="identity.lastName">
-              </div>
-
-              <!-- Gender -->
-              <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">Gender</label>
-                <div class="form-view fst-italic" data-field="identity.gender"></div>
-                <select class="form-select form-edit d-none" data-field="identity.gender">
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-              </div>
-
-              <!-- Nationality -->
-              <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">
-                  Nationality (Citizenship)
-                </label>
-                <div class="form-view fst-italic" data-field="identity.nationality"></div>
-                <select class="form-select form-edit d-none" data-field="identity.nationality">
-                  <?php echo $optCountry; ?>
-                </select>
-              </div>
-
-              <!-- Country of Origin -->
-              <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">
-                  Country of Origin
-                </label>
-                <div class="form-view fst-italic" data-field="identity.countryOrigin"></div>
-                <select class="form-select form-edit d-none" data-field="identity.countryOrigin">
-                  <?php echo $optCountry; ?>
-                </select>
-              </div>
-
-              <!-- Date of Birth -->
-              <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">Date of Birth</label>
-                <div class="form-view fst-italic" data-field="identity.dob"></div>
-                <input type="date" class="form-control form-edit d-none" data-field="identity.dobForEdit">
-              </div>
-
-              <!-- Place of Birth -->
-              <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">
-                  Place / City of Birth
-                </label>
-                <div class="form-view fst-italic" data-field="identity.pob"></div>
-                <select class="form-select form-edit d-none" data-field="identity.pob">
-                  <?php echo $optCity; ?>
-                </select>
-              </div>
-
-              <!-- Religion -->
-              <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">Religion</label>
-                <div class="form-view fst-italic" data-field="identity.religion"></div>
-                <select class="form-select form-edit d-none" data-field="identity.religion">
-                  <option value="Moeslem">Moeslem</option>
-                  <option value="Christian">Christian</option>
-                  <option value="Catholic">Catholic</option>
-                  <option value="Hindu">Hindu</option>
-                  <option value="Buddha">Buddha</option>
-                </select>
-              </div>
-
-              <!-- Marital Status -->
-              <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">
-                  Marital Status
-                </label>
-                <div class="form-view fst-italic" data-field="identity.maritalStatus"></div>
-                <select class="form-select form-edit d-none" data-field="identity.maritalStatus">
-                  <option value="Married">Married</option>
-                  <option value="Single">Single</option>
-                  <option value="Divorced">Divorced</option>
-                  <option value="Commond Law Partner">Commond Law Partner</option>
-                  <option value="Widowed">Widowed</option>
-                  <option value="Separated">Separated</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-2 col-xs-12">
-        <div class="card shadow-sm h-100">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <span class="fw-semibold fst-italic">🟢 Crew Status</span>
-
-            <div class="action-btn">
-              <button class="btn btn-sm btn-outline-primary btn-edit">
-                <i class="fa fa-edit"></i> Edit
-              </button>
-              <button class="btn btn-sm btn-success btn-save d-none">
-                <i class="fa fa-save"></i> Save
-              </button>
-              <button class="btn btn-sm btn-secondary btn-cancel d-none">
-                Cancel
-              </button>
-            </div>
-          </div>
-
-          <div class="card-body small">
-            <div class="row g-2">
-              <div class="col-12">
-                <label class="form-label mb-0 fst-italic fw-semibold">Crew Status</label>
-                <div class="form-view fst-italic">New Applicant</div>
-                <select class="form-select form-edit d-none">
-                  <option selected>New Applicant</option>
-                  <option>Non Aktif</option>
-                  <option>Not for Employed</option>
-                  <option>Non Crew</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <div class="container-fluid mb-4">
-    <div class="row">
-      <div class="col-6 mb-4 col-xs-12">
-        <div class="card shadow-sm h-100" id="familyinformation">
-          <div
-            class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-            role="alert" id="family-success-alert">
-            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
-              <use xlink:href="#check-circle-fill" />
-            </svg>
-            <div class="flex-grow-1">
-              <span id="family-success-message"></span>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-
-          <!-- Alert wrong Message  -->
-          <div
-            class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-            role="alert" id="family-error-alert">
-            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
-              <use xlink:href="#exclamation-triangle-fill" />
-            </svg>
-            <div class="flex-grow-1">
-              <span id="family-error-message"></span>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-          <br>
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <span class="fw-semibold fst-italic">👨‍👩‍👧 Family Information</span>
-
-            <div class="action-btn">
-              <button class="btn btn-sm btn-outline-primary btn-edit">
-                <i class="fa fa-edit"></i> Edit
-              </button>
-              <button class="btn btn-sm btn-success btn-save d-none">
-                <i class="fa fa-save"></i> Save
-              </button>
-              <button class="btn btn-sm btn-secondary btn-cancel d-none">
-                Cancel
-              </button>
-            </div>
-          </div>
-
-          <div class="card-body small">
-            <div class="row g-2">
-
-              <div class="col-12">
-                <label class="form-label mb-0 fst-italic fw-semibold">Father Name</label>
-                <div class="form-view fst-italic" data-field="family.fatherName"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="family.fatherName">
-              </div>
-
-              <div class="col-12">
-                <label class="form-label mb-0 fst-italic fw-semibold">Mother Name</label>
-                <div class="form-view fst-italic" data-field="family.motherName"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="family.motherName">
-              </div>
-
-              <div class="col-12">
-                <label class="form-label mb-0 fst-italic fw-semibold">Wife Name</label>
-                <div class="form-view fst-italic" data-field="family.wifeName"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="family.wifeName">
-              </div>
-
-              <div class="col-12">
-                <label class="form-label mb-0 fst-italic fw-semibold">Next of Kin</label>
-                <div class="form-view fst-italic" data-field="family.nextOfKin"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="family.nextOfKin">
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-6 mb-4">
-        <div class="card shadow-sm h-100" id="legalTaxCard">
-          <div
-            class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-            role="alert" id="tax-success-alert">
-            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
-              <use xlink:href="#check-circle-fill" />
-            </svg>
-            <div class="flex-grow-1">
-              <span id="tax-success-message"></span>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-
-          <!-- Alert wrong Message  -->
-          <div
-            class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-            role="alert" id="tax-error-alert">
-            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
-              <use xlink:href="#exclamation-triangle-fill" />
-            </svg>
-            <div class="flex-grow-1">
-              <span id="tax-error-message"></span>
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <span class="fw-semibold fst-italic">💼 Tax & Social Security</span>
-
-            <div class="action-btn">
-              <button class="btn btn-sm btn-outline-primary btn-edit">
-                <i class="fa fa-edit"></i> Edit
-              </button>
-              <button class="btn btn-sm btn-success btn-save d-none">
-                <i class="fa fa-save"></i> Save
-              </button>
-              <button class="btn btn-sm btn-secondary btn-cancel d-none">
-                Cancel
-              </button>
-            </div>
-          </div>
-
-          <div class="card-body small">
-            <div class="row g-2">
-
-              <div class="col-md-6">
-                <label class="form-label mb-0 fst-italic fw-semibold">Social Security Number</label>
-                <div class="form-view fst-italic" data-field="legal.ssn"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="legal.ssn">
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label mb-0 fst-italic fw-semibold">SS Issuing Country</label>
-                <div class="form-view fst-italic" data-field="legal.ssnCountry"></div>
-                <select class="form-select form-edit d-none" data-field="legal.ssnCountry">
-                  <?php echo $optCountry; ?>
-                </select>
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label mb-0 fst-italic fw-semibold">Personal Tax Number</label>
-                <div class="form-view fst-italic" data-field="legal.taxNumber"></div>
-                <input type="text" class="form-control form-edit d-none" data-field="legal.taxNumber">
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label mb-0 fst-italic fw-semibold">Tax Issuing Country</label>
-                <div class="form-view fst-italic" data-field="legal.taxCountry"></div>
-                <select class="form-select form-edit d-none" data-field="legal.taxCountry">
-                  <?php echo $optCountry; ?>
-                </select>
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label mb-0 fst-italic fw-semibold">Tax Status</label>
-                <div class="form-view fst-italic" data-field="legal.taxStatus"></div>
-                <select class="form-select form-edit d-none" data-field="legal.taxStatus">
-                  <?php echo $optTax; ?>
-                </select>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="container-fluid mb-4">
+    <div class="container-fluid mb-4">
         <div class="row">
-          <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100" id="contactAddressCard">
-              <div
-                class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-                role="alert" id="contact-success-alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
-                  <use xlink:href="#check-circle-fill" />
-                </svg>
-                <div class="flex-grow-1">
-                  <span id="contact-success-message"></span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-
-              <!-- Alert wrong Message  -->
-              <div
-                class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-                role="alert" id="contact-error-alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
-                  <use xlink:href="#exclamation-triangle-fill" />
-                </svg>
-                <div class="flex-grow-1">
-                  <span id="contact-error-message"></span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-              <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="fw-semibold fst-italic">📞 Contact & Address</span>
-
-                <div class="action-btn">
-                  <button class="btn btn-sm btn-outline-primary btn-edit">
-                    <i class="fa fa-edit"></i> Edit
-                  </button>
-                  <button class="btn btn-sm btn-success btn-save d-none">
-                    <i class="fa fa-save"></i> Save
-                  </button>
-                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
-                    Cancel
-                  </button>
-                </div>
-              </div>
-
-              <div class="card-body small">
-                <div class="row g-2">
-
-                  <div class="col-12">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Primary / Permanent Address</label>
-                    <div class="form-view fst-italic" data-field="contact.address"></div>
-                    <textarea class="form-control form-edit d-none" data-field="contact.address"></textarea>
-                  </div>
-
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">City</label>
-                    <div class="form-view fst-italic" data-field="contact.city"></div>
-                    <select class="form-select form-edit d-none" data-field="contact.city">
-                      <?php echo $optCity; ?>
-                    </select>
-                  </div>
-
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Post Code</label>
-                    <div class="form-view fst-italic" data-field="contact.postcode"></div>
-                    <input type="text" class="form-control form-edit d-none" data-field="contact.postcode">
-                  </div>
-
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Country</label>
-                    <div class="form-view fst-italic" data-field="contact.country"></div>
-                    <select class="form-select form-edit d-none" data-field="contact.country">
-                      <?php echo $optCountry; ?>
-                    </select>
-                  </div>
-
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Nearest Airport</label>
-                    <div class="form-view fst-italic" data-field="contact.airport"></div>
-                    <!-- <input type="text" class="form-control form-edit d-none" data-field="contact.airport"> -->
-                    <select class="form-select form-edit d-none" data-field="contact.airport">
-                      <?php echo $optCity; ?>
-                    </select>
-                  </div>
-
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Mobile Tel.</label>
-                    <div class="form-view fst-italic" data-field="contact.mobile"></div>
-                    <input type="text" class="form-control form-edit d-none" data-field="contact.mobile">
-                  </div>
-
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Home Tel.</label>
-                    <div class="form-view fst-italic" data-field="contact.home"></div>
-                    <input type="text" class="form-control form-edit d-none" data-field="contact.home">
-                  </div>
-
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Fax</label>
-                    <div class="form-view fst-italic" data-field="contact.fax"></div>
-                    <input type="text" class="form-control form-edit d-none" data-field="contact.fax">
-                  </div>
-
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Email</label>
-                    <div class="form-view fst-italic" data-field="contact.email"></div>
-                    <input type="email" class="form-control form-edit d-none" data-field="contact.email">
-                  </div>
-
-                  <!-- CONTACT METHOD -->
-                  <div class="col-12 mt-2">
-                    <label class="form-label mb-1 fst-italic fw-semibold">Contact Method</label>
-
-                    <!-- VIEW -->
-                    <div class="form-view fst-italic">
-                      Email, Fax, Mobile Phone, Home Phone, Post
+            <div class="col-6 mb-4 col-xs-12">
+                <div class="card shadow-sm h-100" id="familyinformation">
+                    <div class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                        role="alert" id="family-success-alert">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                            <use xlink:href="#check-circle-fill" />
+                        </svg>
+                        <div class="flex-grow-1">
+                            <span id="family-success-message"></span>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
 
-                    <!-- EDIT -->
-                    <div class="form-edit d-none">
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" data-field="contactMethod.email">
-                        <label class="form-check-label">Email</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" data-field="contactMethod.fax">
-                        <label class="form-check-label">Fax</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" data-field="contactMethod.mobile">
-                        <label class="form-check-label">Mobile Phone</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" data-field="contactMethod.home">
-                        <label class="form-check-label">Home Phone</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" data-field="contactMethod.post">
-                        <label class="form-check-label">Post</label>
-                      </div>
+                    <!-- Alert wrong Message  -->
+                    <div class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                        role="alert" id="family-error-alert">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+                            <use xlink:href="#exclamation-triangle-fill" />
+                        </svg>
+                        <div class="flex-grow-1">
+                            <span id="family-error-message"></span>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                  </div>
+                    <br>
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold fst-italic">👨‍👩‍👧 Family Information</span>
 
+                        <div class="action-btn">
+                            <button class="btn btn-sm btn-outline-primary btn-edit">
+                                <i class="fa fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-success btn-save d-none">
+                                <i class="fa fa-save"></i> Save
+                            </button>
+                            <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-body small">
+                        <div class="row g-2">
+
+                            <div class="col-12">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Father Name</label>
+                                <div class="form-view fst-italic" data-field="family.fatherName"></div>
+                                <input type="text" class="form-control form-edit d-none" data-field="family.fatherName">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Mother Name</label>
+                                <div class="form-view fst-italic" data-field="family.motherName"></div>
+                                <input type="text" class="form-control form-edit d-none" data-field="family.motherName">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Wife Name</label>
+                                <div class="form-view fst-italic" data-field="family.wifeName"></div>
+                                <input type="text" class="form-control form-edit d-none" data-field="family.wifeName">
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Next of Kin</label>
+                                <div class="form-view fst-italic" data-field="family.nextOfKin"></div>
+                                <input type="text" class="form-control form-edit d-none" data-field="family.nextOfKin">
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
 
-          <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100" id="physicalMedicalCard">
-              <div
-                class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-                role="alert" id="physical-success-alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
-                  <use xlink:href="#check-circle-fill" />
-                </svg>
-                <div class="flex-grow-1">
-                  <span id="physical-success-message"></span>
+            <div class="col-6 mb-4">
+                <div class="card shadow-sm h-100" id="legalTaxCard">
+                    <div class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                        role="alert" id="tax-success-alert">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                            <use xlink:href="#check-circle-fill" />
+                        </svg>
+                        <div class="flex-grow-1">
+                            <span id="tax-success-message"></span>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <!-- Alert wrong Message  -->
+                    <div class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                        role="alert" id="tax-error-alert">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
+                            <use xlink:href="#exclamation-triangle-fill" />
+                        </svg>
+                        <div class="flex-grow-1">
+                            <span id="tax-error-message"></span>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold fst-italic">💼 Tax & Social Security</span>
+
+                        <div class="action-btn">
+                            <button class="btn btn-sm btn-outline-primary btn-edit">
+                                <i class="fa fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-success btn-save d-none">
+                                <i class="fa fa-save"></i> Save
+                            </button>
+                            <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-body small">
+                        <div class="row g-2">
+
+                            <div class="col-md-6">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Social Security Number</label>
+                                <div class="form-view fst-italic" data-field="legal.ssn"></div>
+                                <input type="text" class="form-control form-edit d-none" data-field="legal.ssn">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label mb-0 fst-italic fw-semibold">SS Issuing Country</label>
+                                <div class="form-view fst-italic" data-field="legal.ssnCountry"></div>
+                                <select class="form-select form-edit d-none" data-field="legal.ssnCountry">
+                                    <?php echo $optCountry; ?>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Personal Tax Number</label>
+                                <div class="form-view fst-italic" data-field="legal.taxNumber"></div>
+                                <input type="text" class="form-control form-edit d-none" data-field="legal.taxNumber">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Tax Issuing Country</label>
+                                <div class="form-view fst-italic" data-field="legal.taxCountry"></div>
+                                <select class="form-select form-edit d-none" data-field="legal.taxCountry">
+                                    <?php echo $optCountry; ?>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label mb-0 fst-italic fw-semibold">Tax Status</label>
+                                <div class="form-view fst-italic" data-field="legal.taxStatus"></div>
+                                <select class="form-select form-edit d-none" data-field="legal.taxStatus">
+                                    <?php echo $optTax; ?>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-
-              <!-- Alert wrong Message  -->
-              <div
-                class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-                role="alert" id="physical-error-alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
-                  <use xlink:href="#exclamation-triangle-fill" />
-                </svg>
-                <div class="flex-grow-1">
-                  <span id="physical-error-message"></span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-              <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="fw-semibold fst-italic">🩺 Physical & Medical</span>
-
-                <div class="action-btn">
-                  <button class="btn btn-sm btn-outline-primary btn-edit">
-                    <i class="fa fa-edit"></i> Edit
-                  </button>
-                  <button class="btn btn-sm btn-success btn-save d-none">
-                    <i class="fa fa-save"></i> Save
-                  </button>
-                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
-                    Cancel
-                  </button>
-                </div>
-              </div>
-
-              <div class="card-body small">
-                <div class="row g-2">
-
-                  <div class="col-md-4">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Blood Type</label>
-                    <div class="form-view fst-italic" data-field="physical.bloodType"></div>
-                    <select class="form-select form-edit d-none" data-field="physical.bloodType">
-                      <?php echo $optBlood; ?>
-                    </select>
-                  </div>
-
-                  <div class="col-md-4">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Eye Color</label>
-                    <div class="form-view fst-italic" data-field="physical.eyeColor"></div>
-                    <input type="text" class="form-control form-edit d-none" data-field="physical.eyeColor"
-                      value="Brown">
-                  </div>
-
-                  <div class="col-md-4">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Weight (kg)</label>
-                    <div class="form-view fst-italic" data-field="physical.weight"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.weight" value="70">
-                  </div>
-
-                  <div class="col-md-4">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Height (cm)</label>
-                    <div class="form-view fst-italic" data-field="physical.height"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.height" value="175">
-                  </div>
-
-                  <div class="col-md-4">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Shoes (mm)</label>
-                    <div class="form-view fst-italic" data-field="physical.shoesz"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.shoesz" value="270">
-                  </div>
-
-                  <div class="col-md-4">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Collar (cm)</label>
-                    <div class="form-view fst-italic" data-field="physical.collar"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.collar" value="40">
-                  </div>
-
-                  <div class="col-md-4">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Chest (cm)</label>
-                    <div class="form-view fst-italic" data-field="physical.chest"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.chest" value="98">
-                  </div>
-
-                  <div class="col-md-4">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Waist (cm)</label>
-                    <div class="form-view fst-italic" data-field="physical.waist"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.waist" value="82">
-                  </div>
-
-                  <div class="col-md-4">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Ins. Leg (cm)</label>
-                    <div class="form-view fst-italic" data-field="physical.Insdleg"></div>
-                    <input type="number" class="form-control form-edit d-none" data-field="physical.Insdleg" value="78">
-                  </div>
-
-                  <div class="col-md-4">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Clothes Size</label>
-                    <div class="form-view fst-italic" data-field="physical.clothesSize"></div>
-                    <select class="form-select form-edit d-none" data-field="physical.clothesSize">
-                      <?php echo $optSize; ?>
-                    </select>
-                  </div>
-
-                  <div class="col-md-4">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Boilersuit Size</label>
-                    <div class="form-view fst-italic" data-field="physical.boilerszid"></div>
-                    <select class="form-select form-edit d-none" data-field="physical.boilerszid">
-                      <?php echo $optSize; ?>
-                    </select>
-                  </div>
-
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Height Phobia</label>
-                    <div class="form-view fst-italic" data-field="physical.heightPhobia"></div>
-                    <select class="form-select form-edit d-none" data-field="physical.heightPhobia">
-                      <option value="No">No</option>
-                      <option value="Yes">Yes</option>
-                    </select>
-                  </div>
-
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Feel Claustrophobic</label>
-                    <div class="form-view fst-italic" data-field="physical.claustrophob"></div>
-                    <select class="form-select form-edit d-none" data-field="physical.claustrophob">
-                      <option value="No">No</option>
-                      <option value="Yes">Yes</option>
-                    </select>
-                  </div>
-
-                  <div class="col-12">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Any Allergy</label>
-                    <div class="form-view fst-italic" data-field="physical.allergy"></div>
-                    <textarea class="form-control form-edit d-none" data-field="physical.allergy">None</textarea>
-                  </div>
-
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="row">
-          <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100">
-              <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="fw-semibold fst-italic">📋 Assessment & Training</span>
 
-                <div class="action-btn">
-                  <button class="btn btn-sm btn-outline-primary btn-edit">
-                    <i class="fa fa-edit"></i> Edit
-                  </button>
-                  <button class="btn btn-sm btn-success btn-save d-none">
-                    <i class="fa fa-save"></i> Save
-                  </button>
-                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
-                    Cancel
-                  </button>
+            <div class="container-fluid mb-4">
+                <div class="row">
+                    <div class="col-6 mb-4">
+                        <div class="card shadow-sm h-100" id="contactAddressCard">
+                            <div class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                                role="alert" id="contact-success-alert">
+                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                    aria-label="Success:">
+                                    <use xlink:href="#check-circle-fill" />
+                                </svg>
+                                <div class="flex-grow-1">
+                                    <span id="contact-success-message"></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+
+                            <!-- Alert wrong Message  -->
+                            <div class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                                role="alert" id="contact-error-alert">
+                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                    aria-label="danger:">
+                                    <use xlink:href="#exclamation-triangle-fill" />
+                                </svg>
+                                <div class="flex-grow-1">
+                                    <span id="contact-error-message"></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span class="fw-semibold fst-italic">📞 Contact & Address</span>
+
+                                <div class="action-btn">
+                                    <button class="btn btn-sm btn-outline-primary btn-edit">
+                                        <i class="fa fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-success btn-save d-none">
+                                        <i class="fa fa-save"></i> Save
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="card-body small">
+                                <div class="row g-2">
+
+                                    <div class="col-12">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Primary / Permanent
+                                            Address</label>
+                                        <div class="form-view fst-italic" data-field="contact.address"></div>
+                                        <textarea class="form-control form-edit d-none"
+                                            data-field="contact.address"></textarea>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">City</label>
+                                        <div class="form-view fst-italic" data-field="contact.city"></div>
+                                        <select class="form-select form-edit d-none" data-field="contact.city">
+                                            <?php echo $optCity; ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Post Code</label>
+                                        <div class="form-view fst-italic" data-field="contact.postcode"></div>
+                                        <input type="text" class="form-control form-edit d-none"
+                                            data-field="contact.postcode">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Country</label>
+                                        <div class="form-view fst-italic" data-field="contact.country"></div>
+                                        <select class="form-select form-edit d-none" data-field="contact.country">
+                                            <?php echo $optCountry; ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Nearest Airport</label>
+                                        <div class="form-view fst-italic" data-field="contact.airport"></div>
+                                        <!-- <input type="text" class="form-control form-edit d-none" data-field="contact.airport"> -->
+                                        <select class="form-select form-edit d-none" data-field="contact.airport">
+                                            <?php echo $optCity; ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Mobile Tel.</label>
+                                        <div class="form-view fst-italic" data-field="contact.mobile"></div>
+                                        <input type="text" class="form-control form-edit d-none"
+                                            data-field="contact.mobile">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Home Tel.</label>
+                                        <div class="form-view fst-italic" data-field="contact.home"></div>
+                                        <input type="text" class="form-control form-edit d-none"
+                                            data-field="contact.home">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Fax</label>
+                                        <div class="form-view fst-italic" data-field="contact.fax"></div>
+                                        <input type="text" class="form-control form-edit d-none"
+                                            data-field="contact.fax">
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Email</label>
+                                        <div class="form-view fst-italic" data-field="contact.email"></div>
+                                        <input type="email" class="form-control form-edit d-none"
+                                            data-field="contact.email">
+                                    </div>
+
+                                    <!-- CONTACT METHOD -->
+                                    <div class="col-12 mt-2">
+                                        <label class="form-label mb-1 fst-italic fw-semibold">Contact Method</label>
+
+                                        <!-- VIEW -->
+                                        <div class="form-view fst-italic">
+                                            Email, Fax, Mobile Phone, Home Phone, Post
+                                        </div>
+
+                                        <!-- EDIT -->
+                                        <div class="form-edit d-none">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox"
+                                                    data-field="contactMethod.email">
+                                                <label class="form-check-label">Email</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox"
+                                                    data-field="contactMethod.fax">
+                                                <label class="form-check-label">Fax</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox"
+                                                    data-field="contactMethod.mobile">
+                                                <label class="form-check-label">Mobile Phone</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox"
+                                                    data-field="contactMethod.home">
+                                                <label class="form-check-label">Home Phone</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox"
+                                                    data-field="contactMethod.post">
+                                                <label class="form-check-label">Post</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6 mb-4">
+                        <div class="card shadow-sm h-100" id="physicalMedicalCard">
+                            <div class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                                role="alert" id="physical-success-alert">
+                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                    aria-label="Success:">
+                                    <use xlink:href="#check-circle-fill" />
+                                </svg>
+                                <div class="flex-grow-1">
+                                    <span id="physical-success-message"></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+
+                            <!-- Alert wrong Message  -->
+                            <div class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                                role="alert" id="physical-error-alert">
+                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                    aria-label="danger:">
+                                    <use xlink:href="#exclamation-triangle-fill" />
+                                </svg>
+                                <div class="flex-grow-1">
+                                    <span id="physical-error-message"></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span class="fw-semibold fst-italic">🩺 Physical & Medical</span>
+
+                                <div class="action-btn">
+                                    <button class="btn btn-sm btn-outline-primary btn-edit">
+                                        <i class="fa fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-success btn-save d-none">
+                                        <i class="fa fa-save"></i> Save
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="card-body small">
+                                <div class="row g-2">
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Blood Type</label>
+                                        <div class="form-view fst-italic" data-field="physical.bloodType"></div>
+                                        <select class="form-select form-edit d-none" data-field="physical.bloodType">
+                                            <?php echo $optBlood; ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Eye Color</label>
+                                        <div class="form-view fst-italic" data-field="physical.eyeColor"></div>
+                                        <input type="text" class="form-control form-edit d-none"
+                                            data-field="physical.eyeColor" value="Brown">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Weight (kg)</label>
+                                        <div class="form-view fst-italic" data-field="physical.weight"></div>
+                                        <input type="number" class="form-control form-edit d-none"
+                                            data-field="physical.weight" value="70">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Height (cm)</label>
+                                        <div class="form-view fst-italic" data-field="physical.height"></div>
+                                        <input type="number" class="form-control form-edit d-none"
+                                            data-field="physical.height" value="175">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Shoes (mm)</label>
+                                        <div class="form-view fst-italic" data-field="physical.shoesz"></div>
+                                        <input type="number" class="form-control form-edit d-none"
+                                            data-field="physical.shoesz" value="270">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Collar (cm)</label>
+                                        <div class="form-view fst-italic" data-field="physical.collar"></div>
+                                        <input type="number" class="form-control form-edit d-none"
+                                            data-field="physical.collar" value="40">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Chest (cm)</label>
+                                        <div class="form-view fst-italic" data-field="physical.chest"></div>
+                                        <input type="number" class="form-control form-edit d-none"
+                                            data-field="physical.chest" value="98">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Waist (cm)</label>
+                                        <div class="form-view fst-italic" data-field="physical.waist"></div>
+                                        <input type="number" class="form-control form-edit d-none"
+                                            data-field="physical.waist" value="82">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Ins. Leg (cm)</label>
+                                        <div class="form-view fst-italic" data-field="physical.Insdleg"></div>
+                                        <input type="number" class="form-control form-edit d-none"
+                                            data-field="physical.Insdleg" value="78">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Clothes Size</label>
+                                        <div class="form-view fst-italic" data-field="physical.clothesSize"></div>
+                                        <select class="form-select form-edit d-none" data-field="physical.clothesSize">
+                                            <?php echo $optSize; ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Boilersuit Size</label>
+                                        <div class="form-view fst-italic" data-field="physical.boilerszid"></div>
+                                        <select class="form-select form-edit d-none" data-field="physical.boilerszid">
+                                            <?php echo $optSize; ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Height Phobia</label>
+                                        <div class="form-view fst-italic" data-field="physical.heightPhobia"></div>
+                                        <select class="form-select form-edit d-none" data-field="physical.heightPhobia">
+                                            <option value="No">No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Feel
+                                            Claustrophobic</label>
+                                        <div class="form-view fst-italic" data-field="physical.claustrophob"></div>
+                                        <select class="form-select form-edit d-none" data-field="physical.claustrophob">
+                                            <option value="No">No</option>
+                                            <option value="Yes">Yes</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Any Allergy</label>
+                                        <div class="form-view fst-italic" data-field="physical.allergy"></div>
+                                        <textarea class="form-control form-edit d-none"
+                                            data-field="physical.allergy">None</textarea>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
 
-              <div class="card-body small">
-                <div class="row g-2">
+                <div class="row">
+                    <div class="col-6 mb-4">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span class="fw-semibold fst-italic">📋 Assessment & Training</span>
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">CES Score</label>
-                    <div class="form-view fst-italic" data-field="assessment.cesScore"></div>
-                    <input type="number" class="form-control form-edit d-none" value="85"
-                      data-field="assessment.cesScore">
-                  </div>
+                                <div class="action-btn">
+                                    <button class="btn btn-sm btn-outline-primary btn-edit">
+                                        <i class="fa fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-success btn-save d-none">
+                                        <i class="fa fa-save"></i> Save
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Marlin Test Score</label>
-                    <div class="form-view fst-italic" data-field="assessment.marlinScore"></div>
-                    <input type="number" class="form-control form-edit d-none" value="78"
-                      data-field="assessment.marlinScore">
-                  </div>
+                            <div class="card-body small">
+                                <div class="row g-2">
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Training Date</label>
-                    <div class="form-view fst-italic" data-field="assessment.trainingDate"></div>
-                    <input type="date" class="form-control form-edit d-none" value="2024-08-15"
-                      data-field="assessment.trainingDate">
-                  </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">CES Score</label>
+                                        <div class="form-view fst-italic" data-field="assessment.cesScore"></div>
+                                        <input type="number" class="form-control form-edit d-none" value="85"
+                                            data-field="assessment.cesScore">
+                                    </div>
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Evaluation</label>
-                    <div class="form-view fst-italic" data-field="assessment.evaluation"></div>
-                    <select class="form-select form-edit d-none" data-field="assessment.evaluation">
-                      <option value="Recommended">Recommended</option>
-                      <option value="Need Improvement">Need Improvement</option>
-                      <option value="Not Recommended">Not Recommended</option>
-                    </select>
-                  </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Marlin Test Score</label>
+                                        <div class="form-view fst-italic" data-field="assessment.marlinScore"></div>
+                                        <input type="number" class="form-control form-edit d-none" value="78"
+                                            data-field="assessment.marlinScore">
+                                    </div>
 
-                </div>
-              </div>
-            </div>
-          </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Psychometric Score</label>
+                                        <div class="form-view fst-italic" data-field="assessment.cesScore"></div>
+                                        <input type="number" class="form-control form-edit d-none" value="85"
+                                            data-field="assessment.cesScore">
+                                    </div>
 
-          <!-- Career & Placement -->
-          <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100" id="careerPlacementCard">
-              <div
-                class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-                role="alert" id="career-success-alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
-                  <use xlink:href="#check-circle-fill" />
-                </svg>
-                <div class="flex-grow-1">
-                  <span id="career-success-message"></span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">OTG Score</label>
+                                        <div class="form-view fst-italic" data-field="assessment.cesScore"></div>
+                                        <input type="number" class="form-control form-edit d-none" value="85"
+                                            data-field="assessment.cesScore">
+                                    </div>
 
-              <!-- Alert wrong Message  -->
-              <div
-                class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-                role="alert" id="career-error-alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
-                  <use xlink:href="#exclamation-triangle-fill" />
-                </svg>
-                <div class="flex-grow-1">
-                  <span id="career-error-message"></span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-              <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="fw-semibold fst-italic">🧭 Career & Placement</span>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Training Date</label>
+                                        <div class="form-view fst-italic" data-field="assessment.trainingDate"></div>
+                                        <input type="date" class="form-control form-edit d-none" value="2024-08-15"
+                                            data-field="assessment.trainingDate">
+                                    </div>
 
-                <div class="action-btn">
-                  <button class="btn btn-sm btn-outline-primary btn-edit">
-                    <i class="fa fa-edit"></i> Edit
-                  </button>
-                  <button class="btn btn-sm btn-success btn-save d-none">
-                    <i class="fa fa-save"></i> Save
-                  </button>
-                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
-                    Cancel
-                  </button>
-                </div>
-              </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Evaluation</label>
+                                        <div class="form-view fst-italic" data-field="assessment.evaluation"></div>
+                                        <select class="form-select form-edit d-none" data-field="assessment.evaluation">
+                                            <option value="Recommended">Recommended</option>
+                                            <option value="Need Improvement">Need Improvement</option>
+                                            <option value="Not Recommended">Not Recommended</option>
+                                        </select>
+                                    </div>
 
-              <div class="card-body small">
-                <div class="row g-2">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Rank Applied For</label>
-                    <div class="form-view fst-italic" data-field="career.rankApply"></div>
-                    <select class="form-select form-edit d-none" data-field="career.rankApply">
-                      <?php echo $optRank; ?>
-                    </select>
-                  </div>
+                    <!-- Career & Placement -->
+                    <div class="col-6 mb-4">
+                        <div class="card shadow-sm h-100" id="careerPlacementCard">
+                            <div class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                                role="alert" id="career-success-alert">
+                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                    aria-label="Success:">
+                                    <use xlink:href="#check-circle-fill" />
+                                </svg>
+                                <div class="flex-grow-1">
+                                    <span id="career-success-message"></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Vessel Applied For</label>
-                    <div class="form-view fst-italic" data-field="career.vesselApply"></div>
-                    <select class="form-select form-edit d-none" data-field="career.vesselApply">
-                      <?php echo $vesselname; ?>
-                    </select>
-                  </div>
+                            <!-- Alert wrong Message  -->
+                            <div class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                                role="alert" id="career-error-alert">
+                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                    aria-label="danger:">
+                                    <use xlink:href="#exclamation-triangle-fill" />
+                                </svg>
+                                <div class="flex-grow-1">
+                                    <span id="career-error-message"></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span class="fw-semibold fst-italic">🧭 Career & Placement</span>
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Crew Vessel Type</label>
-                    <div class="form-view fst-italic" data-field="career.vesselType"></div>
-                    <select class="form-select form-edit d-none" data-field="career.vesselType">
-                      <?php echo $optVessel; ?>
-                    </select>
-                  </div>
+                                <div class="action-btn">
+                                    <button class="btn btn-sm btn-outline-primary btn-edit">
+                                        <i class="fa fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-success btn-save d-none">
+                                        <i class="fa fa-save"></i> Save
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">
-                      Willing to Accept Lower Rank
-                    </label>
-                    <div class="form-view fst-italic" data-field="career.lowerRank"></div>
-                    <select class="form-select form-edit d-none" data-field="career.lowerRank">
-                      <option value="Yes">Yes</option>
-                      <option value="No">No</option>
-                    </select>
-                  </div>
+                            <div class="card-body small">
+                                <div class="row g-2">
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Available From</label>
-                    <div class="form-view fst-italic" data-field="career.availableDate"></div>
-                    <input type="date" class="form-control form-edit d-none" data-field="career.edt_availableDate">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Rank Applied For</label>
+                                        <div class="form-view fst-italic" data-field="career.rankApply"></div>
+                                        <select class="form-select form-edit d-none" data-field="career.rankApply">
+                                            <?php echo $optRank; ?>
+                                        </select>
+                                    </div>
 
-          <!-- HOME SALARY -->
-          <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100" id="salaryHomeCard">
-              <div
-                class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-                role="alert" id="home-success-alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
-                  <use xlink:href="#check-circle-fill" />
-                </svg>
-                <div class="flex-grow-1">
-                  <span id="home-success-message"></span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Vessel Applied For</label>
+                                        <div class="form-view fst-italic" data-field="career.vesselApply"></div>
+                                        <select class="form-select form-edit d-none" data-field="career.vesselApply">
+                                            <?php echo $vesselname; ?>
+                                        </select>
+                                    </div>
 
-              <!-- Alert wrong Message  -->
-              <div
-                class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-                role="alert" id="home-error-alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
-                  <use xlink:href="#exclamation-triangle-fill" />
-                </svg>
-                <div class="flex-grow-1">
-                  <span id="home-error-message"></span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-              <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="fw-semibold fst-italic">🏠 Home Salary</span>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Crew Vessel Type</label>
+                                        <div class="form-view fst-italic" data-field="career.vesselType"></div>
+                                        <select class="form-select form-edit d-none" data-field="career.vesselType">
+                                            <?php echo $optVessel; ?>
+                                        </select>
+                                    </div>
 
-                <div class="action-btn">
-                  <button class="btn btn-sm btn-outline-primary btn-edit">
-                    <i class="fa fa-edit"></i> Edit
-                  </button>
-                  <button class="btn btn-sm btn-success btn-save d-none">
-                    <i class="fa fa-save"></i> Save
-                  </button>
-                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
-                    Cancel
-                  </button>
-                </div>
-              </div>
-              <div class="card-body small">
-                <div class="row g-2">
-                  <!-- <div class="col-md-6">
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">
+                                            Willing to Accept Lower Rank
+                                        </label>
+                                        <div class="form-view fst-italic" data-field="career.lowerRank"></div>
+                                        <select class="form-select form-edit d-none" data-field="career.lowerRank">
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Available From</label>
+                                        <div class="form-view fst-italic" data-field="career.availableDate"></div>
+                                        <input type="date" class="form-control form-edit d-none"
+                                            data-field="career.edt_availableDate">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- HOME SALARY -->
+                    <div class="col-6 mb-4">
+                        <div class="card shadow-sm h-100" id="salaryHomeCard">
+                            <div class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                                role="alert" id="home-success-alert">
+                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                    aria-label="Success:">
+                                    <use xlink:href="#check-circle-fill" />
+                                </svg>
+                                <div class="flex-grow-1">
+                                    <span id="home-success-message"></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+
+                            <!-- Alert wrong Message  -->
+                            <div class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                                role="alert" id="home-error-alert">
+                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                    aria-label="danger:">
+                                    <use xlink:href="#exclamation-triangle-fill" />
+                                </svg>
+                                <div class="flex-grow-1">
+                                    <span id="home-error-message"></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span class="fw-semibold fst-italic">🏠 Home Salary</span>
+
+                                <div class="action-btn">
+                                    <button class="btn btn-sm btn-outline-primary btn-edit">
+                                        <i class="fa fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-success btn-save d-none">
+                                        <i class="fa fa-save"></i> Save
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body small">
+                                <div class="row g-2">
+                                    <!-- <div class="col-md-6">
                       <label class="form-label mb-0 fst-italic fw-semibold">Home Salary</label>
                       <div class="form-view fst-italic" data-field="salary.home.percentage_home_salary"></div>
                       <input type="text" class="form-control form-edit d-none" value="1500">
                     </div> -->
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Percentage</label>
-                    <div class="form-view fst-italic" data-field="salary.home.percentage"></div>
-                    <input type="number" class="form-control form-edit d-none" value="60"
-                      data-field="salary.home.percentage">
-                  </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Percentage</label>
+                                        <div class="form-view fst-italic" data-field="salary.home.percentage"></div>
+                                        <input type="number" class="form-control form-edit d-none" value="60"
+                                            data-field="salary.home.percentage">
+                                    </div>
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Bank Name</label>
-                    <div class="form-view fst-italic" data-field="salary.home.bank"></div>
-                    <input type="text" class="form-control form-edit d-none" value="BNI" data-field="salary.home.bank">
-                  </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Bank Name</label>
+                                        <div class="form-view fst-italic" data-field="salary.home.bank"></div>
+                                        <input type="text" class="form-control form-edit d-none" value="BNI"
+                                            data-field="salary.home.bank">
+                                    </div>
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Account Number</label>
-                    <div class="form-view fst-italic" data-field="salary.home.accountNo"></div>
-                    <input type="text" class="form-control form-edit d-none" value="1234567890"
-                      data-field="salary.home.accountNo">
-                  </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Account Number</label>
+                                        <div class="form-view fst-italic" data-field="salary.home.accountNo"></div>
+                                        <input type="text" class="form-control form-edit d-none" value="1234567890"
+                                            data-field="salary.home.accountNo">
+                                    </div>
 
-                  <div class="col-12">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Account Name</label>
-                    <div class="form-view fst-italic" data-field="salary.home.accountName"></div>
-                    <input type="text" class="form-control form-edit d-none" value="A LOLO GADING"
-                      data-field="salary.home.accountName">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                                    <div class="col-12">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Account Name</label>
+                                        <div class="form-view fst-italic" data-field="salary.home.accountName"></div>
+                                        <input type="text" class="form-control form-edit d-none" value="A LOLO GADING"
+                                            data-field="salary.home.accountName">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-          <!-- Board Salary -->
-          <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100" id="salaryBoardCard">
-              <div
-                class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-                role="alert" id="board-success-alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
-                  <use xlink:href="#check-circle-fill" />
-                </svg>
-                <div class="flex-grow-1">
-                  <span id="board-success-message"></span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
+                    <!-- Board Salary -->
+                    <div class="col-6 mb-4">
+                        <div class="card shadow-sm h-100" id="salaryBoardCard">
+                            <div class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                                role="alert" id="board-success-alert">
+                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                    aria-label="Success:">
+                                    <use xlink:href="#check-circle-fill" />
+                                </svg>
+                                <div class="flex-grow-1">
+                                    <span id="board-success-message"></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
 
-              <!-- Alert wrong Message  -->
-              <div
-                class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-                role="alert" id="board-error-alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
-                  <use xlink:href="#exclamation-triangle-fill" />
-                </svg>
-                <div class="flex-grow-1">
-                  <span id="board-error-message"></span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-              <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="fw-semibold fst-italic">🚢 Board Salary</span>
+                            <!-- Alert wrong Message  -->
+                            <div class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                                role="alert" id="board-error-alert">
+                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                    aria-label="danger:">
+                                    <use xlink:href="#exclamation-triangle-fill" />
+                                </svg>
+                                <div class="flex-grow-1">
+                                    <span id="board-error-message"></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span class="fw-semibold fst-italic">🚢 Board Salary</span>
 
-                <div class="action-btn">
-                  <button class="btn btn-sm btn-outline-primary btn-edit">
-                    <i class="fa fa-edit"></i> Edit
-                  </button>
-                  <button class="btn btn-sm btn-success btn-save d-none">
-                    <i class="fa fa-save"></i> Save
-                  </button>
-                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
-                    Cancel
-                  </button>
-                </div>
-              </div>
-              <div class="card-body small">
-                <div class="row g-2">
-                  <!-- <div class="col-md-6">
+                                <div class="action-btn">
+                                    <button class="btn btn-sm btn-outline-primary btn-edit">
+                                        <i class="fa fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-success btn-save d-none">
+                                        <i class="fa fa-save"></i> Save
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body small">
+                                <div class="row g-2">
+                                    <!-- <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Board Salary</label>
                     <div class="form-view fst-italic" data-field="salary.board.salary"></div>
                     <input type="text" class="form-control form-edit d-none" value="2500">
                   </div> -->
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Percentage</label>
-                    <div class="form-view fst-italic" data-field="salary.board.percentage"></div>
-                    <input type="number" class="form-control form-edit d-none" value="40"
-                      data-field="salary.board.percentage">
-                  </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Percentage</label>
+                                        <div class="form-view fst-italic" data-field="salary.board.percentage"></div>
+                                        <input type="number" class="form-control form-edit d-none" value="40"
+                                            data-field="salary.board.percentage">
+                                    </div>
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Bank Name</label>
-                    <div class="form-view fst-italic" data-field="salary.board.bank"></div>
-                    <input type="text" class="form-control form-edit d-none" value="Mandiri"
-                      data-field="salary.board.bank">
-                  </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Bank Name</label>
+                                        <div class="form-view fst-italic" data-field="salary.board.bank"></div>
+                                        <input type="text" class="form-control form-edit d-none" value="Mandiri"
+                                            data-field="salary.board.bank">
+                                    </div>
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Account Number</label>
-                    <div class="form-view fst-italic" data-field="salary.board.accountNo"></div>
-                    <input type="text" class="form-control form-edit d-none" value="9876543210"
-                      data-field="salary.board.accountNo">
-                  </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Account Number</label>
+                                        <div class="form-view fst-italic" data-field="salary.board.accountNo"></div>
+                                        <input type="text" class="form-control form-edit d-none" value="9876543210"
+                                            data-field="salary.board.accountNo">
+                                    </div>
 
-                  <div class="col-12">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Account Name</label>
-                    <div class="form-view fst-italic" data-field="salary.board.accountName"></div>
-                    <input type="text" class="form-control form-edit d-none" value="A LOLO GADING"
-                      data-field="salary.board.accountName">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                                    <div class="col-12">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Account Name</label>
+                                        <div class="form-view fst-italic" data-field="salary.board.accountName"></div>
+                                        <input type="text" class="form-control form-edit d-none" value="A LOLO GADING"
+                                            data-field="salary.board.accountName">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-          <!-- Attachments -->
-          <!-- <div class="col-6 mb-4">
+                    <!-- Attachments -->
+                    <!-- <div class="col-6 mb-4">
             <div class="card shadow-sm">
               <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="fw-semibold fst-italic">📎 Attachments</span>
@@ -1037,885 +1084,871 @@
             </div>
           </div> -->
 
-          <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100" id="declarationCard">
-              <div
-                class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-                role="alert" id="declaration-success-alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
-                  <use xlink:href="#check-circle-fill" />
-                </svg>
-                <div class="flex-grow-1">
-                  <span id="declaration-success-message"></span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
+                    <div class="col-6 mb-4">
+                        <div class="card shadow-sm h-100" id="declarationCard">
+                            <div class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                                role="alert" id="declaration-success-alert">
+                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                    aria-label="Success:">
+                                    <use xlink:href="#check-circle-fill" />
+                                </svg>
+                                <div class="flex-grow-1">
+                                    <span id="declaration-success-message"></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
 
-              <!-- Alert wrong Message  -->
-              <div
-                class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
-                role="alert" id="decralation-error-alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="danger:">
-                  <use xlink:href="#exclamation-triangle-fill" />
-                </svg>
-                <div class="flex-grow-1">
-                  <span id="decralation-error-message"></span>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>
-              <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="fw-semibold fst-italic">✍️ Declaration & Signature</span>
+                            <!-- Alert wrong Message  -->
+                            <div class="alert alert-danger  d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                                role="alert" id="decralation-error-alert">
+                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img"
+                                    aria-label="danger:">
+                                    <use xlink:href="#exclamation-triangle-fill" />
+                                </svg>
+                                <div class="flex-grow-1">
+                                    <span id="decralation-error-message"></span>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span class="fw-semibold fst-italic">✍️ Declaration & Signature</span>
 
-                <div class="action-btn">
-                  <button class="btn btn-sm btn-outline-primary btn-edit">
-                    <i class="fa fa-edit"></i> Edit
-                  </button>
-                  <button class="btn btn-sm btn-success btn-save d-none">
-                    <i class="fa fa-save"></i> Save
-                  </button>
-                  <button class="btn btn-sm btn-secondary btn-cancel d-none">
-                    Cancel
-                  </button>
-                </div>
-              </div>
+                                <div class="action-btn">
+                                    <button class="btn btn-sm btn-outline-primary btn-edit">
+                                        <i class="fa fa-edit"></i> Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-success btn-save d-none">
+                                        <i class="fa fa-save"></i> Save
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary btn-cancel d-none">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
 
-              <div class="card-body small">
-                <div class="row g-2">
+                            <div class="card-body small">
+                                <div class="row g-2">
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Sign Place</label>
-                    <div class="form-view fst-italic" data-field="declaration.signPlace"></div>
-                    <input type="text" class="form-control form-edit d-none" value="Jakarta"
-                      data-field="declaration.signPlace">
-                  </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Sign Place</label>
+                                        <div class="form-view fst-italic" data-field="declaration.signPlace"></div>
+                                        <input type="text" class="form-control form-edit d-none" value="Jakarta"
+                                            data-field="declaration.signPlace">
+                                    </div>
 
-                  <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Sign Date</label>
-                    <div class="form-view fst-italic" data-field="declaration.signDate"></div>
-                    <input type="date" class="form-control form-edit d-none" data-field="declaration.edt_signDate">
-                  </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Sign Date</label>
+                                        <div class="form-view fst-italic" data-field="declaration.signDate"></div>
+                                        <input type="date" class="form-control form-edit d-none"
+                                            data-field="declaration.edt_signDate">
+                                    </div>
 
-                  <div class="col-12">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Additional Remarks</label>
-                    <div class="form-view fst-italic" data-field="declaration.remarks">
+                                    <div class="col-12">
+                                        <label class="form-label mb-0 fst-italic fw-semibold">Additional Remarks</label>
+                                        <div class="form-view fst-italic" data-field="declaration.remarks">
+                                        </div>
+                                        <textarea class="form-control form-edit d-none" rows="3"
+                                            data-field="declaration.remarks">
+
+                                        </textarea>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <textarea class="form-control form-edit d-none" rows="3" data-field="declaration.remarks">
 
-              </textarea>
-                  </div>
+
+
 
                 </div>
-              </div>
             </div>
-          </div>
-
-
-
-
         </div>
-      </div>
-    </div>
 
 
-    <style>
-      /* KHUSUS PROFILE */
-      .profile-content {
-        font-size: 13px;
-      }
-
-      .profile-content .card-header {
-        font-size: 13px;
-      }
-
-      .profile-content strong {
-        font-size: 12.5px;
-      }
-
-      .profile-content small {
-        font-size: 12px;
-      }
-
-      .profile-content .form-label {
-        font-size: 12.5px;
-      }
-
-      .profile-content input,
-      .profile-content select {
-        font-size: 13px;
-      }
-    </style>
-
-    <script>
-      $(document).on('click', '.btn-edit', function () {
-        const card = $(this).closest('.card');
-
-        card.find('.form-view').addClass('d-none');
-        card.find('.form-edit').removeClass('d-none');
-
-        card.find('.btn-edit').addClass('d-none');
-        card.find('.btn-save, .btn-cancel').removeClass('d-none');
-
-      });
-
-      $(document).on('click', '.btn-cancel', function () {
-        const card = $(this).closest('.card');
-
-        card.find('.form-view').removeClass('d-none');
-        card.find('.form-edit').addClass('d-none');
-
-        card.find('.btn-edit').removeClass('d-none');
-        card.find('.btn-save, .btn-cancel').addClass('d-none');
-      });
-    </script>
-
-    <script>
-      $(document).ready(function () {
-        var id_person = "<?php echo $idperson; ?>";
-        loadProfile(id_person);
-      });
-
-      function loadProfile(id_person) {
-        $.ajax({
-          url: "<?php echo base_url('PersonDetail/getDataProses'); ?>",
-          type: "POST",
-          dataType: "json",
-          data: {
-            id: id_person,
-            type: "editProses"
-          },
-          success: function (res) {
-            if (!res.status) return alert(res.message);
-            renderProfile(res.data);
-          }
-        });
-      }
-    </script>
-
-
-
-    <script>
-      function renderProfile(data) {
-
-        // VIEW MODE
-        $('.form-view').each(function () {
-          var field = $(this).data('field');
-          if (!field) return;
-
-          var value = getValueByPath(data, field);
-          $(this).text(
-            value !== undefined && value !== null && value !== '' ? value : '-'
-          );
-        });
-
-        // EDIT MODE
-        $('.form-edit').each(function () {
-          var field = $(this).data('field');
-          if (!field) return;
-
-          var value = getValueByPath(data, field);
-
-          if ($(this).is('input, textarea, select')) {
-            $(this).val(value);
-          }
-
-          /*Contact Method Validate */
-          $('.form-edit input[type="checkbox"]').each(function () {
-
-            const field = $(this).data('field'); // contactMethod.email
-            if (!field) return;
-
-            const value = getValueByPath(data, field);
-
-            // console.log('CHECKBOX', field, '=>', value);
-
-            $(this).prop('checked', value == 1);
-
-          });
-
-
-
-        });
-
-        // FOTO
-        if (data.files && data.files.photo) {
-          $('#crewPhoto').attr(
-            'src',
-            "<?php echo base_url('uploads/crew/'); ?>" + data.files.photo
-          );
+        <style>
+        /* KHUSUS PROFILE */
+        .profile-content {
+            font-size: 13px;
         }
 
-        // HEADER
-        if (data.identity) {
-          $('.crew-name').text(data.identity.fullName);
-          $('.crew-id').text(data.identity.idperson);
-        }
-      }
-    </script>
-
-    <script>
-      function getValueByPath(obj, path) {
-        if (!obj || !path) return '';
-
-        var parts = path.split('.');
-        var result = obj;
-
-        for (var i = 0; i < parts.length; i++) {
-          if (result[parts[i]] === undefined) {
-            return '';
-          }
-          result = result[parts[i]];
+        .profile-content .card-header {
+            font-size: 13px;
         }
 
-        return result;
-      }
-    </script>
+        .profile-content strong {
+            font-size: 12.5px;
+        }
 
+        .profile-content small {
+            font-size: 12px;
+        }
 
-    <script>
-      /*Actin Basic Identity Save*/
-      $(document).ready(function () {
+        .profile-content .form-label {
+            font-size: 12.5px;
+        }
 
-        var id_person = "<?php echo $idperson; ?>";
-        var alert_success = $('#basic-success-alert');
-        var alert_error = $('#basic-danger-alert');
-        var success_message = $('#basic-success-message');
-        var error_message = $('#basic-error-message');
+        .profile-content input,
+        .profile-content select {
+            font-size: 13px;
+        }
+        </style>
 
-        $('#basicIdentityCard .btn-save').click(function () {
-          saveBasicIdentity();
+        <script>
+        $(document).on('click', '.btn-edit', function() {
+            const card = $(this).closest('.card');
+
+            card.find('.form-view').addClass('d-none');
+            card.find('.form-edit').removeClass('d-none');
+
+            card.find('.btn-edit').addClass('d-none');
+            card.find('.btn-save, .btn-cancel').removeClass('d-none');
+
         });
 
-        function saveBasicIdentity() {
-          // Reset
-          alert_success.addClass('d-none');
-          alert_error.addClass('d-none');
+        $(document).on('click', '.btn-cancel', function() {
+            const card = $(this).closest('.card');
 
-          var idperson = $('#contentArea').data('idperson');
-          var data = {
-            idperson: idperson,
-            oldCrewId: $('input[data-field="identity.oldCrewId"]').val(),
-            oldContractNo: $('input[data-field="identity.oldContractNo"]').val(),
-            seafarerCode: $('input[data-field="identity.seafarerCode"]').val(),
-            firstName: $('input[data-field="identity.firstName"]').val(),
-            middleName: $('input[data-field="identity.middleName"]').val(),
-            lastName: $('input[data-field="identity.lastName"]').val(),
-            gender: $('select[data-field="identity.gender"]').val(),
-            nationality: $('select[data-field="identity.nationality"]').val(),
-            countryOrigin: $('select[data-field="identity.countryOrigin"]').val(),
-            dob: $('input[data-field="identity.dobForEdit"]').val(),
-            pob: $('select[data-field="identity.pob"]').val(),
-            religion: $('select[data-field="identity.religion"]').val(),
-            maritalStatus: $('select[data-field="identity.maritalStatus"]').val()
-          };
+            card.find('.form-view').removeClass('d-none');
+            card.find('.form-edit').addClass('d-none');
 
-          // console.log('Saving basic identity data:', data);
+            card.find('.btn-edit').removeClass('d-none');
+            card.find('.btn-save, .btn-cancel').addClass('d-none');
+        });
 
-          $.ajax({
-            url: "<?php echo base_url('PersonDetail/updateBasicIdentity'); ?>",
-            type: "POST",
-            dataType: "json",
-            data: data,
-            success: function (res) {
-              if (res.status) {
-                loadProfile(id_person);
+        $(document).ready(function() {
+            var id_person = "<?php echo $idperson; ?>";
+            loadProfile(id_person);
+        });
 
-                success_message.text(res.message);
-                alert_success.removeClass('d-none');
-                setTimeout(function () {
-                  alert_success.addClass('d-none');
-                }, 3000);
+        function loadProfile(id_person) {
+            $.ajax({
+                url: "<?php echo base_url('PersonDetail/getDataProses'); ?>",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    id: id_person,
+                    type: "editProses"
+                },
+                success: function(res) {
+                    if (!res.status) return alert(res.message);
+                    renderProfile(res.data);
+                }
+            });
+        }
 
-                // Switch back to view mode
-                const card = $('.btn-save').closest('.card');
-                card.find('.form-view').removeClass('d-none');
-                card.find('.form-edit').addClass('d-none');
-                card.find('.btn-edit').removeClass('d-none');
-                card.find('.btn-save, .btn-cancel').addClass('d-none');
+        function renderProfile(data) {
 
-              } else {
-                // Tampilkan ERROR message - hanya ubah teks
-                error_message.text(res.message || 'Failed to update basic identity'); // ← Ini yang benar!
-                alert_error.removeClass('d-none');
-                setTimeout(function () {
-                  alert_error.addClass('d-none');
-                }, 5000);
-              }
-            },
-            error: function (xhr, status, error) {
-              console.error('AJAX Error:', xhr.responseText);
-              error_message.text('Failed to update basic identity: ' + error);
-              alert_error.removeClass('d-none');
-              setTimeout(function () {
+            // VIEW MODE
+            $('.form-view').each(function() {
+                var field = $(this).data('field');
+                if (!field) return;
+
+                var value = getValueByPath(data, field);
+                $(this).text(
+                    value !== undefined && value !== null && value !== '' ? value : '-'
+                );
+            });
+
+            // EDIT MODE
+            $('.form-edit').each(function() {
+                var field = $(this).data('field');
+                if (!field) return;
+
+                var value = getValueByPath(data, field);
+
+                if ($(this).is('input, textarea, select')) {
+                    $(this).val(value);
+                }
+
+                /*Contact Method Validate */
+                $('.form-edit input[type="checkbox"]').each(function() {
+
+                    const field = $(this).data('field'); // contactMethod.email
+                    if (!field) return;
+
+                    const value = getValueByPath(data, field);
+
+                    // console.log('CHECKBOX', field, '=>', value);
+
+                    $(this).prop('checked', value == 1);
+
+                });
+
+
+
+            });
+
+            // FOTO
+            if (data.files && data.files.photo) {
+                $('#crewPhoto').attr(
+                    'src',
+                    "<?php echo base_url('uploads/crew/'); ?>" + data.files.photo
+                );
+            }
+
+            // HEADER
+            if (data.identity) {
+                $('.crew-name').text(data.identity.fullName);
+                $('.crew-id').text(data.identity.idperson);
+            }
+        }
+
+        function getValueByPath(obj, path) {
+            if (!obj || !path) return '';
+
+            var parts = path.split('.');
+            var result = obj;
+
+            for (var i = 0; i < parts.length; i++) {
+                if (result[parts[i]] === undefined) {
+                    return '';
+                }
+                result = result[parts[i]];
+            }
+
+            return result;
+        }
+
+        /*Actin Basic Identity Save*/
+        $(document).ready(function() {
+
+            var id_person = "<?php echo $idperson; ?>";
+            var alert_success = $('#basic-success-alert');
+            var alert_error = $('#basic-danger-alert');
+            var success_message = $('#basic-success-message');
+            var error_message = $('#basic-error-message');
+
+            $('#basicIdentityCard .btn-save').click(function() {
+                saveBasicIdentity();
+            });
+
+            function saveBasicIdentity() {
+                // Reset
+                alert_success.addClass('d-none');
                 alert_error.addClass('d-none');
-              }, 5000);
+
+                var idperson = $('#contentArea').data('idperson');
+                var data = {
+                    idperson: idperson,
+                    oldCrewId: $('input[data-field="identity.oldCrewId"]').val(),
+                    oldContractNo: $('input[data-field="identity.oldContractNo"]').val(),
+                    seafarerCode: $('input[data-field="identity.seafarerCode"]').val(),
+                    firstName: $('input[data-field="identity.firstName"]').val(),
+                    middleName: $('input[data-field="identity.middleName"]').val(),
+                    lastName: $('input[data-field="identity.lastName"]').val(),
+                    gender: $('select[data-field="identity.gender"]').val(),
+                    nationality: $('select[data-field="identity.nationality"]').val(),
+                    countryOrigin: $('select[data-field="identity.countryOrigin"]').val(),
+                    dob: $('input[data-field="identity.dobForEdit"]').val(),
+                    pob: $('select[data-field="identity.pob"]').val(),
+                    religion: $('select[data-field="identity.religion"]').val(),
+                    maritalStatus: $('select[data-field="identity.maritalStatus"]').val()
+                };
+
+                // console.log('Saving basic identity data:', data);
+
+                $.ajax({
+                    url: "<?php echo base_url('PersonDetail/updateBasicIdentity'); ?>",
+                    type: "POST",
+                    dataType: "json",
+                    data: data,
+                    success: function(res) {
+                        if (res.status) {
+                            loadProfile(id_person);
+
+                            success_message.text(res.message);
+                            alert_success.removeClass('d-none');
+                            setTimeout(function() {
+                                alert_success.addClass('d-none');
+                            }, 3000);
+
+                            // Switch back to view mode
+                            const card = $('.btn-save').closest('.card');
+                            card.find('.form-view').removeClass('d-none');
+                            card.find('.form-edit').addClass('d-none');
+                            card.find('.btn-edit').removeClass('d-none');
+                            card.find('.btn-save, .btn-cancel').addClass('d-none');
+
+                        } else {
+                            // Tampilkan ERROR message - hanya ubah teks
+                            error_message.text(res.message ||
+                                'Failed to update basic identity'); // ← Ini yang benar!
+                            alert_error.removeClass('d-none');
+                            setTimeout(function() {
+                                alert_error.addClass('d-none');
+                            }, 5000);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', xhr.responseText);
+                        error_message.text('Failed to update basic identity: ' + error);
+                        alert_error.removeClass('d-none');
+                        setTimeout(function() {
+                            alert_error.addClass('d-none');
+                        }, 5000);
+                    }
+                });
             }
-          });
-        }
 
-      });
-    </script>
-
-    <script>
-      /* Family Information actions start*/
-      $(document).ready(function () {
-        var id_person = "<?php echo $idperson; ?>";
-        var alert_success = $('#family-success-alert');
-        var success_message = $('#family-success-message');
-
-        var error_message = $('#family-error-message');
-        var alert_error = $('#family-error-alert');
-
-
-        $('.btn-close').on('click', function () {
-          $(this).closest('.alert').addClass('d-none');
         });
 
-        $('#familyinformation .btn-save').click(function () {
-          saveFamilyInfo();
-        });
+        /* Family Information actions start*/
+        $(document).ready(function() {
+            var id_person = "<?php echo $idperson; ?>";
+            var alert_success = $('#family-success-alert');
+            var success_message = $('#family-success-message');
+
+            var error_message = $('#family-error-message');
+            var alert_error = $('#family-error-alert');
 
 
-        function saveFamilyInfo() {
-          var idperson = $('#contentArea').data('idperson');
-          // Reset alert terlebih dahulu
-          alert_error.addClass('d-none');
-          alert_success.addClass('d-none');
+            $('.btn-close').on('click', function() {
+                $(this).closest('.alert').addClass('d-none');
+            });
 
-          var data = {
-            idperson: idperson,
-            fatherName: $('input[data-field="family.fatherName"]').val(), // fatherName bukan father.name
-            motherName: $('input[data-field="family.motherName"]').val(), // motherName bukan mother.name
-            wifeName: $('input[data-field="family.wifeName"]').val(), // wifeName bukan wife.name
-            nextOfKin: $('input[data-field="family.nextOfKin"]').val() // Tambah nextOfKin
-          };
-          // let isFatherNameValid = validateChildField(
-          //   'fatherName',
-          //   'fatherNameFeedback'
-          // );
+            $('#familyinformation .btn-save').click(function() {
+                saveFamilyInfo();
+            });
 
-          // let isMotherNameValid = validateChildField(
-          //   'motherName',
-          //   'motherNameFeedback'
-          // );
 
-          // let isAddressValid = validateChildField(
-          //   'address',
-          //   'addressFeedback'
-          // );
-
-          // if (!isFatherNameValid || !isMotherNameValid || !isAddressValid) {
-          //   return false;
-          // }
-
-          // var data = {
-          //   idperson: idperson,
-          //   fatherName: fatherName,
-          //   motherName: motherName,
-          //   wifeName: $('input[data-field="family.wife.name"]').val(),
-          // };
-
-          console.log('Saving family data:', data);
-          // return false;
-
-          $.ajax({
-            url: "<?php echo base_url('PersonDetail/updateFamilyInfo'); ?>",
-            type: "POST",
-            dataType: "json",
-            data: data,
-            success: function (res) {
-              // console.log('Response:', res);
-              if (res.status) {
-                loadProfile(id_person);
-                success_message.text(res.message);
-                alert_success.removeClass('d-none');
-                setTimeout(function () {
-                  alert_success.addClass('d-none');
-                }, 3000);
-
-                // Switch back to view mode
-                const card = $('.btn-save').closest('.card');
-                card.find('.form-view').removeClass('d-none');
-                card.find('.form-edit').addClass('d-none');
-                card.find('.btn-edit').removeClass('d-none');
-                card.find('.btn-save, .btn-cancel').addClass('d-none');
-
-                // Update view dengan data baru
-                $('.form-view[data-field="family.father.name"]').text(data.fatherName || '');
-                $('.form-view[data-field="family.mother.name"]').text(data.motherName || '');
-                $('.form-view[data-field="family.wife.name"]').text(data.wifeName || '');
-                $('.form-view[data-field="family.address"]').text(data.address || '');
-
-              } else {
-                error_message.text(res.message || 'Failed to update family information');
-                alert_error.removeClass('d-none');
-                setTimeout(function () {
-                  alert_error.addClass('d-none');
-                }, 5000);
-              }
-            },
-            error: function (xhr, status, error) {
-              $('.btn-save').prop('disabled', false).html('<i class="fa fa-save"></i> Save');
-              console.error('AJAX Error:', xhr.responseText);
-
-              error_message.text('Failed to update family information: ' + error);
-              alert_error.removeClass('d-none');
-              setTimeout(function () {
+            function saveFamilyInfo() {
+                var idperson = $('#contentArea').data('idperson');
+                // Reset alert terlebih dahulu
                 alert_error.addClass('d-none');
-              }, 5000);
+                alert_success.addClass('d-none');
+
+                var data = {
+                    idperson: idperson,
+                    fatherName: $('input[data-field="family.fatherName"]')
+                        .val(), // fatherName bukan father.name
+                    motherName: $('input[data-field="family.motherName"]')
+                        .val(), // motherName bukan mother.name
+                    wifeName: $('input[data-field="family.wifeName"]').val(), // wifeName bukan wife.name
+                    nextOfKin: $('input[data-field="family.nextOfKin"]').val() // Tambah nextOfKin
+                };
+                // let isFatherNameValid = validateChildField(
+                //   'fatherName',
+                //   'fatherNameFeedback'
+                // );
+
+                // let isMotherNameValid = validateChildField(
+                //   'motherName',
+                //   'motherNameFeedback'
+                // );
+
+                // let isAddressValid = validateChildField(
+                //   'address',
+                //   'addressFeedback'
+                // );
+
+                // if (!isFatherNameValid || !isMotherNameValid || !isAddressValid) {
+                //   return false;
+                // }
+
+                // var data = {
+                //   idperson: idperson,
+                //   fatherName: fatherName,
+                //   motherName: motherName,
+                //   wifeName: $('input[data-field="family.wife.name"]').val(),
+                // };
+
+                console.log('Saving family data:', data);
+                // return false;
+
+                $.ajax({
+                    url: "<?php echo base_url('PersonDetail/updateFamilyInfo'); ?>",
+                    type: "POST",
+                    dataType: "json",
+                    data: data,
+                    success: function(res) {
+                        // console.log('Response:', res);
+                        if (res.status) {
+                            loadProfile(id_person);
+                            success_message.text(res.message);
+                            alert_success.removeClass('d-none');
+                            setTimeout(function() {
+                                alert_success.addClass('d-none');
+                            }, 3000);
+
+                            // Switch back to view mode
+                            const card = $('.btn-save').closest('.card');
+                            card.find('.form-view').removeClass('d-none');
+                            card.find('.form-edit').addClass('d-none');
+                            card.find('.btn-edit').removeClass('d-none');
+                            card.find('.btn-save, .btn-cancel').addClass('d-none');
+
+                            // Update view dengan data baru
+                            $('.form-view[data-field="family.father.name"]').text(data.fatherName ||
+                                '');
+                            $('.form-view[data-field="family.mother.name"]').text(data.motherName ||
+                                '');
+                            $('.form-view[data-field="family.wife.name"]').text(data.wifeName ||
+                                '');
+                            $('.form-view[data-field="family.address"]').text(data.address || '');
+
+                        } else {
+                            error_message.text(res.message ||
+                                'Failed to update family information');
+                            alert_error.removeClass('d-none');
+                            setTimeout(function() {
+                                alert_error.addClass('d-none');
+                            }, 5000);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('.btn-save').prop('disabled', false).html(
+                            '<i class="fa fa-save"></i> Save');
+                        console.error('AJAX Error:', xhr.responseText);
+
+                        error_message.text('Failed to update family information: ' + error);
+                        alert_error.removeClass('d-none');
+                        setTimeout(function() {
+                            alert_error.addClass('d-none');
+                        }, 5000);
+                    }
+                });
             }
-          });
-        }
-      });
-    </script>
-
-    <script>
-      /* Tax & Social Security */
-      $(document).ready(function () {
-        var alert_success = $('#tax-success-alert');
-        var success_message = $('#tax-success-message');
-        var error_message = $('#tax-error-message');
-        var alert_error = $('#tax-error-alert');
-        var id_person = "<?php echo $idperson; ?>";
-
-        $('#legalTaxCard .btn-save').click(function () {
-          saveLegalTax(id_person);
-          console.log('Save Legal & Tax clicked');
         });
 
-        function saveLegalTax(id_person) {
-          var idperson = id_person;
-          alert_error.addClass('d-none');
-          alert_success.addClass('d-none');
+        /* Tax & Social Security */
+        $(document).ready(function() {
+            var alert_success = $('#tax-success-alert');
+            var success_message = $('#tax-success-message');
+            var error_message = $('#tax-error-message');
+            var alert_error = $('#tax-error-alert');
+            var id_person = "<?php echo $idperson; ?>";
 
-          // Ambil data dari input fields
-          var data = {
-            idperson: idperson,
-            ssn: $('input[data-field="legal.ssn"]').val(),
-            ssnCountry: $('select[data-field="legal.ssnCountry"]').val(),
-            taxNumber: $('input[data-field="legal.taxNumber"]').val(),
-            taxCountry: $('select[data-field="legal.taxCountry"]').val(),
-            taxStatus: $('select[data-field="legal.taxStatus"]').val()
-          };
+            $('#legalTaxCard .btn-save').click(function() {
+                saveLegalTax(id_person);
+                console.log('Save Legal & Tax clicked');
+            });
 
-          // console.log('Saving legal & tax data:', data);
-          // return false;
-          $.ajax({
-            url: "<?php echo base_url('PersonDetail/updateLegalTax'); ?>",
-            type: "POST",
-            dataType: "json",
-            data: data,
-            success: function (res) {
-              if (res.status) {
-                loadProfile(id_person);
-                success_message.text(res.message);
-                alert_success.removeClass('d-none');
-                setTimeout(function () {
-                  alert_success.addClass('d-none');
-                }, 3000);
-
-                const card = $('#legalTaxCard');
-                card.find('.form-view').removeClass('d-none');
-                card.find('.form-edit').addClass('d-none');
-                card.find('.btn-edit').removeClass('d-none');
-                card.find('.btn-save, .btn-cancel').addClass('d-none');
-              } else {
-                error_message.text(res.message || 'Failed to update legal & tax information');
-                alert_error.removeClass('d-none');
-                setTimeout(function () {
-                  alert_error.addClass('d-none');
-                }, 5000);
-              }
-            },
-            error: function (xhr, status, error) {
-              console.error('AJAX Error:', xhr.responseText);
-              error_message.text('Failed to update legal & tax information');
-              alert_error.removeClass('d-none');
-              setTimeout(function () {
+            function saveLegalTax(id_person) {
+                var idperson = id_person;
                 alert_error.addClass('d-none');
-              }, 5000);
+                alert_success.addClass('d-none');
+
+                // Ambil data dari input fields
+                var data = {
+                    idperson: idperson,
+                    ssn: $('input[data-field="legal.ssn"]').val(),
+                    ssnCountry: $('select[data-field="legal.ssnCountry"]').val(),
+                    taxNumber: $('input[data-field="legal.taxNumber"]').val(),
+                    taxCountry: $('select[data-field="legal.taxCountry"]').val(),
+                    taxStatus: $('select[data-field="legal.taxStatus"]').val()
+                };
+
+                // console.log('Saving legal & tax data:', data);
+                // return false;
+                $.ajax({
+                    url: "<?php echo base_url('PersonDetail/updateLegalTax'); ?>",
+                    type: "POST",
+                    dataType: "json",
+                    data: data,
+                    success: function(res) {
+                        if (res.status) {
+                            loadProfile(id_person);
+                            success_message.text(res.message);
+                            alert_success.removeClass('d-none');
+                            setTimeout(function() {
+                                alert_success.addClass('d-none');
+                            }, 3000);
+
+                            const card = $('#legalTaxCard');
+                            card.find('.form-view').removeClass('d-none');
+                            card.find('.form-edit').addClass('d-none');
+                            card.find('.btn-edit').removeClass('d-none');
+                            card.find('.btn-save, .btn-cancel').addClass('d-none');
+                        } else {
+                            error_message.text(res.message ||
+                                'Failed to update legal & tax information');
+                            alert_error.removeClass('d-none');
+                            setTimeout(function() {
+                                alert_error.addClass('d-none');
+                            }, 5000);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', xhr.responseText);
+                        error_message.text('Failed to update legal & tax information');
+                        alert_error.removeClass('d-none');
+                        setTimeout(function() {
+                            alert_error.addClass('d-none');
+                        }, 5000);
+                    }
+                });
             }
-          });
-        }
 
-      });
-    </script>
-
-    <script>
-      /* Contact & Address */
-      $(document).ready(function () {
-        var alert_success = $('#contact-success-alert');
-        var success_message = $('#contact-success-message');
-        var error_message = $('#contact-error-message');
-        var alert_error = $('#contact-error-alert');
-
-        $('#contactAddressCard .btn-save').click(function () {
-          saveContactAddress();
-          console.log('Save Contact & Address clicked');
         });
 
-        function saveContactAddress() {
-          var idperson = $('#contentArea').data('idperson');
-          alert_error.addClass('d-none');
-          alert_success.addClass('d-none');
+        /* Contact & Address */
+        $(document).ready(function() {
+            var alert_success = $('#contact-success-alert');
+            var success_message = $('#contact-success-message');
+            var error_message = $('#contact-error-message');
+            var alert_error = $('#contact-error-alert');
 
-          var data = {
-            idperson: idperson,
-            address: $('textarea[data-field="contact.address"]').val(),
-            city: $('select[data-field="contact.city"]').val(),
-            postcode: $('input[data-field="contact.postcode"]').val(),
-            country: $('select[data-field="contact.country"]').val(),
-            airport: $('select[data-field="contact.airport"]').val(),
-            mobile: $('input[data-field="contact.mobile"]').val(),
-            home: $('input[data-field="contact.home"]').val(),
-            fax: $('input[data-field="contact.fax"]').val(),
-            email: $('input[data-field="contact.email"]').val(),
+            $('#contactAddressCard .btn-save').click(function() {
+                saveContactAddress();
+                console.log('Save Contact & Address clicked');
+            });
 
-            conmthEmail: $('input[data-field="contactMethod.email"]').is(':checked') ? 1 : 0,
-            conmthFax: $('input[data-field="contactMethod.fax"]').is(':checked') ? 1 : 0,
-            conmthMob: $('input[data-field="contactMethod.mobile"]').is(':checked') ? 1 : 0,
-            conmthHom: $('input[data-field="contactMethod.home"]').is(':checked') ? 1 : 0,
-            conmthPost: $('input[data-field="contactMethod.post"]').is(':checked') ? 1 : 0
-
-          };
-
-          $.ajax({
-            url: "<?php echo base_url('PersonDetail/updateContact'); ?>",
-            type: "POST",
-            dataType: "json",
-            data: data,
-            success: function (res) {
-              if (res.status) {
-                loadProfile(idperson);
-                success_message.text(res.message);
-                alert_success.removeClass('d-none');
-                setTimeout(function () {
-                  alert_success.addClass('d-none');
-                }, 3000);
-
-                const card = $('#contactAddressCard');
-                card.find('.form-view').removeClass('d-none');
-                card.find('.form-edit').addClass('d-none');
-                card.find('.btn-edit').removeClass('d-none');
-                card.find('.btn-save, .btn-cancel').addClass('d-none');
-              } else {
-                error_message.text(res.message || 'Failed to update legal & tax information');
-                alert_error.removeClass('d-none');
-                setTimeout(function () {
-                  alert_error.addClass('d-none');
-                }, 5000);
-              }
-            },
-            error: function (xhr, status, error) {
-              console.error('AJAX Error:', xhr.responseText);
-              error_message.text('Failed to update legal & tax information');
-              alert_error.removeClass('d-none');
-              setTimeout(function () {
+            function saveContactAddress() {
+                var idperson = $('#contentArea').data('idperson');
                 alert_error.addClass('d-none');
-              }, 5000);
+                alert_success.addClass('d-none');
+
+                var data = {
+                    idperson: idperson,
+                    address: $('textarea[data-field="contact.address"]').val(),
+                    city: $('select[data-field="contact.city"]').val(),
+                    postcode: $('input[data-field="contact.postcode"]').val(),
+                    country: $('select[data-field="contact.country"]').val(),
+                    airport: $('select[data-field="contact.airport"]').val(),
+                    mobile: $('input[data-field="contact.mobile"]').val(),
+                    home: $('input[data-field="contact.home"]').val(),
+                    fax: $('input[data-field="contact.fax"]').val(),
+                    email: $('input[data-field="contact.email"]').val(),
+
+                    conmthEmail: $('input[data-field="contactMethod.email"]').is(':checked') ? 1 : 0,
+                    conmthFax: $('input[data-field="contactMethod.fax"]').is(':checked') ? 1 : 0,
+                    conmthMob: $('input[data-field="contactMethod.mobile"]').is(':checked') ? 1 : 0,
+                    conmthHom: $('input[data-field="contactMethod.home"]').is(':checked') ? 1 : 0,
+                    conmthPost: $('input[data-field="contactMethod.post"]').is(':checked') ? 1 : 0
+
+                };
+
+                $.ajax({
+                    url: "<?php echo base_url('PersonDetail/updateContact'); ?>",
+                    type: "POST",
+                    dataType: "json",
+                    data: data,
+                    success: function(res) {
+                        if (res.status) {
+                            loadProfile(idperson);
+                            success_message.text(res.message);
+                            alert_success.removeClass('d-none');
+                            setTimeout(function() {
+                                alert_success.addClass('d-none');
+                            }, 3000);
+
+                            const card = $('#contactAddressCard');
+                            card.find('.form-view').removeClass('d-none');
+                            card.find('.form-edit').addClass('d-none');
+                            card.find('.btn-edit').removeClass('d-none');
+                            card.find('.btn-save, .btn-cancel').addClass('d-none');
+                        } else {
+                            error_message.text(res.message ||
+                                'Failed to update legal & tax information');
+                            alert_error.removeClass('d-none');
+                            setTimeout(function() {
+                                alert_error.addClass('d-none');
+                            }, 5000);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', xhr.responseText);
+                        error_message.text('Failed to update legal & tax information');
+                        alert_error.removeClass('d-none');
+                        setTimeout(function() {
+                            alert_error.addClass('d-none');
+                        }, 5000);
+                    }
+                });
             }
-          });
+        });
+
+        /* Physical & Medical */
+        $(document).ready(function() {
+            var alert_success = $('#physical-success-alert');
+            var success_message = $('#physical-success-message');
+            var error_message = $('#physical-error-message');
+            var alert_error = $('#physical-error-alert');
+
+            $('#physicalMedicalCard .btn-save').on('click', function() {
+                savePhysicalMedical();
+            });
+
+            function savePhysicalMedical() {
+                var id_person = $('#contentArea').data('idperson');
+                alert_error.addClass('d-none');
+                alert_success.addClass('d-none');
+
+                var data = {
+                    idperson: id_person,
+                    bloodType: $('select[data-field="physical.bloodType"]').val(),
+                    eyeColor: $('input[data-field="physical.eyeColor"]').val(),
+                    weight: $('input[data-field="physical.weight"]').val(),
+                    height: $('input[data-field="physical.height"]').val(),
+                    shoes: $('input[data-field="physical.shoesz"]').val(),
+                    collar: $('input[data-field="physical.collar"]').val(),
+                    chest: $('input[data-field="physical.chest"]').val(),
+                    waist: $('input[data-field="physical.waist"]').val(),
+                    insideLeg: $('input[data-field="physical.Insdleg"]').val(),
+                    clothesSize: $('select[data-field="physical.clothesSize"]').val(),
+                    boilerSize: $('select[data-field="physical.boilerszid"]').val(),
+                    heightPhobia: $('select[data-field="physical.heightPhobia"]').val(),
+                    claustrophob: $('select[data-field="physical.claustrophob"]').val(),
+                    allergy: $('textarea[data-field="physical.allergy"]').val()
+                };
+
+                // console.log('Saving physical & medical data:', data);
+                // return false;
+
+                $.ajax({
+                    url: "<?php echo base_url('PersonDetail/updatePhysicalMedical'); ?>",
+                    type: "POST",
+                    dataType: "json",
+                    data: data,
+                    success: function(res) {
+                        if (res.status) {
+                            loadProfile(id_person);
+
+                            success_message.text(res.message);
+                            alert_success.removeClass('d-none');
+
+                            setTimeout(function() {
+                                alert_success.addClass('d-none');
+                            }, 3000);
+
+                            const card = $('#physicalMedicalCard');
+                            card.find('.form-view').removeClass('d-none');
+                            card.find('.form-edit').addClass('d-none');
+                            card.find('.btn-edit').removeClass('d-none');
+                            card.find('.btn-save, .btn-cancel').addClass('d-none');
+
+                        } else {
+                            error_message.text(res.message || 'Failed to update physical data');
+                            alert_error.removeClass('d-none');
+                        }
+                    },
+                    error: function() {
+                        error_message.text('Server error');
+                        alert_error.removeClass('d-none');
+                    }
+                });
+            }
+
+        });
+
+        /* Career & Placement */
+        $(document).ready(function() {
+            var id_person = "<?php echo $idperson; ?>";
+            var alert_success = $('#career-success-alert');
+            var success_message = $('#career-success-message');
+            var error_message = $('#career-error-message');
+            var alert_error = $('#career-error-alert');
+
+            $('#careerPlacementCard .btn-save').on('click', function() {
+                saveCareerPlacement(id_person);
+            });
+        });
+
+        function saveCareerPlacement(id_person) {
+
+            alert_error.addClass('d-none');
+            alert_success.addClass('d-none');
+
+            var data = {
+                idperson: id_person,
+                rankApply: $('select[data-field="career.rankApply"]').val(),
+                vesselApply: $('select[data-field="career.vesselApply"]').val(),
+                vesselType: $('select[data-field="career.vesselType"]').val(),
+                availableDate: $('input[data-field="career.edt_availableDate"]').val(),
+                lowerRank: $('select[data-field="career.lowerRank"]').val()
+            };
+
+            $.ajax({
+                url: "<?php echo base_url('PersonDetail/updateCareerPlacement'); ?>",
+                type: "POST",
+                dataType: "json",
+                data: data,
+                success: function(res) {
+                    if (res.status) {
+                        loadProfile(id_person);
+
+                        success_message.text(res.message);
+                        alert_success.removeClass('d-none');
+
+                        setTimeout(() => alert_success.addClass('d-none'), 3000);
+
+                        const card = $('#careerPlacementCard');
+                        card.find('.form-view').removeClass('d-none');
+                        card.find('.form-edit').addClass('d-none');
+                        card.find('.btn-edit').removeClass('d-none');
+                        card.find('.btn-save, .btn-cancel').addClass('d-none');
+
+                    } else {
+                        error_message.text(res.message || 'Failed to update career & placement');
+                        alert_error.removeClass('d-none');
+                    }
+                },
+                error: function() {
+                    error_message.text('Server error');
+                    alert_error.removeClass('d-none');
+                }
+            });
         }
-      });
-    </script>
 
-    <script>
-      /* Physical & Medical */
-      $(document).ready(function () {
-        var alert_success = $('#physical-success-alert');
-        var success_message = $('#physical-success-message');
-        var error_message = $('#physical-error-message');
-        var alert_error = $('#physical-error-alert');
+        /* Home Salary */
+        $(document).ready(function() {
+            var idperson = "<?php echo $idperson; ?>";
+            var alert_success = $('#home-success-alert');
+            var success_message = $('#home-success-message');
+            var error_message = $('#home-error-message');
+            var alert_error = $('#home-error-alert');
 
-        $('#physicalMedicalCard .btn-save').on('click', function () {
-          savePhysicalMedical();
-        });
+            $('#salaryHomeCard .btn-save').click(function() {
+                saveSalaryHome(idperson);
+            });
 
-        function savePhysicalMedical() {
-          var id_person = $('#contentArea').data('idperson');
-          alert_error.addClass('d-none');
-          alert_success.addClass('d-none');
+            function saveSalaryHome(idperson) {
+                var data = {
+                    idperson: idperson,
+                    bank_home: $('input[data-field="salary.home.bank"]').val(),
+                    norek_home: $('input[data-field="salary.home.accountNo"]').val(),
+                    norek_name_home: $('input[data-field="salary.home.accountName"]').val(),
+                    percentage_home: $('input[data-field="salary.home.percentage"]').val()
+                };
 
-          var data = {
-            idperson: id_person,
-            bloodType: $('select[data-field="physical.bloodType"]').val(),
-            eyeColor: $('input[data-field="physical.eyeColor"]').val(),
-            weight: $('input[data-field="physical.weight"]').val(),
-            height: $('input[data-field="physical.height"]').val(),
-            shoes: $('input[data-field="physical.shoesz"]').val(),
-            collar: $('input[data-field="physical.collar"]').val(),
-            chest: $('input[data-field="physical.chest"]').val(),
-            waist: $('input[data-field="physical.waist"]').val(),
-            insideLeg: $('input[data-field="physical.Insdleg"]').val(),
-            clothesSize: $('select[data-field="physical.clothesSize"]').val(),
-            boilerSize: $('select[data-field="physical.boilerszid"]').val(),
-            heightPhobia: $('select[data-field="physical.heightPhobia"]').val(),
-            claustrophob: $('select[data-field="physical.claustrophob"]').val(),
-            allergy: $('textarea[data-field="physical.allergy"]').val()
-          };
+                $.ajax({
+                    url: "<?php echo base_url('PersonDetail/updateSalaryHome'); ?>",
+                    type: "POST",
+                    dataType: "json",
+                    data: data,
+                    success: function(res) {
+                        if (res.status) {
+                            loadProfile(idperson);
 
-          // console.log('Saving physical & medical data:', data);
-          // return false;
+                            success_message.text(res.message);
+                            alert_success.removeClass('d-none');
 
-          $.ajax({
-            url: "<?php echo base_url('PersonDetail/updatePhysicalMedical'); ?>",
-            type: "POST",
-            dataType: "json",
-            data: data,
-            success: function (res) {
-              if (res.status) {
-                loadProfile(id_person);
+                            setTimeout(() => alert_success.addClass('d-none'), 3000);
 
-                success_message.text(res.message);
-                alert_success.removeClass('d-none');
-
-                setTimeout(function () {
-                  alert_success.addClass('d-none');
-                }, 3000);
-
-                const card = $('#physicalMedicalCard');
-                card.find('.form-view').removeClass('d-none');
-                card.find('.form-edit').addClass('d-none');
-                card.find('.btn-edit').removeClass('d-none');
-                card.find('.btn-save, .btn-cancel').addClass('d-none');
-
-              } else {
-                error_message.text(res.message || 'Failed to update physical data');
-                alert_error.removeClass('d-none');
-              }
-            },
-            error: function () {
-              error_message.text('Server error');
-              alert_error.removeClass('d-none');
+                            const card = $('#salaryHomeCard');
+                            card.find('.form-view').removeClass('d-none');
+                            card.find('.form-edit').addClass('d-none');
+                            card.find('.btn-edit').removeClass('d-none');
+                            card.find('.btn-save, .btn-cancel').addClass('d-none');
+                        } else {
+                            error_message.text(res.message || 'Failed to update home salary');
+                            alert_error.removeClass('d-none');
+                        }
+                    },
+                    error: function() {
+                        error_message.text('Server error');
+                        alert_error.removeClass('d-none');
+                    }
+                });
             }
-          });
-        }
-
-      });
-    </script>
-
-    <script>
-      /* Career & Placement */
-      $(document).ready(function () {
-        var id_person = "<?php echo $idperson; ?>";
-        var alert_success = $('#career-success-alert');
-        var success_message = $('#career-success-message');
-        var error_message = $('#career-error-message');
-        var alert_error = $('#career-error-alert');
-
-        $('#careerPlacementCard .btn-save').on('click', function () {
-          saveCareerPlacement(id_person);
         });
-      });
 
-      function saveCareerPlacement(id_person) {
+        /* Board  Salary */
+        $(document).ready(function() {
+            var idperson = "<?php echo $idperson; ?>";
+            var alert_success = $('#board-success-alert');
+            var success_message = $('#board-success-message');
+            var error_message = $('#board-error-message');
+            var alert_error = $('#board-error-alert');
 
-        alert_error.addClass('d-none');
-        alert_success.addClass('d-none');
+            $('#salaryBoardCard .btn-save').click(function() {
+                saveSalaryBoard(idperson);
+            });
 
-        var data = {
-          idperson: id_person,
-          rankApply: $('select[data-field="career.rankApply"]').val(),
-          vesselApply: $('select[data-field="career.vesselApply"]').val(),
-          vesselType: $('select[data-field="career.vesselType"]').val(),
-          availableDate: $('input[data-field="career.edt_availableDate"]').val(),
-          lowerRank: $('select[data-field="career.lowerRank"]').val()
-        };
+            function saveSalaryBoard(idperson) {
+                var data = {
+                    idperson: idperson,
+                    bank_board: $('input[data-field="salary.board.bank"]').val(),
+                    norek_board: $('input[data-field="salary.board.accountNo"]').val(),
+                    norek_name_board: $('input[data-field="salary.board.accountName"]').val(),
+                    percentage_board: $('input[data-field="salary.board.percentage"]').val()
+                };
 
-        $.ajax({
-          url: "<?php echo base_url('PersonDetail/updateCareerPlacement'); ?>",
-          type: "POST",
-          dataType: "json",
-          data: data,
-          success: function (res) {
-            if (res.status) {
-              loadProfile(id_person);
+                $.ajax({
+                    url: "<?php echo base_url('PersonDetail/updateSalaryBoard'); ?>",
+                    type: "POST",
+                    dataType: "json",
+                    data: data,
+                    success: function(res) {
+                        if (res.status) {
+                            loadProfile(idperson);
 
-              success_message.text(res.message);
-              alert_success.removeClass('d-none');
+                            success_message.text(res.message);
+                            alert_success.removeClass('d-none');
 
-              setTimeout(() => alert_success.addClass('d-none'), 3000);
+                            setTimeout(() => alert_success.addClass('d-none'), 3000);
 
-              const card = $('#careerPlacementCard');
-              card.find('.form-view').removeClass('d-none');
-              card.find('.form-edit').addClass('d-none');
-              card.find('.btn-edit').removeClass('d-none');
-              card.find('.btn-save, .btn-cancel').addClass('d-none');
-
-            } else {
-              error_message.text(res.message || 'Failed to update career & placement');
-              alert_error.removeClass('d-none');
+                            const card = $('#salaryBoardCard');
+                            card.find('.form-view').removeClass('d-none');
+                            card.find('.form-edit').addClass('d-none');
+                            card.find('.btn-edit').removeClass('d-none');
+                            card.find('.btn-save, .btn-cancel').addClass('d-none');
+                        } else {
+                            error_message.text(res.message || 'Failed to update board salary');
+                            alert_error.removeClass('d-none');
+                        }
+                    },
+                    error: function() {
+                        error_message.text('Server error');
+                        alert_error.removeClass('d-none');
+                    }
+                });
             }
-          },
-          error: function () {
-            error_message.text('Server error');
-            alert_error.removeClass('d-none');
-          }
-        });
-      }
-    </script>
-
-    <script>
-      /* Home Salary */
-      $(document).ready(function () {
-        var idperson = "<?php echo $idperson; ?>";
-        var alert_success = $('#home-success-alert');
-        var success_message = $('#home-success-message');
-        var error_message = $('#home-error-message');
-        var alert_error = $('#home-error-alert');
-
-        $('#salaryHomeCard .btn-save').click(function () {
-          saveSalaryHome(idperson);
         });
 
-        function saveSalaryHome(idperson) {
-          var data = {
-            idperson: idperson,
-            bank_home: $('input[data-field="salary.home.bank"]').val(),
-            norek_home: $('input[data-field="salary.home.accountNo"]').val(),
-            norek_name_home: $('input[data-field="salary.home.accountName"]').val(),
-            percentage_home: $('input[data-field="salary.home.percentage"]').val()
-          };
+        $(document).ready(function() {
+            var idperson = "<?php echo $idperson; ?>";
+            var alert_success = $('#declaration-success-alert');
+            var success_message = $('#declaration-success-message');
+            var error_message = $('#declaration-error-message');
+            var alert_error = $('#declaration-error-alert');
 
-          $.ajax({
-            url: "<?php echo base_url('PersonDetail/updateSalaryHome'); ?>",
-            type: "POST",
-            dataType: "json",
-            data: data,
-            success: function (res) {
-              if (res.status) {
-                loadProfile(idperson);
+            $('#declarationCard .btn-save').click(function() {
+                saveDeclaration(idperson);
+            });
 
-                success_message.text(res.message);
-                alert_success.removeClass('d-none');
+            function saveDeclaration(idperson) {
 
-                setTimeout(() => alert_success.addClass('d-none'), 3000);
+                var data = {
+                    idperson: idperson,
 
-                const card = $('#salaryHomeCard');
-                card.find('.form-view').removeClass('d-none');
-                card.find('.form-edit').addClass('d-none');
-                card.find('.btn-edit').removeClass('d-none');
-                card.find('.btn-save, .btn-cancel').addClass('d-none');
-              } else {
-                error_message.text(res.message || 'Failed to update home salary');
-                alert_error.removeClass('d-none');
-              }
-            },
-            error: function () {
-              error_message.text('Server error');
-              alert_error.removeClass('d-none');
+                    signPlace: $('input[data-field="declaration.signPlace"]').val(),
+                    signDate: $('input[data-field="declaration.edt_signDate"]').val(),
+                    remarks: $('textarea[data-field="declaration.remarks"]').val()
+                };
+
+                $.ajax({
+                    url: "<?php echo base_url('PersonDetail/updateDeclaration'); ?>",
+                    type: "POST",
+                    dataType: "json",
+                    data: data,
+                    success: function(res) {
+                        if (res.status) {
+                            loadProfile(idperson);
+
+                            success_message.text(res.message);
+                            alert_success.removeClass('d-none');
+
+                            setTimeout(() => alert_success.addClass('d-none'), 3000);
+
+                            const card = $('#declarationCard');
+                            card.find('.form-view').removeClass('d-none');
+                            card.find('.form-edit').addClass('d-none');
+                            card.find('.btn-edit').removeClass('d-none');
+                            card.find('.btn-save, .btn-cancel').addClass('d-none');
+                        } else {
+                            error_message.text(res.message || 'Failed to update board salary');
+                            alert_error.removeClass('d-none');
+                        }
+                    },
+                    error: function() {
+                        error_message.text('Server error');
+                        alert_error.removeClass('d-none');
+                    }
+                });
             }
-          });
-        }
-      });
-    </script>
-
-
-    <script>
-      /* Board  Salary */
-      $(document).ready(function () {
-        var idperson = "<?php echo $idperson; ?>";
-        var alert_success = $('#board-success-alert');
-        var success_message = $('#board-success-message');
-        var error_message = $('#board-error-message');
-        var alert_error = $('#board-error-alert');
-
-        $('#salaryBoardCard .btn-save').click(function () {
-          saveSalaryBoard(idperson);
         });
-
-        function saveSalaryBoard(idperson) {
-          var data = {
-            idperson: idperson,
-            bank_board: $('input[data-field="salary.board.bank"]').val(),
-            norek_board: $('input[data-field="salary.board.accountNo"]').val(),
-            norek_name_board: $('input[data-field="salary.board.accountName"]').val(),
-            percentage_board: $('input[data-field="salary.board.percentage"]').val()
-          };
-
-          $.ajax({
-            url: "<?php echo base_url('PersonDetail/updateSalaryBoard'); ?>",
-            type: "POST",
-            dataType: "json",
-            data: data,
-            success: function (res) {
-              if (res.status) {
-                loadProfile(idperson);
-
-                success_message.text(res.message);
-                alert_success.removeClass('d-none');
-
-                setTimeout(() => alert_success.addClass('d-none'), 3000);
-
-                const card = $('#salaryBoardCard');
-                card.find('.form-view').removeClass('d-none');
-                card.find('.form-edit').addClass('d-none');
-                card.find('.btn-edit').removeClass('d-none');
-                card.find('.btn-save, .btn-cancel').addClass('d-none');
-              } else {
-                error_message.text(res.message || 'Failed to update board salary');
-                alert_error.removeClass('d-none');
-              }
-            },
-            error: function () {
-              error_message.text('Server error');
-              alert_error.removeClass('d-none');
-            }
-          });
-        }
-      });
-    </script>
-
-    <script>
-      $(document).ready(function () {
-        var idperson = "<?php echo $idperson; ?>";
-        var alert_success = $('#declaration-success-alert');
-        var success_message = $('#declaration-success-message');
-        var error_message = $('#declaration-error-message');
-        var alert_error = $('#declaration-error-alert');
-
-        $('#declarationCard .btn-save').click(function () {
-          saveDeclaration(idperson);
-        });
-
-        function saveDeclaration(idperson) {
-
-          var data = {
-            idperson: idperson,
-
-            signPlace: $('input[data-field="declaration.signPlace"]').val(),
-            signDate: $('input[data-field="declaration.edt_signDate"]').val(),
-            remarks: $('textarea[data-field="declaration.remarks"]').val()
-          };
-
-          $.ajax({
-            url: "<?php echo base_url('PersonDetail/updateDeclaration'); ?>",
-            type: "POST",
-            dataType: "json",
-            data: data,
-            success: function (res) {
-              if (res.status) {
-                loadProfile(idperson);
-                
-                success_message.text(res.message);
-                alert_success.removeClass('d-none');
-
-                setTimeout(() => alert_success.addClass('d-none'), 3000);
-
-                const card = $('#declarationCard');
-                card.find('.form-view').removeClass('d-none');
-                card.find('.form-edit').addClass('d-none');
-                card.find('.btn-edit').removeClass('d-none');
-                card.find('.btn-save, .btn-cancel').addClass('d-none');
-              } else {
-                error_message.text(res.message || 'Failed to update board salary');
-                alert_error.removeClass('d-none');
-              }
-            },
-            error: function () {
-                error_message.text('Server error');
-                alert_error.removeClass('d-none');
-            }
-          });
-        }
-      });
-    </script>
+        </script>

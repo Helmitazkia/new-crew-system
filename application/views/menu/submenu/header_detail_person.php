@@ -20,9 +20,8 @@
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Experience</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Education</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Contract</button>
-        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Medical</button>
-        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Next Plan</button>
-        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Performance & Tranning</button>
+        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabNextplan" >Next Plan</button>
+        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabtraning">Assessment & Tranning</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Competence</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">List Report</button>
       </div>
@@ -115,6 +114,16 @@
       loadFamilyTab();
     });
 
+     $('#tabNextplan').on('click', function () {
+      setActiveTab('tabNextplan');
+      loadNextplanTab();
+    });
+
+    $('#tabtraning').on('click', function () {
+      setActiveTab('tabtraning');
+      loadTraningtab();
+    });
+
     // ================= SET ACTIVE TAB =================
     function setActiveTab(activeBtnId) {
       $('.main-tabs button')
@@ -141,6 +150,45 @@
       $('#loginLoading').show();
       $.ajax({
         url: "<?php echo base_url('CrewDetail/Family'); ?>",
+        type: "GET",
+        success: function (html) {
+          $('#contentArea').html(html);
+        },
+        error: function () {
+          $('#contentArea').html(
+            '<div class="text-danger">Failed load family</div>'
+          );
+        },
+        complete: function () {
+          $('#loginLoading').hide();
+        }
+      });
+    }
+
+    function loadNextplanTab() {
+      $('#loginLoading').show();
+      $.ajax({
+        url: "<?php echo base_url('CrewDetail/NextPlan'); ?>",
+        type: "GET",
+        success: function (html) {
+          $('#contentArea').html(html);
+        },
+        error: function () {
+          $('#contentArea').html(
+            '<div class="text-danger">Failed load family</div>'
+          );
+        },
+        complete: function () {
+          $('#loginLoading').hide();
+        }
+      });
+    }
+
+
+    function loadTraningtab() {
+      $('#loginLoading').show();
+      $.ajax({
+        url: "<?php echo base_url('CrewDetail/Traning'); ?>",
         type: "GET",
         success: function (html) {
           $('#contentArea').html(html);
