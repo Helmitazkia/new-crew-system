@@ -36,118 +36,106 @@ class MasterPersonal extends CI_Controller {
     }
 
    
+
     public function getAllData_personal()
     {
-        $txtSearch  = $this->input->post('txtSearch', true);
-        $typeSearch = $this->input->post('typeSearch', true);
-        $page       = (int) $this->input->post('page');
-        $page   = ($page <= 0) ? 1 : $page;
-        $limit  = 30;
-        $offset = ($page - 1) * $limit;
         $dataContext = new DataContext();
 
-        $where = " WHERE A.deletests = '0'
-                AND (A.fname != '' OR A.mname != '' OR A.lname != '') ";
-        
-        $joinSea = "";
+        $status = $this->input->post('status'); // optional
 
-        if (!empty($txtSearch) && !empty($typeSearch)) {
-            switch ($typeSearch) {
-                case "id":
-                    $where .= " AND A.idperson = '" . $this->db->escape_str($txtSearch) . "' ";
-                    break;
-                case "name":
-                    $where .= " AND (
-                        A.fname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' OR
-                        A.mname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' OR
-                        A.lname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' OR
-                        CONCAT(A.fname,' ',A.mname,' ',A.lname) LIKE '%" . $this->db->escape_like_str($txtSearch) . "%'
-                    )";
-                    break;
-                case "age":
-                    $where .= " AND (YEAR(CURDATE()) - YEAR(A.dob)) = '" . $this->db->escape_str($txtSearch) . "' ";
-                    break;
-                case "rank":
-                    $where .= " AND C.rankexp LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' ";
-                    $joinSea = "LEFT JOIN tblseaexp C ON C.idperson = A.idperson";
-                    break;
-                case "applied":
-                    $where .= " AND A.applyfor LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' ";
-                    break;
-                case "vessel":
-                    $where .= " AND C.vslexp LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' ";
-                    $joinSea = "LEFT JOIN tblseaexp C ON C.idperson = A.idperson";
-                    break;
-                case "idPerson":
-                    $where .= " AND A.idperson = '" . $this->db->escape_str($txtSearch) . "' ";
-                    break;
-                default:
-                    $where .= " AND (
-                        A.fname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' OR
-                        A.mname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%' OR
-                        A.lname LIKE '%" . $this->db->escape_like_str($txtSearch) . "%'
-                    )";
-                    break;
-            }
-        }
-
-        $sqlCount = "
-            SELECT COUNT(DISTINCT A.idperson) AS total
-            FROM mstpersonal A
-            LEFT JOIN tblkota B ON A.pob = B.KdKota
-            " . $joinSea . "
-            " . $where . "
+        $where = "
+            WHERE A.deletests = '0'
+            AND (A.fname != '' OR A.mname != '' OR A.lname != '')
         ";
 
-        $total = (int) $this->db->query($sqlCount)->row()->total;
-
         $sql = "
-            SELECT 
+            SELECT
                 A.idperson,
-                TRIM(CONCAT(A.fname,' ',A.mname,' ',A.lname)) AS fullName,
+                TRIM(CONCAT_WS(' ', A.fname, A.mname, A.lname)) AS fullName,
                 A.applyfor,
                 A.gender,
                 A.religion,
                 A.dob,
-                A.inAktif,
-                A.lower_rank,
-                B.NmKota
+                K.NmKota AS birth_city,
+                A.dob AS birth_date,
+                D.nmvsl,
+                CASE
+                    WHEN A.inBlacklist = '1' AND K.deletests = '0' THEN 'Not For Emp'
+                    WHEN A.newapplicent = '1' AND K.deletests = '0' THEN 'Pickup'
+                    WHEN
+                        A.inAktif = '1'
+                        AND A.inBlacklist = '0'
+                    THEN 'Non Aktif'
+                    WHEN 
+                        C.signoffdt = '0000-00-00'
+                        AND A.inaktif = '0'
+                        AND A.deletests = '0'
+        
+                    THEN 'On board'
+                    WHEN C.signoffdt IS NOT NULL
+                        AND C.signoffdt != '0000-00-00'
+                        AND C.signoffdt <= CURDATE()
+                    THEN 'Stand By'
+                END AS statusPerson
+
             FROM mstpersonal A
-            LEFT JOIN tblkota B ON A.pob = B.KdKota
-            " . $joinSea . "
-            " . $where . "
-            GROUP BY A.idperson
+        
+            LEFT JOIN (
+                SELECT *
+                FROM tblcontract t1
+                WHERE t1.deletests = 0
+                AND t1.idcontract = (
+                    SELECT MAX(t2.idcontract)
+                    FROM tblcontract t2
+                    WHERE t2.idperson = t1.idperson
+                    AND t2.deletests = 0
+                )
+            ) C ON A.idperson = C.idperson
+
+            LEFT JOIN tblkota K ON A.pob = K.KdKota 
+            LEFT JOIN mstvessel D ON D.kdvsl = C.signonvsl
+   
+
+            $where
             ORDER BY fullName ASC
-            LIMIT $limit OFFSET $offset
         ";
+
+        
 
         $rows = $this->db->query($sql)->result_array();
 
         $data = array();
         foreach ($rows as $row) {
+            $city = $row['birth_city'];
+            $date = $row['birth_date'];
+            $dobFormatted = '';
+            if ($date && $date != '0000-00-00') {
+                $dobFormatted = $dataContext->convertReturnName($date);
+            }
+
             $data[] = array(
-                'idperson'     => $row['idperson'],
-                'fullName'     => $row['fullName'],
-                'applyfor'     => strtoupper($row['applyfor']),
-                'gender'       => $row['gender'],
-                'religion'     => $row['religion'],
-                'NmKota'        => $row['NmKota'],
-                'dob'          => $dataContext->convertReturnName($row['dob']),
-                'statusPerson' => ($row['inAktif'] == '0') ? 'Active' : 'Non Active',
-                'lowerRank'    => ($row['lower_rank'] == '1') ? 'Yes' : 'No',
+                'idperson'      => $row['idperson'],
+                'fullName'      => $row['fullName'],
+                'applyfor'      => strtoupper($row['applyfor']),
+                'gender'        => $row['gender'],
+                'religion'      => $row['religion'],
+                'nmvsl'         => $row['nmvsl'],
+                'dob' => trim($city . ($dobFormatted ? ', ' . $dobFormatted : '')),
+                'statusPerson' => $row['statusPerson']
             );
         }
+
+
 
         $this->output
             ->set_content_type('application/json')
             ->set_output(json_encode(array(
                 'success' => true,
-                'page'    => $page,
-                'limit'   => $limit,
-                'total'   => $total,
                 'data'    => $data
             )));
     }
+
+
     public function getDataOnboard($searchNya = "")
     {
         $dataContext = new DataContext();
