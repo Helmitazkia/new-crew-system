@@ -1,238 +1,5 @@
 <div class="crew-rotation-content">
   <div class="container-fluid">
-    <style>
-    :root {
-      --crew-blue: #000099;
-      --crew-font-sm: 12px;
-      --crew-font-xs: 11px;
-    }
-
-    .crew-table th,
-    .crew-table td {
-      font-size: var(--crew-font-sm);
-      vertical-align: middle;
-    }
-
-    .crew-table th {
-      font-weight: 600;
-      text-align: center;
-    }
-
-
-    .crew-table .btn {
-      font-size: var(--crew-font-xs);
-      padding: 2px 6px;
-    }
-
-    .crew-header th {
-      background-color: var(--crew-blue) !important;
-      color: #fff !important;
-    }
-
-
-    .crew-header-group {
-      background-color: var(--crew-blue) !important;
-      color: #fff !important;
-    }
-
-    /* DataTables Customization */
-    .dataTables_wrapper {
-      padding: 15px 0;
-    }
-
-    .dataTables_length {
-      padding: 10px 0;
-      margin-bottom: 10px;
-    }
-
-    .dataTables_length label,
-    .dataTables_filter label {
-      display: flex;
-      align-items: center;
-      margin: 0;
-      padding: 20px 0;
-    }
-
-    .dataTables_length select {
-      width: auto;
-      margin: 0 8px;
-      padding: 4px 8px;
-      border-radius: 4px;
-      border: 1px solid #ced4da;
-    }
-
-    .dataTables_filter {
-      text-align: right;
-      margin-bottom: 10px;
-    }
-
-    .dataTables_filter label {
-      display: inline-flex;
-      align-items: center;
-      margin: 0;
-      padding: 8px 0;
-      font-weight: normal;
-    }
-
-    .dataTables_filter input {
-      margin-left: 10px;
-      padding: 6px 12px;
-      border-radius: 4px;
-      border: 1px solid #ced4da;
-      width: 200px;
-    }
-
-    /* PAGINATION STYLING */
-    .dataTables_paginate {
-      margin-top: 15px;
-      padding-top: 10px;
-      border-top: 1px solid #dee2e6;
-    }
-
-    .paginate_button {
-      margin: 0 2px;
-      padding: 6px 12px !important;
-      border-radius: 4px;
-      border: 1px solid #dee2e6;
-      background: #fff !important;
-      color: #0d6efd !important;
-    }
-
-    .paginate_button.current {
-      background: #0d6efd !important;
-      color: #fff !important;
-      border-color: #0d6efd !important;
-    }
-
-    .paginate_button:hover {
-      background: #e9ecef !important;
-      border-color: #dee2e6;
-    }
-
-    /* INFO TEXT STYLING */
-    .dataTables_info {
-      padding: 10px 0;
-      color: #6c757d;
-      font-size: 14px;
-    }
-
-    /* Filter Icon */
-    .filter-icon {
-      cursor: pointer;
-      font-size: 14px;
-      margin-left: 6px;
-      color: #0d6efd;
-    }
-
-    .filter-dropdown {
-      position: absolute;
-      background: #fff;
-      border: 1px solid #ccc;
-      padding: 8px;
-      width: 200px;
-      max-height: 260px;
-      overflow-y: auto;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
-      display: none;
-      z-index: 9999;
-    }
-
-    .filter-dropdown input[type="text"] {
-      width: 100%;
-      margin-bottom: 6px;
-      padding: 4px;
-      font-size: 12px;
-      border: 1px solid #dee2e6;
-      border-radius: 4px;
-    }
-
-    .filter-dropdown label {
-      display: block;
-      font-size: 13px;
-      cursor: pointer;
-      padding: 4px 8px;
-      margin: 2px 0;
-      border-radius: 4px;
-    }
-
-    .filter-dropdown label:hover {
-      background: #f8f9fa;
-    }
-
-    .filter-list {
-      max-height: 120px;
-      overflow-y: auto;
-      margin-bottom: 6px;
-    }
-
-    /* Column Search Input */
-    .column-search {
-      width: 100%;
-      padding: 6px 8px;
-      box-sizing: border-box;
-      font-size: 12px;
-      border: 1px solid #dee2e6;
-      border-radius: 4px;
-      background: #f8f9fa;
-    }
-
-    /* Responsive Card */
-    .card {
-      margin-top: 20px;
-      border-radius: 8px;
-    }
-
-    .card-header {
-      padding: 15px 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .card-body {
-      padding: 20px;
-      overflow-x: auto;
-    }
-
-    /* Table responsive fixes */
-    .table-responsive {
-      margin: 0;
-    }
-
-    /* Custom layout for DataTables controls */
-    .dataTables_wrapper .row {
-      margin: 0;
-    }
-
-    .dataTables_wrapper .col-sm-12 {
-      padding: 0;
-    }
-
-    /* Ensure proper spacing */
-    .dt-length {
-      float: left;
-    }
-
-    .dt-search {
-      float: right;
-    }
-
-    .dt-info {
-      float: left;
-      margin-top: 10px;
-    }
-
-    .dt-paging {
-      float: right;
-      margin-top: 10px;
-    }
-
-    /* Clear floats */
-    .dataTables_wrapper:after {
-      content: "";
-      display: table;
-      clear: both;
-    }
-    </style>
-
     <div class="row">
       <div class="col-md-12">
         <div class="card shadow">
@@ -508,7 +275,7 @@ $(document).ready(function() {
           table.column(colIndex).search('').draw();
         }
         dropdown.show();
-        //$('.filter-dropdown').hide();
+        // $('.filter-dropdown').hide();
       });
 
 
@@ -526,14 +293,10 @@ $(document).ready(function() {
 
 
 
-
-
-
   // Function to show crew detail
   window.showCrewDetail = function(crewNo) {
-    alert(`Showing details for crew #${crewNo}`);
-    // In actual implementation, you would show a modal or redirect
-    // $('#nextPlanVesselCard').removeClass('d-none');
+    window.location.href =
+      "<?php echo base_url('PersonDetail/index'); ?>/" + crewNo;
   };
 
   // Function to export table
@@ -546,6 +309,12 @@ $(document).ready(function() {
   window.reloadTable = function() {
     table.draw();
   };
+});
+
+$(document).on('click', function(e) {
+  if (!$(e.target).closest('.filter-dropdown').length) {
+    $('.filter-dropdown').hide();
+  }
 });
 </script>
 
@@ -564,5 +333,239 @@ $(document).ready(function() {
 
 .btn-clear-filter i {
   font-size: 14px;
+}
+</style>
+
+
+<style>
+:root {
+  --crew-blue: #000099;
+  --crew-font-sm: 12px;
+  --crew-font-xs: 11px;
+}
+
+.crew-table th,
+.crew-table td {
+  font-size: var(--crew-font-sm);
+  vertical-align: middle;
+}
+
+.crew-table th {
+  font-weight: 600;
+  text-align: center;
+}
+
+
+.crew-table .btn {
+  font-size: var(--crew-font-xs);
+  padding: 2px 6px;
+}
+
+.crew-header th {
+  background-color: var(--crew-blue) !important;
+  color: #fff !important;
+}
+
+
+.crew-header-group {
+  background-color: var(--crew-blue) !important;
+  color: #fff !important;
+}
+
+/* DataTables Customization */
+.dataTables_wrapper {
+  padding: 15px 0;
+}
+
+.dataTables_length {
+  padding: 10px 0;
+  margin-bottom: 10px;
+}
+
+.dataTables_length label,
+.dataTables_filter label {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 20px 0;
+}
+
+.dataTables_length select {
+  width: auto;
+  margin: 0 8px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+}
+
+.dataTables_filter {
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.dataTables_filter label {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 8px 0;
+  font-weight: normal;
+}
+
+.dataTables_filter input {
+  margin-left: 10px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  width: 200px;
+}
+
+/* PAGINATION STYLING */
+.dataTables_paginate {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #dee2e6;
+}
+
+.paginate_button {
+  margin: 0 2px;
+  padding: 6px 12px !important;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  background: #fff !important;
+  color: #0d6efd !important;
+}
+
+.paginate_button.current {
+  background: #0d6efd !important;
+  color: #fff !important;
+  border-color: #0d6efd !important;
+}
+
+.paginate_button:hover {
+  background: #e9ecef !important;
+  border-color: #dee2e6;
+}
+
+/* INFO TEXT STYLING */
+.dataTables_info {
+  padding: 10px 0;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+/* Filter Icon */
+.filter-icon {
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 6px;
+  color: #0d6efd;
+}
+
+.filter-dropdown {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 8px;
+  width: 200px;
+  max-height: 260px;
+  overflow-y: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
+  display: none;
+  z-index: 9999;
+}
+
+.filter-dropdown input[type="text"] {
+  width: 100%;
+  margin-bottom: 6px;
+  padding: 4px;
+  font-size: 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.filter-dropdown label {
+  display: block;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 8px;
+  margin: 2px 0;
+  border-radius: 4px;
+}
+
+.filter-dropdown label:hover {
+  background: #f8f9fa;
+}
+
+.filter-list {
+  max-height: 120px;
+  overflow-y: auto;
+  margin-bottom: 6px;
+}
+
+/* Column Search Input */
+.column-search {
+  width: 100%;
+  padding: 6px 8px;
+  box-sizing: border-box;
+  font-size: 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: #f8f9fa;
+}
+
+/* Responsive Card */
+.card {
+  margin-top: 20px;
+  border-radius: 8px;
+}
+
+.card-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-body {
+  padding: 20px;
+  overflow-x: auto;
+}
+
+/* Table responsive fixes */
+.table-responsive {
+  margin: 0;
+}
+
+/* Custom layout for DataTables controls */
+.dataTables_wrapper .row {
+  margin: 0;
+}
+
+.dataTables_wrapper .col-sm-12 {
+  padding: 0;
+}
+
+/* Ensure proper spacing */
+.dt-length {
+  float: left;
+}
+
+.dt-search {
+  float: right;
+}
+
+.dt-info {
+  float: left;
+  margin-top: 10px;
+}
+
+.dt-paging {
+  float: right;
+  margin-top: 10px;
+}
+
+/* Clear floats */
+.dataTables_wrapper:after {
+  content: "";
+  display: table;
+  clear: both;
 }
 </style>

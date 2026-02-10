@@ -1,17 +1,19 @@
-<div class="container-fluid content-wrapper text-center">
-  <div class="row align-items-center mb-0 ms-2 ">
-    <div class="col-md-8 d-flex justify-content-end gap-1 main-tabs">
+<div class="container-fluid content-wrapper">
+  <div class="row justify-content-center align-items-center mb-0">
+    <div class="col-12 col-xl-8 d-flex justify-content-center gap-2 main-tabs flex-wrap">
       <button class="btn btn-primary rounded-pill fst-italic fw-semibold active" id="activeRoster">
         Active Roster
       </button>
-      <button class="btn btn-light rounded-pill fst-italic fw-semibold" id="menuCrewRotation">
+      <button class="btn btn-light rounded-pill fst-italic fw-semibold shadow-sm" id="menuCrewRotation">
         Crew Rotation
       </button>
-      <button class="btn btn-light rounded-pill fst-italic fw-semibold" id="menuMasterPersonal">
+      <button class="btn btn-light rounded-pill fst-italic fw-semibold shadow-sm" id="menuMasterPersonal">
         Master Personal
       </button>
     </div>
-    <hr class="border-top border-1 border-secondary mt-2 mb-1 w-100">
+    <div class="col-12">
+      <hr class="border-top border-1 border-secondary mt-3 mb-1 w-100">
+    </div>
   </div>
 </div>
 
@@ -31,8 +33,6 @@ $(document).ready(function() {
   // ================= ACTIVE ROSTER =================
   $('#activeRoster').on('click', function() {
     setActiveTab($(this));
-    $('#loginLoading').show();
-
     $.ajax({
       url: "<?php echo base_url('ActiveRoster/ActiveRoster/getActiveRoster'); ?>",
       type: 'GET',
@@ -51,17 +51,12 @@ $(document).ready(function() {
       },
       error: function() {
         alert('Gagal membuka Active Roster');
-      },
-      complete: function() {
-        $('#loginLoading').hide();
       }
     });
   });
 
   $('#menuCrewRotation').on('click', function() {
     setActiveTab($(this));
-    $('#loginLoading').show();
-
     $.ajax({
       url: "<?php echo base_url('CrewRotation/CrewRotation/ajaxCrewRotation'); ?>",
       type: 'GET',
@@ -70,9 +65,6 @@ $(document).ready(function() {
       },
       error: function() {
         alert('Gagal membuka Crew Rotation');
-      },
-      complete: function() {
-        $('#loginLoading').hide();
       }
     });
   });
