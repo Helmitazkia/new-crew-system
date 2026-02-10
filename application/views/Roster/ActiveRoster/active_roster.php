@@ -1,8 +1,5 @@
 <div class="crew-rotation-content">
   <div class="container-fluid">
-    <style>
-
-    </style>
     <div class="row">
       <div class="col-md-12">
         <div class="card shadow">
@@ -21,7 +18,7 @@
                     <th>Next Vessel <br><span class="filter-icon">☰</span></th>
                     <th>City Birth <br><span class="filter-icon">☰</span></th>
                     <th>Status Person <br><span class="filter-icon">☰</span></th>
-                    <th>Certificate <br><span class="filter-icon">☰</span></th>
+                    <th>Contract <br><span class="filter-icon">☰</span></th>
                     <th class="text-center">Action</th>
                   </tr>
                 </thead>
@@ -127,19 +124,47 @@ $(document).ready(function() {
         }
       },
       {
-        data: 'statusPerson',
+        data: 'estsignoffdt',
         className: 'text-center',
-        render: function(data, type) {
+        render: function(data, type, row) {
+          if (!data || data === '0000-00-00') return '<span class="text-muted">-</span>';
+
           if (type === 'display') {
-            let cls = 'bg-secondary';
+            const dateNow = new Date();
+            const estDate = new Date(data);
+            dateNow.setHours(0, 0, 0, 0);
+            estDate.setHours(0, 0, 0, 0);
 
-            if (data === 'On board') cls = 'bg-success';
-            else if (data === 'Stand By') cls = 'bg-warning text-dark';
-            else if (data === 'Non Aktif') cls = 'bg-danger';
+            let diffTime = estDate - dateNow;
+            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            let displayText = row.estsignoffdt_formatted;
+            let warningMsg = "";
 
-            return `<span class="badge ${cls}">${data}</span>`;
+            const getDuration = (totalDays) => {
+              let days = Math.abs(totalDays);
+              let months = Math.floor(days / 30);
+              let remainingDays = days % 30;
+              let result = "";
+              if (months > 0) result += months + " Months ";
+              if (remainingDays > 0) result += remainingDays + " Days";
+              return result.trim();
+            };
+
+            if (diffDays < 0) {
+              // 1. LOGIKA: SUDAH LEWAT (Expired Over)
+              let duration = getDuration(diffDays);
+              warningMsg =
+                `<br><span style="font-size:10px; color:red; font-weight: bold;">Expired Over ${duration}</span>`;
+            } else if (diffDays <= 90) {
+              // 2. LOGIKA: AKAN DATANG (Expired In)
+              let duration = getDuration(diffDays);
+              warningMsg =
+                `<br><span style="font-size:10px; color:orange; font-weight: bold;">Expired In ${duration}</span>`;
+            }
+
+            return `<div>${displayText}${warningMsg}</div>`;
           }
-          return data; // penting buat search & filter
+          return data;
         }
       },
       {
