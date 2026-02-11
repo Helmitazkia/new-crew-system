@@ -61,7 +61,7 @@ $(document).ready(function() {
       loadingRecords: '',
     },
     ajax: {
-      url: "<?= base_url('ActiveRoster/ActiveRoster/getAllData_activeRoster'); ?>",
+      url: "<?php echo base_url('ActiveRoster/ActiveRoster/getAllData_activeRoster'); ?>",
       type: "POST",
       dataSrc: function(json) {
         return json.success ? json.data : [];
