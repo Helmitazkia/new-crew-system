@@ -235,173 +235,173 @@
 </div>
 
 <style>
-  #loginLoading {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 9999;
-  }
+#loginLoading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+}
 </style>
 
 
 <style>
-  .family-content {
-    font-size: 13px;
-  }
+.family-content {
+  font-size: 13px;
+}
 
-  .family-content .card-header {
-    font-size: 13px;
-  }
+.family-content .card-header {
+  font-size: 13px;
+}
 
-  .family-content strong {
-    font-size: 12.5px;
-  }
+.family-content strong {
+  font-size: 12.5px;
+}
 
-  .family-content hr {
-    margin: 6px 0;
-  }
+.family-content hr {
+  margin: 6px 0;
+}
 
-  .child-item {
-    border-bottom: 1px solid #eee;
-    padding: 10px 15px;
-  }
+.child-item {
+  border-bottom: 1px solid #eee;
+  padding: 10px 15px;
+}
 
-  .child-item:last-child {
-    border-bottom: none;
-  }
+.child-item:last-child {
+  border-bottom: none;
+}
 
-  .child-item:hover {
-    background-color: #f8f9fa;
-  }
+.child-item:hover {
+  background-color: #f8f9fa;
+}
 </style>
 
 
 <script>
-  $(document).on('click', '.btn-edit', function () {
-    const card = $(this).closest('.card');
+$(document).on('click', '.btn-edit', function() {
+  const card = $(this).closest('.card');
 
-    card.find('.form-view').addClass('d-none');
-    card.find('.form-edit').removeClass('d-none');
+  card.find('.form-view').addClass('d-none');
+  card.find('.form-edit').removeClass('d-none');
 
-    card.find('.btn-edit').addClass('d-none');
-    card.find('.btn-save, .btn-cancel').removeClass('d-none');
-  });
+  card.find('.btn-edit').addClass('d-none');
+  card.find('.btn-save, .btn-cancel').removeClass('d-none');
+});
 
-  $(document).on('click', '.btn-cancel', function () {
-    const card = $(this).closest('.card');
+$(document).on('click', '.btn-cancel', function() {
+  const card = $(this).closest('.card');
 
-    card.find('.form-view').removeClass('d-none');
-    card.find('.form-edit').addClass('d-none');
+  card.find('.form-view').removeClass('d-none');
+  card.find('.form-edit').addClass('d-none');
 
-    card.find('.btn-edit').removeClass('d-none');
-    card.find('.btn-save, .btn-cancel').addClass('d-none');
-  });
+  card.find('.btn-edit').removeClass('d-none');
+  card.find('.btn-save, .btn-cancel').addClass('d-none');
+});
 </script>
 
 <script>
-  /* Family Information actions start*/
-  $(document).ready(function () {
-    var alert_error = $('#error-alert');
-    var alert_success = $('#success-alert');
-    var error_message = $('#error-message');
-    var success_message = $('#success-message');
+/* Family Information actions start*/
+$(document).ready(function() {
+  var alert_error = $('#error-alert');
+  var alert_success = $('#success-alert');
+  var error_message = $('#error-message');
+  var success_message = $('#success-message');
 
-    $('.btn-close').on('click', function () {
-      $(this).closest('.alert').addClass('d-none');
-    });
+  $('.btn-close').on('click', function() {
+    $(this).closest('.alert').addClass('d-none');
+  });
 
-    $(document).on('click', '.btn-save', function () {
-      saveFamilyInfo();
-    });
+  $(document).on('click', '.btn-save', function() {
+    saveFamilyInfo();
+  });
 
 
-    function saveFamilyInfo() {
-      var idperson = $('#contentArea').data('idperson');
-      // Reset alert terlebih dahulu
-      alert_error.addClass('d-none');
-      alert_success.addClass('d-none');
+  function saveFamilyInfo() {
+    var idperson = $('#contentArea').data('idperson');
+    // Reset alert terlebih dahulu
+    alert_error.addClass('d-none');
+    alert_success.addClass('d-none');
 
-      fatherName = $('input[data-field="family.father.name"]').val().trim();
-      motherName = $('input[data-field="family.mother.name"]').val().trim();
-      address = $('textarea[data-field="family.address"]').val().trim();
-      let isFatherNameValid = validateChildField(
-        'fatherName',
-        'fatherNameFeedback'
-      );
+    fatherName = $('input[data-field="family.father.name"]').val().trim();
+    motherName = $('input[data-field="family.mother.name"]').val().trim();
+    address = $('textarea[data-field="family.address"]').val().trim();
+    let isFatherNameValid = validateChildField(
+      'fatherName',
+      'fatherNameFeedback'
+    );
 
-      let isMotherNameValid = validateChildField(
-        'motherName',
-        'motherNameFeedback'
-      );
+    let isMotherNameValid = validateChildField(
+      'motherName',
+      'motherNameFeedback'
+    );
 
-      let isAddressValid = validateChildField(
-        'address',
-        'addressFeedback'
-      );
+    let isAddressValid = validateChildField(
+      'address',
+      'addressFeedback'
+    );
 
-      if (!isFatherNameValid || !isMotherNameValid || !isAddressValid) {
-        return false;
-      }
+    if (!isFatherNameValid || !isMotherNameValid || !isAddressValid) {
+      return false;
+    }
 
-      var data = {
-        idperson: idperson,
-        fatherName: fatherName,
-        motherName: motherName,
-        wifeName: $('input[data-field="family.wife.name"]').val(),
-        address: address
-      };
+    var data = {
+      idperson: idperson,
+      fatherName: fatherName,
+      motherName: motherName,
+      wifeName: $('input[data-field="family.wife.name"]').val(),
+      address: address
+    };
 
-      console.log('Saving family data:', data);
+    console.log('Saving family data:', data);
 
-      $.ajax({
-        url: "<?php echo base_url('CrewDetail/Family/updateFamilyInfo'); ?>",
-        type: "POST",
-        dataType: "json",
-        data: data,
-        success: function (res) {
-          // console.log('Response:', res);
-          if (res.status) {
-            success_message.text(res.message);
-            alert_success.removeClass('d-none');
-            setTimeout(function () {
-              alert_success.addClass('d-none');
-            }, 3000);
+    $.ajax({
+      url: "<?php echo base_url('CrewDetail/Family/updateFamilyInfo'); ?>",
+      type: "POST",
+      dataType: "json",
+      data: data,
+      success: function(res) {
+        // console.log('Response:', res);
+        if (res.status) {
+          success_message.text(res.message);
+          alert_success.removeClass('d-none');
+          setTimeout(function() {
+            alert_success.addClass('d-none');
+          }, 3000);
 
-            // Switch back to view mode
-            const card = $('.btn-save').closest('.card');
-            card.find('.form-view').removeClass('d-none');
-            card.find('.form-edit').addClass('d-none');
-            card.find('.btn-edit').removeClass('d-none');
-            card.find('.btn-save, .btn-cancel').addClass('d-none');
+          // Switch back to view mode
+          const card = $('.btn-save').closest('.card');
+          card.find('.form-view').removeClass('d-none');
+          card.find('.form-edit').addClass('d-none');
+          card.find('.btn-edit').removeClass('d-none');
+          card.find('.btn-save, .btn-cancel').addClass('d-none');
 
-            // Update view dengan data baru
-            $('.form-view[data-field="family.father.name"]').text(data.fatherName || '');
-            $('.form-view[data-field="family.mother.name"]').text(data.motherName || '');
-            $('.form-view[data-field="family.wife.name"]').text(data.wifeName || '');
-            $('.form-view[data-field="family.address"]').text(data.address || '');
+          // Update view dengan data baru
+          $('.form-view[data-field="family.father.name"]').text(data.fatherName || '');
+          $('.form-view[data-field="family.mother.name"]').text(data.motherName || '');
+          $('.form-view[data-field="family.wife.name"]').text(data.wifeName || '');
+          $('.form-view[data-field="family.address"]').text(data.address || '');
 
-          } else {
-            error_message.text(res.message || 'Failed to update family information');
-            alert_error.removeClass('d-none');
-            setTimeout(function () {
-              alert_error.addClass('d-none');
-            }, 5000);
-          }
-        },
-        error: function (xhr, status, error) {
-          $('.btn-save').prop('disabled', false).html('<i class="fa fa-save"></i> Save');
-          console.error('AJAX Error:', xhr.responseText);
-
-          error_message.text('Failed to update family information: ' + error);
+        } else {
+          error_message.text(res.message || 'Failed to update family information');
           alert_error.removeClass('d-none');
-          setTimeout(function () {
+          setTimeout(function() {
             alert_error.addClass('d-none');
           }, 5000);
         }
-      });
-    }
-  });
+      },
+      error: function(xhr, status, error) {
+        $('.btn-save').prop('disabled', false).html('<i class="fa fa-save"></i> Save');
+        console.error('AJAX Error:', xhr.responseText);
+
+        error_message.text('Failed to update family information: ' + error);
+        alert_error.removeClass('d-none');
+        setTimeout(function() {
+          alert_error.addClass('d-none');
+        }, 5000);
+      }
+    });
+  }
+});
 </script>
 
 
@@ -410,202 +410,202 @@
 
 
 <script>
-  /* Children Information actions start*/
-  $(document).ready(function () {
-    var alert_error = $('#child-danger-alert');
-    var alert_success = $('#child-success-alert');
-    var error_message = $('#child-error-message');
-    var success_message = $('#child-success-message');
+/* Children Information actions start*/
+$(document).ready(function() {
+  var alert_error = $('#child-danger-alert');
+  var alert_success = $('#child-success-alert');
+  var error_message = $('#child-error-message');
+  var success_message = $('#child-success-message');
 
-    loadFamilyData();
+  loadFamilyData();
 
-    $('#btnSaveChild').click(function () {
-      saveChild();
-    });
-
-    // Delete child
-    $(document).on('click', '.btn-delete-child', function () {
-      var childId = $(this).data('id');
-      var childName = $(this).data('name');
-      deleteChild(childId, childName);
-    });
-
-
-    function saveChild() {
-      let isFirstNameValid = validateChildField(
-        'childFirstName',
-        'childFirstNameFeedback'
-      );
-
-      let isGenderValid = validateChildField(
-        'childGender',
-        'childGenderFeedback'
-      );
-
-      let isDobValid = validateChildField(
-        'childDob',
-        'childDobFeedback'
-      );
-
-      if (!isFirstNameValid || !isGenderValid || !isDobValid) {
-        return false;
-      }
-
-      var idperson = $('#contentArea').data('idperson');
-      var data = {
-        idfm: $('#childIdfm').val(),
-        idperson: idperson,
-        fmrel: 'CHILD',
-        fmfname: $('#childFirstName').val(),
-        fmlname: $('#childLastName').val(),
-        fmsex: $('#childGender').val(),
-        fmdob: $('#childDob').val(),
-        fmpassno: $('#childPassport').val(),
-        fmissdt: $('#childIssueDate').val(),
-        fmplc: $('#childIssuePlace').val(),
-        fmexpdt: $('#childExpiryDate').val(),
-        fmvisa: $('#childVisa').val()
-      };
-
-      $.ajax({
-        url: "<?php echo base_url('CrewDetail/Family/saveChild'); ?>",
-        type: "POST",
-        dataType: "json",
-        data: data,
-        beforeSend: function () {
-          $('#btnSaveChild').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Saving...');
-        },
-        success: function (res) {
-          $('#btnSaveChild').prop('disabled', false).html('Save');
-          console.log('Response:', res);
-
-          if (res.status) {
-            $('#childModal').modal('hide');
-            loadFamilyData();
-            success_message.text(res.message);
-            alert_success.removeClass('d-none');
-            setTimeout(function () {
-              alert_success.addClass('d-none');
-            }, 3000);
-
-          } else {
-            error_message.text(res.message || 'Failed to save child data');
-            alert_error.removeClass('d-none');
-          }
-        },
-        error: function (xhr, status, error) {
-          $('#btnSaveChild').prop('disabled', false).html('Save');
-          console.error('AJAX Error:', xhr.responseText);
-          alert('Failed to save child data. Error: ' + error);
-        }
-      });
-    }
-
-
-    // Delete child
-    function deleteChild(idfm, childName) {
-      if (!confirm('Are you sure you want to delete "' + childName + '"?')) {
-        return;
-      }
-
-      $.ajax({
-        url: "<?php echo base_url('CrewDetail/Family/deleteChild'); ?>",
-        type: "POST",
-        dataType: "json",
-        data: {
-          idfm: idfm
-        },
-        success: function (res) {
-          if (res.status) {
-            loadFamilyData(); // Reload data
-            success_message.text(res.message);
-            alert_success.removeClass('d-none');
-            setTimeout(function () {
-              alert_success.addClass('d-none');
-            }, 3000);
-
-          } else {
-            error_message.text(res.message || 'Failed to delete child');
-            alert_error.removeClass('d-none');
-            setTimeout(function () {
-              alert_error.addClass('d-none');
-            }, 3000);
-          }
-
-        },
-        error: function () {
-          alert('Failed to delete child');
-        }
-      });
-    }
-
+  $('#btnSaveChild').click(function() {
+    saveChild();
   });
 
-  function loadFamilyData() {
+  // Delete child
+  $(document).on('click', '.btn-delete-child', function() {
+    var childId = $(this).data('id');
+    var childName = $(this).data('name');
+    deleteChild(childId, childName);
+  });
+
+
+  function saveChild() {
+    let isFirstNameValid = validateChildField(
+      'childFirstName',
+      'childFirstNameFeedback'
+    );
+
+    let isGenderValid = validateChildField(
+      'childGender',
+      'childGenderFeedback'
+    );
+
+    let isDobValid = validateChildField(
+      'childDob',
+      'childDobFeedback'
+    );
+
+    if (!isFirstNameValid || !isGenderValid || !isDobValid) {
+      return false;
+    }
+
     var idperson = $('#contentArea').data('idperson');
-    $("#loginLoading").show();
+    var data = {
+      idfm: $('#childIdfm').val(),
+      idperson: idperson,
+      fmrel: 'CHILD',
+      fmfname: $('#childFirstName').val(),
+      fmlname: $('#childLastName').val(),
+      fmsex: $('#childGender').val(),
+      fmdob: $('#childDob').val(),
+      fmpassno: $('#childPassport').val(),
+      fmissdt: $('#childIssueDate').val(),
+      fmplc: $('#childIssuePlace').val(),
+      fmexpdt: $('#childExpiryDate').val(),
+      fmvisa: $('#childVisa').val()
+    };
+
     $.ajax({
-      url: "<?php echo base_url('CrewDetail/Family/getFamilyData'); ?>",
+      url: "<?php echo base_url('CrewDetail/Family/saveChild'); ?>",
+      type: "POST",
+      dataType: "json",
+      data: data,
+      beforeSend: function() {
+        $('#btnSaveChild').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+      },
+      success: function(res) {
+        $('#btnSaveChild').prop('disabled', false).html('Save');
+        console.log('Response:', res);
+
+        if (res.status) {
+          $('#childModal').modal('hide');
+          loadFamilyData();
+          success_message.text(res.message);
+          alert_success.removeClass('d-none');
+          setTimeout(function() {
+            alert_success.addClass('d-none');
+          }, 3000);
+
+        } else {
+          error_message.text(res.message || 'Failed to save child data');
+          alert_error.removeClass('d-none');
+        }
+      },
+      error: function(xhr, status, error) {
+        $('#btnSaveChild').prop('disabled', false).html('Save');
+        console.error('AJAX Error:', xhr.responseText);
+        alert('Failed to save child data. Error: ' + error);
+      }
+    });
+  }
+
+
+  // Delete child
+  function deleteChild(idfm, childName) {
+    if (!confirm('Are you sure you want to delete "' + childName + '"?')) {
+      return;
+    }
+
+    $.ajax({
+      url: "<?php echo base_url('CrewDetail/Family/deleteChild'); ?>",
       type: "POST",
       dataType: "json",
       data: {
-        idperson: idperson
+        idfm: idfm
       },
-      success: function (res) {
-        // console.log('Family data response:', res);
+      success: function(res) {
         if (res.status) {
-          renderFamily(res.data);
+          loadFamilyData(); // Reload data
+          success_message.text(res.message);
+          alert_success.removeClass('d-none');
+          setTimeout(function() {
+            alert_success.addClass('d-none');
+          }, 3000);
+
         } else {
-          console.error('Error:', res.message);
+          error_message.text(res.message || 'Failed to delete child');
+          alert_error.removeClass('d-none');
+          setTimeout(function() {
+            alert_error.addClass('d-none');
+          }, 3000);
         }
-        $("#loginLoading").hide();
+
       },
-      error: function (xhr, status, error) {
-        console.error('Failed to load family data:', error);
+      error: function() {
+        alert('Failed to delete child');
       }
     });
   }
 
+});
 
-  function validateChildField(inputId, feedbackId) {
-    let input = document.getElementById(inputId);
-    let feedback = document.getElementById(feedbackId);
-    input.classList.remove('is-valid', 'is-invalid');
-
-    if (!input.value || input.value.trim() === '') {
-      input.classList.add('is-invalid');
-      feedback.style.display = 'block';
-      return false;
-    } else {
-      input.classList.add('is-valid');
-      feedback.style.display = 'none';
-      return true;
+function loadFamilyData() {
+  var idperson = $('#contentArea').data('idperson');
+  $("#loginLoading").show();
+  $.ajax({
+    url: "<?php echo base_url('CrewDetail/Family/getFamilyData'); ?>",
+    type: "POST",
+    dataType: "json",
+    data: {
+      idperson: idperson
+    },
+    success: function(res) {
+      // console.log('Family data response:', res);
+      if (res.status) {
+        renderFamily(res.data);
+      } else {
+        console.error('Error:', res.message);
+      }
+      $("#loginLoading").hide();
+    },
+    error: function(xhr, status, error) {
+      console.error('Failed to load family data:', error);
     }
+  });
+}
+
+
+function validateChildField(inputId, feedbackId) {
+  let input = document.getElementById(inputId);
+  let feedback = document.getElementById(feedbackId);
+  input.classList.remove('is-valid', 'is-invalid');
+
+  if (!input.value || input.value.trim() === '') {
+    input.classList.add('is-invalid');
+    feedback.style.display = 'block';
+    return false;
+  } else {
+    input.classList.add('is-valid');
+    feedback.style.display = 'none';
+    return true;
   }
+}
 
 
 
 
-  function renderChildren(children) {
-    var $container = $('#childrenContainer');
-    var $childrenCount = $('#childrenCount');
+function renderChildren(children) {
+  var $container = $('#childrenContainer');
+  var $childrenCount = $('#childrenCount');
 
-    // Update children count
-    $childrenCount.text(children.length);
+  // Update children count
+  $childrenCount.text(children.length);
 
-    if (children.length === 0) {
-      $container.html(`
+  if (children.length === 0) {
+    $container.html(`
         <div class="text-center text-muted py-4">
           <i class="fa fa-child fa-2x mb-2"></i><br>
           No children data
         </div>
       `);
-      return;
-    }
+    return;
+  }
 
-    var html = '';
-    children.forEach(function (child, index) {
-      html += `
+  var html = '';
+  children.forEach(function(child, index) {
+    html += `
         <div class="child-item" data-id="${child.idfm}">
           <div class="d-flex justify-content-between align-items-start">
             <div style="flex: 1;">
@@ -632,127 +632,127 @@
           </div>
         </div>
       `;
-    });
+  });
 
-    $container.html(html);
-  }
+  $container.html(html);
+}
 
-  function loadChildData(idfm) {
-    $.ajax({
-      url: "<?php echo base_url('CrewDetail/Family/getChildData'); ?>",
-      type: "POST",
-      dataType: "json",
-      data: {
-        idfm: idfm
-      },
-      success: function (res) {
-        // console.log('Child data response:', res);
-        if (res.status) {
-          var childData = res.data;
+function loadChildData(idfm) {
+  $.ajax({
+    url: "<?php echo base_url('CrewDetail/Family/getChildData'); ?>",
+    type: "POST",
+    dataType: "json",
+    data: {
+      idfm: idfm
+    },
+    success: function(res) {
+      // console.log('Child data response:', res);
+      if (res.status) {
+        var childData = res.data;
 
-          // Set data ke form
-          $('#childModal .modal-title').text('Edit Child');
-          $('#childIdfm').val(childData.idfm);
-          $('#childIdperson').val(childData.idperson);
-          $('#childFirstName').val(childData.fmfname);
-          $('#childLastName').val(childData.fmlname);
-          $('#childGender').val(childData.fmsex);
+        // Set data ke form
+        $('#childModal .modal-title').text('Edit Child');
+        $('#childIdfm').val(childData.idfm);
+        $('#childIdperson').val(childData.idperson);
+        $('#childFirstName').val(childData.fmfname);
+        $('#childLastName').val(childData.fmlname);
+        $('#childGender').val(childData.fmsex);
 
-          // Format tanggal untuk input date (YYYY-MM-DD)
-          $('#childDob').val(childData.fmdob);
-          $('#childIssueDate').val(childData.fmissdt);
-          $('#childExpiryDate').val(childData.fmexpdt);
+        // Format tanggal untuk input date (YYYY-MM-DD)
+        $('#childDob').val(childData.fmdob);
+        $('#childIssueDate').val(childData.fmissdt);
+        $('#childExpiryDate').val(childData.fmexpdt);
 
-          $('#childPassport').val(childData.fmpassno);
-          $('#childIssuePlace').val(childData.fmplc);
-          $('#childVisa').val(childData.fmvisa);
+        $('#childPassport').val(childData.fmpassno);
+        $('#childIssuePlace').val(childData.fmplc);
+        $('#childVisa').val(childData.fmvisa);
 
-          // Tampilkan modal
-          $('#childModal').modal('show');
-        } else {
-          alert(res.message || 'Failed to load child data');
-        }
-      },
-      error: function (xhr, status, error) {
-        console.error('Error loading child data:', error);
-        alert('Failed to load child data');
+        // Tampilkan modal
+        $('#childModal').modal('show');
+      } else {
+        alert(res.message || 'Failed to load child data');
       }
-    });
+    },
+    error: function(xhr, status, error) {
+      console.error('Error loading child data:', error);
+      alert('Failed to load child data');
+    }
+  });
+}
+
+// Event listener untuk tombol edit child
+$(document).on('click', '.btn-edit-child', function() {
+  var childId = $(this).data('id');
+  loadChildData(childId);
+});
+
+// Event listener untuk tombol add child
+$(document).on('click', '.btn-add-child', function() {
+  var idperson = $('#contentArea').data('idperson');
+
+  if (!idperson) {
+    alert('Person ID not found!');
+    return;
   }
 
-  // Event listener untuk tombol edit child
-  $(document).on('click', '.btn-edit-child', function () {
-    var childId = $(this).data('id');
-    loadChildData(childId);
-  });
+  $('#childModal .modal-title').text('Add Child');
+  $('#childForm')[0].reset(); // Reset form
+  $('#childIdfm').val(''); // Kosongkan untuk add baru
+  $('#childIdperson').val(idperson); // Set idperson
+  $('#childModal').modal('show');
+});
 
-  // Event listener untuk tombol add child
-  $(document).on('click', '.btn-add-child', function () {
-    var idperson = $('#contentArea').data('idperson');
-
-    if (!idperson) {
-      alert('Person ID not found!');
-      return;
-    }
-
-    $('#childModal .modal-title').text('Add Child');
-    $('#childForm')[0].reset(); // Reset form
-    $('#childIdfm').val(''); // Kosongkan untuk add baru
-    $('#childIdperson').val(idperson); // Set idperson
-    $('#childModal').modal('show');
-  });
-
-  /*end of Children Information actions */
+/*end of Children Information actions */
 </script>
 
 <script>
-  function renderFamily(data) {
-    console.log('Rendering family data:', data);
+function renderFamily(data) {
+  console.log('Rendering family data:', data);
 
-    // VIEW MODE - Family Information
-    $('.form-view').each(function () {
-      var field = $(this).data('field');
-      if (!field) return;
+  // VIEW MODE - Family Information
+  $('.form-view').each(function() {
+    var field = $(this).data('field');
+    if (!field) return;
 
-      var value = getValueByPath({
-        family: data
-      }, field);
-      $(this).text(value ? value : '-');
-    });
+    var value = getValueByPath({
+      family: data
+    }, field);
+    $(this).text(value ? value : '-');
+  });
 
-    // EDIT MODE - Family Information
-    $('.form-edit').each(function () {
-      var field = $(this).data('field');
-      if (!field) return;
+  // EDIT MODE - Family Information
+  $('.form-edit').each(function() {
+    var field = $(this).data('field');
+    if (!field) return;
 
-      var value = getValueByPath({
-        family: data
-      }, field);
-      if ($(this).is('textarea')) {
-        $(this).val(value ? value : '');
-      } else {
-        $(this).val(value ? value : '');
-      }
-    });
-
-    // Render children
-    renderChildren(data.children || []);
-  }
-
-  // // Helper function untuk mengambil nilai dari nested object
-  function getValueByPath(obj, path) {
-    if (!obj || !path) return '';
-
-    var parts = path.split('.');
-    var current = obj;
-
-    for (var i = 0; i < parts.length; i++) {
-      if (current[parts[i]] === undefined || current[parts[i]] === null) {
-        return '';
-      }
-      current = current[parts[i]];
+    var value = getValueByPath({
+      family: data
+    }, field);
+    if ($(this).is('textarea')) {
+      $(this).val(value ? value : '');
+    } else {
+      $(this).val(value ? value : '');
     }
+  });
 
-    return current;
+  // Render children
+  renderChildren(data.children || []);
+}
+
+// // Helper function untuk mengambil nilai dari nested object
+function getValueByPath(obj, path) {
+  if (!obj || !path) return '';
+
+  var parts = path.split('.');
+  var current = obj;
+
+  for (var i = 0; i < parts.length; i++) {
+    if (current[parts[i]] === undefined || current[parts[i]] === null) {
+      return '';
+    }
+    current = current[parts[i]];
   }
+
+  return current;
+}
 </script>

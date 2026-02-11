@@ -321,7 +321,7 @@ public function updateFamilyInfo() {
     }
     
     // Ambil username dan timestamp
-    $username = $this->session->userdata('username') ?: 'system';
+    $username = $this->session->userdata('userName') ?: 'system';
     $currentDate = date('Y-m-d H:i:s');
     
     // Data untuk update

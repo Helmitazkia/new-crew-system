@@ -12,18 +12,22 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
-    <!-- DataTables CSS -->
+  <!-- DataTables CSS -->
   <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css">
 
   <!-- Optional: Bootstrap (biar cakep) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 
-    <!-- Select2 CSS -->
+  <!-- Select2 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+
 </head>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+
 
 <body>
 
@@ -155,142 +159,142 @@
 
 
   <script>
-    $(document).ready(function () {
-      $(document).on('click', '#btnLogout', function (e) {
-        e.preventDefault();
+  $(document).ready(function() {
+    $(document).on('click', '#btnLogout', function(e) {
+      e.preventDefault();
 
-        Swal.fire({
-          title: 'Konfirmasi Logout',
-          text: 'Apakah Anda yakin ingin keluar?',
-          icon: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Ya, Logout',
-          cancelButtonText: 'Batal'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            logoutProcess();
-          }
-        });
+      Swal.fire({
+        title: 'Konfirmasi Logout',
+        text: 'Apakah Anda yakin ingin keluar?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ya, Logout',
+        cancelButtonText: 'Batal'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          logoutProcess();
+        }
       });
+    });
 
-      function logoutProcess() {
-        $.ajax({
-          url: '<?php echo base_url("auth/login/do_logout"); ?>',
-          type: 'POST',
-          dataType: 'json',
-          beforeSend: function () {
-            // Update button state
-            $('#btnLogout').html('<i class="fas fa-spinner fa-spin me-2"></i>Logging out...');
-            $('#btnLogout').prop('disabled', true);
-          },
-          success: function (response) {
-            if (response.status) {
-              Swal.fire({
-                icon: 'info',
-                title: 'Memproses logout...',
-                html: `
+    function logoutProcess() {
+      $.ajax({
+        url: '<?php echo base_url("auth/login/do_logout"); ?>',
+        type: 'POST',
+        dataType: 'json',
+        beforeSend: function() {
+          // Update button state
+          $('#btnLogout').html('<i class="fas fa-spinner fa-spin me-2"></i>Logging out...');
+          $('#btnLogout').prop('disabled', true);
+        },
+        success: function(response) {
+          if (response.status) {
+            Swal.fire({
+              icon: 'info',
+              title: 'Memproses logout...',
+              html: `
                     <div class="text-center">
                         <div class="spinner-border text-primary mb-3" role="status"></div>
                     </div>
                 `,
-                showConfirmButton: false,
-                allowOutsideClick: false,
-                timer: 1500,
-                willClose: () => {
-                  window.location.href = '<?php echo base_url("auth/login"); ?>';
-                }
-              });
-            } else {
-              Swal.fire({
-                icon: 'error',
-                title: 'Gagal',
-                text: response.msg,
-                confirmButtonColor: '#0000cc'
-              });
-              resetLogoutButton();
-            }
-          },
-          error: function (xhr, status, error) {
-            Swal.close();
-            let errorMessage = 'Terjadi kesalahan saat logout';
-            try {
-              if (xhr.responseJSON && xhr.responseJSON.msg) {
-                errorMessage = xhr.responseJSON.msg;
+              showConfirmButton: false,
+              allowOutsideClick: false,
+              timer: 1500,
+              willClose: () => {
+                window.location.href = '<?php echo base_url("auth/login"); ?>';
               }
-            } catch (e) {
-              console.error("Error parsing response:", e);
-            }
-
+            });
+          } else {
             Swal.fire({
               icon: 'error',
-              title: 'Error',
-              text: errorMessage,
+              title: 'Gagal',
+              text: response.msg,
               confirmButtonColor: '#0000cc'
             });
-            console.error(xhr.responseText);
             resetLogoutButton();
           }
-        });
-      }
+        },
+        error: function(xhr, status, error) {
+          Swal.close();
+          let errorMessage = 'Terjadi kesalahan saat logout';
+          try {
+            if (xhr.responseJSON && xhr.responseJSON.msg) {
+              errorMessage = xhr.responseJSON.msg;
+            }
+          } catch (e) {
+            console.error("Error parsing response:", e);
+          }
 
-      function resetLogoutButton() {
-        $('#btnLogout').html('<i class="fas fa-sign-out-alt me-2"></i>Logout');
-        $('#btnLogout').prop('disabled', false);
-      }
-
-      $(document).keydown(function (e) {
-        if (e.ctrlKey && e.key === 'l') {
-          e.preventDefault();
-          $('#btnLogout').click();
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: errorMessage,
+            confirmButtonColor: '#0000cc'
+          });
+          console.error(xhr.responseText);
+          resetLogoutButton();
         }
       });
+    }
 
+    function resetLogoutButton() {
+      $('#btnLogout').html('<i class="fas fa-sign-out-alt me-2"></i>Logout');
+      $('#btnLogout').prop('disabled', false);
+    }
+
+    $(document).keydown(function(e) {
+      if (e.ctrlKey && e.key === 'l') {
+        e.preventDefault();
+        $('#btnLogout').click();
+      }
     });
+
+  });
   </script>
 
   <style>
-    /* Profile dropdown styling */
-    .user-profile:hover {
-      background-color: rgba(0, 0, 0, 0.05);
-      border-radius: 20px;
-      padding: 5px 10px;
+  /* Profile dropdown styling */
+  .user-profile:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 20px;
+    padding: 5px 10px;
+  }
+
+  .avatar-circle {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .dropdown-menu {
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
     }
 
-    .avatar-circle {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
+  }
 
-    .dropdown-menu {
-      animation: slideIn 0.3s ease;
-    }
+  .dropdown-item:hover {
+    background-color: #f8f9fa;
+    border-radius: 5px;
+  }
 
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
+  #btnLogout:hover {
+    background-color: rgba(220, 53, 69, 0.1) !important;
+  }
 
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .dropdown-item:hover {
-      background-color: #f8f9fa;
-      border-radius: 5px;
-    }
-
-    #btnLogout:hover {
-      background-color: rgba(220, 53, 69, 0.1) !important;
-    }
-
-    .cursor-pointer {
-      cursor: pointer !important;
-    }
+  .cursor-pointer {
+    cursor: pointer !important;
+  }
   </style>
 
 
@@ -301,87 +305,87 @@
   </section>
 
   <style>
-    .hero-banner {
-      height: 310px;
-      overflow: hidden;
-    }
+  .hero-banner {
+    height: 310px;
+    overflow: hidden;
+  }
 
-    .hero-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-    }
+  .hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
 
-    .hero-banner {
-      height: 35vh;
-      min-height: 260px;
-      max-height: 420px;
-    }
+  .hero-banner {
+    height: 35vh;
+    min-height: 260px;
+    max-height: 420px;
+  }
   </style>
 
   <style>
-    .content-wrapper {
-      padding-left: 0;
-      padding-right: 0;
-    }
+  .content-wrapper {
+    padding-left: 0;
+    padding-right: 0;
+  }
   </style>
 
 
   <style>
-    /* Kecilkan input-group & button di form ini saja */
-    .compact-form .btn {
-      font-size: 12.5px;
-      padding: 5px 12px;
-    }
+  /* Kecilkan input-group & button di form ini saja */
+  .compact-form .btn {
+    font-size: 12.5px;
+    padding: 5px 12px;
+  }
 
-    .compact-form .form-control {
-      font-size: 12.5px;
-      height: 40px;
-    }
+  .compact-form .form-control {
+    font-size: 12.5px;
+    height: 40px;
+  }
 
-    /* Button kanan (Button) */
-    .compact-form #button-addon2 {
-      height: 40px;
-      padding: 4px 12px;
-      font-size: 12.5px;
-    }
+  /* Button kanan (Button) */
+  .compact-form #button-addon2 {
+    height: 40px;
+    padding: 4px 12px;
+    font-size: 12.5px;
+  }
 
-    /* Dropdown button kiri */
-    .compact-form .dropdown-toggle {
-      height: 40px;
-      padding: 4px 10px;
-      font-size: 12.5px;
-      width: 130px;
-    }
+  /* Dropdown button kiri */
+  .compact-form .dropdown-toggle {
+    height: 40px;
+    padding: 4px 10px;
+    font-size: 12.5px;
+    width: 130px;
+  }
 
 
-    .compact-form .btn-pill {
-      padding: 5px 14px;
-    }
+  .compact-form .btn-pill {
+    padding: 5px 14px;
+  }
   </style>
 
   <style>
-    /* Navbar clickable cursor */
-    .navbar .nav-link,
-    .navbar-brand,
-    .navbar-toggler,
-    .navbar img {
-      cursor: pointer;
-    }
+  /* Navbar clickable cursor */
+  .navbar .nav-link,
+  .navbar-brand,
+  .navbar-toggler,
+  .navbar img {
+    cursor: pointer;
+  }
 
-    .navbar-nav .nav-link {
-      cursor: pointer;
-    }
+  .navbar-nav .nav-link {
+    cursor: pointer;
+  }
 
-    .navbar-nav .nav-link:hover {
-      color: #000099;
-      text-decoration: underline;
-    }
+  .navbar-nav .nav-link:hover {
+    color: #000099;
+    text-decoration: underline;
+  }
 
-    .navbar-nav .nav-link.active {
-      color: #000099;
-      font-weight: 700;
-      text-decoration: underline;
-    }
+  .navbar-nav .nav-link.active {
+    color: #000099;
+    font-weight: 700;
+    text-decoration: underline;
+  }
   </style>
