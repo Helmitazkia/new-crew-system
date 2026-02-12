@@ -1,24 +1,19 @@
 <div class="container-fluid content-wrapper">
   <div class="row mb-2 ms-2">
     <div class="col-12 d-flex align-items-center gap-2">
-
-      <!-- TABS -->
       <div class="d-flex flex-wrap justify-content-center gap-2 main-tabs flex-grow-1">
         <button id="btnBack" class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">
           <i class="fa fa-arrow-left"></i> Back
         </button>
-
         <button id="tabProfile" class="btn btn-primary rounded-pill px-3 fst-italic fw-semibold active">
           Profile
         </button>
-
         <button id="tabFamily" class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">
           Family
         </button>
-
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold"
           id="tabCertificates">Certificates</button>
-        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Experience</button>
+        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabExperience">Experience</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Education</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Contract</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabNextplan">Next Plan</button>
@@ -122,6 +117,12 @@ $(document).ready(function() {
     loadCertificatesTab();
   });
 
+
+  $('#tabExperience').on('click', function() {
+    setActiveTab('tabExperience');
+    loadExperienceTab();
+  });
+
   $('#tabNextplan').on('click', function() {
     setActiveTab('tabNextplan');
     loadNextplanTab();
@@ -184,6 +185,22 @@ $(document).ready(function() {
       error: function() {
         $('#contentArea').html(
           '<div class="text-danger">Failed load Certificates</div>'
+        );
+      }
+    });
+  }
+
+  function loadExperienceTab() {
+    // $('#loginLoading').show();
+    $.ajax({
+      url: "<?php echo base_url('CrewDetail/Experience'); ?>",
+      type: "GET",
+      success: function(html) {
+        $('#contentArea').html(html);
+      },
+      error: function() {
+        $('#contentArea').html(
+          '<div class="text-danger">Failed load Experience</div>'
         );
       }
     });
