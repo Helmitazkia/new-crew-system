@@ -203,7 +203,6 @@ $(document).ready(function() {
   }
 
   let table = $('#crewTable').DataTable({
-    //Create new button New Monitoring
     dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end custom-btn'>>" +
       "<'row'<'col-md-12'tr>>" +
       "<'row mt-2'<'col-md-5'i><'col-md-7'p>>",
