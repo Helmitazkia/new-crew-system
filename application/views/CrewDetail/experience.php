@@ -210,7 +210,7 @@ $(document).ready(function() {
 
     processing: true,
     serverSide: false,
-    searching: false,
+    searching: true,
     paging: true,
     info: true,
     lengthChange: true,
@@ -343,6 +343,9 @@ $(document).ready(function() {
     }
 
   });
+
+
+
 
   $(document).on('click', '#btnNew', function() {
     $('#experienceForm')[0].reset();
