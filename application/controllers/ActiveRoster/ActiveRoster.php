@@ -21,17 +21,6 @@ class ActiveRoster extends CI_Controller {
         }
     }
 
-    // public function getActiveRoster()
-    // {
-    //     $data = array(
-    //         'title' => 'Active Roster',
-    //         'active_menu' => 'crew_roster',
-    //         'content' => 'Roster/ActiveRoster/active_roster'
-    //     );
-
-    //     $this->load->view('menu/main_CrewLifecycle', $data);
-    // }
-
     public function index()
     {
         $data = array(
@@ -69,7 +58,9 @@ class ActiveRoster extends CI_Controller {
                 D.nmvsl,
                 C.signoffdt,
                 C.estsignoffdt, -- TAMBAHKAN INI
-                SE.rankexp,
+                 (SELECT rankexp FROM tblseaexp 
+                    WHERE idperson = A.idperson AND deletests = '0' 
+                    ORDER BY idexp DESC, todtexp DESC LIMIT 1) as rankexp,
                 CASE
                     WHEN A.inBlacklist = '1' AND K.deletests = '0' THEN 'Not For Emp'
                     WHEN A.inAktif = '1' AND A.inBlacklist = '0' THEN 'Non Aktif'
@@ -88,13 +79,6 @@ class ActiveRoster extends CI_Controller {
             ) C ON A.idperson = C.idperson
             LEFT JOIN tblkota K ON A.pob = K.KdKota 
             LEFT JOIN mstvessel D ON D.kdvsl = C.signonvsl
-            LEFT JOIN (
-                SELECT s1.idperson, s1.rankexp
-                FROM tblseaexp s1
-                WHERE s1.idexp = (
-                    SELECT MAX(s2.idexp) FROM tblseaexp s2 WHERE s2.idperson = s1.idperson
-                )
-            ) SE ON a.idperson = SE.idperson
             $where
             GROUP BY A.idperson
             ORDER BY fullName ASC

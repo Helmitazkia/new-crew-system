@@ -100,6 +100,10 @@
 <script>
 $(document).ready(function() {
 
+  document.getElementById('btnBack').addEventListener('click', function() {
+    window.history.back();
+  });
+
   // ================= TAB CLICK =================
   $('#tabProfile').on('click', function() {
     setActiveTab('tabProfile');
