@@ -1174,5 +1174,25 @@ class DataContext extends CI_Controller {
 		}
 	}
 
+	 public function getMstSchoolByOption($return = "",$typeVal = "")
+	 {
+		$opt = "<option value=''></option>";
+		$sql = "SELECT id, schoolname FROM mstschool WHERE deletests = '0' ORDER BY schoolname ASC";
+		$rsl = $this->db->query($sql)->result_array();
+		foreach ($rsl as $key => $val) {
+			$opt .= "<option value=\"".$val['schoolname']."\">".$val['schoolname']."</option>";
+		}
+		return $opt;
+	 }
+
+	 public function getYearsByOption($return = "",$typeVal = "")
+	 {
+		$opt = "<option value=''></option>";
+		for ($i = 2000; $i <= (int) date('Y'); $i++) {
+			$opt .= "<option value=\"".$i."\">".$i."</option>";
+		}
+		return $opt;
+	 }
+
 
 }

@@ -14,7 +14,7 @@
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold"
           id="tabCertificates">Certificates</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabExperience">Experience</button>
-        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Education</button>
+        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabEducation">Education</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Contract</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabNextplan">Next Plan</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabtraning">Assessment &
@@ -126,6 +126,10 @@ $(document).ready(function() {
     setActiveTab('tabExperience');
     loadExperienceTab();
   });
+  $('#tabEducation').on('click', function() {
+    setActiveTab('tabEducation');
+    loadEducationTab();
+  });
 
   $('#tabNextplan').on('click', function() {
     setActiveTab('tabNextplan');
@@ -205,6 +209,21 @@ $(document).ready(function() {
       error: function() {
         $('#contentArea').html(
           '<div class="text-danger">Failed load Experience</div>'
+        );
+      }
+    });
+  }
+
+  function loadEducationTab() {
+    $.ajax({
+      url: "<?php echo base_url('CrewDetail/Education'); ?>",
+      type: "GET",
+      success: function(html) {
+        $('#contentArea').html(html);
+      },
+      error: function() {
+        $('#contentArea').html(
+          '<div class="text-danger">Failed load Education</div>'
         );
       }
     });
