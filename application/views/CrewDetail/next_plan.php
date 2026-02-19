@@ -270,83 +270,29 @@
 
   
     <div class="card shadow-sm">
-      <div class="card-header fw-semibold fst-italic">
-        📊 Next Plan Vessel – Crew Overview
-      </div>
-      <div class="card-body p-0">
+      <!-- <div class="card-header fw-semibold fst-italic">
+        📊 Next Plan – History (Crew Rotation)
+      </div> -->
+      <div class="card-body p-3">
         <div class="table-responsive">
-
-          <table class="table table-sm table-bordered align-middle mb-0 crew-table">
-
+          <table id="nextPlanHistoryTable" class="table table-sm table-bordered align-middle mb-0 crew-table" style="width:100%">
             <thead class="crew-header">
               <tr>
-                <th rowspan="2">No</th>
-                <th colspan="5" class="crew-header-group">ONBOARD</th>
-                <th colspan="3" class="crew-header-group">REPLACEMENT</th>
-                <th rowspan="2">Status</th>
-                <th rowspan="2">Next Vessel</th>
-              </tr>
-              <tr>
+                <th class="text-center">No</th>
                 <th>Name</th>
-                <th>Rank</th>
-                <th>S/ON</th>
-                <th>Old Vessel</th>
-                <th>S/OFF Plan</th>
-                <th>Remark</th>
-                <th>Rank</th>
-                <th>Name</th>
+                <th class="text-center">Rank</th>
+                <th class="text-center">S/ON</th>
+                <th>Vessel</th>
+                <th class="text-center">S/OFF Plan</th>
+                <th class="text-center">Remark</th>
+                <th class="text-center">Repl. Rank</th>
+                <th>Repl. Name</th>
+                <th class="text-center">Status</th>
+                <th>Next Vessel</th>
               </tr>
             </thead>
-
-            <tbody>
-              <tr>
-                <td class="text-center">1</td>
-
-                <td>
-                  <a href="#" class="crew-name">
-                    Jefri Bernadus
-                  </a>
-                </td>
-                <td class="text-center">A/B</td>
-                <td class="text-center">17-10-2025</td>
-                <td>MT. ANDHIKA VIDYANATA</td>
-                <td class="text-center">17-07-2026</td>
-
-                <td class="fst-italic text-muted">Planned</td>
-                <td class="text-center">A/B</td>
-                <td class="text-muted">-</td>
-
-                <td class="text-center">
-                  <span class="badge bg-success badge-status">Submit</span>
-                </td>
-                <td>MT. ANDHIKA VIDYANATA</td>
-              </tr>
-              <tr>
-                <td class="text-center">2</td>
-
-                <td>
-                  <a href="#" class="crew-name">
-                      Jefri Bernadus
-                  </a>
-                </td>
-                <td class="text-center">A/B</td>
-                <td class="text-center">20-10-2025</td>
-                <td>MT. ANDHIKA VIDYANATA</td>
-                <td class="text-center">17-07-2026</td>
-
-                <td class="fst-italic text-muted">Planned</td>
-                <td class="text-center">A/B</td>
-                <td class="text-muted">-</td>
-
-                <td class="text-center">
-                  <span class="badge bg-danger badge-status">Cancel</span>
-                </td>
-                <td>MT. ANDHIKA VIDYANATA</td>
-              </tr>
-            </tbody>
-
+            <tbody></tbody>
           </table>
-
         </div>
       </div>
     </div>
@@ -358,12 +304,66 @@
 </div>
 
 <script>
-  $('.crew-name').on('click', function (e) {
-    e.preventDefault();
-    $('#nextPlanVesselCard').removeClass('d-none');
-  });
+  $(document).ready(function () {
+    var idperson = $('#contentArea').data('idperson');
+    if (!idperson) {
+      $('#nextPlanHistoryTable').closest('.card-body').html('<p class="text-muted p-3">idperson not found. Open this tab from Crew Detail.</p>');
+      return;
+    }
+    var baseUrl = "<?php echo base_url('CrewRotation/CrewRotation'); ?>";
+    var table = $('#nextPlanHistoryTable').DataTable({
+      serverSide: false,
+      ajax: {
+        url: baseUrl + '/getHistoryByPerson',
+        type: 'GET',
+        data: { idperson: idperson },
+        dataSrc: function (json) {
+          return json.success ? json.data : [];
+        }
+      },
+      columns: [
+        {
+          data: null,
+          className: 'text-center',
+          orderable: false,
+          render: function (data, type, row, meta) {
+            return meta.row + 1;
+          }
+        },
+        { data: 'onboard_name', defaultContent: '-' },
+        { data: 'onboard_rank', className: 'text-center', defaultContent: '-' },
+        { data: 'onboard_son', className: 'text-center', defaultContent: '-' },
+        { data: 'onboard_vessel', defaultContent: '-' },
+        { data: 'onboard_soff', className: 'text-center', defaultContent: '-' },
+        { data: 'remark', className: 'text-center', defaultContent: '-' },
+        { data: 'replacement_rank', className: 'text-center', defaultContent: '-' },
+        { data: 'replacement_name', defaultContent: '-' },
+        {
+          data: 'status',
+          className: 'text-center',
+          render: function (data) {
+            var c = 'bg-secondary';
+            if (data === 'Submit') c = 'bg-success';
+            else if (data === 'Cancel') c = 'bg-danger';
+            else if (data === 'Joined') c = 'bg-primary';
+            return '<span class="badge ' + c + ' badge-status">' + (data || '') + '</span>';
+          }
+        },
+        { data: 'next_vessel', defaultContent: '-' }
+      ],
+      pageLength: 10,
+      lengthMenu: [5, 10, 25, 50],
+      language: {
+        lengthMenu: ' _MENU_ &nbsp; Entries',
+        search: 'Search:',
+        info: 'Showing _START_ to _END_ of _TOTAL_ entries',
+        infoEmpty: 'No records'
+      },
+      order: [[2, 'desc']]
+    });
 
-  $('#btnCloseNextPlan').on('click', function () {
-    $('#nextPlanVesselCard').addClass('d-none');
+    $('#btnCloseNextPlan').on('click', function () {
+      $('#nextPlanVesselCard').addClass('d-none');
+    });
   });
 </script>

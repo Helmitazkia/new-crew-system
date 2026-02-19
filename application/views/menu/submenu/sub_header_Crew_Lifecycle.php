@@ -64,7 +64,7 @@ $(document).ready(function() {
         $('#contentArea').html(html);
       },
       error: function() {
-        alert('Gagal membuka Crew Rotation');
+        $('#contentArea').html('<div class="alert alert-danger">Gagal membuka Crew Rotation</div>');
       }
     });
   });
