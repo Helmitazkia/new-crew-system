@@ -12,7 +12,6 @@
                     <th>Year</th>
                     <th>School Name</th>
                     <th>Course / Finish</th>
-                    <th>File</th>
                     <th class="text-center">Action</th>
                   </tr>
                 </thead>
@@ -22,7 +21,6 @@
                     <th><input type="text" class="column-search form-control form-control-sm" placeholder="Search"></th>
                     <th><input type="text" class="column-search form-control form-control-sm" placeholder="Search"></th>
                     <th><input type="text" class="column-search form-control form-control-sm" placeholder="Search"></th>
-                    <th></th>
                     <th></th>
                   </tr>
                 </thead>
@@ -181,7 +179,14 @@
           className: 'text-center',
           orderable: false,
           render: function (data, type, row, meta) {
-            return meta.row + 1;
+            var no = meta.row + 1;
+            var below = '';
+            if (row.scl_file && row.scl_file.trim() !== '') {
+              below = '<div class="mt-1"><a href="<?php echo base_url("uploadFile"); ?>/' + row.scl_file + '" target="_blank" class="text-primary small" title="View / Download"><i class="fa-solid fa-book"></i></a></div>';
+            } else {
+              below = '<div class="mt-1"><button type="button" class="btn btn-sm btn-outline-info p-1 btn-upload-edu" data-id="' + row.idscl + '" title="Upload File"><i class="fa fa-upload"></i></button></div>';
+            }
+            return '<div>' + no + below + '</div>';
           }
         },
         {
@@ -194,18 +199,6 @@
           data: 'crsfin'
         },
         {
-          data: 'scl_file',
-          orderable: false,
-          searchable: false,
-          render: function (data, type, row) {
-            if (data && data.trim() !== '') {
-              return '<a href="<?php echo base_url("uploadFile"); ?>/' + data +
-                '" target="_blank" class="text-primary">View / Download</a>';
-            }
-            return '<span class="text-muted">-</span>';
-          }
-        },
-        {
           data: null,
           orderable: false,
           searchable: false,
@@ -214,9 +207,6 @@
             return `
             <button type="button" class="btn btn-sm btn-outline-primary btn-view-edu" data-id="${row.idscl}" title="Edit">
               <i class="fa fa-edit"></i>
-            </button>
-            <button type="button" class="btn btn-sm btn-outline-info btn-upload-edu" data-id="${row.idscl}" title="Upload File">
-              <i class="fa fa-upload"></i>
             </button>
             <button type="button" class="btn btn-sm btn-outline-danger btn-delete-edu" data-id="${row.idscl}" title="Delete">
               <i class="fa fa-trash"></i>

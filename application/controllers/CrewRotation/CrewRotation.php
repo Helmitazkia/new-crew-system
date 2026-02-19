@@ -301,9 +301,10 @@ class CrewRotation extends CI_Controller
             'next_vessel'          => $this->input->post('next_vessel') ?: null,
             'updusrdt'             => $username . '/' . $currentDate,
         );
+
         $this->db->where('idcrewrotation', $idcrewrotation);
         $this->db->update('tblcrewrotation', $data);
-        if (strtoupper($status) === 'JOINED') {
+        if (strtoupper($status) === 'Joined') {
             $this->_syncRotationToContract($idcrewrotation);
         }
         $this->output->set_content_type('application/json')->set_output(
@@ -365,14 +366,14 @@ class CrewRotation extends CI_Controller
             'signondt'      => $row->signondt,
             'signoffdt'     => $signoffdt,
             'estsignoffdt'  => $estsignoffdt,
-            'signonrank'    => $row->signonrank,
-            'signonvsl'     => $row->signonvsl,
-            'signonport'    => $row->signonport,
-            'signondesc'    => $row->signondesc,
-            'lastvsl'       => $row->lastvsl,
-            'no_pkl'        => $row->no_pkl,
-            'estremark'     => $row->estremark,
-            'signoffremark' => $row->signoffremark,
+            'signonrank'    => $row->signonrank ?: '',
+            'signonvsl'     => $row->signonvsl ?: '',
+            'signonport'    => $row->signonport ?: '',
+            'signondesc'    => $row->signondesc ?: '',
+            'lastvsl'       => $row->lastvsl ?: '',
+            'no_pkl'        => $row->no_pkl ?: '',
+            'estremark'     => $row->estremark ?: '',
+            'signoffremark' => $row->signoffremark ?: '',
             'idcontractRepl'=>  $newId,
             'additional'    => 0,
             'foreigncrew'   => 0,
