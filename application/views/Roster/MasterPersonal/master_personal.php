@@ -310,7 +310,7 @@ $(document).ready(function() {
           table.column(colIndex).search('').draw();
         }
         dropdown.show();
-        // $('.filter-dropdown').hide();
+        $('.filter-dropdown').hide();
       });
 
 

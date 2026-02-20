@@ -316,6 +316,7 @@ class CrewRotation extends CI_Controller
     {
         $idcrewrotation = $this->input->post('idcrewrotation');
         $status = $this->input->post('status');
+        $remaks_cancel = trim($this->input->post('remaks_cancel') ?: '');
         if (empty($idcrewrotation) || empty($status)) {
             $this->output->set_content_type('application/json')->set_output(
                 json_encode(array('status' => false, 'message' => 'idcrewrotation and status required'))
@@ -326,6 +327,61 @@ class CrewRotation extends CI_Controller
         if (!in_array($status, array('Submit', 'Cancel', 'Joined'))) {
             $this->output->set_content_type('application/json')->set_output(
                 json_encode(array('status' => false, 'message' => 'Invalid status'))
+            );
+            return;
+        }
+        $row = $this->db->query(
+            "SELECT status, idcontract_synced FROM tblcrewrotation WHERE idcrewrotation = ? AND deletests = '0'",
+            array($idcrewrotation)
+        )->row();
+        if (!$row) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'Record not found'))
+            );
+            return;
+        }
+        $current_status = $row->status;
+        if ($current_status === 'Cancel') {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'Status sudah Cancel. Tidak dapat diubah. Harus buat data baru.'))
+            );
+            return;
+        }
+        if ($current_status === 'Joined' && $status === 'Submit') {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'Dari Joined tidak bisa kembali ke Submit. Data sudah masuk Contract. Hanya bisa di-Cancel jika dibatalkan.'))
+            );
+            return;
+        }
+        if ($status === 'Cancel') {
+            if ($remaks_cancel === '') {
+                $this->output->set_content_type('application/json')->set_output(
+                    json_encode(array('status' => false, 'message' => 'Remarks Cancel wajib diisi.'))
+                );
+                return;
+            }
+            $username = $this->session->userdata('userName') ?: 'system';
+            $currentDate = date('Ymd/H:i:s');
+            if ($current_status === 'Joined' && !empty($row->idcontract_synced)) {
+                $this->db->where('idcontract', $row->idcontract_synced);
+                $this->db->update('tblcontract', array('deletests' => '1'));
+                $this->db->where('idcrewrotation', $idcrewrotation);
+                $this->db->update('tblcrewrotation', array(
+                    'status'            => 'Cancel',
+                    'remaks_cancel'     => $remaks_cancel,
+                    'idcontract_synced' => null,
+                    'updusrdt'          => $username . '/' . $currentDate,
+                ));
+            } else {
+                $this->db->where('idcrewrotation', $idcrewrotation);
+                $this->db->update('tblcrewrotation', array(
+                    'status'        => 'Cancel',
+                    'remaks_cancel' => $remaks_cancel,
+                    'updusrdt'      => $username . '/' . $currentDate,
+                ));
+            }
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => true, 'message' => 'Status updated to Cancel successfully'))
             );
             return;
         }
@@ -346,6 +402,13 @@ class CrewRotation extends CI_Controller
 
     private function _syncRotationToContract($idcrewrotation)
     {
+        $check = $this->db->query(
+            "SELECT idcontract_synced FROM tblcrewrotation WHERE idcrewrotation = ? AND deletests = '0'",
+            array($idcrewrotation)
+        )->row();
+        if ($check && !empty($check->idcontract_synced)) {
+            return;
+        }
         $sql = "SELECT idperson, kdcmprec, signondt, signoffdt, estsignoffdt, signonrank, signonvsl,
                 signonport, signondesc, lastvsl, no_pkl, estremark, signoffremark
                 FROM tblcrewrotation WHERE idcrewrotation = ? AND deletests = '0'";
@@ -382,6 +445,8 @@ class CrewRotation extends CI_Controller
             'addusrdt'      => $username . '/' . $currentDate,
         );
         $this->db->insert('tblcontract', $data);
+        $this->db->where('idcrewrotation', $idcrewrotation);
+        $this->db->update('tblcrewrotation', array('idcontract_synced' => $newId));
     }
 
     public function delete_crewRotation()

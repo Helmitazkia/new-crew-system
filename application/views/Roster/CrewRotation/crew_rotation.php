@@ -58,6 +58,10 @@
       }
 
       /* DataTables Customization */
+      .custom-btn {
+        justify-content: flex-end;
+      }
+
       .dataTables_wrapper {
         padding: 15px 0;
       }
@@ -138,64 +142,31 @@
         font-size: 14px;
       }
 
-      /* Filter Icon */
-      .filter-icon {
-        cursor: pointer;
-        font-size: 14px;
-        margin-left: 6px;
-        color: #0d6efd;
+      /* Baris search di bawah header (column search) */
+      .crew-search-row {
+        background: #f8f9fa !important;
       }
-
-      .filter-dropdown {
-        position: absolute;
-        background: #fff;
-        border: 1px solid #ccc;
-        padding: 8px;
-        width: 200px;
-        max-height: 260px;
-        overflow-y: auto;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
-        display: none;
-        z-index: 9999;
+      .crew-search-row th {
+        background: #f8f9fa !important;
+        color: #495057 !important;
+        padding: 6px 8px;
+        vertical-align: middle;
       }
-
-      .filter-dropdown input[type="text"] {
+      .crew-search-row .column-search {
         width: 100%;
-        margin-bottom: 6px;
-        padding: 4px;
-        font-size: 12px;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-      }
-
-      .filter-dropdown label {
+        max-width: 160px;
+        margin: 0 auto;
         display: block;
-        font-size: 13px;
-        cursor: pointer;
-        padding: 4px 8px;
-        margin: 2px 0;
-        border-radius: 4px;
-      }
-
-      .filter-dropdown label:hover {
-        background: #f8f9fa;
-      }
-
-      .filter-list {
-        max-height: 120px;
-        overflow-y: auto;
-        margin-bottom: 6px;
       }
 
       /* Column Search Input */
       .column-search {
-        width: 100%;
         padding: 6px 8px;
         box-sizing: border-box;
         font-size: 12px;
         border: 1px solid #dee2e6;
         border-radius: 4px;
-        background: #f8f9fa;
+        background: #fff;
       }
 
       /* Responsive Card */
@@ -259,12 +230,6 @@
       <div class="col-md-12">
         <div class="card shadow">
           <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-1">
-              <!-- <h6 class="mb-0 fw-semibold fst-italic">Crew Rotation Plan</h6> -->
-              <!-- <button type="button" class="btn btn-sm btn-primary rounded-pill fst-italic" id="btnNewCrewRotation">
-                <i class="fa fa-plus"></i> New
-              </button> -->
-            </div>
             <div class="table-responsive">
               <table id="crewTable" class="table table-bordered align-middle mb-0 crew-table" style="width:100%">
                 <thead class="crew-header">
@@ -277,35 +242,30 @@
                     <th rowspan="2" class="text-center">Action</th>
                   </tr>
                   <tr>
-                    <th>Name <span class="filter-icon">☰</span></th>
-                    <th>Rank <span class="filter-icon">☰</span></th>
-                    <th>S/ON <span class="filter-icon">☰</span></th>
-                    <th>Vessel <span class="filter-icon">☰</span></th>
-                    <th>S/OFF Plan <span class="filter-icon">☰</span></th>
-                    <th>Remark <span class="filter-icon">☰</span></th>
-                    <th>Rank <span class="filter-icon">☰</span></th>
-                    <th>Name <span class="filter-icon">☰</span></th>
+                    <th>Name</th>
+                    <th>Rank</th>
+                    <th>S/ON</th>
+                    <th>Vessel</th>
+                    <th>S/OFF Plan</th>
+                    <th>Remark</th>
+                    <th>Rank</th>
+                    <th>Name</th>
                   </tr>
-                </thead>
-
-                <!-- Search Row -->
-                <thead>
-                  <tr>
+                  <tr class="crew-search-row">
                     <th></th>
-                    <th><input type="text" class="column-search" placeholder="Search Name"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Rank"></th>
-                    <th><input type="text" class="column-search" placeholder="Search S/ON"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Vessel"></th>
-                    <th><input type="text" class="column-search" placeholder="Search S/OFF"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Remark"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Rank"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Name"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Status"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Next Vessel"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th></th>
                   </tr>
                 </thead>
-
                 <tbody>
                   <!-- Data akan diisi oleh DataTables -->
                 </tbody>
@@ -313,6 +273,28 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Remarks Cancel -->
+<div class="modal fade" id="modalRemarksCancel" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header text-white" style="background-color:#000099;">
+        <h5 class="modal-title">Remarks Cancel</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="remarksCancel_idcrewrotation">
+        <label class="form-label fw-semibold">Remarks Cancel <span class="text-danger">*</span></label>
+        <textarea class="form-control" id="remarksCancel_input" rows="4" placeholder="Alasan / keterangan cancel..."></textarea>
+        <small id="remarksCancel_feedback" class="text-danger d-none">Remarks Cancel wajib diisi.</small>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-primary" id="btnSubmitRemarksCancel">Submit</button>
       </div>
     </div>
   </div>
@@ -350,6 +332,9 @@
 
   $(document).ready(function () {
     let table = $('#crewTable').DataTable({
+      dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end custom-btn'>>" +
+        "<'row'<'col-md-12'tr>>" +
+        "<'row mt-2'<'col-md-5'i><'col-md-7'p>>",
       processing: true,
       serverSide: false,
       ajax: {
@@ -400,7 +385,8 @@
           searchable: false,
           className: "text-center",
           render: function (data, type, row) {
-            var statusOpt = '<select class="form-select form-select-sm d-inline-block w-auto status-select" data-id="' + row.idcrewrotation + '">' +
+            var disabled = row.status === "Cancel" ? " disabled" : "";
+            var statusOpt = '<select class="form-select form-select-sm d-inline-block w-auto status-select" data-id="' + row.idcrewrotation + '" data-current="' + (row.status || "") + '"' + disabled + '>' +
               '<option value="Submit"' + (row.status === "Submit" ? " selected" : "") + '>Submit</option>' +
               '<option value="Cancel"' + (row.status === "Cancel" ? " selected" : "") + '>Cancel</option>' +
               '<option value="Joined"' + (row.status === "Joined" ? " selected" : "") + '>Joined</option></select>';
@@ -415,7 +401,7 @@
       lengthMenu: [5, 10, 25, 50, 100],
       language: {
         lengthMenu: " _MENU_ &nbsp; Entries",
-        search: "Search:",
+        search: "",
         paginate: { first: "First", last: "Last", next: "Next", previous: "Previous" },
         info: "Showing _START_ to _END_ of _TOTAL_ entries",
         infoEmpty: "Showing 0 to 0 of 0 entries"
@@ -423,44 +409,172 @@
       order: [[1, "asc"]],
       initComplete: function () {
         $(".dataTables_info").css({ padding: "10px 0", color: "#6c757d", "font-size": "14px" });
+        $(".custom-btn").html(
+          '<button type="button" class="btn btn-primary btn-sm rounded-pill fst-italic" id="btnNewCrewRotation">' +
+          '<i class="fa fa-plus"></i> New</button>'
+        );
       }
     });
 
-    $(document).on("change", ".status-select", function () {
-      var id = $(this).data("id");
-      var status = $(this).val();
-      $.post(baseUrlCrewRotation + "/updateStatus", { idcrewrotation: id, status: status })
+    $(document).on("change", ".status-select", function (e) {
+      var $sel = $(this);
+      var id = $sel.data("id");
+      var currentStatus = $sel.data("current");
+      var newStatus = $sel.val();
+      if (currentStatus === "Cancel") {
+        e.preventDefault();
+        e.stopPropagation();
+        $sel.val("Cancel");
+        if (typeof Swal !== "undefined") {
+          Swal.fire({ icon: "info", title: "Tidak dapat diubah", text: "Status sudah Cancel. Harus buat data baru." });
+        } else {
+          alert("Status sudah Cancel. Harus buat data baru.");
+        }
+        return false;
+      }
+      if (currentStatus === "Joined" && newStatus === "Submit") {
+        e.preventDefault();
+        e.stopPropagation();
+        $sel.val("Joined");
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            icon: "warning",
+            title: "Tidak dapat diubah",
+            text: "Dari Joined tidak bisa kembali ke Submit. Data sudah masuk ke Contract. Hanya bisa di-Cancel jika dibatalkan."
+          });
+        } else {
+          alert("Dari Joined tidak bisa kembali ke Submit. Hanya bisa di-Cancel.");
+        }
+        return false;
+      }
+      if (newStatus === "Cancel") {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof Swal !== "undefined") {
+          Swal.fire({
+            icon: "question",
+            title: "Ubah ke Cancel?",
+            text: "Anda yakin akan mengubah status menjadi Cancel?",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "Cancel"
+          }).then(function (result) {
+            if (result.isConfirmed) {
+              $("#remarksCancel_idcrewrotation").val(id);
+              $("#remarksCancel_input").val("");
+              $("#remarksCancel_feedback").addClass("d-none");
+              $("#modalRemarksCancel").modal("show");
+            } else {
+              $sel.val(currentStatus);
+            }
+          });
+        } else {
+          if (confirm("Ubah ke Cancel? Jika Yes, isi Remarks Cancel.")) {
+            $("#remarksCancel_idcrewrotation").val(id);
+            $("#remarksCancel_input").val("");
+            $("#remarksCancel_feedback").addClass("d-none");
+            $("#modalRemarksCancel").modal("show");
+          } else {
+            $sel.val(currentStatus);
+          }
+        }
+        return false;
+      }
+      $.post(baseUrlCrewRotation + "/updateStatus", { idcrewrotation: id, status: newStatus })
         .done(function (res) {
           var r = typeof res === "string" ? JSON.parse(res) : res;
           if (r.status) {
             table.ajax.reload(null, false);
+            if (typeof Swal !== "undefined") Swal.fire({ icon: "success", title: "Berhasil", text: r.message });
+            else alert(r.message);
           } else {
-            alert(r.message || "Update failed");
+            if (typeof Swal !== "undefined") Swal.fire({ icon: "error", title: "Error", text: r.message || "Update failed" });
+            else alert(r.message || "Update failed");
+            $sel.val(currentStatus);
           }
         })
         .fail(function () {
-          alert("Request failed");
+          if (typeof Swal !== "undefined") Swal.fire({ icon: "error", title: "Error", text: "Request failed" });
+          else alert("Request failed");
+          $sel.val(currentStatus);
         });
     });
 
-    $(document).on("click", ".btn-delete-rotation", function () {
-      var id = $(this).data("id");
-      if (!confirm("Delete this crew rotation record?")) return;
-      $.post(baseUrlCrewRotation + "/delete_crewRotation", { idcrewrotation: id })
+    $("#btnSubmitRemarksCancel").on("click", function () {
+      var id = $("#remarksCancel_idcrewrotation").val();
+      var remaks = $("#remarksCancel_input").val().trim();
+      if (!remaks) {
+        $("#remarksCancel_feedback").removeClass("d-none");
+        return false;
+      }
+      $("#remarksCancel_feedback").addClass("d-none");
+      $.post(baseUrlCrewRotation + "/updateStatus", { idcrewrotation: id, status: "Cancel", remaks_cancel: remaks })
         .done(function (res) {
           var r = typeof res === "string" ? JSON.parse(res) : res;
+          $("#modalRemarksCancel").modal("hide");
           if (r.status) {
             table.ajax.reload(null, false);
+            if (typeof Swal !== "undefined") Swal.fire({ icon: "success", title: "Berhasil", text: r.message });
+            else alert(r.message);
           } else {
-            alert(r.message || "Delete failed");
+            if (typeof Swal !== "undefined") Swal.fire({ icon: "error", title: "Error", text: r.message || "Update failed" });
+            else alert(r.message || "Update failed");
           }
         })
         .fail(function () {
-          alert("Request failed");
+          $("#modalRemarksCancel").modal("hide");
+          if (typeof Swal !== "undefined") Swal.fire({ icon: "error", title: "Error", text: "Request failed" });
+          else alert("Request failed");
         });
     });
 
-    $("#btnNewCrewRotation").on("click", function () {
+    $(document).on("click", ".btn-delete-rotation", function (e) {
+      e.preventDefault();
+      var id = $(this).data("id");
+      if (typeof Swal !== "undefined") {
+        Swal.fire({
+          icon: "warning",
+          title: "Hapus data?",
+          text: "Yakin akan menghapus crew rotation ini?",
+          showCancelButton: true,
+          confirmButtonText: "Yes, Hapus",
+          cancelButtonText: "Cancel",
+          confirmButtonColor: "#d33"
+        }).then(function (result) {
+          if (result.isConfirmed) {
+            $.post(baseUrlCrewRotation + "/delete_crewRotation", { idcrewrotation: id })
+              .done(function (res) {
+                var r = typeof res === "string" ? JSON.parse(res) : res;
+                if (r.status) {
+                  table.ajax.reload(null, false);
+                  Swal.fire({ icon: "success", title: "Terhapus", text: r.message || "Data berhasil dihapus." });
+                } else {
+                  Swal.fire({ icon: "error", title: "Gagal", text: r.message || "Delete failed" });
+                }
+              })
+              .fail(function () {
+                Swal.fire({ icon: "error", title: "Error", text: "Request failed" });
+              });
+          }
+        });
+      } else {
+        if (!confirm("Delete this crew rotation record?")) return false;
+        $.post(baseUrlCrewRotation + "/delete_crewRotation", { idcrewrotation: id })
+          .done(function (res) {
+            var r = typeof res === "string" ? JSON.parse(res) : res;
+            if (r.status) {
+              table.ajax.reload(null, false);
+            } else {
+              alert(r.message || "Delete failed");
+            }
+          })
+          .fail(function () {
+            alert("Request failed");
+          });
+      }
+    });
+
+    $(document).on("click", "#btnNewCrewRotation", function () {
       $.ajax({
         url: baseUrlCrewRotation + "/detail",
         type: "GET",
@@ -473,129 +587,15 @@
       });
     });
 
-    // Column Search Functionality /klo ga pake row span bisa gini
-    // $('#crewTable thead tr:eq(1) th').each(function (i) {
-    //   $('input', this).on('keyup change', function () {
-    //     if (table.column(i).search() !== this.value) {
-    //       table
-    //          .column(i)
-    //         .search(this.value)
-    //         .draw();
-    //     }
-    //   });
-    // });
-
-    // Column search (search row is the last thead tr)
-    $("#crewTable thead tr:last th").each(function (i) {
-      $("input", this).on("keyup change", function () {
+    // Column search (baris search di bawah header)
+    $("#crewTable thead tr.crew-search-row th").each(function (i) {
+      var $input = $(this).find("input.column-search");
+      if (!$input.length) return;
+      $input.on("keyup change", function () {
         if (table.column(i).search() !== this.value) {
           table.column(i).search(this.value).draw();
         }
       });
-    });
-
-
-    // Filter Dropdown Implementation
-    $('#crewTable thead th').each(function (colIndex) {
-      let icon = $(this).find('.filter-icon');
-      if (!icon.length) return;
-
-      // Skip the first column (No)
-      if (colIndex === 0) return;
-
-      // Create dropdown
-      let dropdown = $(`
-            <div class="filter-dropdown" data-column="${colIndex}">
-                <input type="text" class="filter-search" placeholder="Search...">
-                <div class="filter-list"></div>
-                <hr>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-primary w-100 apply-filter">
-                        Apply
-                    </button>
-                  <button class="btn btn-sm btn-danger w-100 clear-filter">
-                  Clear
-                </button>
-                </div>
-            </div>
-        `).appendTo('body');
-
-      let listContainer = dropdown.find('.filter-list');
-
-      // Get unique data for this column
-      let column = table.column(colIndex);
-      let uniqueData = column.data().unique().sort();
-
-      uniqueData.each(function (val) {
-        if (val) {
-          listContainer.append(`
-                    <label>
-                        <input type="checkbox" value="${val}"> ${val}
-                    </label>
-                `);
-        }
-      });
-
-      // Toggle dropdown
-      icon.on('click', function (e) {
-        e.stopPropagation();
-        $('.filter-dropdown').hide();
-
-        let offset = icon.offset();
-        dropdown.css({
-          top: offset.top + icon.outerHeight(),
-          left: offset.left
-        }).toggle();
-      });
-
-      // Prevent dropdown from closing when clicking inside
-      dropdown.on('click', function (e) {
-        e.stopPropagation();
-      });
-
-      // Search inside filter
-      dropdown.find('.filter-search').on('keyup', function () {
-        let keyword = $(this).val().toLowerCase();
-        listContainer.find('label').each(function () {
-          $(this).toggle($(this).text().toLowerCase().includes(keyword));
-        });
-      });
-
-      // Clear filter
-      dropdown.on('click', '.clear-filter', function (e) {
-        e.stopPropagation();
-        dropdown.find('input[type="checkbox"]').prop('checked', false);
-        dropdown.find('.filter-search').val('');
-        dropdown.find('label').show();
-        table.column(colIndex).search('').draw();
-        dropdown.hide();
-      });
-
-      // Apply filter
-      dropdown.on('click', '.apply-filter', function () {
-        let selected = [];
-
-        dropdown.find('input[type="checkbox"]:checked').each(function () {
-          selected.push($(this).val());
-        });
-
-        if (selected.length > 0) {
-          // Escape regex special characters
-          let escapedValues = selected.map(function (value) {
-            return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-          });
-          let regex = escapedValues.join('|');
-          table.column(colIndex).search(regex, true, false).draw();
-        } else {
-          table.column(colIndex).search('').draw();
-        }
-        dropdown.hide();
-      });
-    });
-
-    // Close dropdown when clicking outside
-    $(document).on('click', function () {
-      $('.filter-dropdown').hide();
     });
 
   });

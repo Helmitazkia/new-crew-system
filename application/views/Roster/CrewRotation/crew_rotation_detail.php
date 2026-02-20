@@ -175,7 +175,6 @@
                     <label class="form-label small fw-semibold">Status</label>
                     <select name="status" id="status" class="form-select">
                       <option value="Submit">Submit</option>
-                      <option value="Cancel">Cancel</option>
                       <option value="Joined">Joined</option>
                     </select>
                   </div>
