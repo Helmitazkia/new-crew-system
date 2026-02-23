@@ -231,27 +231,46 @@ $(document).ready(function() {
       let listContainer = dropdown.find('.filter-list');
 
       // ✅ AMBIL DATA SETELAH TABLE READY
-      table.column(colIndex).data().unique().sort().each(function(val) {
-        if (val) {
-          listContainer.append(`
-          <label>
-            <input type="checkbox" value="${val}"> ${val}
-          </label>
-        `);
+      // Cek apakah column data tersedia sebelum memanggil unique()
+      try {
+        let columnData = table.column(colIndex).data();
+        if (columnData && typeof columnData.unique === 'function') {
+          columnData.unique().sort().each(function(val) {
+            if (val && val !== null && val !== '' && val !== undefined) {
+              // Escape HTML untuk keamanan
+              let displayVal = String(val).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+              listContainer.append(`
+              <label>
+                <input type="checkbox" value="${displayVal}"> ${displayVal}
+              </label>
+            `);
+            }
+          });
         }
-      });
+      } catch (e) {
+        console.warn('Error loading filter data for column ' + colIndex + ':', e);
+        // Skip column ini jika error
+      }
 
       // ✅ DEFAULT FILTER KHUSUS statusPerson
-      if (table.column(colIndex).dataSrc() === 'statusPerson') {
-        const defaultStatus = ['On board', 'Stand By'];
+      try {
+        let column = table.column(colIndex);
+        if (column && typeof column.dataSrc === 'function') {
+          let dataSrc = column.dataSrc();
+          if (dataSrc === 'statusPerson') {
+            const defaultStatus = ['On board', 'Stand By'];
 
-        dropdown.find('input[type="checkbox"]').each(function() {
-          if (defaultStatus.includes($(this).val())) {
-            $(this).prop('checked', true);
+            dropdown.find('input[type="checkbox"]').each(function() {
+              if (defaultStatus.includes($(this).val())) {
+                $(this).prop('checked', true);
+              }
+            });
+
+            applyDropdownFilter(dropdown, table, colIndex);
           }
-        });
-
-        applyDropdownFilter(dropdown, table, colIndex);
+        }
+      } catch (e) {
+        console.warn('Error setting default filter for column ' + colIndex + ':', e);
       }
 
       function applyDropdownFilter(dropdown, table, colIndex) {
@@ -311,7 +330,7 @@ $(document).ready(function() {
           table.column(colIndex).search('').draw();
         }
         dropdown.show();
-        // $('.filter-dropdown').hide();
+        $('.filter-dropdown').hide();
       });
 
 
