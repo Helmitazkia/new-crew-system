@@ -41,10 +41,6 @@
                     value="">
                 </div>
                 <div class="col-6 mb-2">
-                  <label class="form-label mb-0">Payscale</label>
-                  <input type="text" id="off_payscale" class="form-control form-control-sm bg-light" disabled value="">
-                </div>
-                <div class="col-6 mb-2">
                   <label class="form-label mb-0">Status</label>
                   <input type="text" id="off_status" class="form-control form-control-sm bg-light" disabled value="">
                 </div>
@@ -371,7 +367,6 @@
           $('#off_rank').val(d.rank || '-');
           $('#off_planned_signoff').val(d.planned_signoff || '-');
           $('#off_relieving_port').val(d.relieving_port || '-');
-          $('#off_payscale').val(d.payscale || '-');
           $('#off_status').val(d.status || '-');
           $('#off_eoc').val(d.eoc || '-');
           $('#off_remarks').val(d.remarks || '-');

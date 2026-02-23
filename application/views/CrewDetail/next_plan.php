@@ -57,15 +57,17 @@
         padding: 4px 8px;
       }
 
-      /* LINK NAME */
-      .crew-name {
+      /* LINK NAME - hitam, cursor tangan (untuk Next Plan) */
+      .next-plan-name {
         font-weight: 600;
-        color: #0d6efd;
+        color: #000;
         text-decoration: none;
+        cursor: pointer;
       }
 
-      .crew-name:hover {
+      .next-plan-name:hover {
         text-decoration: underline;
+        color: #333;
       }
     </style>
 
@@ -113,7 +115,41 @@
   </div>
 </div>
 
+<!-- Modal Next Plan Detail (View Only) -->
+<div class="modal fade" id="modalNextPlanDetail" tabindex="-1" aria-labelledby="modalNextPlanDetailLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header text-white" style="background-color:#000099;">
+        <h5 class="modal-title" id="modalNextPlanDetailLabel">Next Plan – Detail</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body mb-0 pb-8 pt-2" id="modalNextPlanDetailBody">
+        <div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+var baseUrlNextPlan = "<?php echo base_url('CrewDetail/NextPlan'); ?>";
+
+window.showNextPlanDetail = function(idcrewrotation) {
+  if (!idcrewrotation) return;
+  $('#modalNextPlanDetail').modal('show');
+  $('#modalNextPlanDetailBody').html('<div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+  $.ajax({
+    url: baseUrlNextPlan + '/detail',
+    type: 'GET',
+    data: { idcrewrotation: idcrewrotation },
+    success: function(html) {
+      $('#modalNextPlanDetailBody').html(html);
+    },
+    error: function() {
+      $('#modalNextPlanDetailBody').html('<div class="alert alert-danger">Gagal memuat detail</div>');
+    }
+  });
+};
+
   $(document).ready(function () {
     var idperson = $('#contentArea').data('idperson');
     if (!idperson) {
@@ -140,7 +176,14 @@
             return meta.row + 1;
           }
         },
-        { data: 'onboard_name', defaultContent: '-' },
+        {
+          data: 'onboard_name',
+          defaultContent: '-',
+          render: function (data, type, row) {
+            var name = data || '-';
+            return '<a href="#" class="next-plan-name" onclick="showNextPlanDetail(' + (row.idcrewrotation || 0) + '); return false;" title="View detail">' + (name !== '-' ? name : '-') + '</a>';
+          }
+        },
         { data: 'onboard_rank', className: 'text-center', defaultContent: '-' },
         { data: 'onboard_son', className: 'text-center', defaultContent: '-' },
         { data: 'onboard_vessel', defaultContent: '-' },
