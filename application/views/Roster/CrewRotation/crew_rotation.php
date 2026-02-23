@@ -291,6 +291,19 @@
     .btn-clear-filter i {
       font-size: 14px;
     }
+
+    /* LINK NAME - hitam, cursor tangan (untuk Next Plan) */
+    .crew-name {
+      font-weight: 600;
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .crew-name:hover {
+      text-decoration: underline;
+      color: #333;
+    }
     </style>
 
     <div class="row">
