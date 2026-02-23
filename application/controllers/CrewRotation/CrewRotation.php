@@ -237,9 +237,16 @@ class CrewRotation extends CI_Controller
         $username = $this->session->userdata('userName') ?: 'system';
         $currentDate = date('Ymd/H:i:s');
         $idperson = $this->input->post('idperson');
+        $replacement_idperson = $this->input->post('replacement_idperson');
         if (empty($idperson)) {
             $this->output->set_content_type('application/json')->set_output(
                 json_encode(array('status' => false, 'message' => 'Crew (idperson) is required'))
+            );
+            return;
+        }
+        if (empty($replacement_idperson)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'Replacement Candidate is required'))
             );
             return;
         }
@@ -354,12 +361,7 @@ class CrewRotation extends CI_Controller
             return;
         }
         if ($status === 'Cancel') {
-            if ($remaks_cancel === '') {
-                $this->output->set_content_type('application/json')->set_output(
-                    json_encode(array('status' => false, 'message' => 'Remarks Cancel wajib diisi.'))
-                );
-                return;
-            }
+            // Remarks Cancel tidak mandatory (bisa kosong)
             $username = $this->session->userdata('userName') ?: 'system';
             $currentDate = date('Ymd/H:i:s');
             if ($current_status === 'Joined' && !empty($row->idcontract_synced)) {
@@ -385,6 +387,31 @@ class CrewRotation extends CI_Controller
             );
             return;
         }
+        // Validasi kelengkapan data jika status = Joined
+        if ($status === 'Joined') {
+            $checkData = $this->db->query(
+                "SELECT kdcmprec, signondt, estsignoffdt, signonrank, signonvsl, signonport, signondesc, no_pkl 
+                 FROM tblcrewrotation 
+                 WHERE idcrewrotation = ? AND deletests = '0'",
+                array($idcrewrotation)
+            )->row();
+            
+            if (!$checkData || 
+                empty($checkData->kdcmprec) || 
+                empty($checkData->signondt) || 
+                empty($checkData->estsignoffdt) || 
+                empty($checkData->signonrank) || 
+                empty($checkData->signonvsl) || 
+                empty($checkData->signonport) || 
+                empty($checkData->signondesc) || 
+                empty($checkData->no_pkl)) {
+                $this->output->set_content_type('application/json')->set_output(
+                    json_encode(array('status' => false, 'message' => 'Data belum lengkap untuk Joined. Lengkapi semua field wajib (Company, Sign on Date, Estimate Sign off Date, Rank, Vessel, Port, Description, No. PKL) via Edit terlebih dahulu.'))
+                );
+                return;
+            }
+        }
+        
         $username = $this->session->userdata('userName') ?: 'system';
         $currentDate = date('Ymd/H:i:s');
         $this->db->where('idcrewrotation', $idcrewrotation);

@@ -1,21 +1,13 @@
-<div class="crew-rotation-detail-content container-fluid">
-  <div class="card shadow">
-    <div class="card-header d-flex justify-content-between align-items-center" style="background-color:#000099; color:#fff;">
-      <span class="fw-semibold fst-italic" id="detailFormTitle">Crew Rotation – New</span>
-      <button type="button" class="btn btn-light btn-sm" id="btnBackToList">
-        <i class="fa fa-arrow-left"></i> Back to List
-      </button>
-    </div>
-    <div class="card-body">
-      <form id="crewRotationForm">
+<div class="crew-rotation-detail-content mb-0 pb-0">
+  <form id="crewRotationForm">
         <input type="hidden" name="idcrewrotation" id="idcrewrotation" value="">
         <input type="hidden" name="idperson" id="idperson" value="">
 
-        <div class="row g-3">
+        <div class="row g-3 pb-3">
           <!-- ========== LEFT: OFF-SIGNER ========== -->
           <div class="col-lg-4">
             <div class="card h-100 border">
-              <div class="card-header bg-light fw-semibold fst-italic">Reliever</div>
+              <div class="card-header bg-light fw-semibold fst-italic">Off Signer (yang turun)</div>
               <div class="card-body">
                 <div class="d-flex align-items-center gap-2 mb-2">
                   <div class="rounded bg-primary bg-opacity-25 d-flex align-items-center justify-content-center" style="width:48px;height:48px;">
@@ -27,6 +19,7 @@
                     <select id="offSignerSelect" class="form-control selectpicker-on" style="max-height:120px;" data-live-search="true" data-size="5">
                       <option value="">- Select crew -</option>
                     </select>
+                    <small id="offSignerSelectFeedback" class="text-danger d-none">Name is required</small>
                   </div>
                   <div class="form-check form-switch mb-0">
                     <input class="form-check-input" type="checkbox" id="changeOffSigner" title="Change Off-signer">
@@ -75,6 +68,15 @@
               <div class="card-header bg-light fw-semibold fst-italic">On Signer (New Contract Details)</div>
               <div class="card-body">
                 <div class="row g-2">
+                  <div class="col-md-6 mb-2">
+                    <label class="form-label small fw-semibold">Replacement Candidate <span class="text-danger">*</span></label>
+                    <select name="replacement_idperson" id="replacement_idperson" class="form-select selectpicker-on" data-live-search="true" data-size="5"></select>
+                    <small id="replacement_idpersonFeedback" class="text-danger d-none">Replacement Candidate is required</small>
+                  </div>
+                  <div class="col-md-6 mb-2">
+                    <label class="form-label small fw-semibold">Replacement Rank</label>
+                    <input type="text" name="replacement_rank" id="replacement_rank" class="form-control form-control-sm">
+                  </div>
                   <div class="col-md-6 mb-2">
                     <label class="form-label small fw-semibold">Company Name <span class="text-danger">*</span></label>
                     <select name="kdcmprec" id="kdcmprec" class="form control selectpicker-on" data-live-search="true" data-size="5"></select>
@@ -142,14 +144,6 @@
                     <select name="signoffremark" id="signoffremark" class="form-select selectpicker-on" data-live-search="true" data-size="5"></select>
                   </div>
                   <div class="col-md-6 mb-2">
-                    <label class="form-label small fw-semibold">Replacement Candidate</label>
-                    <select name="replacement_idperson" id="replacement_idperson" class="form-select selectpicker-on" data-live-search="true" data-size="5"></select>
-                  </div>
-                  <div class="col-md-6 mb-2">
-                    <label class="form-label small fw-semibold">Replacement Rank</label>
-                    <input type="text" name="replacement_rank" id="replacement_rank" class="form-control form-control-sm">
-                  </div>
-                  <div class="col-md-6 mb-2">
                     <label class="form-label small fw-semibold">Additional / Foreign Crew</label>
                     <div class="d-flex gap-3 flex-wrap pt-1">
                       <label class="d-flex align-items-center gap-1 mb-0 small">
@@ -171,7 +165,7 @@
                       <button type="button" class="btn btn-sm btn-warning" id="btnClearFile">Clear</button>
                     </div>
                   </div>
-                  <div class="col-12 mb-2">
+                  <div class="col-12 mb-2" id="statusFieldWrapper" style="display:none;">
                     <label class="form-label small fw-semibold">Status</label>
                     <select name="status" id="status" class="form-select">
                       <option value="Submit">Submit</option>
@@ -184,7 +178,7 @@
                   </div>
                   <div class="col-12 mt-3">
                     <button type="submit" class="btn btn-primary px-4 rounded-pill fw-semibold" id="btnSubmitForm">
-                      <i class="fa fa-paper-plane me-1"></i> Submit
+                      <i class="fa fa-paper-plane me-1"></i> <span id="btnSubmitText">Submit</span>
                     </button>
                   </div>
                 </div>
@@ -193,14 +187,13 @@
           </div>
         </div>
       </form>
-    </div>
-  </div>
 </div>
 
-<style>
+<!-- <style>
   .crew-rotation-detail-content .card.border { border-color: #dee2e6 !important; }
   .crew-rotation-detail-content .form-label.small { font-size: 0.875rem; }
-</style>
+  .crew-rotation-detail-content { padding: 0; }
+</style> -->
 
 <script>
 (function () {
@@ -323,8 +316,20 @@
     $('#signondt').val('<?php echo date("Y-m-d"); ?>');
   }
   var row = <?php echo isset($row) && $row ? json_encode($row) : 'null'; ?>;
-  if (row) {
+  var isEditMode = row !== null && row.idcrewrotation;
+  
+  // Show/hide status field: hidden for New, visible for Edit
+  if (isEditMode) {
+    $('#statusFieldWrapper').show();
     $('#detailFormTitle').text('Crew Rotation – Edit');
+    $('#btnSubmitText').text('Update');
+  } else {
+    $('#statusFieldWrapper').hide();
+    $('#detailFormTitle').text('Crew Rotation – New');
+    $('#btnSubmitText').text('Submit');
+  }
+  
+  if (row) {
     $('#idcrewrotation').val(row.idcrewrotation || '');
     $('#idperson').val(row.idperson || '');
     $offSelect.val(row.idperson || '');
@@ -355,11 +360,15 @@
 
   function hideAllFeedback() {
     $('[id$="Feedback"]').addClass('d-none');
-    $('#kdcmprec,#signondt,#signonrank,#signonvsl,#signonport,#signondesc,#estsignoffdt,#no_pkl').removeClass('is-invalid');
+    $('#kdcmprec,#signondt,#signonrank,#signonvsl,#signonport,#signondesc,#estsignoffdt,#no_pkl,#replacement_idperson,#offSignerSelect').removeClass('is-invalid');
   }
   function validateField(inputId, feedbackId) {
     var $input = $('#' + inputId);
     var val = $input.val();
+    // Handle select field (bootstrap-select might return array)
+    if (Array.isArray(val)) {
+      val = val.length > 0 ? val[0] : '';
+    }
     if (!val || (typeof val === 'string' && val.trim() === '')) {
       $('#' + feedbackId).removeClass('d-none');
       $input.addClass('is-invalid');
@@ -388,34 +397,35 @@
   function validateOnSigner() {
     hideAllFeedback();
     var ok = true;
-    if (!validateField('kdcmprec', 'kdcmprecFeedback')) ok = false;
-    if (!validateField('signondt', 'signondtFeedback')) ok = false;
-    if (!validateField('signonrank', 'signonrankFeedback')) ok = false;
-    if (!validateField('signonvsl', 'signonvslFeedback')) ok = false;
-    if (!validateField('signonport', 'signonportFeedback')) ok = false;
-    if (!validateField('signondesc', 'signondescFeedback')) ok = false;
-    if (!validateField('estsignoffdt', 'estsignoffdtFeedback')) ok = false;
-    if (!validateField('no_pkl', 'no_pklFeedback')) ok = false;
-    if (!validateEstSignOff()) ok = false;
+    var isEditMode = $('#idcrewrotation').val() !== '';
+    var status = $('#status').val() || 'Submit';
+    
+    // Always required: Off-signer (idperson) and Replacement Candidate
     if (!$('#idperson').val()) {
-      alert('Please select Off-signer (search name).');
+      $('#offSignerSelectFeedback').removeClass('d-none');
+      $('#offSignerSelect').addClass('is-invalid');
       ok = false;
     }
+    if (!validateField('replacement_idperson', 'replacement_idpersonFeedback')) ok = false;
+    
+    // For New mode: only 2 fields mandatory (already checked above)
+    // For Edit mode with status = Joined: all fields mandatory
+    if (isEditMode && status === 'Joined') {
+      if (!validateField('kdcmprec', 'kdcmprecFeedback')) ok = false;
+      if (!validateField('signondt', 'signondtFeedback')) ok = false;
+      if (!validateField('signonrank', 'signonrankFeedback')) ok = false;
+      if (!validateField('signonvsl', 'signonvslFeedback')) ok = false;
+      if (!validateField('signonport', 'signonportFeedback')) ok = false;
+      if (!validateField('signondesc', 'signondescFeedback')) ok = false;
+      if (!validateField('estsignoffdt', 'estsignoffdtFeedback')) ok = false;
+      if (!validateField('no_pkl', 'no_pklFeedback')) ok = false;
+      if (!validateEstSignOff()) ok = false;
+    }
+    
     return ok;
   }
 
-  $('#btnBackToList').on('click', function () {
-    $.ajax({
-      url: baseUrl + '/ajaxCrewRotation',
-      type: 'GET',
-      success: function (html) {
-        $('#contentArea').html(html);
-      },
-      error: function () {
-        alert('Gagal memuat daftar');
-      }
-    });
-  });
+  // Back to List button - tidak ada lagi karena card header sudah dihapus
 
   $('#crewRotationForm').on('submit', function (e) {
     e.preventDefault();
@@ -439,9 +449,16 @@
       success: function (r) {
         if (r.status) {
           alert(r.message || 'Saved.');
-          $.get(baseUrl + '/ajaxCrewRotation', function (html) {
-            $('#contentArea').html(html);
-          });
+          // Jika di modal, tutup modal dan reload table. Jika di halaman terpisah, kembali ke list.
+          if ($('#crewRotationForm').closest('.modal').length) {
+            $('#modalCrewRotationForm').modal('hide');
+            // Trigger event untuk reload table (akan di-handle di crew_rotation.php)
+            $(document).trigger('crewRotationSaved');
+          } else {
+            $.get(baseUrl + '/ajaxCrewRotation', function (html) {
+              $('#contentArea').html(html);
+            });
+          }
         } else {
           alert(r.message || 'Failed.');
         }

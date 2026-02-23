@@ -47,7 +47,7 @@ $(document).ready(function() {
           .addClass('btn-info active')
           .removeClass('btn-light');
 
-        loadCrew(1);
+        // loadCrew(1);
       },
       error: function() {
         alert('Gagal membuka Active Roster');
