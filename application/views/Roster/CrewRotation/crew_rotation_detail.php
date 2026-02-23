@@ -1,202 +1,256 @@
 <div class="crew-rotation-detail-content mb-0 pb-0">
   <form id="crewRotationForm">
-        <input type="hidden" name="idcrewrotation" id="idcrewrotation" value="">
-        <input type="hidden" name="idperson" id="idperson" value="">
+    <input type="hidden" name="idcrewrotation" id="idcrewrotation" value="">
+    <input type="hidden" name="idperson" id="idperson" value="">
 
-        <div class="row g-3 pb-3">
-          <!-- ========== LEFT: OFF-SIGNER ========== -->
-          <div class="col-lg-4">
-            <div class="card h-100 border">
-              <div class="card-header bg-light fw-semibold fst-italic">Off Signer (yang turun)</div>
-              <div class="card-body">
-                <div class="d-flex align-items-center gap-2 mb-2">
-                  <div class="rounded bg-primary bg-opacity-25 d-flex align-items-center justify-content-center" style="width:48px;height:48px;">
-                    <i class="fa fa-user text-primary"></i>
-                  </div>
-                  <div class="flex-grow-1">
-                    <label class="form-label mb-0 small fw-semibold">Name <span class="text-danger">*</span></label>
-                    <!-- <input type="text" id="offSignerSearch" class="form-control form-control-sm" placeholder="Search name..." autocomplete="off"> -->
-                    <select id="offSignerSelect" class="form-control selectpicker-on" style="max-height:120px;" data-live-search="true" data-size="5">
-                      <option value="">- Select crew -</option>
-                    </select>
-                    <small id="offSignerSelectFeedback" class="text-danger d-none">Name is required</small>
-                  </div>
-                  <div class="form-check form-switch mb-0">
-                    <input class="form-check-input" type="checkbox" id="changeOffSigner" title="Change Off-signer">
-                    <label class="form-check-label small" for="changeOffSigner">Change Off-signer</label>
-                  </div>
-                </div>
-                <div id="offSignerContractPanel" class="small" style="display:none;">
-                  <div class="row g-2 border-top pt-2">
-                    <div class="col-6 mb-2">
-                      <label class="form-label mb-0">Rank</label>
-                      <input type="text" id="off_rank" class="form-control form-control-sm bg-light" disabled value="">
-                    </div>
-                    <div class="col-6 mb-2">
-                      <label class="form-label mb-0">Planned Sign-off</label>
-                      <input type="text" id="off_planned_signoff" class="form-control form-control-sm bg-light" disabled value="">
-                    </div>
-                    <div class="col-6 mb-2">
-                      <label class="form-label mb-0">Relieving Port</label>
-                      <input type="text" id="off_relieving_port" class="form-control form-control-sm bg-light" disabled value="">
-                    </div>
-                    <div class="col-6 mb-2">
-                      <label class="form-label mb-0">Payscale</label>
-                      <input type="text" id="off_payscale" class="form-control form-control-sm bg-light" disabled value="">
-                    </div>
-                    <div class="col-6 mb-2">
-                      <label class="form-label mb-0">Status</label>
-                      <input type="text" id="off_status" class="form-control form-control-sm bg-light" disabled value="">
-                    </div>
-                    <div class="col-6 mb-2">
-                      <label class="form-label mb-0">EOC</label>
-                      <input type="text" id="off_eoc" class="form-control form-control-sm bg-light" disabled value="">
-                    </div>
-                    <div class="col-12 mb-2">
-                      <label class="form-label mb-0">Remarks</label>
-                      <input type="text" id="off_remarks" class="form-control form-control-sm bg-light" disabled value="">
-                    </div>
-                  </div>
-                </div>
+    <div class="row g-3 pb-3">
+      <!-- ========== LEFT: OFF-SIGNER ========== -->
+      <div class="col-lg-4">
+        <div class="card h-100 border">
+          <div class="card-header bg-light fw-semibold fst-italic">Off Signer (yang turun)</div>
+          <div class="card-body">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <div class="rounded bg-primary bg-opacity-25 d-flex align-items-center justify-content-center"
+                style="width:48px;height:48px;">
+                <i class="fa fa-user text-primary"></i>
+              </div>
+              <div class="flex-grow-1">
+                <label class="form-label mb-0 small fw-semibold">Name <span class="text-danger">*</span></label>
+                <!-- <input type="text" id="offSignerSearch" class="form-control form-control-sm" placeholder="Search name..." autocomplete="off"> -->
+                <select id="offSignerSelect" class="form-control selectpicker-on"
+                  style="max-height:120px;word-break:break-all;" data-live-search="true" data-size="5">
+                  <option value="">- Select crew -</option>
+                </select>
+                <small id="offSignerSelectFeedback" class="text-danger d-none">Name is required</small>
               </div>
             </div>
-          </div>
-
-          <!-- ========== RIGHT: ON SIGNER (New Contract Details) ========== -->
-          <div class="col-lg-8">
-            <div class="card h-100 border">
-              <div class="card-header bg-light fw-semibold fst-italic">On Signer (New Contract Details)</div>
-              <div class="card-body">
-                <div class="row g-2">
-                  <div class="col-md-6 mb-2">
-                    <label class="form-label small fw-semibold">Replacement Candidate <span class="text-danger">*</span></label>
-                    <select name="replacement_idperson" id="replacement_idperson" class="form-select selectpicker-on" data-live-search="true" data-size="5"></select>
-                    <small id="replacement_idpersonFeedback" class="text-danger d-none">Replacement Candidate is required</small>
-                  </div>
-                  <div class="col-md-6 mb-2">
-                    <label class="form-label small fw-semibold">Replacement Rank</label>
-                    <input type="text" name="replacement_rank" id="replacement_rank" class="form-control form-control-sm">
-                  </div>
-                  <div class="col-md-6 mb-2">
-                    <label class="form-label small fw-semibold">Company Name <span class="text-danger">*</span></label>
-                    <select name="kdcmprec" id="kdcmprec" class="form control selectpicker-on" data-live-search="true" data-size="5"></select>
-                    <small id="kdcmprecFeedback" class="text-danger d-none">Company Name is required</small>
-                  </div>
-                  <div class="col-md-3 mb-2">
-                    <label class="form-label small fw-semibold">Sign on Date <span class="text-danger">*</span></label>
-                    <input type="date" name="signondt" id="signondt" class="form-control form-control-sm">
-                    <small id="signondtFeedback" class="text-danger d-none">Sign on Date is required</small>
-                  </div>
-                  <div class="col-md-3 mb-2">
-                    <label class="form-label small fw-semibold">Month</label>
-                    <div class="d-flex gap-1 align-items-center">
-                      <input type="number" id="month" class="form-control form-control-sm" min="1" max="24" placeholder="1-24" style="width:70px;">
-                      <button type="button" class="btn btn-sm btn-primary" id="btnCalculate">Calculate</button>
-                    </div>
-                  </div>
-                  <div class="col-md-4 mb-2">
-                    <label class="form-label small fw-semibold">Estimate Sign off Date <span class="text-danger">*</span></label>
-                    <input type="date" name="estsignoffdt" id="estsignoffdt" class="form-control form-control-sm">
-                    <small id="estsignoffdtFeedback" class="text-danger d-none">Estimate Sign off Date is required</small>
-                    <small id="estsignoffdtFeedbackDate" class="text-danger d-none">Cannot be earlier than Sign off Date</small>
-                  </div>
-                  <div class="col-md-4 mb-2">
-                    <label class="form-label small fw-semibold">Sign on Rank <span class="text-danger">*</span></label>
-                    <select name="signonrank" id="signonrank" class="form control selectpicker-on" data-live-search="true" data-size="5"></select>
-                    <small id="signonrankFeedback" class="text-danger d-none">Sign on Rank is required</small>
-                  </div>
-                  <div class="col-md-4 mb-2">
-                    <label class="form-label small fw-semibold">Sign on Vessel <span class="text-danger">*</span></label>
-                    <select name="signonvsl" id="signonvsl" class="form control selectpicker-on" data-live-search="true" data-size="5"></select>
-                    <small id="signonvslFeedback" class="text-danger d-none">Sign on Vessel is required</small>
-                  </div>
-                  <div class="col-md-6 mb-2">
-                    <label class="form-label small fw-semibold">Sign on Port <span class="text-danger">*</span></label>
-                    <input type="text" name="signonport" id="signonport" class="form-control form-control-sm" placeholder="e.g. BENOA">
-                    <small id="signonportFeedback" class="text-danger d-none">Sign on Port is required</small>
-                  </div>
-                  <div class="col-md-6 mb-2">
-                    <label class="form-label small fw-semibold">Last Vessel</label>
-                    <select name="lastvsl" id="lastvsl" class="form control selectpicker-on" data-live-search="true" data-size="5">
-                      <option value="">- Select -</option>
-                    </select>
-                  </div>
-                  <div class="col-12 mb-2">
-                    <label class="form-label small fw-semibold">Sign on Description <span class="text-danger">*</span></label>
-                    <textarea name="signondesc" id="signondesc" class="form-control form-control-sm" rows="2" placeholder="e.g. Joining as AB"></textarea>
-                    <small id="signondescFeedback" class="text-danger d-none">Sign on Description is required</small>
-                  </div>
-                  <div class="col-md-4 mb-2">
-                    <label class="form-label small fw-semibold">No. PKL <span class="text-danger">*</span></label>
-                    <input type="text" name="no_pkl" id="no_pkl" class="form-control form-control-sm">
-                    <small id="no_pklFeedback" class="text-danger d-none">No. PKL is required</small>
-                  </div>
-                  <div class="col-md-4 mb-2">
-                    <label class="form-label small fw-semibold">Remarks</label>
-                    <textarea name="estremark" id="estremark" class="form-control form-control-sm" rows="2"></textarea>
-                  </div>
-                  <div class="col-md-4 mb-2">
-                    <label class="form-label small fw-semibold">Sign off Date</label>
-                    <input type="date" name="signoffdt" id="signoffdt" class="form-control form-control-sm">
-                  </div>
-                  <div class="col-md-6 mb-2">
-                    <label class="form-label small fw-semibold">Sign off remarks</label>
-                    <select name="signoffremark" id="signoffremark" class="form-select selectpicker-on" data-live-search="true" data-size="5"></select>
-                  </div>
-                  <div class="col-md-6 mb-2">
-                    <label class="form-label small fw-semibold">Additional / Foreign Crew</label>
-                    <div class="d-flex gap-3 flex-wrap pt-1">
-                      <label class="d-flex align-items-center gap-1 mb-0 small">
-                        <input type="radio" name="foreigncrew_option" value="none" class="form-check-input" checked> None
-                      </label>
-                      <label class="d-flex align-items-center gap-1 mb-0 small">
-                        <input type="radio" name="foreigncrew_option" value="additional" class="form-check-input"> Additional
-                      </label>
-                      <label class="d-flex align-items-center gap-1 mb-0 small">
-                        <input type="radio" name="foreigncrew_option" value="foreigncrew" class="form-check-input"> Foreign Crew
-                      </label>
-                    </div>
-                  </div>
-                  <div class="col-12 mb-2">
-                    <label class="form-label small fw-semibold">File Contract</label>
-                    <div class="d-flex gap-2 align-items-center">
-                      <input type="file" name="file_contract" id="file_contract" class="form-control form-control-sm" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif" style="max-width:220px;">
-                      <span class="small text-muted" id="file_contract_label">No file selected</span>
-                      <button type="button" class="btn btn-sm btn-warning" id="btnClearFile">Clear</button>
-                    </div>
-                  </div>
-                  <div class="col-12 mb-2" id="statusFieldWrapper" style="display:none;">
-                    <label class="form-label small fw-semibold">Status</label>
-                    <select name="status" id="status" class="form-select">
-                      <option value="Submit">Submit</option>
-                      <option value="Joined">Joined</option>
-                    </select>
-                  </div>
-                  <div class="col-md-6 mb-2">
-                    <label class="form-label small fw-semibold">Next Vessel</label>
-                    <input type="text" name="next_vessel" id="next_vessel" class="form-control form-control-sm">
-                  </div>
-                  <div class="col-12 mt-3">
-                    <button type="submit" class="btn btn-primary px-4 rounded-pill fw-semibold" id="btnSubmitForm">
-                      <i class="fa fa-paper-plane me-1"></i> <span id="btnSubmitText">Submit</span>
-                    </button>
-                  </div>
+            <div id="offSignerContractPanel" class="small" style="display:none;">
+              <div class="row g-2 border-top pt-2">
+                <div class="col-6 mb-2">
+                  <label class="form-label mb-0">Rank</label>
+                  <input type="text" id="off_rank" class="form-control form-control-sm bg-light" disabled value="">
+                </div>
+                <div class="col-6 mb-2">
+                  <label class="form-label mb-0">Planned Sign-off</label>
+                  <input type="text" id="off_planned_signoff" class="form-control form-control-sm bg-light" disabled
+                    value="">
+                </div>
+                <div class="col-6 mb-2">
+                  <label class="form-label mb-0">Relieving Port</label>
+                  <input type="text" id="off_relieving_port" class="form-control form-control-sm bg-light" disabled
+                    value="">
+                </div>
+                <div class="col-6 mb-2">
+                  <label class="form-label mb-0">Payscale</label>
+                  <input type="text" id="off_payscale" class="form-control form-control-sm bg-light" disabled value="">
+                </div>
+                <div class="col-6 mb-2">
+                  <label class="form-label mb-0">Status</label>
+                  <input type="text" id="off_status" class="form-control form-control-sm bg-light" disabled value="">
+                </div>
+                <div class="col-6 mb-2">
+                  <label class="form-label mb-0">EOC</label>
+                  <input type="text" id="off_eoc" class="form-control form-control-sm bg-light" disabled value="">
+                </div>
+                <div class="col-12 mb-2">
+                  <label class="form-label mb-0">Remarks</label>
+                  <input type="text" id="off_remarks" class="form-control form-control-sm bg-light" disabled value="">
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </form>
+      </div>
+
+      <!-- ========== RIGHT: ON SIGNER (New Contract Details) ========== -->
+      <div class="col-lg-8">
+        <div class="card h-100 border">
+          <div class="card-header bg-light fw-semibold fst-italic">On Signer (New Contract Details)</div>
+          <div class="card-body">
+            <div class="row g-2 align-items-end">
+              <div class="col-md-6 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Replacement Candidate <span
+                    class="text-danger">*</span></label>
+                <select name="replacement_idperson" id="replacement_idperson" class="form-select selectpicker-on"
+                  data-live-search="true" data-size="5"></select>
+                <small id="replacement_idpersonFeedback" class="text-danger d-none">Replacement Candidate is
+                  required</small>
+              </div>
+              <div class="col-md-6 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Replacement Rank</label>
+                <input type="text" name="replacement_rank" id="replacement_rank" class="form-control form-control-sm">
+              </div>
+              <div class="col-md-6 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Company Name <span class="text-danger">*</span></label>
+                <select name="kdcmprec" id="kdcmprec" class="form-control selectpicker-on" data-live-search="true"
+                  data-size="5"></select>
+                <small id="kdcmprecFeedback" class="text-danger d-none">Company Name is required</small>
+              </div>
+              <div class="col-md-3 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Sign on Date <span class="text-danger">*</span></label>
+                <input type="date" name="signondt" id="signondt" class="form-control form-control-sm">
+                <small id="signondtFeedback" class="text-danger d-none">Sign on Date is required</small>
+              </div>
+              <div class="col-md-3 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Month</label>
+                <div class="d-flex gap-1 align-items-center">
+                  <input type="number" id="month" class="form-control form-control-sm" min="1" max="24"
+                    placeholder="1-24" style="width:70px;">
+                  <button type="button" class="btn btn-sm btn-primary" id="btnCalculate">Calculate</button>
+                </div>
+              </div>
+              <div class="col-md-4 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Estimate Sign off Date <span
+                    class="text-danger">*</span></label>
+                <input type="date" name="estsignoffdt" id="estsignoffdt" class="form-control form-control-sm">
+                <small id="estsignoffdtFeedback" class="text-danger d-none">Estimate Sign off Date is required</small>
+                <small id="estsignoffdtFeedbackDate" class="text-danger d-none">Cannot be earlier than Sign off
+                  Date</small>
+              </div>
+              <div class="col-md-4 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Sign on Rank <span class="text-danger">*</span></label>
+                <select name="signonrank" id="signonrank" class="form-control selectpicker-on" data-live-search="true"
+                  data-size="5"></select>
+                <small id="signonrankFeedback" class="text-danger d-none">Sign on Rank is required</small>
+              </div>
+              <div class="col-md-4 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Sign on Vessel <span class="text-danger">*</span></label>
+                <select name="signonvsl" id="signonvsl" class="form-control selectpicker-on" data-live-search="true"
+                  data-size="5"></select>
+                <small id="signonvslFeedback" class="text-danger d-none">Sign on Vessel is required</small>
+              </div>
+              <div class="col-md-6 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Sign on Port <span class="text-danger">*</span></label>
+                <input type="text" name="signonport" id="signonport" class="form-control form-control-sm"
+                  placeholder="e.g. BENOA">
+                <small id="signonportFeedback" class="text-danger d-none">Sign on Port is required</small>
+              </div>
+              <div class="col-md-6 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Last Vessel</label>
+                <select name="lastvsl" id="lastvsl" class="form-control selectpicker-on" data-live-search="true"
+                  data-size="5">
+                  <option value="">- Select -</option>
+                </select>
+              </div>
+              <div class="col-12 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Sign on Description <span
+                    class="text-danger">*</span></label>
+                <textarea name="signondesc" id="signondesc" class="form-control form-control-sm" rows="2"
+                  placeholder="e.g. Joining as AB"></textarea>
+                <small id="signondescFeedback" class="text-danger d-none">Sign on Description is required</small>
+              </div>
+              <div class="col-md-4 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">No. PKL <span class="text-danger">*</span></label>
+                <input type="text" name="no_pkl" id="no_pkl" class="form-control form-control-sm">
+                <small id="no_pklFeedback" class="text-danger d-none">No. PKL is required</small>
+              </div>
+              <div class="col-md-4 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Remarks</label>
+                <textarea name="estremark" id="estremark" class="form-control form-control-sm" rows="2"></textarea>
+              </div>
+              <div class="col-md-4 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Sign off Date</label>
+                <input type="date" name="signoffdt" id="signoffdt" class="form-control form-control-sm">
+              </div>
+              <div class="col-md-6 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Sign off remarks</label>
+                <select name="signoffremark" id="signoffremark" class="form-select selectpicker-on"
+                  data-live-search="true" data-size="5"></select>
+              </div>
+              <div class="col-md-6 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Additional / Foreign Crew</label>
+                <div class="d-flex gap-3 flex-wrap pt-1">
+                  <label class="d-flex align-items-center gap-1 mb-0 small">
+                    <input type="radio" name="foreigncrew_option" value="none" class="form-check-input" checked> None
+                  </label>
+                  <label class="d-flex align-items-center gap-1 mb-0 small">
+                    <input type="radio" name="foreigncrew_option" value="additional" class="form-check-input">
+                    Additional
+                  </label>
+                  <label class="d-flex align-items-center gap-1 mb-0 small">
+                    <input type="radio" name="foreigncrew_option" value="foreigncrew" class="form-check-input"> Foreign
+                    Crew
+                  </label>
+                </div>
+              </div>
+              <div class="col-12 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">File Contract</label>
+                <div class="d-flex gap-2 align-items-center">
+                  <input type="file" name="file_contract" id="file_contract" class="form-control form-control-sm"
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif" style="max-width:220px;">
+                  <span class="small text-muted" id="file_contract_label">No file selected</span>
+                  <button type="button" class="btn btn-sm btn-warning" id="btnClearFile">Clear</button>
+                </div>
+              </div>
+              <div class="col-12 mb-2 on-signer-field" id="statusFieldWrapper" style="display:none;">
+                <label class="form-label small fw-semibold">Status</label>
+                <select name="status" id="status" class="form-select">
+                  <option value="Submit">Submit</option>
+                  <option value="Joined">Joined</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-2 on-signer-field">
+                <label class="form-label small fw-semibold">Next Vessel</label>
+                <input type="text" name="next_vessel" id="next_vessel" class="form-control form-control-sm">
+              </div>
+              <div class="col-12 mt-3">
+                <button type="submit" class="btn btn-primary px-4 rounded-pill fw-semibold" id="btnSubmitForm">
+                  <i class="fa fa-paper-plane me-1"></i> <span id="btnSubmitText">Submit</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
 
-<!-- <style>
-  .crew-rotation-detail-content .card.border { border-color: #dee2e6 !important; }
-  .crew-rotation-detail-content .form-label.small { font-size: 0.875rem; }
-  .crew-rotation-detail-content { padding: 0; }
-</style> -->
+<style>
+.crew-rotation-detail-content .card.border {
+  border-color: #dee2e6 !important;
+}
+
+.crew-rotation-detail-content .form-label.small {
+  font-size: 0.875rem;
+}
+
+.crew-rotation-detail-content {
+  padding: 0;
+}
+
+/* Sejajar: label + input align bottom per row */
+.crew-rotation-detail-content .on-signer-field {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.crew-rotation-detail-content .on-signer-field .form-label {
+  flex-shrink: 0;
+}
+
+/* Wrapping: value panjang akan turun ke baris baru */
+.crew-rotation-detail-content .form-control,
+.crew-rotation-detail-content .form-select,
+.crew-rotation-detail-content textarea {
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.crew-rotation-detail-content .bootstrap-select .filter-option-inner-inner,
+.crew-rotation-detail-content .bootstrap-select .btn {
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal !important;
+  text-align: left;
+}
+</style>
 
 <script>
-(function () {
+(function() {
   var baseUrl = "<?php echo base_url('CrewRotation/CrewRotation'); ?>";
   var optionsCompany = <?php echo isset($optionsCompanyJson) ? $optionsCompanyJson : '[]'; ?>;
   var optionsRank = <?php echo isset($optionsRankJson) ? $optionsRankJson : '[]'; ?>;
@@ -206,35 +260,18 @@
 
   function fillSelect($el, arr) {
     $el.empty().append($('<option value="">- Select -</option>'));
-    (arr || []).forEach(function (o) {
+    (arr || []).forEach(function(o) {
       if (o.value === '') return;
       $el.append($('<option></option>').val(o.value).text(o.text));
     });
   }
 
-  // Off-signer: plain select (single only) + search input to filter options
+  // Off-signer: select dengan selectpicker (live-search) - langsung bisa scroll/select tanpa ketik dulu
   var $offSelect = $('#offSignerSelect');
-  var $offSearch = $('#offSignerSearch');
   $offSelect.empty().append($('<option value="">- Select crew -</option>'));
-  optionsPerson.forEach(function (o) {
+  optionsPerson.forEach(function(o) {
     if (o.value) $offSelect.append($('<option></option>').val(o.value).text(o.text));
   });
-  var allPersonOptions = optionsPerson.slice();
-  function filterOffSignerOptions() {
-    var q = $offSearch.val().toLowerCase().trim();
-    var currentVal = $offSelect.val();
-    $offSelect.empty().append($('<option value="">- Select crew -</option>'));
-    allPersonOptions.forEach(function (o) {
-      if (!o.value) return;
-      if (!q || o.text.toLowerCase().indexOf(q) >= 0) {
-        $offSelect.append($('<option></option>').val(o.value).text(o.text));
-      }
-    });
-    if (currentVal && $offSelect.find('option[value="' + currentVal + '"]').length) {
-      $offSelect.val(currentVal);
-    }
-  }
-  $offSearch.on('keyup', filterOffSignerOptions);
 
   fillSelect($('#kdcmprec'), optionsCompany);
   fillSelect($('#signonrank'), optionsRank);
@@ -243,21 +280,78 @@
   fillSelect($('#lastvsl'), optionsVessel);
   fillSelect($('#replacement_idperson'), optionsPerson);
 
-  $('.selectpicker-on').each(function () {
-    if ($.fn.selectpicker) $(this).selectpicker({ noneSelectedText: '- Select -', liveSearch: true, size: 5 });
+  // Set row values BEFORE init selectpicker (avoid refresh yang bisa cause double display)
+  var row = <?php echo isset($row) && $row ? json_encode($row) : 'null'; ?>;
+  if (row) {
+    $('#idcrewrotation').val(row.idcrewrotation || '');
+    $('#idperson').val(row.idperson || '');
+    $('#kdcmprec').val(row.kdcmprec || '');
+    $('#signondt').val((row.signondt && row.signondt !== '0000-00-00') ? row.signondt : '');
+    $('#signoffdt').val((row.signoffdt && row.signoffdt !== '0000-00-00') ? row.signoffdt : '');
+    $('#estsignoffdt').val((row.estsignoffdt && row.estsignoffdt !== '0000-00-00') ? row.estsignoffdt : '');
+    $('#signonrank').val(row.signonrank || '');
+    $('#signonvsl').val(row.signonvsl || '');
+    $('#signonport').val(row.signonport || '');
+    $('#signondesc').val(row.signondesc || '');
+    $('#lastvsl').val(row.lastvsl || '');
+    $('#no_pkl').val(row.no_pkl || '');
+    $('#estremark').val(row.estremark || '');
+    $('#signoffremark').val(row.signoffremark || '');
+    $('#replacement_rank').val(row.replacement_rank || '');
+    $('#status').val(row.status || 'Submit');
+    $('#next_vessel').val(row.next_vessel || '');
+    if ($('#offSignerSelect').length && row.idperson != null) {
+      var idValPadded = row.idperson.toString().padStart(6, '0');
+      if ($('#offSignerSelect').find('option[value="' + idValPadded + '"]').length > 0) {
+        $('#offSignerSelect').val(idValPadded);
+      } else {
+        $('#offSignerSelect').val(row.idperson.toString());
+      }
+    }
+    var replacementId = (row.replacement_idperson !== undefined && row.replacement_idperson !== null && row
+        .replacement_idperson !== "") ?
+      row.replacement_idperson : row.idperson;
+    if ($('#replacement_idperson').length && replacementId != null) {
+      var repValPadded = replacementId.toString().padStart(6, '0');
+      if ($('#replacement_idperson').find('option[value="' + repValPadded + '"]').length > 0) {
+        $('#replacement_idperson').val(repValPadded);
+      } else {
+        $('#replacement_idperson').val(replacementId.toString());
+      }
+    }
+  }
+
+  // Init selectpicker: destroy dulu jika ada (prevent double)
+  // Tanpa container: dropdown render di samping select, hindari flash/jump dari pojok kiri atas
+  $('.selectpicker-on').each(function() {
+    var $el = $(this);
+    if ($.fn.selectpicker) {
+      if ($el.data('selectpicker')) {
+        try {
+          $el.selectpicker('destroy');
+        } catch (e) {}
+      }
+      var opts = {
+        noneSelectedText: '- Select -',
+        liveSearch: true,
+        size: 5
+      };
+      if ($el.attr('id') === 'offSignerSelect') opts.noneSelectedText = '- Select crew -';
+      $el.selectpicker(opts);
+    }
   });
 
-  $('#file_contract').on('change', function () {
+  $('#file_contract').on('change', function() {
     var fn = $(this).val().split(/\\/).pop();
     $('#file_contract_label').text(fn || 'No file selected');
   });
-  $('#btnClearFile').on('click', function () {
+  $('#btnClearFile').on('click', function() {
     $('#file_contract').val('');
     $('#file_contract_label').text('No file selected');
   });
 
   // When Off-signer selected → load contract (single value only)
-  $offSelect.on('change', function () {
+  $offSelect.on('change', function() {
     var idperson = $(this).val();
     if (Array.isArray(idperson)) idperson = idperson[0];
     idperson = idperson || '';
@@ -268,8 +362,10 @@
     }
     var $panel = $('#offSignerContractPanel');
     $panel.hide();
-    $.get(baseUrl + '/getContractByPerson', { idperson: idperson })
-      .done(function (res) {
+    $.get(baseUrl + '/getContractByPerson', {
+        idperson: idperson
+      })
+      .done(function(res) {
         if (res.success && res.data) {
           var d = res.data;
           $('#off_rank').val(d.rank || '-');
@@ -284,23 +380,13 @@
           alert(res.message || 'No contract found');
         }
       })
-      .fail(function () {
+      .fail(function() {
         alert('Failed to load contract');
       });
   });
 
-  $('#changeOffSigner').on('change', function () {
-    var allowChange = $(this).prop('checked');
-    $offSelect.prop('disabled', !allowChange);
-    $offSearch.prop('disabled', !allowChange);
-    if (!allowChange) {
-      $offSearch.val('');
-      filterOffSignerOptions();
-    }
-  });
-
   // Month → Calculate Est. Sign off
-  $('#btnCalculate').on('click', function () {
+  $('#btnCalculate').on('click', function() {
     var signondt = $('#signondt').val();
     var months = parseInt($('#month').val(), 10);
     if (!signondt || !months || months < 1) {
@@ -315,12 +401,11 @@
   if (!$('#signondt').val()) {
     $('#signondt').val('<?php echo date("Y-m-d"); ?>');
   }
-  var row = <?php echo isset($row) && $row ? json_encode($row) : 'null'; ?>;
   var isEditMode = row !== null && row.idcrewrotation;
-  
+
   // Show/hide status field: hidden for New, visible for Edit
   if (isEditMode) {
-    $('#statusFieldWrapper').show();
+    $('#statusFieldWrapper').hide();
     $('#detailFormTitle').text('Crew Rotation – Edit');
     $('#btnSubmitText').text('Update');
   } else {
@@ -328,40 +413,18 @@
     $('#detailFormTitle').text('Crew Rotation – New');
     $('#btnSubmitText').text('Submit');
   }
-  
+
   if (row) {
-    $('#idcrewrotation').val(row.idcrewrotation || '');
-    $('#idperson').val(row.idperson || '');
-    $offSelect.val(row.idperson || '');
-    $offSelect.trigger('change');
-    $('#kdcmprec').val(row.kdcmprec || '');
-    $('#signondt').val((row.signondt && row.signondt !== '0000-00-00') ? row.signondt : '');
-    $('#signoffdt').val((row.signoffdt && row.signoffdt !== '0000-00-00') ? row.signoffdt : '');
-    $('#estsignoffdt').val((row.estsignoffdt && row.estsignoffdt !== '0000-00-00') ? row.estsignoffdt : '');
-    $('#signonrank').val(row.signonrank || '');
-    $('#signonvsl').val(row.signonvsl || '');
-    $('#signonport').val(row.signonport || '');
-    $('#signondesc').val(row.signondesc || '');
-    $('#lastvsl').val(row.lastvsl || '');
-    $('#no_pkl').val(row.no_pkl || '');
-    $('#estremark').val(row.estremark || '');
-    $('#signoffremark').val(row.signoffremark || '');
-    $('#replacement_idperson').val(row.replacement_idperson || '');
-    $('#replacement_rank').val(row.replacement_rank || '');
-    $('#status').val(row.status || 'Submit');
-    $('#next_vessel').val(row.next_vessel || '');
-    if ($.fn.selectpicker) {
-      $('#kdcmprec,#signonrank,#signonvsl,#signoffremark,#lastvsl,#replacement_idperson').selectpicker('refresh');
-    }
-    $('#changeOffSigner').prop('checked', false);
-    $offSelect.prop('disabled', true);
-    $offSearch.prop('disabled', true);
+    $('#offSignerSelect').trigger('change');
+    $('#replacement_idperson').trigger('change');
   }
 
   function hideAllFeedback() {
     $('[id$="Feedback"]').addClass('d-none');
-    $('#kdcmprec,#signondt,#signonrank,#signonvsl,#signonport,#signondesc,#estsignoffdt,#no_pkl,#replacement_idperson,#offSignerSelect').removeClass('is-invalid');
+    $('#kdcmprec,#signondt,#signonrank,#signonvsl,#signonport,#signondesc,#estsignoffdt,#no_pkl,#replacement_idperson,#offSignerSelect')
+      .removeClass('is-invalid');
   }
+
   function validateField(inputId, feedbackId) {
     var $input = $('#' + inputId);
     var val = $input.val();
@@ -378,6 +441,7 @@
     $input.removeClass('is-invalid');
     return true;
   }
+
   function validateEstSignOff() {
     var signoffdt = $('#signoffdt').val() || '';
     var estsignoffdt = $('#estsignoffdt').val() || '';
@@ -394,12 +458,13 @@
     $('#estsignoffdt').removeClass('is-invalid');
     return true;
   }
+
   function validateOnSigner() {
     hideAllFeedback();
     var ok = true;
     var isEditMode = $('#idcrewrotation').val() !== '';
     var status = $('#status').val() || 'Submit';
-    
+
     // Always required: Off-signer (idperson) and Replacement Candidate
     if (!$('#idperson').val()) {
       $('#offSignerSelectFeedback').removeClass('d-none');
@@ -407,7 +472,7 @@
       ok = false;
     }
     if (!validateField('replacement_idperson', 'replacement_idpersonFeedback')) ok = false;
-    
+
     // For New mode: only 2 fields mandatory (already checked above)
     // For Edit mode with status = Joined: all fields mandatory
     if (isEditMode && status === 'Joined') {
@@ -421,13 +486,13 @@
       if (!validateField('no_pkl', 'no_pklFeedback')) ok = false;
       if (!validateEstSignOff()) ok = false;
     }
-    
+
     return ok;
   }
 
   // Back to List button - tidak ada lagi karena card header sudah dihapus
 
-  $('#crewRotationForm').on('submit', function (e) {
+  $('#crewRotationForm').on('submit', function(e) {
     e.preventDefault();
     if (!validateOnSigner()) return;
     var idcrewrotation = $('#idcrewrotation').val();
@@ -446,24 +511,26 @@
       processData: false,
       contentType: false,
       dataType: 'json',
-      success: function (r) {
+      success: function(r) {
         if (r.status) {
-          alert(r.message || 'Saved.');
+          Swal.fire({
+            title: r.message,
+            icon: "success"
+          });
           // Jika di modal, tutup modal dan reload table. Jika di halaman terpisah, kembali ke list.
           if ($('#crewRotationForm').closest('.modal').length) {
             $('#modalCrewRotationForm').modal('hide');
             // Trigger event untuk reload table (akan di-handle di crew_rotation.php)
             $(document).trigger('crewRotationSaved');
-          } else {
-            $.get(baseUrl + '/ajaxCrewRotation', function (html) {
-              $('#contentArea').html(html);
-            });
           }
         } else {
-          alert(r.message || 'Failed.');
+          Swal.fire({
+            title: r.message,
+            icon: "error"
+          });
         }
       },
-      error: function () {
+      error: function() {
         alert('Request failed');
       }
     });

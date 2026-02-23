@@ -156,8 +156,12 @@ class CrewRotation extends CI_Controller
             'optionsRankJson'        => json_encode($this->_getRankOptionsArray()),
             'optionsVesselJson'      => json_encode($this->_getVesselOptionsArray()),
             'optionsSignOffRemarkJson' => json_encode($this->_getSignOffRemarkOptionsArray()),
-            'optionsPersonJson'      => json_encode($this->_getPersonOptionsArray()),
+            'optionsPersonJson'      => json_encode($this->_getPersonOptionsArray())
+            
         );
+
+        // print_r($data['optionsPersonJson']);
+        // exit;
         $this->load->view('Roster/CrewRotation/crew_rotation_detail', $data);
     }
 

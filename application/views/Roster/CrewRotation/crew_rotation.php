@@ -30,13 +30,13 @@
 
     /* HEADER COLOR (BLUE) */
     .crew-header th {
-      background-color: var(--crew-blue) !important;
+      /* background-color: var(--crew-blue) !important; */
       color: #fff !important;
     }
 
     /* HEADER GROUP (ONBOARD / REPLACEMENT) */
     .crew-header-group {
-      background-color: var(--crew-blue) !important;
+      /* background-color: var(--crew-blue) !important; */
       color: #fff !important;
     }
 
@@ -301,18 +301,18 @@
               <table id="crewTable" class="table table-bordered align-middle mb-0 crew-table" style="width:100%">
                 <thead class="crew-header">
                   <tr>
-                    <th class="text-center">No</th>
-                    <th>Name <br><span class="filter-icon">☰</span></th>
-                    <th>Rank <br><span class="filter-icon">☰</span></th>
-                    <th>S/ON <br><span class="filter-icon">☰</span></th>
-                    <th>Vessel <br><span class="filter-icon">☰</span></th>
-                    <th>S/OFF Plan <br><span class="filter-icon">☰</span></th>
-                    <th>Remark <br><span class="filter-icon">☰</span></th>
-                    <th>Rank <br><span class="filter-icon">☰</span></th>
-                    <th>Name <br><span class="filter-icon">☰</span></th>
-                    <th>Status <br><span class="filter-icon">☰</span></th>
-                    <th>Next Vessel <br><span class="filter-icon">☰</span></th>
-                    <th class="text-center">Action</th>
+                    <th class="text-center" style="background-color: #000099 !important;">No</th>
+                    <th style="background-color: #000099 !important;">Name <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Rank <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">S/ON <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Vessel <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">S/OFF Plan <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Remark <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Rank <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Name <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Status <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Next Vessel <br><span class="filter-icon">☰</span></th>
+                    <th class="text-center" style="background-color: #000099 !important;">Action</th>
                   </tr>
                   <tr>
                     <th></th>
@@ -409,6 +409,13 @@ function loadCrewRotationList() {
 
 window.showCrewDetail = function(idcrewrotation) {
   $('#modalCrewRotationForm').modal('show');
+  // Destroy selectpicker sebelum ganti content (agar dropdown orphan hilang)
+  try {
+    $('#modalCrewRotationFormBody .selectpicker-on').each(function() {
+      var $el = $(this);
+      if ($el.data('selectpicker')) { $el.selectpicker('destroy'); }
+    });
+  } catch (e) { /* ignore */ }
   $('#modalCrewRotationFormBody').html('<div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
   $.ajax({
     url: baseUrlCrewRotation + "/detail",
@@ -417,6 +424,11 @@ window.showCrewDetail = function(idcrewrotation) {
       idcrewrotation: idcrewrotation
     },
     success: function(html) {
+      // Hapus orphan bootstrap-select (dropdown/menu) yang mungkin tertinggal di body
+      try {
+        $('body > .bootstrap-select, body > .dropdown.bootstrap-select').remove();
+        $('#modalCrewRotationForm .bootstrap-select').not('#modalCrewRotationFormBody .bootstrap-select').remove();
+      } catch (e) { /* ignore */ }
       $('#modalCrewRotationFormBody').html(html);
     },
     error: function() {
@@ -548,68 +560,56 @@ $(document).ready(function() {
       initDropdownFilters(this.api());
     }
   });
-  
+
   function initDropdownFilters(table) {
+
     $('#crewTable thead th').each(function(colIndex) {
       let icon = $(this).find('.filter-icon');
       if (!icon.length) return;
-      
+
       // Skip No & Action
-      if (colIndex === 0 || colIndex === 11) return;
-      
+      if (colIndex === 0  || colIndex === 12) return;
+
       let dropdown = $(`
-        <div class="filter-dropdown">
-          <input type="text" class="filter-search" placeholder="Search...">
-          <div class="filter-list"></div>
-          <hr>
-          <div class="d-flex gap-2 text-center">
-            <button class="btn btn-sm w-30 apply-filter rounded-pill fst-italic btn-clear-filter" id="clear-filter"> 
-              <i class="fa-solid fa-eraser"></i>
-            </button>
-          </div>
+      <div class="filter-dropdown">
+        <input type="text" class="filter-search" placeholder="Search...">
+        <div class="filter-list"></div>
+        <hr>
+        <div class="d-flex gap-2 text-center">
+          <button
+            class="btn btn-sm w-30 apply-filter rounded-pill fst-italic btn-clear-filter" id="clear-filter"> 
+            <i class="fa-solid fa-eraser"></i>
+          </button>
         </div>
-      `).appendTo('body');
-      
+
+      </div>
+    `).appendTo('body');
+
       let listContainer = dropdown.find('.filter-list');
-      
-      // Ambil data setelah table ready
+
+      // ✅ AMBIL DATA SETELAH TABLE READY
       table.column(colIndex).data().unique().sort().each(function(val) {
-        if (val && val !== '-' && val.trim() !== '') {
+        if (val) {
           listContainer.append(`
-            <label>
-              <input type="checkbox" value="${val}"> ${val}
-            </label>
-          `);
+          <label>
+            <input type="checkbox" value="${val}"> ${val}
+          </label>
+        `);
         }
       });
-      
-      function applyDropdownFilter(dropdown, table, colIndex) {
-        let selected = [];
-        dropdown.find('input[type="checkbox"]:checked').each(function() {
-          selected.push($(this).val());
-        });
-        
-        if (selected.length > 0) {
-          let escapedValues = selected.map(v => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-          let regex = escapedValues.join('|');
-          table.column(colIndex).search(regex, true, false).draw();
-        } else {
-          table.column(colIndex).search('').draw();
-        }
-      }
-      
+
       // Toggle dropdown
       icon.on('click', function(e) {
         e.stopPropagation();
         $('.filter-dropdown').hide();
-        
+
         let offset = icon.offset();
         dropdown.css({
           top: offset.top + icon.outerHeight(),
           left: offset.left
         }).toggle();
       });
-      
+
       // Search inside dropdown
       dropdown.find('.filter-search').on('keyup', function() {
         let keyword = $(this).val().toLowerCase();
@@ -617,16 +617,34 @@ $(document).ready(function() {
           $(this).toggle($(this).text().toLowerCase().includes(keyword));
         });
       });
-      
+
+
       dropdown.on('change', 'input[type="checkbox"]', function() {
-        applyDropdownFilter(dropdown, table, colIndex);
+        let selected = [];
+        dropdown.find('input[type="checkbox"]:checked').each(function() {
+          selected.push($(this).val());
+        });
+
+        if (selected.length > 0) {
+          let escapedValues = selected.map(v =>
+            v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+          );
+          let regex = escapedValues.join('|');
+          table.column(colIndex).search(regex, true, false).draw();
+        } else {
+          table.column(colIndex).search('').draw();
+        }
+        dropdown.show();
+        $('.filter-dropdown').hide();
       });
-      
+
+
       // Clear filter
       dropdown.on('click', '.btn-clear-filter', function() {
-        dropdown.find('input[type="checkbox"]').prop('checked', false);
+        dropdown.find('input').prop('checked', false);
         dropdown.find('.filter-search').val('');
         listContainer.find('label').show();
+
         table.column(colIndex).search('').draw();
         dropdown.hide();
       });
@@ -765,7 +783,7 @@ $(document).ready(function() {
         } else {
           if (typeof Swal !== "undefined") Swal.fire({
             icon: "error",
-            title: "Error",
+            title: "error",
             text: r.message || "Update failed"
           });
           else alert(r.message || "Update failed");
@@ -846,11 +864,22 @@ $(document).ready(function() {
 
   $(document).on("click", "#btnNewCrewRotation", function() {
     $('#modalCrewRotationForm').modal('show');
+    // Destroy selectpicker sebelum ganti content (agar dropdown orphan hilang)
+    try {
+      $('#modalCrewRotationFormBody .selectpicker-on').each(function() {
+        var $el = $(this);
+        if ($el.data('selectpicker')) { $el.selectpicker('destroy'); }
+      });
+    } catch (e) { /* ignore */ }
     $('#modalCrewRotationFormBody').html('<div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
     $.ajax({
       url: baseUrlCrewRotation + "/detail",
       type: "GET",
       success: function(html) {
+        try {
+          $('body > .bootstrap-select, body > .dropdown.bootstrap-select').remove();
+          $('#modalCrewRotationForm .bootstrap-select').not('#modalCrewRotationFormBody .bootstrap-select').remove();
+        } catch (e) { /* ignore */ }
         $('#modalCrewRotationFormBody').html(html);
       },
       error: function() {
