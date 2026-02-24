@@ -49,7 +49,7 @@
           <div class="row">
             <div class="col-md-6 mb-2">
               <label>Year<span style="color: red;">*</span></label>
-              <input type="text" name="yearscl" id="yearscl" class="form-control">
+              <input type="date" name="yearscl" id="yearscl" class="form-control">
               <small id="yearsclFeedback" class="text-danger d-none">Year is required</small>
             </div>
             <div class="col-md-6 mb-2">
@@ -62,7 +62,7 @@
             </div>
             <div class="col-md-12 mb-2">
               <label>Course / Finish<span style="color: red;">*</span></label>
-              <input type="text" name="crsfin" id="crsfin" class="form-control">
+              <input type="date" name="crsfin" id="crsfin" class="form-control">
               <small id="crsfinFeedback" class="text-danger d-none">Course / Finish is required</small>
             </div>
             <div class="col-md-12 mb-2" id="wrapEducationFile">
@@ -132,6 +132,9 @@
     color: #212529;
     background-color: #fff;
   }
+
+  .contract-no-icon { font-size: 1rem !important; width: 1.25em; text-align: center; }
+  .contract-no-filelink .contract-no-icon { margin-right: 2px; }
 </style>
 
 <script>
@@ -182,21 +185,23 @@
             var no = meta.row + 1;
             var below = '';
             if (row.scl_file && row.scl_file.trim() !== '') {
-              below = '<div class="mt-1"><a href="<?php echo base_url("uploadFile"); ?>/' + row.scl_file + '" target="_blank" class="text-primary small" title="View / Download"><i class="fa-solid fa-book"></i></a></div>';
+              below = '<div class="mt-1"><a href="<?php echo base_url("uploadFile"); ?>/' + row.scl_file + '" target="_blank" class="text-primary small contract-no-filelink" title="View / Download"><i class="fa-solid fa-book contract-no-icon"></i></a></div>';
             } else {
-              below = '<div class="mt-1"><button type="button" class="btn btn-sm btn-outline-info p-1 btn-upload-edu" data-id="' + row.idscl + '" title="Upload File"><i class="fa fa-upload"></i></button></div>';
+              below = '<div class="mt-1"><button type="button" class="btn btn-sm btn-outline-info p-1 btn-upload-edu" data-id="' + row.idscl + '" title="Upload File"><i class="fa fa-upload contract-no-icon"></i></button></div>';
             }
             return '<div>' + no + below + '</div>';
           }
         },
         {
-          data: 'yearscl'
+          data: 'yearscl_display',
+          defaultContent: '-'
         },
         {
           data: 'namescl'
         },
         {
-          data: 'crsfin'
+          data: 'crsfin_display',
+          defaultContent: '-'
         },
         {
           data: null,
@@ -315,10 +320,17 @@
         success: function (res) {
           $('#idscl').val(res.idscl);
           $('#idperson_edu').val(res.idperson);
-          var yearVal = String(res.yearscl || '').replace(/\D/g, '').substring(0, 4);
-          $('#yearscl').val(yearVal || res.yearscl);
+          var yr = (res.yearscl || '').toString().trim();
+          var yrVal = yr;
+          if (/^\d{4}$/.test(yr)) yrVal = yr + '-01-01';
+          else if (!/^\d{4}-\d{2}-\d{2}$/.test(yr) && yr.length >= 4) yrVal = yr.substring(0, 4) + '-01-01';
+          $('#yearscl').val(yrVal || '');
           $('#namescl').val(res.namescl).selectpicker('refresh');
-          $('#crsfin').val(res.crsfin);
+          var cf = (res.crsfin || '').toString().trim();
+          var cfVal = cf;
+          if (/^\d{4}$/.test(cf)) cfVal = cf + '-01-01';
+          else if (!/^\d{4}-\d{2}-\d{2}$/.test(cf) && cf.length >= 4) cfVal = cf.substring(0, 4) + '-01-01';
+          $('#crsfin').val(cfVal || '');
           $('#yearsclFeedback, #namesclFeedback, #crsfinFeedback').addClass('d-none');
           $('#yearscl, #namescl, #crsfin').removeClass('is-invalid');
           $('#educationModal').modal('show');
