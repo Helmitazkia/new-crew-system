@@ -51,12 +51,18 @@ class Education extends CI_Controller
     $rows = $this->db->query($sql, array($idperson))->result_array();
     $data = array();
     foreach ($rows as $row) {
+      $yrRaw = isset($row["yearscl"]) ? $row["yearscl"] : "";
+      $cfRaw = isset($row["crsfin"]) ? $row["crsfin"] : "";
+      $yrNorm = $this->_normalize_date($yrRaw);
+      $cfNorm = $this->_normalize_date($cfRaw);
       $data[] = array(
         "idscl" => $row["idscl"],
         "idperson" => $row["idperson"],
-        "yearscl" => $this->_normalize_year($row["yearscl"]),
+        "yearscl" => $yrNorm,
+        "yearscl_display" => $this->_format_date_display($yrRaw),
         "namescl" => $row["namescl"],
-        "crsfin" => $row["crsfin"],
+        "crsfin" => $cfNorm,
+        "crsfin_display" => $this->_format_date_display($cfRaw),
         "scl_file" => $row["scl_file"],
       );
     }
@@ -104,9 +110,9 @@ class Education extends CI_Controller
     $newId = $row && $row->idscl ? $row->idscl + 1 : 1;
 
     $idperson = $this->input->post("idperson");
-    $yearscl = $this->_normalize_year($this->input->post("yearscl"));
+    $yearscl = $this->_normalize_date($this->input->post("yearscl"));
     $namescl = $this->input->post("namescl");
-    $crsfin = $this->input->post("crsfin");
+    $crsfin = $this->_normalize_date($this->input->post("crsfin"));
     $scl_file = "";
 
     if (!empty($_FILES["scl_file"]["name"])) {
@@ -156,9 +162,9 @@ class Education extends CI_Controller
     $currentDate = date("Ymd/H:i:s");
 
     $idperson = $this->input->post("idperson");
-    $yearscl = $this->_normalize_year($this->input->post("yearscl"));
+    $yearscl = $this->_normalize_date($this->input->post("yearscl"));
     $namescl = $this->input->post("namescl");
-    $crsfin = $this->input->post("crsfin");
+    $crsfin = $this->_normalize_date($this->input->post("crsfin"));
 
     $data = array(
       "yearscl" => $yearscl,
@@ -284,5 +290,54 @@ class Education extends CI_Controller
     }
     $digits = preg_replace("/\D/", "", (string) $year);
     return substr($digits, 0, 4);
+  }
+
+  /**
+   * Normalize date input ke format Y-m-d (untuk yearscl & crsfin).
+   * Terima: Y-m-d, Y only (2020), d/m/Y, d-m-Y, d M Y, dll.
+   */
+  private function _normalize_date($val)
+  {
+    if ($val === null || trim((string) $val) === "") {
+      return "";
+    }
+    $s = trim((string) $val);
+    if (preg_match("/^\d{4}-\d{2}-\d{2}$/", $s)) {
+      return $s;
+    }
+    if (preg_match("/^\d{4}$/", $s)) {
+      return $s . "-01-01";
+    }
+    $ts = strtotime($s);
+    if ($ts !== false) {
+      return date("Y-m-d", $ts);
+    }
+    $digits = preg_replace("/\D/", "", $s);
+    if (strlen($digits) >= 8) {
+      return substr($digits, 0, 4) . "-" . substr($digits, 4, 2) . "-" . substr($digits, 6, 2);
+    }
+    if (strlen($digits) >= 4) {
+      return substr($digits, 0, 4) . "-01-01";
+    }
+    return "";
+  }
+
+  private function _format_date_display($val)
+  {
+    if ($val === null || trim((string) $val) === "") {
+      return "-";
+    }
+    $s = trim((string) $val);
+    if (preg_match("/^\d{4}-\d{2}-\d{2}$/", $s)) {
+      return date("d M Y", strtotime($s));
+    }
+    if (preg_match("/^\d{4}$/", $s)) {
+      return date("M Y", strtotime($s . "-01-01"));
+    }
+    $ts = strtotime($s);
+    if ($ts !== false) {
+      return date("d M Y", $ts);
+    }
+    return $s;
   }
 }
