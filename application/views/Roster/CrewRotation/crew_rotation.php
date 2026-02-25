@@ -321,6 +321,7 @@
                     <th style="background-color: #000099 !important;">Vessel <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">S/OFF Plan <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">Remark <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Remarks Cancel <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">Rank <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">Name <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">Status <br><span class="filter-icon">☰</span></th>
@@ -339,8 +340,9 @@
                     <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th></th>
-                  </tr>
+                </tr>
                 </thead>
                 <tbody>
                   <!-- Data akan diisi oleh DataTables -->
@@ -500,6 +502,10 @@ $(document).ready(function() {
         className: "text-center"
       },
       {
+        data: "remarks_cancel",
+        className: "text-center"
+      },
+      {
         data: "replacement_rank",
         className: "text-center"
       },
@@ -576,12 +582,14 @@ $(document).ready(function() {
 
   function initDropdownFilters(table) {
 
-    $('#crewTable thead th').each(function(colIndex) {
+    // Hanya baris header pertama (baris kedua thead adalah filter search)
+    var colCount = table.columns().count();
+    $('#crewTable thead tr:first th').each(function(colIndex) {
       let icon = $(this).find('.filter-icon');
       if (!icon.length) return;
 
-      // Skip No & Action
-      if (colIndex === 0  || colIndex === 12) return;
+      // Skip No & Action; pastikan index dalam range kolom table
+      if (colIndex === 0 || colIndex >= colCount - 1) return;
 
       let dropdown = $(`
       <div class="filter-dropdown">
@@ -600,8 +608,10 @@ $(document).ready(function() {
 
       let listContainer = dropdown.find('.filter-list');
 
-      // ✅ AMBIL DATA SETELAH TABLE READY
-      table.column(colIndex).data().unique().sort().each(function(val) {
+      // ✅ AMBIL DATA SETELAH TABLE READY; hindari error bila column().data() undefined
+      var colData = table.column(colIndex).data();
+      if (!colData || typeof colData.unique !== 'function') return;
+      colData.unique().sort().each(function(val) {
         if (val) {
           listContainer.append(`
           <label>
@@ -675,6 +685,8 @@ $(document).ready(function() {
     var id = $sel.data("id");
     var currentStatus = $sel.data("current");
     var newStatus = $sel.val();
+    // Tidak ada perubahan (termasuk saat kita reset setelah tolak Joined→Submit)
+    if (newStatus === currentStatus) return;
     if (currentStatus === "Cancel") {
       e.preventDefault();
       e.stopPropagation();

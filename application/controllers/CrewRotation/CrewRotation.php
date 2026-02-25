@@ -93,7 +93,7 @@ class CrewRotation extends CI_Controller
     {
         $sql = "SELECT R.idcrewrotation, R.idperson, R.kdcmprec, R.signondt, R.signoffdt, R.estsignoffdt,
                 R.signonrank, R.signonvsl, R.signonport, R.signondesc, R.lastvsl, R.no_pkl, R.estremark,
-                R.signoffremark, R.replacement_idperson, R.replacement_rank, R.status, R.next_vessel,
+                R.signoffremark, R.remaks_cancel, R.replacement_idperson, R.replacement_rank, R.status, R.next_vessel,
                 P.fullName AS onboard_name,
                 C.nmrank AS onboard_rank_name,
                 D.nmvsl AS onboard_vessel_name,
@@ -125,6 +125,7 @@ class CrewRotation extends CI_Controller
                 'onboard_vessel'    => isset($row['onboard_vessel_name']) ? $row['onboard_vessel_name'] : '',
                 'onboard_soff'     => $row['estsignoffdt'] && $row['estsignoffdt'] !== '0000-00-00' ? date('d M Y', strtotime($row['estsignoffdt'])) : '-',
                 'remark'           => isset($row['estremark']) ? $row['estremark'] : '',
+                'remarks_cancel'   => isset($row['remaks_cancel']) ? $row['remaks_cancel'] : '',
                 'replacement_rank' => isset($row['replacement_rank']) ? $row['replacement_rank'] : '-',
                 'replacement_name' => isset($row['replacement_name']) ? $row['replacement_name'] : '-',
                 'status'           => $row['status'],
@@ -440,22 +441,20 @@ class CrewRotation extends CI_Controller
         if ($check && !empty($check->idcontract_synced)) {
             return;
         }
-        $sql = "SELECT idperson, kdcmprec, signondt, signoffdt, estsignoffdt, signonrank, signonvsl,
+        $sql = "SELECT replacement_idperson, kdcmprec, signondt, signoffdt, estsignoffdt, signonrank, signonvsl,
                 signonport, signondesc, lastvsl, no_pkl, estremark, signoffremark
                 FROM tblcrewrotation WHERE idcrewrotation = ? AND deletests = '0'";
         $row = $this->db->query($sql, array($idcrewrotation))->row();
         if (!$row) return;
-        $this->db->select_max('idcontract');
-        $q = $this->db->get('tblcontract');
-        $r = $q->row();
-        $newId = ($r && $r->idcontract) ? (int)$r->idcontract + 1 : 1;
+        $r = $this->db->query("SELECT COALESCE(MAX(idcontract), 0) AS maxid FROM tblcontract")->row();
+        $newId = (int)(isset($r->maxid) ? $r->maxid : 0) + 1;
         $username = $this->session->userdata('userName') ?: 'system';
         $currentDate = date('Ymd/H:i:s');
         $signoffdt = $row->signoffdt && $row->signoffdt !== '0000-00-00' ? $row->signoffdt : '0000-00-00';
         $estsignoffdt = $row->estsignoffdt && $row->estsignoffdt !== '0000-00-00' ? $row->estsignoffdt : '0000-00-00';
         $data = array(
             'idcontract'    => $newId,
-            'idperson'      => $row->idperson,
+            'idperson'      => $row->replacement_idperson,
             'kdcmprec'      => $row->kdcmprec,
             'signondt'      => $row->signondt,
             'signoffdt'     => $signoffdt,
