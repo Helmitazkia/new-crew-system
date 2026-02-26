@@ -362,8 +362,8 @@
                 <tfoot>
                   <tr>
                     <!-- <td class="text-center fw-bold" style="background-color:#f8f9fa;"></td> -->
-                    <td colspan="6" class="text-center fw-bold" style="background-color:#000099; color:#fff;">ONBOARD</td>
-                    <td colspan="8" class="text-center fw-bold" style="background-color:#000099; color:#fff;">REPLACEMENT</td>
+                    <td colspan="8" class="text-center fw-bold" style="background-color:#000099; color:#fff;">ONBOARD</td>
+                    <td colspan="6" class="text-center fw-bold" style="background-color:#000099; color:#fff;">REPLACEMENT</td>
                     <!-- <td colspan="3" class="text-center fw-bold" style="background-color:#f8f9fa;"></td> -->
                   </tr>
                 </tfoot>
@@ -610,30 +610,44 @@ $(document).ready(function() {
         g.push({ batch_id: bid, rowIndex: i, node: nodes[i] });
       }
       if (g.length) groups.push(g);
-
       groups.forEach(function(grp) {
         if (grp.length === 0) return;
-        var first = grp[0];
-        var firstNode = first.node;
-        var firstCells = firstNode.getElementsByTagName("td");
-        if (firstCells.length <= BATCH_COL_INDEX) return;
-        var batchTd = firstCells[BATCH_COL_INDEX];
-        var isCollapsed = collapsedBatches[first.batch_id];
-        if (isCollapsed) {
-          batchTd.rowSpan = 1;
-          batchTd.innerHTML = (first.batch_id || "-") + ' <button type="button" class="btn btn-sm btn-link p-0 batch-toggle" data-batch="' + first.batch_id.replace(/"/g, "&quot;") + '" title="Expand">+</button>';
-          for (var j = 1; j < grp.length; j++) grp[j].node.style.display = "none";
-        } else {
-          for (var j = 0; j < grp.length; j++) grp[j].node.style.display = "";
-          batchTd.rowSpan = grp.length;
-          batchTd.innerHTML = (first.batch_id || "-") + ' <button type="button" class="btn btn-sm btn-link p-0 batch-toggle" data-batch="' + first.batch_id.replace(/"/g, "&quot;") + '" title="Collapse">−</button>';
-          for (var j = 1; j < grp.length; j++) {
+          var first = grp[0];
+          var firstNode = first.node;
+          var firstCells = firstNode.getElementsByTagName("td");
+          if (firstCells.length <= BATCH_COL_INDEX) return;
+          var batchTd = firstCells[BATCH_COL_INDEX];
+          var isCollapsed = collapsedBatches[first.batch_id];
+          
+          for (var j = 0; j < grp.length; j++) {
             var rowCells = grp[j].node.getElementsByTagName("td");
-            if (rowCells.length >= TOTAL_COLUMNS && rowCells.length > BATCH_COL_INDEX) {
-              rowCells[BATCH_COL_INDEX].remove();
+            if (rowCells.length > BATCH_COL_INDEX) {
+              rowCells[BATCH_COL_INDEX].style.display = "";
             }
           }
-        }
+
+          if (isCollapsed) {
+            for (var j = 1; j < grp.length; j++) {
+              grp[j].node.style.display = "none";
+            }
+            batchTd.rowSpan = 1;
+            batchTd.innerHTML = (first.batch_id || "-") + ' <button type="button" class="btn btn-sm btn-link p-0 batch-toggle" data-batch="' + first.batch_id.replace(/"/g, "&quot;") + '" title="Expand">+</button>';
+          } else {
+            // Tampilkan semua baris
+            for (var j = 0; j < grp.length; j++) {
+              grp[j].node.style.display = "";
+            }
+            // Set rowSpan sesuai jumlah baris
+            batchTd.rowSpan = grp.length;
+            batchTd.innerHTML = (first.batch_id || "-") + ' <button type="button" class="btn btn-sm btn-link p-0 batch-toggle" data-batch="' + first.batch_id.replace(/"/g, "&quot;") + '" title="Collapse">−</button>';
+            for (var j = 1; j < grp.length; j++) {
+              var rowCells = grp[j].node.getElementsByTagName("td");
+              if (rowCells.length > BATCH_COL_INDEX) {
+                rowCells[BATCH_COL_INDEX].style.display = "none";
+                rowCells[BATCH_COL_INDEX].innerHTML = "";
+              }
+            }
+          }
       });
 
       $("#crewTable").off("click.batchToggle").on("click.batchToggle", ".batch-toggle", function(e) {
