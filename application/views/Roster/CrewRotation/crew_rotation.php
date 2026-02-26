@@ -46,6 +46,16 @@
       padding: 4px 8px;
     }
 
+    .batch-toggle {
+      cursor: pointer;
+      min-width: 22px;
+      font-weight: bold;
+      user-select: none;
+    }
+    .batch-toggle:hover {
+      opacity: 0.8;
+    }
+
     /* LINK NAME */
     .crew-name {
       font-weight: 600;
@@ -315,6 +325,7 @@
                 <thead class="crew-header">
                   <tr>
                     <th class="text-center" style="background-color: #000099 !important;">No</th>
+                    <th style="background-color: #000099 !important;">Batch <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">Name <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">Rank <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">S/ON <br><span class="filter-icon">☰</span></th>
@@ -341,6 +352,7 @@
                     <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -351,7 +363,7 @@
                   <tr>
                     <!-- <td class="text-center fw-bold" style="background-color:#f8f9fa;"></td> -->
                     <td colspan="6" class="text-center fw-bold" style="background-color:#000099; color:#fff;">ONBOARD</td>
-                    <td colspan="6" class="text-center fw-bold" style="background-color:#000099; color:#fff;">REPLACEMENT</td>
+                    <td colspan="8" class="text-center fw-bold" style="background-color:#000099; color:#fff;">REPLACEMENT</td>
                     <!-- <td colspan="3" class="text-center fw-bold" style="background-color:#f8f9fa;"></td> -->
                   </tr>
                 </tfoot>
@@ -453,6 +465,10 @@ window.showCrewDetail = function(idcrewrotation) {
 };
 
 $(document).ready(function() {
+  var collapsedBatches = {};
+  var BATCH_COL_INDEX = 1;
+  var TOTAL_COLUMNS = 14;
+
   let table = $('#crewTable').DataTable({
     dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end custom-btn'>>" +
       "<'row'<'col-md-12'tr>>" +
@@ -472,6 +488,13 @@ $(document).ready(function() {
         orderable: false,
         render: function(data, type, row, meta) {
           return meta.row + 1;
+        }
+      },
+      {
+        data: "batch_id",
+        className: "text-center",
+        render: function(data) {
+          return data || "-";
         }
       },
       {
@@ -520,7 +543,8 @@ $(document).ready(function() {
           if (data === "Submit") badgeClass = "bg-success";
           else if (data === "Cancel") badgeClass = "bg-danger";
           else if (data === "Joined") badgeClass = "bg-primary";
-          return '<span class="badge ' + badgeClass + ' badge-status">' + (data || "") + "</span>";
+          var label = (data === "Submit") ? "Planned" : (data || "");
+          return '<span class="badge ' + badgeClass + ' badge-status">' + label + "</span>";
         }
       },
       {
@@ -532,11 +556,11 @@ $(document).ready(function() {
         searchable: false,
         className: "text-center",
         render: function(data, type, row) {
-          var disabled = row.status === "Cancel" ? " disabled" : "";
+          var disabled = (row.status === "Cancel" || row.status === "Joined") ? " disabled" : "";
           var statusOpt =
             '<select class="form-select form-select-sm d-inline-block w-auto status-select" data-id="' + row
-            .idcrewrotation + '" data-current="' + (row.status || "") + '"' + disabled + '>' +
-            '<option value="Submit"' + (row.status === "Submit" ? " selected" : "") + '>Submit</option>' +
+            .idcrewrotation + '" data-batch-id="' + (row.batch_id || "") + '" data-current="' + (row.status || "") + '"' + disabled + '>' +
+            '<option value="Submit"' + (row.status === "Submit" ? " selected" : "") + '>Planned</option>' +
             '<option value="Cancel"' + (row.status === "Cancel" ? " selected" : "") + '>Cancel</option>' +
             '<option value="Joined"' + (row.status === "Joined" ? " selected" : "") +
             '>Joined</option></select>';
@@ -566,6 +590,61 @@ $(document).ready(function() {
     order: [
       [1, "asc"]
     ],
+    createdRow: function(row, data) {
+      $(row).attr("data-batch-id", (data.batch_id || "").toString());
+    },
+    drawCallback: function() {
+      var api = this.api();
+      var data = api.rows({ page: "current" }).data();
+      var nodes = api.rows({ page: "current" }).nodes();
+      if (!data.length) return;
+
+      var groups = [];
+      var g = [];
+      for (var i = 0; i < data.length; i++) {
+        var bid = (data[i].batch_id || "").toString();
+        if (g.length && g[0].batch_id !== bid) {
+          groups.push(g);
+          g = [];
+        }
+        g.push({ batch_id: bid, rowIndex: i, node: nodes[i] });
+      }
+      if (g.length) groups.push(g);
+
+      groups.forEach(function(grp) {
+        if (grp.length === 0) return;
+        var first = grp[0];
+        var firstNode = first.node;
+        var firstCells = firstNode.getElementsByTagName("td");
+        if (firstCells.length <= BATCH_COL_INDEX) return;
+        var batchTd = firstCells[BATCH_COL_INDEX];
+        var isCollapsed = collapsedBatches[first.batch_id];
+        if (isCollapsed) {
+          batchTd.rowSpan = 1;
+          batchTd.innerHTML = (first.batch_id || "-") + ' <button type="button" class="btn btn-sm btn-link p-0 batch-toggle" data-batch="' + first.batch_id.replace(/"/g, "&quot;") + '" title="Expand">+</button>';
+          for (var j = 1; j < grp.length; j++) grp[j].node.style.display = "none";
+        } else {
+          for (var j = 0; j < grp.length; j++) grp[j].node.style.display = "";
+          batchTd.rowSpan = grp.length;
+          batchTd.innerHTML = (first.batch_id || "-") + ' <button type="button" class="btn btn-sm btn-link p-0 batch-toggle" data-batch="' + first.batch_id.replace(/"/g, "&quot;") + '" title="Collapse">−</button>';
+          for (var j = 1; j < grp.length; j++) {
+            var rowCells = grp[j].node.getElementsByTagName("td");
+            if (rowCells.length >= TOTAL_COLUMNS && rowCells.length > BATCH_COL_INDEX) {
+              rowCells[BATCH_COL_INDEX].remove();
+            }
+          }
+        }
+      });
+
+      $("#crewTable").off("click.batchToggle").on("click.batchToggle", ".batch-toggle", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var batch = $(this).data("batch");
+        if (!batch) return;
+        collapsedBatches[batch] = !collapsedBatches[batch];
+        table.draw(false);
+      });
+    },
     initComplete: function() {
       $(".dataTables_info").css({
         padding: "10px 0",
