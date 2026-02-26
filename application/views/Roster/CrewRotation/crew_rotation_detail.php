@@ -2,6 +2,7 @@
   <form id="crewRotationForm">
     <input type="hidden" name="idcrewrotation" id="idcrewrotation" value="">
     <input type="hidden" name="idperson" id="idperson" value="">
+    <input type="hidden" name="batch_id" id="batch_id" value="">
 
     <div class="row g-3 pb-3">
       <!-- ========== LEFT: OFF-SIGNER ========== -->
@@ -9,6 +10,22 @@
         <div class="card h-100 border">
           <div class="card-header bg-light fw-semibold fst-italic">Off Signer (yang turun)</div>
           <div class="card-body">
+            <div class="mb-2">
+              <label class="form-label mb-0 small fw-semibold">Batch ID</label>
+              <input type="text" id="batch_id_display" class="form-control form-control-sm bg-light" disabled
+                placeholder="Auto (setelah save)" value="">
+            </div>
+            <div class="mb-2">
+              <label class="form-label mb-0 small fw-semibold">Single UP / Double UP</label>
+              <div class="d-flex gap-3 pt-1">
+                <label class="d-flex align-items-center gap-1 mb-0 small">
+                  <input type="radio" name="is_double_up" value="0" class="form-check-input" checked> Single UP
+                </label>
+                <label class="d-flex align-items-center gap-1 mb-0 small">
+                  <input type="radio" name="is_double_up" value="1" class="form-check-input"> Double UP
+                </label>
+              </div>
+            </div>
             <div class="d-flex align-items-center gap-2 mb-2">
               <div class="rounded bg-primary bg-opacity-25 d-flex align-items-center justify-content-center"
                 style="width:48px;height:48px;">
@@ -16,12 +33,22 @@
               </div>
               <div class="flex-grow-1">
                 <label class="form-label mb-0 small fw-semibold">Name <span class="text-danger">*</span></label>
-                <!-- <input type="text" id="offSignerSearch" class="form-control form-control-sm" placeholder="Search name..." autocomplete="off"> -->
                 <select id="offSignerSelect" class="form-control selectpicker-on"
                   style="max-height:120px;word-break:break-all;" data-live-search="true" data-size="5">
                   <option value="">- Select crew -</option>
                 </select>
                 <small id="offSignerSelectFeedback" class="text-danger d-none">Name is required</small>
+              </div>
+            </div>
+            <div class="row g-2 mb-2">
+              <div class="col-6">
+                <label class="form-label mb-0 small">Sign off Date</label>
+                <input type="date" name="signoffdt" id="signoffdt" class="form-control form-control-sm">
+              </div>
+              <div class="col-6">
+                <label class="form-label mb-0 small">Sign off remarks</label>
+                <select name="signoffremark" id="signoffremark" class="form-select selectpicker-on"
+                  data-live-search="true" data-size="5"></select>
               </div>
             </div>
             <div id="offSignerContractPanel" class="small" style="display:none;">
@@ -67,8 +94,9 @@
               <div class="col-md-6 mb-2 on-signer-field">
                 <label class="form-label small fw-semibold">Replacement Candidate <span
                     class="text-danger">*</span></label>
-                <select name="replacement_idperson" id="replacement_idperson" class="form-select selectpicker-on"
-                  data-live-search="true" data-size="5"></select>
+                <select name="replacement_idperson[]" id="replacement_idperson" class="form-select selectpicker-on"
+                  data-live-search="true" data-size="8" multiple></select>
+                <small class="text-muted small">Bisa pilih lebih dari satu (plan banyak replacement)</small>
                 <small id="replacement_idpersonFeedback" class="text-danger d-none">Replacement Candidate is
                   required</small>
               </div>
@@ -144,15 +172,6 @@
                 <label class="form-label small fw-semibold">Remarks</label>
                 <textarea name="estremark" id="estremark" class="form-control form-control-sm" rows="2"></textarea>
               </div>
-              <div class="col-md-4 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">Sign off Date</label>
-                <input type="date" name="signoffdt" id="signoffdt" class="form-control form-control-sm">
-              </div>
-              <div class="col-md-6 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">Sign off remarks</label>
-                <select name="signoffremark" id="signoffremark" class="form-select selectpicker-on"
-                  data-live-search="true" data-size="5"></select>
-              </div>
               <div class="col-md-6 mb-2 on-signer-field">
                 <label class="form-label small fw-semibold">Additional / Foreign Crew</label>
                 <div class="d-flex gap-3 flex-wrap pt-1">
@@ -190,8 +209,11 @@
                 <input type="text" name="next_vessel" id="next_vessel" class="form-control form-control-sm">
               </div>
               <div class="col-12 mt-3">
-                <button type="submit" class="btn btn-primary px-4 rounded-pill fw-semibold" id="btnSubmitForm">
-                  <i class="fa fa-paper-plane me-1"></i> <span id="btnSubmitText">Submit</span>
+                <button type="button" class="btn btn-primary px-4 rounded-pill fw-semibold" id="btnSaveForm">
+                  <i class="fa fa-save me-1"></i> Save
+                </button>
+                <button type="button" class="btn btn-success px-4 rounded-pill fw-semibold d-none" id="btnUpdateForm">
+                  <i class="fa fa-edit me-1"></i> Update
                 </button>
               </div>
             </div>
@@ -274,10 +296,19 @@
   fillSelect($('#signonvsl'), optionsVessel);
   fillSelect($('#signoffremark'), optionsSignOffRemark);
   fillSelect($('#lastvsl'), optionsVessel);
-  fillSelect($('#replacement_idperson'), optionsPerson);
+  var $replSelect = $('#replacement_idperson');
+  $replSelect.empty();
+  (optionsPerson || []).forEach(function(o) {
+    if (o.value) $replSelect.append($('<option></option>').val(o.value).text(o.text));
+  });
 
-  // Set row values BEFORE init selectpicker (avoid refresh yang bisa cause double display)
   var row = <?php echo isset($row) && $row ? json_encode($row) : 'null'; ?>;
+  var batch_rows = <?php echo isset($batch_rows) ? json_encode($batch_rows) : '[]'; ?>;
+  var batch_id = <?php echo isset($batch_id) ? json_encode($batch_id) : '""'; ?>;
+
+  $('#batch_id').val(batch_id || '');
+  $('#batch_id_display').val(batch_id || 'Auto (setelah save)');
+
   if (row) {
     $('#idcrewrotation').val(row.idcrewrotation || '');
     $('#idperson').val(row.idperson || '');
@@ -296,6 +327,8 @@
     $('#replacement_rank').val(row.replacement_rank || '');
     $('#status').val(row.status || 'Submit');
     $('#next_vessel').val(row.next_vessel || '');
+    var isDoubleUp = (row.is_double_up == 1 || row.is_double_up === '1');
+    $('input[name="is_double_up"][value="' + (isDoubleUp ? '1' : '0') + '"]').prop('checked', true);
     if ($('#offSignerSelect').length && row.idperson != null) {
       var idValPadded = row.idperson.toString().padStart(6, '0');
       if ($('#offSignerSelect').find('option[value="' + idValPadded + '"]').length > 0) {
@@ -304,16 +337,20 @@
         $('#offSignerSelect').val(row.idperson.toString());
       }
     }
-    var replacementId = (row.replacement_idperson !== undefined && row.replacement_idperson !== null && row
-        .replacement_idperson !== "") ?
-      row.replacement_idperson : row.idperson;
-    if ($('#replacement_idperson').length && replacementId != null) {
-      var repValPadded = replacementId.toString().padStart(6, '0');
-      if ($('#replacement_idperson').find('option[value="' + repValPadded + '"]').length > 0) {
-        $('#replacement_idperson').val(repValPadded);
-      } else {
-        $('#replacement_idperson').val(replacementId.toString());
-      }
+    var repIds = [];
+    if (batch_rows && batch_rows.length > 0) {
+      batch_rows.forEach(function(r) {
+        if (r.replacement_idperson != null && r.replacement_idperson !== '') repIds.push(r.replacement_idperson.toString());
+      });
+    } else if (row.replacement_idperson != null && row.replacement_idperson !== '') {
+      repIds.push(row.replacement_idperson.toString());
+    }
+    if (repIds.length > 0) {
+      var setVal = repIds.map(function(id) {
+        var pad = id.toString().padStart(6, '0');
+        return $replSelect.find('option[value="' + pad + '"]').length ? pad : id;
+      });
+      $replSelect.val(setVal);
     }
   }
 
@@ -333,6 +370,10 @@
         size: 5
       };
       if ($el.attr('id') === 'offSignerSelect') opts.noneSelectedText = '- Select crew -';
+      if ($el.attr('id') === 'replacement_idperson') {
+        opts.noneSelectedText = '- Select replacement(s) -';
+        opts.size = 8;
+      }
       $el.selectpicker(opts);
     }
   });
@@ -396,17 +437,18 @@
   if (!$('#signondt').val()) {
     $('#signondt').val('<?php echo date("Y-m-d"); ?>');
   }
-  var isEditMode = row !== null && row.idcrewrotation;
+  var isEditMode = (row !== null && row.idcrewrotation) || (batch_id && (batch_id + '').trim() !== '');
 
-  // Show/hide status field: hidden for New, visible for Edit
   if (isEditMode) {
     $('#statusFieldWrapper').hide();
     $('#detailFormTitle').text('Crew Rotation – Edit');
-    $('#btnSubmitText').text('Update');
+    $('#btnSaveForm').addClass('d-none');
+    $('#btnUpdateForm').removeClass('d-none');
   } else {
     $('#statusFieldWrapper').hide();
     $('#detailFormTitle').text('Crew Rotation – New');
-    $('#btnSubmitText').text('Submit');
+    $('#btnSaveForm').removeClass('d-none');
+    $('#btnUpdateForm').addClass('d-none');
   }
 
   if (row) {
@@ -423,8 +465,10 @@
   function validateField(inputId, feedbackId) {
     var $input = $('#' + inputId);
     var val = $input.val();
-    // Handle select field (bootstrap-select might return array)
-    if (Array.isArray(val)) {
+    if (inputId === 'replacement_idperson') {
+      if (Array.isArray(val)) val = val.length > 0 ? val.join(',') : '';
+      else if (!val) val = '';
+    } else if (Array.isArray(val)) {
       val = val.length > 0 ? val[0] : '';
     }
     if (!val || (typeof val === 'string' && val.trim() === '')) {
@@ -485,50 +529,68 @@
     return ok;
   }
 
-  // Back to List button - tidak ada lagi karena card header sudah dihapus
-
-  $('#crewRotationForm').on('submit', function(e) {
-    e.preventDefault();
-    if (!validateOnSigner()) return;
-    var idcrewrotation = $('#idcrewrotation').val();
-    var isUpdate = idcrewrotation !== '';
-    var url = isUpdate ? baseUrl + '/update_crewRotation' : baseUrl + '/save_crewRotation';
-    var formData = new FormData(this);
+  function buildFormData() {
+    var formData = new FormData(document.getElementById('crewRotationForm'));
     formData.set('idperson', $('#idperson').val());
     formData.delete('month');
     var opt = $('input[name="foreigncrew_option"]:checked').val();
     formData.set('foreigncrew_option', opt || 'none');
+    return formData;
+  }
 
+  function onSaveSuccess(r) {
+    if (r.status) {
+      Swal.fire({ title: r.message, icon: "success" });
+      if ($('#crewRotationForm').closest('.modal').length) {
+        $('#modalCrewRotationForm').modal('hide');
+        $(document).trigger('crewRotationSaved');
+      }
+    } else {
+      Swal.fire({ title: r.message || 'Error', icon: "error" });
+    }
+  }
+
+  $('#btnSaveForm').off('click').on('click', function() {
+    if (!validateOnSigner()) return;
+    var $btn = $(this);
+    if ($btn.prop('disabled')) return;
+    $btn.prop('disabled', true);
+    var formData = buildFormData();
     $.ajax({
-      url: url,
+      url: baseUrl + '/save_crewRotation',
       type: 'POST',
       data: formData,
       processData: false,
       contentType: false,
       dataType: 'json',
-      success: function(r) {
-        if (r.status) {
-          Swal.fire({
-            title: r.message,
-            icon: "success"
-          });
-          // Jika di modal, tutup modal dan reload table. Jika di halaman terpisah, kembali ke list.
-          if ($('#crewRotationForm').closest('.modal').length) {
-            $('#modalCrewRotationForm').modal('hide');
-            // Trigger event untuk reload table (akan di-handle di crew_rotation.php)
-            $(document).trigger('crewRotationSaved');
-          }
-        } else {
-          Swal.fire({
-            title: r.message,
-            icon: "error"
-          });
-        }
-      },
-      error: function() {
-        alert('Request failed');
-      }
+      success: function(res) { $btn.prop('disabled', false); onSaveSuccess(res); },
+      error: function() { $btn.prop('disabled', false); alert('Request failed'); }
     });
+  });
+
+  $('#btnUpdateForm').off('click').on('click', function() {
+    if (!validateOnSigner()) return;
+    var $btn = $(this);
+    if ($btn.prop('disabled')) return;
+    $btn.prop('disabled', true);
+    var formData = buildFormData();
+    formData.set('idcrewrotation', ($('#idcrewrotation').val() || '').trim());
+    formData.set('batch_id', ($('#batch_id').val() || '').trim());
+
+    $.ajax({
+      url: baseUrl + '/update_crewRotation',
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: 'json',
+      success: function(res) { $btn.prop('disabled', false); onSaveSuccess(res); },
+      error: function() { $btn.prop('disabled', false); alert('Request failed'); }
+    });
+  });
+
+  $('#crewRotationForm').on('submit', function(e) {
+    e.preventDefault();
   });
 })();
 </script>

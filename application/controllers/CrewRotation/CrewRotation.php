@@ -91,9 +91,9 @@ class CrewRotation extends CI_Controller
 
     public function getAllData_crewRotation()
     {
-        $sql = "SELECT R.idcrewrotation, R.idperson, R.kdcmprec, R.signondt, R.signoffdt, R.estsignoffdt,
+        $sql = "SELECT R.idcrewrotation, R.idperson, R.BatchID, R.is_double_up, R.kdcmprec, R.signondt, R.signoffdt, R.estsignoffdt,
                 R.signonrank, R.signonvsl, R.signonport, R.signondesc, R.lastvsl, R.no_pkl, R.estremark,
-                R.signoffremark, R.replacement_idperson, R.replacement_rank, R.status, R.next_vessel,
+                R.signoffremark, R.remaks_cancel, R.replacement_idperson, R.replacement_rank, R.status, R.next_vessel,
                 P.fullName AS onboard_name,
                 C.nmrank AS onboard_rank_name,
                 D.nmvsl AS onboard_vessel_name,
@@ -112,19 +112,22 @@ class CrewRotation extends CI_Controller
                     FROM mstpersonal WHERE deletests = '0'
                 ) REPL ON REPL.idperson = R.replacement_idperson
                 WHERE R.deletests = '0'
-                ORDER BY R.signondt DESC, R.idcrewrotation DESC";
+                ORDER BY (R.BatchID IS NULL OR R.BatchID = ''), R.BatchID ASC, R.idcrewrotation ASC";
         $rows = $this->db->query($sql)->result_array();
         $data = array();
         foreach ($rows as $row) {
             $data[] = array(
                 'idcrewrotation'    => $row['idcrewrotation'],
                 'idperson'          => $row['idperson'],
+                'batch_id'          => isset($row['BatchID']) ? $row['BatchID'] : '',
+                'is_double_up'      => isset($row['is_double_up']) ? (int)$row['is_double_up'] : 0,
                 'onboard_name'      => isset($row['onboard_name']) ? $row['onboard_name'] : '',
                 'onboard_rank'      => isset($row['onboard_rank_name']) ? $row['onboard_rank_name'] : '',
                 'onboard_son'       => $row['signondt'] && $row['signondt'] !== '0000-00-00' ? date('d M Y', strtotime($row['signondt'])) : '-',
                 'onboard_vessel'    => isset($row['onboard_vessel_name']) ? $row['onboard_vessel_name'] : '',
                 'onboard_soff'     => $row['estsignoffdt'] && $row['estsignoffdt'] !== '0000-00-00' ? date('d M Y', strtotime($row['estsignoffdt'])) : '-',
                 'remark'           => isset($row['estremark']) ? $row['estremark'] : '',
+                'remarks_cancel'   => isset($row['remaks_cancel']) ? $row['remaks_cancel'] : '',
                 'replacement_rank' => isset($row['replacement_rank']) ? $row['replacement_rank'] : '-',
                 'replacement_name' => isset($row['replacement_name']) ? $row['replacement_name'] : '-',
                 'status'           => $row['status'],
@@ -140,6 +143,8 @@ class CrewRotation extends CI_Controller
     {
         $idcrewrotation = $this->input->get('idcrewrotation');
         $row = null;
+        $batch_rows = array();
+        $batch_id = '';
         if (!empty($idcrewrotation)) {
             $sql = "SELECT R.*, P.fullName AS onboard_name
                     FROM tblcrewrotation R
@@ -148,20 +153,35 @@ class CrewRotation extends CI_Controller
                         FROM mstpersonal WHERE deletests = '0'
                     ) P ON P.idperson = R.idperson
                     WHERE R.deletests = '0' AND R.idcrewrotation = ?";
-            $row = $this->db->query($sql, array($idcrewrotation))->row_array();
+            $first = $this->db->query($sql, array($idcrewrotation))->row_array();
+            if ($first) {
+                $row = $first;
+                $batch_id = isset($first['BatchID']) ? $first['BatchID'] : '';
+                if ($batch_id !== '') {
+                    $sqlBatch = "SELECT R.*, P.fullName AS onboard_name
+                            FROM tblcrewrotation R
+                            LEFT JOIN (
+                                SELECT idperson, TRIM(CONCAT_WS(' ', fname, mname, lname)) AS fullName
+                                FROM mstpersonal WHERE deletests = '0'
+                            ) P ON P.idperson = R.idperson
+                            WHERE R.deletests = '0' AND R.BatchID = ?
+                            ORDER BY R.idcrewrotation ASC";
+                    $batch_rows = $this->db->query($sqlBatch, array($batch_id))->result_array();
+                } else {
+                    $batch_rows = array($first);
+                }
+            }
         }
         $data = array(
             'row'                    => $row,
+            'batch_rows'             => $batch_rows,
+            'batch_id'               => $batch_id,
             'optionsCompanyJson'     => json_encode($this->_getCompanyOptionsArray()),
             'optionsRankJson'        => json_encode($this->_getRankOptionsArray()),
             'optionsVesselJson'      => json_encode($this->_getVesselOptionsArray()),
             'optionsSignOffRemarkJson' => json_encode($this->_getSignOffRemarkOptionsArray()),
             'optionsPersonJson'      => json_encode($this->_getPersonOptionsArray())
-            
         );
-
-        // print_r($data['optionsPersonJson']);
-        // exit;
         $this->load->view('Roster/CrewRotation/crew_rotation_detail', $data);
     }
 
@@ -248,75 +268,162 @@ class CrewRotation extends CI_Controller
             );
             return;
         }
-        if (empty($replacement_idperson)) {
+        $replacements = is_array($replacement_idperson) ? $replacement_idperson : ($replacement_idperson ? array($replacement_idperson) : array());
+        $replacements = array_filter(array_map('trim', array_map('strval', $replacements)));
+        if (empty($replacements)) {
             $this->output->set_content_type('application/json')->set_output(
                 json_encode(array('status' => false, 'message' => 'Replacement Candidate is required'))
             );
             return;
         }
-        $data = array(
-            'idperson'             => $idperson,
-            'kdcmprec'             => $this->input->post('kdcmprec') ?: null,
-            'signondt'             => $this->input->post('signondt') ?: null,
-            'signoffdt'            => $this->input->post('signoffdt') ?: '0000-00-00',
-            'estsignoffdt'         => $this->input->post('estsignoffdt') ?: null,
-            'signonrank'           => $this->input->post('signonrank') ?: null,
-            'signonvsl'            => $this->input->post('signonvsl') ?: null,
-            'signonport'           => $this->input->post('signonport') ?: null,
-            'signondesc'           => $this->input->post('signondesc') ?: null,
-            'lastvsl'              => $this->input->post('lastvsl') ?: null,
-            'no_pkl'               => $this->input->post('no_pkl') ?: null,
-            'estremark'            => $this->input->post('estremark') ?: null,
-            'signoffremark'        => $this->input->post('signoffremark') ?: null,
-            'replacement_idperson' => $this->input->post('replacement_idperson') ?: null,
-            'replacement_rank'     => $this->input->post('replacement_rank') ?: null,
-            'status'               => $this->input->post('status') ?: 'Submit',
-            'next_vessel'          => $this->input->post('next_vessel') ?: null,
-            'addusrdt'             => $username . '/' . $currentDate,
-            'deletests'            => 0,
+        $is_double_up = (int) $this->input->post('is_double_up');
+        $batch_id = 'CR-' . date('YmdHis') . '-' . substr(uniqid(), -4);
+        $signoffdt = $this->input->post('signoffdt');
+        $base = array(
+            'idperson'          => $idperson,
+            'BatchID'            => $batch_id,
+            'is_double_up'       => $is_double_up ? 1 : 0,
+            'kdcmprec'           => $this->input->post('kdcmprec') ?: null,
+            'signondt'           => $this->input->post('signondt') ?: null,
+            'signoffdt'          => ($signoffdt && $signoffdt !== '') ? $signoffdt : '0000-00-00',
+            'estsignoffdt'       => $this->input->post('estsignoffdt') ?: null,
+            'signonrank'         => $this->input->post('signonrank') ?: null,
+            'signonvsl'          => $this->input->post('signonvsl') ?: null,
+            'signonport'         => $this->input->post('signonport') ?: null,
+            'signondesc'         => $this->input->post('signondesc') ?: null,
+            'lastvsl'            => $this->input->post('lastvsl') ?: null,
+            'no_pkl'             => $this->input->post('no_pkl') ?: null,
+            'estremark'          => $this->input->post('estremark') ?: null,
+            'signoffremark'      => $this->input->post('signoffremark') ?: null,
+            'replacement_rank'   => $this->input->post('replacement_rank') ?: null,
+            'status'             => 'Submit',
+            'next_vessel'        => $this->input->post('next_vessel') ?: null,
+            'addusrdt'           => $username . '/' . $currentDate,
+            'deletests'           => 0,
         );
-        $this->db->insert('tblcrewrotation', $data);
+        foreach ($replacements as $rid) {
+            $row = $base;
+            $row['replacement_idperson'] = $rid;
+            $this->db->insert('tblcrewrotation', $row);
+        }
         $this->output->set_content_type('application/json')->set_output(
-            json_encode(array('status' => true, 'message' => 'Data saved successfully'))
+            json_encode(array('status' => true, 'message' => 'Data saved successfully', 'batch_id' => $batch_id))
         );
     }
 
     public function update_crewRotation()
     {
         $idcrewrotation = $this->input->post('idcrewrotation');
-        if (empty($idcrewrotation)) {
+        $batch_id = $this->input->post('batch_id');
+        if (empty($idcrewrotation) && empty($batch_id)) {
             $this->output->set_content_type('application/json')->set_output(
-                json_encode(array('status' => false, 'message' => 'idcrewrotation required'))
+                json_encode(array('status' => false, 'message' => 'idcrewrotation or batch_id required'))
             );
             return;
         }
         $username = $this->session->userdata('userName') ?: 'system';
         $currentDate = date('Ymd/H:i:s');
-        $status = $this->input->post('status') ?: 'Submit';
-        $data = array(
-            'kdcmprec'             => $this->input->post('kdcmprec') ?: null,
-            'signondt'             => $this->input->post('signondt') ?: null,
-            'signoffdt'            => $this->input->post('signoffdt') ?: '0000-00-00',
-            'estsignoffdt'         => $this->input->post('estsignoffdt') ?: null,
-            'signonrank'           => $this->input->post('signonrank') ?: null,
-            'signonvsl'            => $this->input->post('signonvsl') ?: null,
-            'signonport'           => $this->input->post('signonport') ?: null,
-            'signondesc'           => $this->input->post('signondesc') ?: null,
-            'lastvsl'              => $this->input->post('lastvsl') ?: null,
-            'no_pkl'               => $this->input->post('no_pkl') ?: null,
-            'estremark'            => $this->input->post('estremark') ?: null,
-            'signoffremark'        => $this->input->post('signoffremark') ?: null,
-            'replacement_idperson' => $this->input->post('replacement_idperson') ?: null,
-            'replacement_rank'     => $this->input->post('replacement_rank') ?: null,
-            'status'               => $status,
-            'next_vessel'          => $this->input->post('next_vessel') ?: null,
-            'updusrdt'             => $username . '/' . $currentDate,
+        $is_double_up = (int) $this->input->post('is_double_up');
+        $shared = array(
+            'kdcmprec'       => $this->input->post('kdcmprec') ?: null,
+            'signondt'       => $this->input->post('signondt') ?: null,
+            'signoffdt'      => $this->input->post('signoffdt') ?: '0000-00-00',
+            'estsignoffdt'   => $this->input->post('estsignoffdt') ?: null,
+            'signonrank'     => $this->input->post('signonrank') ?: null,
+            'signonvsl'      => $this->input->post('signonvsl') ?: null,
+            'signonport'     => $this->input->post('signonport') ?: null,
+            'signondesc'     => $this->input->post('signondesc') ?: null,
+            'lastvsl'        => $this->input->post('lastvsl') ?: null,
+            'no_pkl'         => $this->input->post('no_pkl') ?: null,
+            'estremark'      => $this->input->post('estremark') ?: null,
+            'signoffremark'  => $this->input->post('signoffremark') ?: null,
+            'replacement_rank' => $this->input->post('replacement_rank') ?: null,
+            'next_vessel'    => $this->input->post('next_vessel') ?: null,
+            'is_double_up'   => $is_double_up ? 1 : 0,
+            'updusrdt'       => $username . '/' . $currentDate,
         );
+        $replacements = $this->input->post('replacement_idperson');
+        $replacements = is_array($replacements) ? $replacements : ($replacements ? array($replacements) : array());
+        $replacements = array_filter(array_map('trim', array_map('strval', $replacements)));
 
-        $this->db->where('idcrewrotation', $idcrewrotation);
-        $this->db->update('tblcrewrotation', $data);
-        if (strtoupper($status) === 'Joined') {
-            $this->_syncRotationToContract($idcrewrotation);
+        // Normalize replacement ID for comparison (DB might return 4177, form sends 004177)
+        $normalizeRid = function ($v) {
+            $v = trim((string) $v);
+            return $v === '' ? '' : str_pad($v, 6, '0', STR_PAD_LEFT);
+        };
+
+        if (!empty($batch_id)) {
+            $batch_rows = $this->db->query("SELECT idcrewrotation, idperson, replacement_idperson, status FROM tblcrewrotation WHERE deletests = '0' AND BatchID = ?", array($batch_id))->result_array();
+            // Debug: set to true to log to application/logs/log-*.php
+            $debug_update_batch = isset($_GET['debug_batch']) || (defined('ENVIRONMENT') && ENVIRONMENT === 'development' && $this->input->post('debug_batch'));
+            if ($debug_update_batch) {
+                log_message('info', '[update_crewRotation] batch_id=' . $batch_id . ' replacements=' . json_encode($replacements) . ' batch_rows_count=' . count($batch_rows));
+            }
+            if (empty($batch_rows)) {
+                $this->output->set_content_type('application/json')->set_output(
+                    json_encode(array('status' => false, 'message' => 'Batch not found'))
+                );
+                return;
+            }
+            $idperson = $batch_rows[0]['idperson'];
+            $existing_rids = array();
+            foreach ($batch_rows as $br) {
+                $key = $normalizeRid($br['replacement_idperson']);
+                if ($key !== '') {
+                    $existing_rids[$key] = array('idcrewrotation' => $br['idcrewrotation'], 'replacement_idperson' => $br['replacement_idperson']);
+                }
+            }
+            $replacements_normalized = array();
+            foreach ($replacements as $r) {
+                $replacements_normalized[$normalizeRid($r)] = $r;
+            }
+            if ($debug_update_batch) {
+                log_message('info', '[update_crewRotation] existing_rids_keys=' . json_encode(array_keys($existing_rids)) . ' replacements_normalized_keys=' . json_encode(array_keys($replacements_normalized)));
+            }
+            foreach ($batch_rows as $br) {
+                $ridKey = $normalizeRid($br['replacement_idperson']);
+                if (!array_key_exists($ridKey, $replacements_normalized)) {
+                    if ($br['status'] !== 'Joined' && $br['status'] !== 'Cancel') {
+                        $this->db->where('idcrewrotation', $br['idcrewrotation']);
+                        $this->db->update('tblcrewrotation', array('deletests' => 1, 'updusrdt' => $username . '/' . $currentDate));
+                    }
+                } else {
+                    $this->db->where('idcrewrotation', $br['idcrewrotation']);
+                    $this->db->update('tblcrewrotation', array_merge($shared, array('replacement_idperson' => $br['replacement_idperson'])));
+                }
+            }
+            foreach ($replacements_normalized as $ridKey => $ridValue) {
+                if (!array_key_exists($ridKey, $existing_rids)) {
+                    $ins = array(
+                        'idperson' => $idperson,
+                        'BatchID' => $batch_id,
+                        'replacement_idperson' => $ridValue,
+                        'status' => 'Submit',
+                        'addusrdt' => $username . '/' . $currentDate,
+                        'deletests' => 0,
+                    );
+                    foreach (array('kdcmprec', 'signondt', 'signoffdt', 'estsignoffdt', 'signonrank', 'signonvsl', 'signonport', 'signondesc', 'lastvsl', 'no_pkl', 'estremark', 'signoffremark', 'replacement_rank', 'next_vessel', 'is_double_up') as $k) {
+                        $ins[$k] = isset($shared[$k]) ? $shared[$k] : null;
+                    }
+                    $this->db->insert('tblcrewrotation', $ins);
+                }
+            }
+        } else {
+            if (empty($replacements)) {
+                $this->output->set_content_type('application/json')->set_output(
+                    json_encode(array('status' => false, 'message' => 'Replacement Candidate is required'))
+                );
+                return;
+            }
+            $data = array_merge($shared, array(
+                'replacement_idperson' => $replacements[0],
+                'status'               => $this->input->post('status') ?: 'Submit',
+            ));
+            $this->db->where('idcrewrotation', $idcrewrotation);
+            $this->db->update('tblcrewrotation', $data);
+            if (strtoupper($data['status']) === 'Joined') {
+                $this->_syncRotationToContract($idcrewrotation);
+            }
         }
         $this->output->set_content_type('application/json')->set_output(
             json_encode(array('status' => true, 'message' => 'Data updated successfully'))
@@ -342,7 +449,7 @@ class CrewRotation extends CI_Controller
             return;
         }
         $row = $this->db->query(
-            "SELECT status, idcontract_synced FROM tblcrewrotation WHERE idcrewrotation = ? AND deletests = '0'",
+            "SELECT status, idcontract_synced, BatchID, idperson, signondt FROM tblcrewrotation WHERE idcrewrotation = ? AND deletests = '0'",
             array($idcrewrotation)
         )->row();
         if (!$row) {
@@ -352,6 +459,7 @@ class CrewRotation extends CI_Controller
             return;
         }
         $current_status = $row->status;
+        $batch_id = isset($row->BatchID) ? trim($row->BatchID) : '';
         if ($current_status === 'Cancel') {
             $this->output->set_content_type('application/json')->set_output(
                 json_encode(array('status' => false, 'message' => 'Status sudah Cancel. Tidak dapat diubah. Harus buat data baru.'))
@@ -365,25 +473,40 @@ class CrewRotation extends CI_Controller
             return;
         }
         if ($status === 'Cancel') {
-            // Remarks Cancel tidak mandatory (bisa kosong)
             $username = $this->session->userdata('userName') ?: 'system';
             $currentDate = date('Ymd/H:i:s');
-            if ($current_status === 'Joined' && !empty($row->idcontract_synced)) {
-                $this->db->where('idcontract', $row->idcontract_synced);
-                $this->db->update('tblcontract', array('deletests' => '1'));
+            if ($remaks_cancel === '') {
+                $this->output->set_content_type('application/json')->set_output(
+                    json_encode(array('status' => false, 'message' => 'Reason Cancel wajib diisi.'))
+                );
+                return;
+            }
+            if ($batch_id !== '') {
+                $batch_rows = $this->db->query("SELECT idcrewrotation, idcontract_synced FROM tblcrewrotation WHERE deletests = '0' AND BatchID = ?", array($batch_id))->result();
+                foreach ($batch_rows as $br) {
+                    if (!empty($br->idcontract_synced)) {
+                        $this->db->where('idcontract', $br->idcontract_synced);
+                        $this->db->update('tblcontract', array('deletests' => '1'));
+                    }
+                    $this->db->where('idcrewrotation', $br->idcrewrotation);
+                    $this->db->update('tblcrewrotation', array(
+                        'status'            => 'Cancel',
+                        'remaks_cancel'     => $remaks_cancel,
+                        'idcontract_synced' => null,
+                        'updusrdt'          => $username . '/' . $currentDate,
+                    ));
+                }
+            } else {
+                if ($current_status === 'Joined' && !empty($row->idcontract_synced)) {
+                    $this->db->where('idcontract', $row->idcontract_synced);
+                    $this->db->update('tblcontract', array('deletests' => '1'));
+                }
                 $this->db->where('idcrewrotation', $idcrewrotation);
                 $this->db->update('tblcrewrotation', array(
                     'status'            => 'Cancel',
                     'remaks_cancel'     => $remaks_cancel,
                     'idcontract_synced' => null,
                     'updusrdt'          => $username . '/' . $currentDate,
-                ));
-            } else {
-                $this->db->where('idcrewrotation', $idcrewrotation);
-                $this->db->update('tblcrewrotation', array(
-                    'status'        => 'Cancel',
-                    'remaks_cancel' => $remaks_cancel,
-                    'updusrdt'      => $username . '/' . $currentDate,
                 ));
             }
             $this->output->set_content_type('application/json')->set_output(
@@ -399,7 +522,6 @@ class CrewRotation extends CI_Controller
                  WHERE idcrewrotation = ? AND deletests = '0'",
                 array($idcrewrotation)
             )->row();
-            
             if (!$checkData || 
                 empty($checkData->kdcmprec) || 
                 empty($checkData->signondt) || 
@@ -415,9 +537,22 @@ class CrewRotation extends CI_Controller
                 return;
             }
         }
-        
+
         $username = $this->session->userdata('userName') ?: 'system';
         $currentDate = date('Ymd/H:i:s');
+
+        if ($status === 'Joined' && $batch_id !== '') {
+            $others = $this->db->query("SELECT idcrewrotation FROM tblcrewrotation WHERE deletests = '0' AND BatchID = ? AND idcrewrotation != ?", array($batch_id, $idcrewrotation))->result_array();
+            foreach ($others as $o) {
+                $this->db->where('idcrewrotation', $o['idcrewrotation']);
+                $this->db->update('tblcrewrotation', array(
+                    'status'        => 'Cancel',
+                    'remaks_cancel' => $remaks_cancel,
+                    'updusrdt'      => $username . '/' . $currentDate,
+                ));
+            }
+        }
+
         $this->db->where('idcrewrotation', $idcrewrotation);
         $this->db->update('tblcrewrotation', array(
             'status'   => $status,
@@ -434,28 +569,43 @@ class CrewRotation extends CI_Controller
     private function _syncRotationToContract($idcrewrotation)
     {
         $check = $this->db->query(
-            "SELECT idcontract_synced FROM tblcrewrotation WHERE idcrewrotation = ? AND deletests = '0'",
+            "SELECT idcontract_synced, idperson, signondt, is_double_up FROM tblcrewrotation WHERE idcrewrotation = ? AND deletests = '0'",
             array($idcrewrotation)
         )->row();
         if ($check && !empty($check->idcontract_synced)) {
             return;
         }
-        $sql = "SELECT idperson, kdcmprec, signondt, signoffdt, estsignoffdt, signonrank, signonvsl,
-                signonport, signondesc, lastvsl, no_pkl, estremark, signoffremark
-                FROM tblcrewrotation WHERE idcrewrotation = ? AND deletests = '0'";
+        $sql = "SELECT R.replacement_idperson, R.idperson, R.kdcmprec, R.signondt, R.signoffdt, R.estsignoffdt,
+                R.signonrank, R.signonvsl, R.signonport, R.signondesc, R.lastvsl, R.no_pkl, R.estremark, R.signoffremark, R.is_double_up,
+                L.nmvsl AS lastvsl_nmvsl
+                FROM tblcrewrotation R
+                LEFT JOIN mstvessel L ON L.kdvsl = R.lastvsl AND L.deletests = '0'
+                WHERE R.idcrewrotation = ? AND R.deletests = '0'";
         $row = $this->db->query($sql, array($idcrewrotation))->row();
         if (!$row) return;
-        $this->db->select_max('idcontract');
-        $q = $this->db->get('tblcontract');
-        $r = $q->row();
-        $newId = ($r && $r->idcontract) ? (int)$r->idcontract + 1 : 1;
+
+        $is_double_up = isset($row->is_double_up) ? (int)$row->is_double_up : 0;
+        if (!$is_double_up && !empty($row->idperson) && !empty($row->signondt) && $row->signondt !== '0000-00-00') {
+            $off_contract = $this->db->query(
+                "SELECT idcontract FROM tblcontract WHERE idperson = ? AND (signoffdt = '0000-00-00' OR signoffdt IS NULL) AND deletests = '0' ORDER BY idcontract DESC LIMIT 1",
+                array($row->idperson)
+            )->row();
+            if ($off_contract) {
+                $this->db->where('idcontract', $off_contract->idcontract);
+                $this->db->update('tblcontract', array('signoffdt' => $row->signondt));
+            }
+        }
+
+        $r = $this->db->query("SELECT COALESCE(MAX(idcontract), 0) AS maxid FROM tblcontract")->row();
+        $newId = (int)(isset($r->maxid) ? $r->maxid : 0) + 1;
         $username = $this->session->userdata('userName') ?: 'system';
         $currentDate = date('Ymd/H:i:s');
         $signoffdt = $row->signoffdt && $row->signoffdt !== '0000-00-00' ? $row->signoffdt : '0000-00-00';
         $estsignoffdt = $row->estsignoffdt && $row->estsignoffdt !== '0000-00-00' ? $row->estsignoffdt : '0000-00-00';
+        $lastvsl_for_contract = !empty($row->lastvsl_nmvsl) ? $row->lastvsl_nmvsl : ($row->lastvsl ?: '');
         $data = array(
             'idcontract'    => $newId,
-            'idperson'      => $row->idperson,
+            'idperson'      => $row->replacement_idperson,
             'kdcmprec'      => $row->kdcmprec,
             'signondt'      => $row->signondt,
             'signoffdt'     => $signoffdt,
@@ -464,7 +614,7 @@ class CrewRotation extends CI_Controller
             'signonvsl'     => $row->signonvsl ?: '',
             'signonport'    => $row->signonport ?: '',
             'signondesc'    => $row->signondesc ?: '',
-            'lastvsl'       => $row->lastvsl ?: '',
+            'lastvsl'       => $lastvsl_for_contract,
             'no_pkl'        => $row->no_pkl ?: '',
             'estremark'     => $row->estremark ?: '',
             'signoffremark' => $row->signoffremark ?: '',
