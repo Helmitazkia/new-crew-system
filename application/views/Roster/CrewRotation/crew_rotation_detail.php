@@ -41,13 +41,13 @@
               </div>
             </div>
             <div class="row g-2 mb-2">
-              <div class="col-6">
+              <div class="col-12">
                 <label class="form-label mb-0 small">Sign off Date</label>
                 <input type="date" name="signoffdt" id="signoffdt" class="form-control form-control-sm">
               </div>
-              <div class="col-6">
+              <div class="col-12">
                 <label class="form-label mb-0 small">Sign off remarks</label>
-                <select name="signoffremark" id="signoffremark" class="form-select selectpicker-on"
+                <select name="signoffremark" id="signoffremark" class="form-control selectpicker-on p-10"
                   data-live-search="true" data-size="5"></select>
               </div>
             </div>
@@ -164,7 +164,7 @@
                 <small id="signondescFeedback" class="text-danger d-none">Sign on Description is required</small>
               </div>
               <div class="col-md-4 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">No. PKL <span class="text-danger">*</span></label>
+                <label class="form-label small fw-semibold">No. PKL</label>
                 <input type="text" name="no_pkl" id="no_pkl" class="form-control form-control-sm">
                 <small id="no_pklFeedback" class="text-danger d-none">No. PKL is required</small>
               </div>
@@ -522,7 +522,7 @@
       if (!validateField('signonport', 'signonportFeedback')) ok = false;
       if (!validateField('signondesc', 'signondescFeedback')) ok = false;
       if (!validateField('estsignoffdt', 'estsignoffdtFeedback')) ok = false;
-      if (!validateField('no_pkl', 'no_pklFeedback')) ok = false;
+      // if (!validateField('no_pkl', 'no_pklFeedback')) ok = false;
       if (!validateEstSignOff()) ok = false;
     }
 

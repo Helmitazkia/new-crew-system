@@ -91,12 +91,16 @@ class CrewRotation extends CI_Controller
 
     public function getAllData_crewRotation()
     {
+        // Onboard (Name, Rank, S/ON, Vessel, S/Off Plan) = dari Old Contract yang di-replace (tblcontract, kontrak aktif off-signer)
+        // Sisanya (Remark, Remarks Cancel, Replacement, Status, Next Vessel, Batch) = dari tblcrewrotation
         $sql = "SELECT R.idcrewrotation, R.idperson, R.BatchID, R.is_double_up, R.kdcmprec, R.signondt, R.signoffdt, R.estsignoffdt,
                 R.signonrank, R.signonvsl, R.signonport, R.signondesc, R.lastvsl, R.no_pkl, R.estremark,
                 R.signoffremark, R.remaks_cancel, R.replacement_idperson, R.replacement_rank, R.status, R.next_vessel,
                 P.fullName AS onboard_name,
-                C.nmrank AS onboard_rank_name,
-                D.nmvsl AS onboard_vessel_name,
+                C_ONBOARD.nmrank AS onboard_rank_name,
+                D_ONBOARD.nmvsl AS onboard_vessel_name,
+                COFF.signondt AS contract_signondt,
+                COFF.estsignoffdt AS contract_estsignoffdt,
                 B.nmcmp AS company_name,
                 REPL.fullName AS replacement_name
                 FROM tblcrewrotation R
@@ -104,18 +108,32 @@ class CrewRotation extends CI_Controller
                     SELECT idperson, TRIM(CONCAT_WS(' ', fname, mname, lname)) AS fullName
                     FROM mstpersonal WHERE deletests = '0'
                 ) P ON P.idperson = R.idperson
+                LEFT JOIN tblcontract COFF ON COFF.idperson = R.idperson AND COFF.deletests = '0'
+                    AND (COFF.estsignoffdt != '0000-00-00' OR COFF.estsignoffdt IS NULL)
+                    AND COFF.idcontract = (
+                        SELECT MAX(c2.idcontract) FROM tblcontract c2
+                        WHERE c2.idperson = R.idperson AND c2.deletests = '0'
+                        AND (c2.estsignoffdt != '0000-00-00' OR c2.estsignoffdt IS NULL)
+                    )
+                LEFT JOIN mstrank C_ONBOARD ON C_ONBOARD.kdrank = COFF.signonrank AND C_ONBOARD.deletests = '0'
+                LEFT JOIN mstvessel D_ONBOARD ON D_ONBOARD.kdvsl = COFF.signonvsl AND D_ONBOARD.deletests = '0'
                 LEFT JOIN mstcmprec B ON B.kdcmp = R.kdcmprec AND B.deletests = '0'
-                LEFT JOIN mstrank C ON C.kdrank = R.signonrank AND C.deletests = '0'
-                LEFT JOIN mstvessel D ON D.kdvsl = R.signonvsl AND D.deletests = '0'
                 LEFT JOIN (
                     SELECT idperson, TRIM(CONCAT_WS(' ', fname, mname, lname)) AS fullName
                     FROM mstpersonal WHERE deletests = '0'
                 ) REPL ON REPL.idperson = R.replacement_idperson
                 WHERE R.deletests = '0'
                 ORDER BY (R.BatchID IS NULL OR R.BatchID = ''), R.BatchID ASC, R.idcrewrotation ASC";
+
+        // print_r($sql);
+        // exit;
         $rows = $this->db->query($sql)->result_array();
         $data = array();
         foreach ($rows as $row) {
+            $signondt = isset($row['contract_signondt']) && $row['contract_signondt'] && $row['contract_signondt'] !== '0000-00-00'
+                ? $row['contract_signondt'] : null;
+            $estsignoffdt = isset($row['contract_estsignoffdt']) && $row['contract_estsignoffdt'] && $row['contract_estsignoffdt'] !== '0000-00-00'
+                ? $row['contract_estsignoffdt'] : null;
             $data[] = array(
                 'idcrewrotation'    => $row['idcrewrotation'],
                 'idperson'          => $row['idperson'],
@@ -123,9 +141,9 @@ class CrewRotation extends CI_Controller
                 'is_double_up'      => isset($row['is_double_up']) ? (int)$row['is_double_up'] : 0,
                 'onboard_name'      => isset($row['onboard_name']) ? $row['onboard_name'] : '',
                 'onboard_rank'      => isset($row['onboard_rank_name']) ? $row['onboard_rank_name'] : '',
-                'onboard_son'       => $row['signondt'] && $row['signondt'] !== '0000-00-00' ? date('d M Y', strtotime($row['signondt'])) : '-',
+                'onboard_son'       => $signondt ? date('d M Y', strtotime($signondt)) : '-',
                 'onboard_vessel'    => isset($row['onboard_vessel_name']) ? $row['onboard_vessel_name'] : '',
-                'onboard_soff'     => $row['estsignoffdt'] && $row['estsignoffdt'] !== '0000-00-00' ? date('d M Y', strtotime($row['estsignoffdt'])) : '-',
+                'onboard_soff'     => $estsignoffdt ? date('d M Y', strtotime($estsignoffdt)) : '-',
                 'remark'           => isset($row['estremark']) ? $row['estremark'] : '',
                 'remarks_cancel'   => isset($row['remaks_cancel']) ? $row['remaks_cancel'] : '',
                 'replacement_rank' => isset($row['replacement_rank']) ? $row['replacement_rank'] : '-',

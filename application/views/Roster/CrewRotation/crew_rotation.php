@@ -362,8 +362,8 @@
                 <tfoot>
                   <tr>
                     <!-- <td class="text-center fw-bold" style="background-color:#f8f9fa;"></td> -->
-                    <td colspan="8" class="text-center fw-bold" style="background-color:#000099; color:#fff;">ONBOARD</td>
-                    <td colspan="6" class="text-center fw-bold" style="background-color:#000099; color:#fff;">REPLACEMENT</td>
+                    <td colspan="7" class="text-center fw-bold" style="background-color:#000099; color:#fff;">ONBOARD</td>
+                    <td colspan="7" class="text-center fw-bold" style="background-color:#000099; color:#fff;">REPLACEMENT</td>
                     <!-- <td colspan="3" class="text-center fw-bold" style="background-color:#f8f9fa;"></td> -->
                   </tr>
                 </tfoot>
@@ -482,7 +482,9 @@ $(document).ready(function() {
         return json.success ? json.data : [];
       }
     },
-    columns: [{
+    columns: [
+      // No, Batch = dari rotation
+      {
         data: null,
         className: "text-center",
         orderable: false,
@@ -497,6 +499,7 @@ $(document).ready(function() {
           return data || "-";
         }
       },
+      // Onboard (Name, Rank, S/ON, Vessel, S/Off Plan) = dari Old Contract (tblcontract)
       {
         data: "onboard_name",
         render: function(data, type, row) {
@@ -520,6 +523,7 @@ $(document).ready(function() {
         data: "onboard_soff",
         className: "text-center"
       },
+      // Remark, Remarks Cancel, Replacement, Status, Next Vessel = dari tblcrewrotation
       {
         data: "remark",
         className: "text-center"

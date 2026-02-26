@@ -199,7 +199,8 @@ window.showNextPlanDetail = function(idcrewrotation) {
             if (data === 'Submit') c = 'bg-success';
             else if (data === 'Cancel') c = 'bg-danger';
             else if (data === 'Joined') c = 'bg-primary';
-            return '<span class="badge ' + c + ' badge-status">' + (data || '') + '</span>';
+            var label = (data === 'Submit') ? 'Planned' : (data || '');
+            return '<span class="badge ' + c + ' badge-status">' + label + '</span>';
           }
         },
         { data: 'next_vessel', defaultContent: '-' }
