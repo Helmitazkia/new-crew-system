@@ -547,8 +547,9 @@ class CrewRotation extends CI_Controller
                 empty($checkData->signonrank) || 
                 empty($checkData->signonvsl) || 
                 empty($checkData->signonport) || 
-                empty($checkData->signondesc) || 
-                empty($checkData->no_pkl)) {
+                empty($checkData->signondesc)) 
+                // empty($checkData->no_pkl)) 
+                {
                 $this->output->set_content_type('application/json')->set_output(
                     json_encode(array('status' => false, 'message' => 'Data belum lengkap untuk Joined. Lengkapi semua field wajib (Company, Sign on Date, Estimate Sign off Date, Rank, Vessel, Port, Description, No. PKL) via Edit terlebih dahulu.'))
                 );
@@ -678,7 +679,7 @@ class CrewRotation extends CI_Controller
             );
             return;
         }
-        $sql = "SELECT R.idcrewrotation, R.idperson, R.signondt, R.estsignoffdt, R.estremark, R.status, R.next_vessel,
+        $sql = "SELECT R.idcrewrotation, R.idperson, R.BatchID, R.signondt, R.estsignoffdt, R.estremark, R.remaks_cancel, R.status, R.next_vessel,
                 R.signonrank, R.signonvsl, R.replacement_rank, R.replacement_idperson,
                 P.fullName AS onboard_name, C.nmrank AS onboard_rank_name, D.nmvsl AS onboard_vessel_name,
                 REPL.fullName AS replacement_name
@@ -700,12 +701,14 @@ class CrewRotation extends CI_Controller
         foreach ($rows as $row) {
             $data[] = array(
                 'idcrewrotation'   => $row['idcrewrotation'],
+                'batch_id'        => isset($row['BatchID']) ? $row['BatchID'] : '',
                 'onboard_name'     => isset($row['onboard_name']) ? $row['onboard_name'] : '',
                 'onboard_rank'     => isset($row['onboard_rank_name']) ? $row['onboard_rank_name'] : '',
                 'onboard_son'      => $row['signondt'] && $row['signondt'] !== '0000-00-00' ? date('d M Y', strtotime($row['signondt'])) : '-',
                 'onboard_vessel'   => isset($row['onboard_vessel_name']) ? $row['onboard_vessel_name'] : '',
                 'onboard_soff'     => $row['estsignoffdt'] && $row['estsignoffdt'] !== '0000-00-00' ? date('d M Y', strtotime($row['estsignoffdt'])) : '-',
                 'remark'           => isset($row['estremark']) ? $row['estremark'] : '',
+                'remarks_cancel'   => isset($row['remaks_cancel']) ? $row['remaks_cancel'] : '',
                 'replacement_rank' => isset($row['replacement_rank']) ? $row['replacement_rank'] : '-',
                 'replacement_name' => isset($row['replacement_name']) ? $row['replacement_name'] : '-',
                 'status'          => $row['status'],
