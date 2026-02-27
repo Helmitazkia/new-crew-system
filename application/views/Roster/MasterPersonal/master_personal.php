@@ -55,7 +55,7 @@ $(document).ready(function() {
       loadingRecords: '',
     },
     ajax: {
-      url: "<?= base_url('MasterPersonal/MasterPersonal/getAllData_personal'); ?>",
+      url: "<?php echo base_url('MasterPersonal/MasterPersonal/getAllData_personal'); ?>",
       type: "POST",
       dataSrc: function(json) {
         return json.success ? json.data : [];
