@@ -57,23 +57,21 @@ class ActiveRoster extends CI_Controller {
                 K.NmKota AS birth_city,
                 D.nmvsl,
                 C.signoffdt,
-                C.estsignoffdt, -- TAMBAHKAN INI
-                 (SELECT rankexp FROM tblseaexp 
+                C.estsignoffdt,
+                A.inBlacklist,
+                A.inAktif,
+                A.newapplicent,
+                A.inaktif,
+                K.deletests AS kota_deletests,
+                (SELECT rankexp FROM tblseaexp 
                     WHERE idperson = A.idperson AND deletests = '0' 
-                    ORDER BY idexp DESC, todtexp DESC LIMIT 1) as rankexp,
-                CASE
-                    WHEN A.inBlacklist = '1' AND K.deletests = '0' THEN 'Not For Emp'
-                    WHEN A.inAktif = '1' AND A.inBlacklist = '0' THEN 'Non Aktif'
-                    WHEN A.newapplicent = '1' AND K.deletests = '0' THEN 'Pickup'
-                    WHEN C.signoffdt = '0000-00-00' AND A.inaktif = '0' AND A.deletests = '0' THEN 'On board'
-                    WHEN C.signoffdt IS NOT NULL AND C.signoffdt != '0000-00-00' AND C.signoffdt <= CURDATE() THEN 'Stand By'
-                END AS statusPerson
+                    ORDER BY idexp DESC, todtexp DESC LIMIT 1) AS rankexp
             FROM mstpersonal A
             LEFT JOIN (
                 SELECT t.idperson, t.signonvsl, t.signoffdt, t.estsignoffdt
                 FROM tblcontract t
                 INNER JOIN (
-                    SELECT idperson, MAX(idcontract) as max_idcontract
+                    SELECT idperson, MAX(idcontract) AS max_idcontract
                     FROM tblcontract WHERE deletests = 0 GROUP BY idperson
                 ) x ON x.idperson = t.idperson AND x.max_idcontract = t.idcontract
             ) C ON A.idperson = C.idperson
@@ -85,11 +83,44 @@ class ActiveRoster extends CI_Controller {
         ";
 
         $rows = $this->db->query($sql)->result_array();
+        $today = date('Y-m-d');
         $data = array();
         foreach ($rows as $row) {
             $city = $row['birth_city'];
             $date = $row['birth_date'];
             $dobFormatted = ($date && $date != '0000-00-00') ? $dataContext->convertReturnName($date) : '';
+
+            // Validasi status di controller: signoffdt ada = kontrak abis (Stand By), tidak ada = pakai estsignoffdt (On board)
+            $statusPerson = null;
+            if (isset($row['inBlacklist']) && $row['inBlacklist'] == '1' && isset($row['kota_deletests']) && $row['kota_deletests'] == '0') {
+                $statusPerson = 'Not For Emp';
+            } elseif (isset($row['inAktif']) && $row['inAktif'] == '1' && isset($row['inBlacklist']) && $row['inBlacklist'] == '0') {
+                $statusPerson = 'Non Aktif';
+            } elseif (isset($row['newapplicent']) && $row['newapplicent'] == '1' && isset($row['kota_deletests']) && $row['kota_deletests'] == '0') {
+                $statusPerson = 'Pickup';
+            } elseif (isset($row['signoffdt']) && $row['signoffdt'] !== '' && $row['signoffdt'] !== null && $row['signoffdt'] !== '0000-00-00') {
+                // signoffdt ada value = kontrak sudah abis
+                if ($row['signoffdt'] <= $today) {
+                    $statusPerson = 'Stand By';
+                } else {
+                    $statusPerson = 'On board';
+                }
+            } else {
+                // signoffdt tidak ada → pakai estsignoffdt (masih On board)
+                if (isset($row['signoffdt'])) {
+                    $statusPerson = 'On board';
+                }
+            }
+
+            $signoffdt = isset($row['signoffdt']) ? $row['signoffdt'] : '';
+            $estsignoffdt = isset($row['estsignoffdt']) ? $row['estsignoffdt'] : '';
+            $estsignoffdt_formatted = ($estsignoffdt !== '0000-00-00' && $estsignoffdt !== '') ? $dataContext->convertReturnName($estsignoffdt) : '';
+            $signoffdt_formatted = ($signoffdt !== '0000-00-00' && $signoffdt !== '') ? $dataContext->convertReturnName($signoffdt) : '';
+
+            // Active Roster hanya tampilkan On board & Stand By
+            if ($statusPerson !== 'On board' && $statusPerson !== 'Stand By') {
+                continue;
+            }
 
             $data[] = array(
                 'idperson'     => $row['idperson'],
@@ -99,10 +130,12 @@ class ActiveRoster extends CI_Controller {
                 'religion'     => $row['religion'],
                 'nmvsl'        => $row['nmvsl'],
                 'dob'          => trim($city . ($dobFormatted ? ', ' . $dobFormatted : '')),
-                'statusPerson' => $row['statusPerson'],
+                'statusPerson' => $statusPerson,
                 'rankexp'      => $row['rankexp'],
-                'estsignoffdt' => $row['estsignoffdt'],
-                'estsignoffdt_formatted' => ($row['estsignoffdt'] != '0000-00-00' && $row['estsignoffdt'] != '') ? $dataContext->convertReturnName($row['estsignoffdt']) : ''
+                'estsignoffdt' => $estsignoffdt,
+                'estsignoffdt_formatted' => $estsignoffdt_formatted,
+                'signoffdt' => $signoffdt,
+                'signoffdt_formatted' => $signoffdt_formatted
             );
         }
 
