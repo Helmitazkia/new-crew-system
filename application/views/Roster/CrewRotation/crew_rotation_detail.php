@@ -40,17 +40,18 @@
                 <small id="offSignerSelectFeedback" class="text-danger d-none">Name is required</small>
               </div>
             </div>
-            <div class="row g-2 mb-2">
+            <!-- <div class="row g-2 mb-2">
               <div class="col-12">
                 <label class="form-label mb-0 small">Sign off Date</label>
                 <input type="date" name="signoffdt" id="signoffdt" class="form-control form-control-sm">
+                <small class="text-muted d-block mt-1">Opsional. Tanggal turun bisa dicatat di kontrak off-signer.</small>
               </div>
               <div class="col-12">
                 <label class="form-label mb-0 small">Sign off remarks</label>
                 <select name="signoffremark" id="signoffremark" class="form-control selectpicker-on p-10"
                   data-live-search="true" data-size="5"></select>
               </div>
-            </div>
+            </div> -->
             <div id="offSignerContractPanel" class="small" style="display:none;">
               <div class="row g-2 border-top pt-2">
                 <div class="col-6 mb-2">
@@ -95,10 +96,10 @@
           <div class="card-header bg-light fw-semibold fst-italic">On Signer (New Contract Details)</div>
           <div class="card-body">
             <div class="row g-2 align-items-end">
-              <div class="col-md-6 mb-2 on-signer-field">
+              <div class="col-md-12 mb-2 on-signer-field">
                 <label class="form-label small fw-semibold">Replacement Candidate <span
                     class="text-danger">*</span></label>
-                <select name="replacement_idperson[]" id="replacement_idperson" class="form-select selectpicker-on"
+                <select name="replacement_idperson[]" id="replacement_idperson" class="form-control selectpicker-on"
                   data-live-search="true" data-size="8" multiple></select>
                 <small class="text-muted small">Bisa pilih lebih dari satu (plan banyak replacement)</small>
                 <small id="replacement_idpersonFeedback" class="text-danger d-none">Replacement Candidate is
@@ -280,8 +281,29 @@
   var optionsRank = <?php echo isset($optionsRankJson) ? $optionsRankJson : '[]'; ?>;
   var optionsVessel = <?php echo isset($optionsVesselJson) ? $optionsVesselJson : '[]'; ?>;
   var optionsSignOffRemark = <?php echo isset($optionsSignOffRemarkJson) ? $optionsSignOffRemarkJson : '[]'; ?>;
-  var optionsPersonOnBoard = <?php echo isset($optionsPersonOnBoardJson) ? $optionsPersonOnBoardJson : '[]'; ?>;
-  var optionsPersonStandBy = <?php echo isset($optionsPersonStandByJson) ? $optionsPersonStandByJson : '[]'; ?>;
+  var optionsPersonActiveRoster = <?php echo isset($optionsPersonActiveRosterJson) ? $optionsPersonActiveRosterJson : '[]'; ?>;
+
+  // Validasi sama dengan active_roster.php: Expired Over (tanggal lewat) = Stand By; Expired In = On board
+  function computeStatusFromRow(row) {
+    var hasSignoff = row.signoffdt && row.signoffdt !== '' && row.signoffdt !== '0000-00-00';
+    var dateRaw = hasSignoff ? row.signoffdt : (row.estsignoffdt || '');
+    if (!dateRaw || dateRaw === '0000-00-00') return 'On board';
+    var dateNow = new Date();
+    var estDate = new Date(dateRaw);
+    dateNow.setHours(0, 0, 0, 0);
+    estDate.setHours(0, 0, 0, 0);
+    var diffDays = Math.ceil((estDate - dateNow) / (1000 * 60 * 60 * 24));
+    return diffDays < 0 ? 'Stand By' : 'On board';
+  }
+  var optionsPersonOnBoard = [{ value: '', text: '- Select crew -' }];
+  var optionsPersonStandBy = [];
+  (optionsPersonActiveRoster || []).forEach(function(o) {
+    if (!o.value) return;
+    var status = computeStatusFromRow(o);
+    var opt = { value: o.value, text: o.text };
+    if (status === 'On board') optionsPersonOnBoard.push(opt);
+    else optionsPersonStandBy.push(opt);
+  });
 
   function fillSelect($el, arr) {
     $el.empty().append($('<option value="">- Select -</option>'));
@@ -385,7 +407,12 @@
       $el.selectpicker(opts);
     }
   });
-
+  function toggleSignoffdtRequiredStar() {
+    var status = ($('#status').val() || '').trim();
+    $('#signoffdtRequiredStar').toggle(status.toUpperCase() === 'JOINED');
+  }
+  toggleSignoffdtRequiredStar();
+  $('#status').on('change', toggleSignoffdtRequiredStar);
   $('#file_contract').on('change', function() {
     var fn = $(this).val().split(/\\/).pop();
     $('#file_contract_label').text(fn || 'No file selected');
@@ -481,7 +508,7 @@
 
   function hideAllFeedback() {
     $('[id$="Feedback"]').addClass('d-none');
-    $('#kdcmprec,#signondt,#signonrank,#signonvsl,#signonport,#signondesc,#estsignoffdt,#no_pkl,#replacement_idperson,#offSignerSelect')
+    $('#kdcmprec,#signondt,#signonrank,#signonvsl,#signonport,#signondesc,#estsignoffdt,#no_pkl,#replacement_idperson,#offSignerSelect,#signoffdt')
       .removeClass('is-invalid');
   }
 

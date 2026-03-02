@@ -110,27 +110,34 @@ $(document).ready(function() {
       {
         data: 'statusPerson',
         className: 'text-center',
-        render: function(data, type) {
-          if (type === 'display') {
-            let cls = 'bg-secondary';
-
-            if (data === 'On board') cls = 'bg-success';
-            else if (data === 'Stand By') cls = 'bg-warning text-dark';
-            else if (data === 'Non Aktif') cls = 'bg-danger';
-
-            return `<span class="badge ${cls}">${data}</span>`;
+        render: function(data, type, row) {
+          // Logic samakan Contract: Expired Over (tanggal lewat) = Stand By; Expired In (masih mau abis) = On board
+          const hasSignoff = row.signoffdt && row.signoffdt !== '' && row.signoffdt !== '0000-00-00';
+          const dateRaw = hasSignoff ? row.signoffdt : (row.estsignoffdt || '');
+          let displayStatus = 'On board';
+          if (dateRaw && dateRaw !== '0000-00-00') {
+            const dateNow = new Date();
+            const estDate = new Date(dateRaw);
+            dateNow.setHours(0, 0, 0, 0);
+            estDate.setHours(0, 0, 0, 0);
+            const diffDays = Math.ceil((estDate - dateNow) / (1000 * 60 * 60 * 24));
+            if (diffDays < 0) displayStatus = 'Stand By';  // Expired Over
           }
-          return data; // penting buat search & filter
+          if (type === 'display') {
+            let cls = displayStatus === 'Stand By' ? 'bg-warning text-dark' : 'bg-success';
+            return `<span class="badge ${cls}">${displayStatus}</span>`;
+          }
+          return displayStatus;
         }
       },
       {
         data: 'estsignoffdt',
         className: 'text-center',
         render: function(data, type, row) {
-          // Stand By: pakai signoffdt (kontrak abis); On board: pakai estsignoffdt (estimasi)
-          const isStandBy = row.statusPerson === 'Stand By';
-          const dateRaw = isStandBy && row.signoffdt ? row.signoffdt : (data || '');
-          const displayText = isStandBy && row.signoffdt_formatted ? row.signoffdt_formatted : (row.estsignoffdt_formatted || '');
+          // signoffdt ada value = kontrak abis → pakai signoffdt; tidak ada → pakai estsignoffdt (estimasi)
+          const hasSignoff = row.signoffdt && row.signoffdt !== '' && row.signoffdt !== '0000-00-00';
+          const dateRaw = hasSignoff ? row.signoffdt : (data || '');
+          const displayText = hasSignoff ? (row.signoffdt_formatted || '') : (row.estsignoffdt_formatted || '');
           if (!dateRaw || dateRaw === '0000-00-00') return '<span class="text-muted">-</span>';
 
           if (type === 'display') {
@@ -157,7 +164,7 @@ $(document).ready(function() {
               let duration = getDuration(diffDays);
               warningMsg =
                 `<br><span style="font-size:10px; color:red; font-weight: bold;">Expired Over ${duration}</span>`;
-            } else if (diffDays <= 90 && !isStandBy) {
+            } else if (diffDays <= 90) {
               let duration = getDuration(diffDays);
               warningMsg =
                 `<br><span style="font-size:10px; color:orange; font-weight: bold;">Expired In ${duration}</span>`;
