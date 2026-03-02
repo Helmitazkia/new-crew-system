@@ -54,6 +54,10 @@
             <div id="offSignerContractPanel" class="small" style="display:none;">
               <div class="row g-2 border-top pt-2">
                 <div class="col-6 mb-2">
+                  <label class="form-label mb-0">Vessel</label>
+                  <input type="text" id="off_vessel" class="form-control form-control-sm bg-light" disabled value="">
+                </div>
+                <div class="col-6 mb-2">
                   <label class="form-label mb-0">Rank</label>
                   <input type="text" id="off_rank" class="form-control form-control-sm bg-light" disabled value="">
                 </div>
@@ -102,7 +106,9 @@
               </div>
               <div class="col-md-6 mb-2 on-signer-field">
                 <label class="form-label small fw-semibold">Replacement Rank</label>
-                <input type="text" name="replacement_rank" id="replacement_rank" class="form-control form-control-sm">
+                <input type="hidden" name="replacement_rank" id="replacement_rank" value="">
+                <input type="text" id="replacement_rank_display" class="form-control form-control-sm bg-light" disabled
+                  placeholder="(rank yang turun – pilih Name dulu)" value="">
               </div>
               <div class="col-md-6 mb-2 on-signer-field">
                 <label class="form-label small fw-semibold">Company Name <span class="text-danger">*</span></label>
@@ -204,7 +210,7 @@
                   <option value="Joined">Joined</option>
                 </select>
               </div>
-              <div class="col-md-6 mb-2 on-signer-field">
+              <div class="col-md-6 mb-2 on-signer-field d-none">
                 <label class="form-label small fw-semibold">Next Vessel</label>
                 <input type="text" name="next_vessel" id="next_vessel" class="form-control form-control-sm">
               </div>
@@ -274,7 +280,8 @@
   var optionsRank = <?php echo isset($optionsRankJson) ? $optionsRankJson : '[]'; ?>;
   var optionsVessel = <?php echo isset($optionsVesselJson) ? $optionsVesselJson : '[]'; ?>;
   var optionsSignOffRemark = <?php echo isset($optionsSignOffRemarkJson) ? $optionsSignOffRemarkJson : '[]'; ?>;
-  var optionsPerson = <?php echo isset($optionsPersonJson) ? $optionsPersonJson : '[]'; ?>;
+  var optionsPersonOnBoard = <?php echo isset($optionsPersonOnBoardJson) ? $optionsPersonOnBoardJson : '[]'; ?>;
+  var optionsPersonStandBy = <?php echo isset($optionsPersonStandByJson) ? $optionsPersonStandByJson : '[]'; ?>;
 
   function fillSelect($el, arr) {
     $el.empty().append($('<option value="">- Select -</option>'));
@@ -284,10 +291,9 @@
     });
   }
 
-  // Off-signer: select dengan selectpicker (live-search) - langsung bisa scroll/select tanpa ketik dulu
   var $offSelect = $('#offSignerSelect');
   $offSelect.empty().append($('<option value="">- Select crew -</option>'));
-  optionsPerson.forEach(function(o) {
+  (optionsPersonOnBoard || []).forEach(function(o) {
     if (o.value) $offSelect.append($('<option></option>').val(o.value).text(o.text));
   });
 
@@ -298,7 +304,7 @@
   fillSelect($('#lastvsl'), optionsVessel);
   var $replSelect = $('#replacement_idperson');
   $replSelect.empty();
-  (optionsPerson || []).forEach(function(o) {
+  (optionsPersonStandBy || []).forEach(function(o) {
     if (o.value) $replSelect.append($('<option></option>').val(o.value).text(o.text));
   });
 
@@ -318,15 +324,17 @@
     $('#estsignoffdt').val((row.estsignoffdt && row.estsignoffdt !== '0000-00-00') ? row.estsignoffdt : '');
     $('#signonrank').val(row.signonrank || '');
     $('#signonvsl').val(row.signonvsl || '');
+    $('#next_vessel').val(row.next_vessel || row.signonvsl || '');
     $('#signonport').val(row.signonport || '');
     $('#signondesc').val(row.signondesc || '');
     $('#lastvsl').val(row.lastvsl || '');
     $('#no_pkl').val(row.no_pkl || '');
     $('#estremark').val(row.estremark || '');
     $('#signoffremark').val(row.signoffremark || '');
-    $('#replacement_rank').val(row.replacement_rank || '');
+    var rr = (row.replacement_rank || '').toString().trim();
+    $('#replacement_rank').val(rr);
+    $('#replacement_rank_display').val(rr);
     $('#status').val(row.status || 'Submit');
-    $('#next_vessel').val(row.next_vessel || '');
     var isDoubleUp = (row.is_double_up == 1 || row.is_double_up === '1');
     $('input[name="is_double_up"][value="' + (isDoubleUp ? '1' : '0') + '"]').prop('checked', true);
     if ($('#offSignerSelect').length && row.idperson != null) {
@@ -395,6 +403,12 @@
     $('#idperson').val(idperson);
     if (!idperson) {
       $('#offSignerContractPanel').hide();
+      $('#signoffdt').val('');
+      $('#off_vessel').val('');
+      $('#replacement_rank').val('');
+      $('#replacement_rank_display').val('');
+      $('#lastvsl').val('');
+      if ($('#lastvsl').data('selectpicker')) $('#lastvsl').selectpicker('refresh');
       return;
     }
     var $panel = $('#offSignerContractPanel');
@@ -406,11 +420,17 @@
         if (res.success && res.data) {
           var d = res.data;
           $('#off_rank').val(d.rank || '-');
+          $('#off_vessel').val(d.nmvsl || '-');
           $('#off_planned_signoff').val(d.planned_signoff || '-');
           $('#off_relieving_port').val(d.relieving_port || '-');
           $('#off_status').val(d.status || '-');
           $('#off_eoc').val(d.eoc || '-');
           $('#off_remarks').val(d.remarks || '-');
+          if (d.signoffdt) $('#signoffdt').val(d.signoffdt);
+          // Replacement Rank = rank yang turun (dari kontrak off-signer), tampil di input disabled
+          var rankName = (d.rank && d.rank !== '-') ? d.rank : '';
+          $('#replacement_rank').val(rankName);
+          $('#replacement_rank_display').val(rankName);
           $panel.show();
         } else {
           alert(res.message || 'No contract found');
@@ -437,6 +457,9 @@
   if (!$('#signondt').val()) {
     $('#signondt').val('<?php echo date("Y-m-d"); ?>');
   }
+  $('#signonvsl').on('change', function() {
+    $('#next_vessel').val($(this).val() || '');
+  });
   var isEditMode = (row !== null && row.idcrewrotation) || (batch_id && (batch_id + '').trim() !== '');
 
   if (isEditMode) {
@@ -535,6 +558,8 @@
     formData.delete('month');
     var opt = $('input[name="foreigncrew_option"]:checked').val();
     formData.set('foreigncrew_option', opt || 'none');
+    formData.set('next_vessel', $('#signonvsl').val() || '');
+    formData.set('replacement_rank', ($('#replacement_rank').val() || '').trim());
     return formData;
   }
 

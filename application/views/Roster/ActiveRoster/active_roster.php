@@ -127,17 +127,20 @@ $(document).ready(function() {
         data: 'estsignoffdt',
         className: 'text-center',
         render: function(data, type, row) {
-          if (!data || data === '0000-00-00') return '<span class="text-muted">-</span>';
+          // Stand By: pakai signoffdt (kontrak abis); On board: pakai estsignoffdt (estimasi)
+          const isStandBy = row.statusPerson === 'Stand By';
+          const dateRaw = isStandBy && row.signoffdt ? row.signoffdt : (data || '');
+          const displayText = isStandBy && row.signoffdt_formatted ? row.signoffdt_formatted : (row.estsignoffdt_formatted || '');
+          if (!dateRaw || dateRaw === '0000-00-00') return '<span class="text-muted">-</span>';
 
           if (type === 'display') {
             const dateNow = new Date();
-            const estDate = new Date(data);
+            const estDate = new Date(dateRaw);
             dateNow.setHours(0, 0, 0, 0);
             estDate.setHours(0, 0, 0, 0);
 
             let diffTime = estDate - dateNow;
             let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            let displayText = row.estsignoffdt_formatted;
             let warningMsg = "";
 
             const getDuration = (totalDays) => {
@@ -151,12 +154,10 @@ $(document).ready(function() {
             };
 
             if (diffDays < 0) {
-              // 1. LOGIKA: SUDAH LEWAT (Expired Over)
               let duration = getDuration(diffDays);
               warningMsg =
                 `<br><span style="font-size:10px; color:red; font-weight: bold;">Expired Over ${duration}</span>`;
-            } else if (diffDays <= 90) {
-              // 2. LOGIKA: AKAN DATANG (Expired In)
+            } else if (diffDays <= 90 && !isStandBy) {
               let duration = getDuration(diffDays);
               warningMsg =
                 `<br><span style="font-size:10px; color:orange; font-weight: bold;">Expired In ${duration}</span>`;
@@ -164,7 +165,7 @@ $(document).ready(function() {
 
             return `<div>${displayText}${warningMsg}</div>`;
           }
-          return data;
+          return dateRaw;
         }
       },
       {

@@ -75,6 +75,63 @@ class CrewRotation extends CI_Controller
         return $out;
     }
 
+    /**
+     * Name * (Off Signer): orang yang On Board.
+     * Sama dengan logic Active Roster: kontrak terakhir (MAX idcontract) per person, signoffdt = '0000-00-00'.
+     */
+    private function _getPersonOnBoardOptionsArray()
+    {
+        $sql = "SELECT P.idperson, TRIM(CONCAT_WS(' ', P.fname, P.mname, P.lname)) AS fullName
+                FROM mstpersonal P
+                INNER JOIN (
+                    SELECT t.idperson
+                    FROM tblcontract t
+                    INNER JOIN (
+                        SELECT idperson, MAX(idcontract) AS max_idcontract
+                        FROM tblcontract WHERE deletests = '0' GROUP BY idperson
+                    ) x ON x.idperson = t.idperson AND x.max_idcontract = t.idcontract
+                    WHERE t.deletests = '0' AND (t.signoffdt = '0000-00-00' OR t.signoffdt IS NULL)
+                ) C ON P.idperson = C.idperson
+                WHERE P.deletests = '0' AND P.inaktif = '0'
+                AND (P.fname != '' OR P.mname != '' OR P.lname != '')
+                ORDER BY fullName ASC";
+        $rows = $this->db->query($sql)->result();
+        $out = array(array("value" => "", "text" => "- Select crew -"));
+        foreach ($rows as $r) {
+            $out[] = array("value" => $r->idperson, "text" => $r->fullName . ' (' . $r->idperson . ')');
+        }
+        return $out;
+    }
+
+    /**
+     * Replacement Candidate *: orang yang Stand By.
+     * Sama dengan logic Active Roster: kontrak terakhir (MAX idcontract) per person,
+     * signoffdt IS NOT NULL AND signoffdt != '0000-00-00' AND signoffdt <= CURDATE().
+     */
+    private function _getPersonStandByOptionsArray()
+    {
+        $sql = "SELECT P.idperson, TRIM(CONCAT_WS(' ', P.fname, P.mname, P.lname)) AS fullName
+                FROM mstpersonal P
+                INNER JOIN (
+                    SELECT t.idperson
+                    FROM tblcontract t
+                    INNER JOIN (
+                        SELECT idperson, MAX(idcontract) AS max_idcontract
+                        FROM tblcontract WHERE deletests = '0' GROUP BY idperson
+                    ) x ON x.idperson = t.idperson AND x.max_idcontract = t.idcontract
+                    WHERE t.deletests = '0'
+                    AND t.signoffdt IS NOT NULL AND t.signoffdt != '0000-00-00' AND t.signoffdt <= CURDATE()
+                ) C ON P.idperson = C.idperson
+                WHERE P.deletests = '0' AND (P.fname != '' OR P.mname != '' OR P.lname != '')
+                ORDER BY fullName ASC";
+        $rows = $this->db->query($sql)->result();
+        $out = array();
+        foreach ($rows as $r) {
+            $out[] = array("value" => $r->idperson, "text" => $r->fullName . ' (' . $r->idperson . ')');
+        }
+        return $out;
+    }
+
     public function index()
     {
         $data = array(
@@ -113,7 +170,7 @@ class CrewRotation extends CI_Controller
                     AND COFF.idcontract = (
                         SELECT MAX(c2.idcontract) FROM tblcontract c2
                         WHERE c2.idperson = R.idperson AND c2.deletests = '0'
-                        AND (c2.estsignoffdt != '0000-00-00' OR c2.estsignoffdt IS NULL)
+                        AND (c2.signoffdt = '0000-00-00' OR c2.signoffdt IS NULL)
                     )
                 LEFT JOIN mstrank C_ONBOARD ON C_ONBOARD.kdrank = COFF.signonrank AND C_ONBOARD.deletests = '0'
                 LEFT JOIN mstvessel D_ONBOARD ON D_ONBOARD.kdvsl = COFF.signonvsl AND D_ONBOARD.deletests = '0'
@@ -198,7 +255,9 @@ class CrewRotation extends CI_Controller
             'optionsRankJson'        => json_encode($this->_getRankOptionsArray()),
             'optionsVesselJson'      => json_encode($this->_getVesselOptionsArray()),
             'optionsSignOffRemarkJson' => json_encode($this->_getSignOffRemarkOptionsArray()),
-            'optionsPersonJson'      => json_encode($this->_getPersonOptionsArray())
+            'optionsPersonJson'      => json_encode($this->_getPersonOptionsArray()),
+            'optionsPersonOnBoardJson'  => json_encode($this->_getPersonOnBoardOptionsArray()),
+            'optionsPersonStandByJson'   => json_encode($this->_getPersonStandByOptionsArray()),
         );
         $this->load->view('Roster/CrewRotation/crew_rotation_detail', $data);
     }
@@ -242,25 +301,31 @@ class CrewRotation extends CI_Controller
             return;
         }
         $sql = "SELECT A.idcontract, A.idperson, A.signondt, A.signoffdt, A.estsignoffdt, A.signonport, A.estremark,
+                A.signonrank, A.signonvsl,
                 B.nmrank, C.nmvsl, E.nmremark AS signoffremark_name
                 FROM tblcontract A
                 LEFT JOIN mstrank B ON B.kdrank = A.signonrank AND B.deletests = '0'
                 LEFT JOIN mstvessel C ON C.kdvsl = A.signonvsl AND C.deletests = '0'
                 LEFT JOIN mstremark E ON E.kdremark = A.signoffremark AND E.deletests = '0'
                 WHERE A.deletests = '0' AND A.idperson = ?
+                AND (A.signoffdt = '0000-00-00' OR A.signoffdt IS NULL)
                 ORDER BY A.idcontract DESC LIMIT 1";
         $row = $this->db->query($sql, array($idperson))->row_array();
         if (!$row) {
             $this->output->set_content_type('application/json')->set_output(
-                json_encode(array('success' => false, 'message' => 'No contract found for this person'))
+                json_encode(array('success' => false, 'message' => 'No active contract found for this person'))
             );
             return;
         }
         $planned_signoff = isset($row['estsignoffdt']) && $row['estsignoffdt'] !== '0000-00-00' ? $row['estsignoffdt'] : (isset($row['signoffdt']) ? $row['signoffdt'] : '-');
         $status = (isset($row['signoffdt']) && $row['signoffdt'] !== '0000-00-00' && $row['signoffdt'] <= date('Y-m-d')) ? 'On Leave' : 'On Board';
+        $signoffdt_fmt = (isset($row['signoffdt']) && $row['signoffdt'] !== '' && $row['signoffdt'] !== '0000-00-00') ? $row['signoffdt'] : '';
         $data = array(
             'idperson'         => $row['idperson'],
             'rank'             => isset($row['nmrank']) ? $row['nmrank'] : '-',
+            'signonrank'       => isset($row['signonrank']) ? $row['signonrank'] : '',
+            'signonvsl'        => isset($row['signonvsl']) ? $row['signonvsl'] : '',
+            'signoffdt'        => $signoffdt_fmt,
             'planned_signoff'  => $planned_signoff,
             'relieving_port'   => isset($row['signonport']) ? $row['signonport'] : '-',
             'payscale'         => '-',
