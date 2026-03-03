@@ -40,18 +40,18 @@
                 <small id="offSignerSelectFeedback" class="text-danger d-none">Name is required</small>
               </div>
             </div>
-            <!-- <div class="row g-2 mb-2">
+            <div class="row g-2 mb-2">
               <div class="col-12">
-                <label class="form-label mb-0 small">Sign off Date</label>
-                <input type="date" name="signoffdt" id="signoffdt" class="form-control form-control-sm">
-                <small class="text-muted d-block mt-1">Opsional. Tanggal turun bisa dicatat di kontrak off-signer.</small>
+                <label class="form-label mb-0 small">Sign off Date (Off Yang Turun)</label>
+                <input type="date" name="signoffdt_offsigner" id="signoffdt_offsigner" class="form-control form-control-sm">
+                <small class="text-muted d-block mt-1">Single UP: auto dari Sign on Date. Double UP: biarkan kosong. Simpan ke kontrak yang turun jika diisi.</small>
               </div>
               <div class="col-12">
-                <label class="form-label mb-0 small">Sign off remarks</label>
-                <select name="signoffremark" id="signoffremark" class="form-control selectpicker-on p-10"
+                <label class="form-label mb-0 small">Sign off remarks (Off Yang Turun)</label>
+                <select name="signoffremark_offsigner" id="signoffremark_offsigner" class="form-control selectpicker-on p-10"
                   data-live-search="true" data-size="5"></select>
               </div>
-            </div> -->
+            </div>
             <div id="offSignerContractPanel" class="small" style="display:none;">
               <div class="row g-2 border-top pt-2">
                 <div class="col-6 mb-2">
@@ -162,6 +162,18 @@
                   data-size="5">
                   <option value="">- Select -</option>
                 </select>
+              </div>
+              <div class="row g-2 mb-2">
+                <div class="col-md-6 on-signer-field">
+                  <label class="form-label mb-0 small">Sign off Date (Off Yang Naik)</label>
+                  <input type="date" name="signoffdt_onsigner" id="signoffdt_onsigner" class="form-control form-control-sm">
+                  <small class="text-muted d-block mt-1">Opsional. Simpan ke data yang naik (kontrak replacement) jika diisi.</small>
+                </div>
+                <div class="col-md-6 on-signer-field">
+                  <label class="form-label mb-0 small">Sign off remarks (Off Yang Naik)</label>
+                  <select name="signoffremark_onsigner" id="signoffremark_onsigner" class="form-control selectpicker-on p-10"
+                    data-live-search="true" data-size="5"></select>
+                </div>
               </div>
               <div class="col-12 mb-2 on-signer-field">
                 <label class="form-label small fw-semibold">Sign on Description <span
@@ -304,6 +316,17 @@
     if (status === 'On board') optionsPersonOnBoard.push(opt);
     else optionsPersonStandBy.push(opt);
   });
+  var standByIds = {};
+  optionsPersonStandBy.forEach(function(o) { standByIds[o.value] = true; });
+  var batch_rows = <?php echo isset($batch_rows) ? json_encode($batch_rows) : '[]'; ?>;
+  (batch_rows || []).forEach(function(r) {
+    var rid = r.replacement_idperson;
+    if (rid != null && rid !== '' && !standByIds[rid]) {
+      var text = (r.replacement_name || '') ? (r.replacement_name + ' (' + rid + ')') : ('(' + rid + ')');
+      optionsPersonStandBy.push({ value: rid.toString(), text: text });
+      standByIds[rid] = true;
+    }
+  });
 
   function fillSelect($el, arr) {
     $el.empty().append($('<option value="">- Select -</option>'));
@@ -322,7 +345,8 @@
   fillSelect($('#kdcmprec'), optionsCompany);
   fillSelect($('#signonrank'), optionsRank);
   fillSelect($('#signonvsl'), optionsVessel);
-  fillSelect($('#signoffremark'), optionsSignOffRemark);
+  fillSelect($('#signoffremark_offsigner'), optionsSignOffRemark);
+  fillSelect($('#signoffremark_onsigner'), optionsSignOffRemark);
   fillSelect($('#lastvsl'), optionsVessel);
   var $replSelect = $('#replacement_idperson');
   $replSelect.empty();
@@ -331,7 +355,6 @@
   });
 
   var row = <?php echo isset($row) && $row ? json_encode($row) : 'null'; ?>;
-  var batch_rows = <?php echo isset($batch_rows) ? json_encode($batch_rows) : '[]'; ?>;
   var batch_id = <?php echo isset($batch_id) ? json_encode($batch_id) : '""'; ?>;
 
   $('#batch_id').val(batch_id || '');
@@ -342,7 +365,7 @@
     $('#idperson').val(row.idperson || '');
     $('#kdcmprec').val(row.kdcmprec || '');
     $('#signondt').val((row.signondt && row.signondt !== '0000-00-00') ? row.signondt : '');
-    $('#signoffdt').val((row.signoffdt && row.signoffdt !== '0000-00-00') ? row.signoffdt : '');
+    $('#signoffdt_offsigner').val((row.signoffdt && row.signoffdt !== '0000-00-00') ? row.signoffdt : '');
     $('#estsignoffdt').val((row.estsignoffdt && row.estsignoffdt !== '0000-00-00') ? row.estsignoffdt : '');
     $('#signonrank').val(row.signonrank || '');
     $('#signonvsl').val(row.signonvsl || '');
@@ -352,7 +375,8 @@
     $('#lastvsl').val(row.lastvsl || '');
     $('#no_pkl').val(row.no_pkl || '');
     $('#estremark').val(row.estremark || '');
-    $('#signoffremark').val(row.signoffremark || '');
+    $('#signoffremark_offsigner').val(row.signoffremark || '');
+    if ($('#signoffremark_offsigner').data('selectpicker')) $('#signoffremark_offsigner').selectpicker('refresh');
     var rr = (row.replacement_rank || '').toString().trim();
     $('#replacement_rank').val(rr);
     $('#replacement_rank_display').val(rr);
@@ -430,7 +454,7 @@
     $('#idperson').val(idperson);
     if (!idperson) {
       $('#offSignerContractPanel').hide();
-      $('#signoffdt').val('');
+      $('#signoffdt_offsigner').val('');
       $('#off_vessel').val('');
       $('#replacement_rank').val('');
       $('#replacement_rank_display').val('');
@@ -453,7 +477,7 @@
           $('#off_status').val(d.status || '-');
           $('#off_eoc').val(d.eoc || '-');
           $('#off_remarks').val(d.remarks || '-');
-          if (d.signoffdt) $('#signoffdt').val(d.signoffdt);
+          if (d.signoffdt) $('#signoffdt_offsigner').val(d.signoffdt);
           // Replacement Rank = rank yang turun (dari kontrak off-signer), tampil di input disabled
           var rankName = (d.rank && d.rank !== '-') ? d.rank : '';
           $('#replacement_rank').val(rankName);
@@ -481,12 +505,25 @@
     $('#estsignoffdt').val(d.toISOString().slice(0, 10));
   });
 
-  if (!$('#signondt').val()) {
-    $('#signondt').val('<?php echo date("Y-m-d"); ?>');
-  }
+  //if (!$('#signondt').val()) {
+    //$('#signondt').val('<?php echo date("Y-m-d"); ?>');
+  //}
   $('#signonvsl').on('change', function() {
     $('#next_vessel').val($(this).val() || '');
   });
+  function syncSignoffdtOffsigner() {
+    var isDoubleUp = $('input[name="is_double_up"]:checked').val() === '1';
+    if (isDoubleUp) {
+      $('#signoffdt_offsigner').val('');
+    } else {
+      var signondt = $('#signondt').val();
+      if (signondt && signondt !== '0000-00-00') {
+        $('#signoffdt_offsigner').val(signondt);
+      }
+    }
+  }
+  $('#signondt').on('change input', syncSignoffdtOffsigner);
+  $('input[name="is_double_up"]').on('change', syncSignoffdtOffsigner);
   var isEditMode = (row !== null && row.idcrewrotation) || (batch_id && (batch_id + '').trim() !== '');
 
   if (isEditMode) {
@@ -508,7 +545,7 @@
 
   function hideAllFeedback() {
     $('[id$="Feedback"]').addClass('d-none');
-    $('#kdcmprec,#signondt,#signonrank,#signonvsl,#signonport,#signondesc,#estsignoffdt,#no_pkl,#replacement_idperson,#offSignerSelect,#signoffdt')
+    $('#kdcmprec,#signondt,#signonrank,#signonvsl,#signonport,#signondesc,#estsignoffdt,#no_pkl,#replacement_idperson,#offSignerSelect,#signoffdt_offsigner')
       .removeClass('is-invalid');
   }
 
@@ -532,7 +569,7 @@
   }
 
   function validateEstSignOff() {
-    var signoffdt = $('#signoffdt').val() || '';
+    var signoffdt = $('#signoffdt_offsigner').val() || '';
     var estsignoffdt = $('#estsignoffdt').val() || '';
     signoffdt = signoffdt.trim();
     estsignoffdt = estsignoffdt.trim();
@@ -583,6 +620,13 @@
     var formData = new FormData(document.getElementById('crewRotationForm'));
     formData.set('idperson', $('#idperson').val());
     formData.delete('month');
+    var isDoubleUp = $('input[name="is_double_up"]:checked').val() === '1';
+    var signoffdtVal = isDoubleUp ? '' : ($('#signoffdt_offsigner').val() || '');
+    var signoffremarkVal = $('#signoffremark_offsigner').val() || '';
+    formData.set('signoffdt', signoffdtVal);
+    formData.set('signoffremark', signoffremarkVal);
+    formData.set('signoffdt_onsigner', $('#signoffdt_onsigner').val() || '');
+    formData.set('signoffremark_onsigner', $('#signoffremark_onsigner').val() || '');
     var opt = $('input[name="foreigncrew_option"]:checked').val();
     formData.set('foreigncrew_option', opt || 'none');
     formData.set('next_vessel', $('#signonvsl').val() || '');
