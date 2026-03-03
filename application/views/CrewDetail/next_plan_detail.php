@@ -100,7 +100,7 @@ if (!function_exists('_np_val')) {
             </div>
             <div class="col-md-6 mb-2">
               <label class="form-label small fw-semibold">Next Vessel</label>
-              <input type="text" class="form-control form-control-sm bg-light" readonly value="<?php echo $r ? htmlspecialchars(_np_val($r, 'next_vessel')) : '-'; ?>">
+              <input type="text" class="form-control form-control-sm bg-light" readonly value="<?php echo $r ? htmlspecialchars(_np_val($r, 'next_vessel_name') !== '-' ? _np_val($r, 'next_vessel_name') : _np_val($r, 'next_vessel')) : '-'; ?>">
             </div>
           </div>
         </div>

@@ -90,7 +90,8 @@ class ActiveRoster extends CI_Controller {
             $date = $row['birth_date'];
             $dobFormatted = ($date && $date != '0000-00-00') ? $dataContext->convertReturnName($date) : '';
 
-            // Validasi status di controller: signoffdt ada = kontrak abis (Stand By), tidak ada = pakai estsignoffdt (On board)
+            // On board: signoffdt kosong (0000-00-00) → pakai estsignoffdt
+            // Stand By: signoffdt ada value DAN sudah lewat hari ini → pakai signoffdt_formatted
             $statusPerson = null;
             if (isset($row['inBlacklist']) && $row['inBlacklist'] == '1' && isset($row['kota_deletests']) && $row['kota_deletests'] == '0') {
                 $statusPerson = 'Not For Emp';
@@ -98,16 +99,12 @@ class ActiveRoster extends CI_Controller {
                 $statusPerson = 'Non Aktif';
             } elseif (isset($row['newapplicent']) && $row['newapplicent'] == '1' && isset($row['kota_deletests']) && $row['kota_deletests'] == '0') {
                 $statusPerson = 'Pickup';
-            } elseif (isset($row['signoffdt']) && $row['signoffdt'] !== '' && $row['signoffdt'] !== null && $row['signoffdt'] !== '0000-00-00') {
-                // signoffdt ada value = kontrak sudah abis
-                if ($row['signoffdt'] <= $today) {
-                    $statusPerson = 'Stand By';
-                } else {
-                    $statusPerson = 'On board';
-                }
+            } elseif (isset($row['signoffdt']) && $row['signoffdt'] !== '' && $row['signoffdt'] !== null && $row['signoffdt'] !== '0000-00-00' && $row['signoffdt'] <= $today) {
+                // Stand By: signoffdt ada value dan sudah lewat hari ini → pakai signoffdt_formatted
+                $statusPerson = 'Stand By';
             } else {
-                // signoffdt tidak ada → pakai estsignoffdt (masih On board)
-                if (isset($row['signoffdt'])) {
+                // On board: signoffdt kosong (0000-00-00) → pakai estsignoffdt
+                if (isset($row['signoffdt']) || isset($row['estsignoffdt'])) {
                     $statusPerson = 'On board';
                 }
             }
