@@ -479,7 +479,15 @@ $(document).ready(function() {
       url: baseUrlCrewRotation + "/getAllData_crewRotation",
       type: "GET",
       dataSrc: function(json) {
-        return json.success ? json.data : [];
+        var rows = json.success ? json.data : [];
+        var batchIdHasJoined = {};
+        rows.forEach(function(r) {
+          if ((r.status || "").toUpperCase() === "JOINED") batchIdHasJoined[r.batch_id] = true;
+        });
+        rows.forEach(function(r) {
+          r._batch_has_joined = !!batchIdHasJoined[r.batch_id];
+        });
+        return rows;
       }
     },
     columns: [
@@ -542,13 +550,19 @@ $(document).ready(function() {
       {
         data: "status",
         className: "text-center",
-        render: function(data) {
+        render: function(data, type, row) {
+          var displayStatus = data;
           var badgeClass = "bg-secondary";
-          if (data === "Submit") badgeClass = "bg-success";
-          else if (data === "Cancel") badgeClass = "bg-danger";
-          else if (data === "Joined") badgeClass = "bg-primary";
-          var label = (data === "Submit") ? "Planned" : (data || "");
-          return '<span class="badge ' + badgeClass + ' badge-status">' + label + "</span>";
+          if (row._batch_has_joined && (data || "").toUpperCase() !== "JOINED") {
+            displayStatus = "Delete";
+            badgeClass = "bg-dark";
+          } else {
+            if (data === "Submit") badgeClass = "bg-success";
+            else if (data === "Cancel") badgeClass = "bg-danger";
+            else if (data === "Joined") badgeClass = "bg-primary";
+            displayStatus = (data === "Submit") ? "Planned" : (data || "");
+          }
+          return '<span class="badge ' + badgeClass + ' badge-status">' + displayStatus + "</span>";
         }
       },
       {
