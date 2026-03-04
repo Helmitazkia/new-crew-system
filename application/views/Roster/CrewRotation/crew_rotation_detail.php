@@ -525,6 +525,8 @@
   $('#signondt').on('change input', syncSignoffdtOffsigner);
   $('input[name="is_double_up"]').on('change', syncSignoffdtOffsigner);
   var isEditMode = (row !== null && row.idcrewrotation) || (batch_id && (batch_id + '').trim() !== '');
+  var batchHasJoined = (batch_rows || []).some(function(r) { return (r.status || '').toUpperCase() === 'JOINED'; });
+  var batchAllCancel = (batch_rows || []).length > 0 && (batch_rows || []).every(function(r) { return (r.status || '').toUpperCase() === 'CANCEL'; });
 
   if (isEditMode) {
     $('#statusFieldWrapper').hide();
@@ -535,6 +537,10 @@
     $('#statusFieldWrapper').hide();
     $('#detailFormTitle').text('Crew Rotation – New');
     $('#btnSaveForm').removeClass('d-none');
+    $('#btnUpdateForm').addClass('d-none');
+  }
+  if (batchHasJoined || batchAllCancel) {
+    $('#btnSaveForm').addClass('d-none');
     $('#btnUpdateForm').addClass('d-none');
   }
 
