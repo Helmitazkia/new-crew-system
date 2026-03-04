@@ -97,10 +97,10 @@ $(document).ready(function() {
         className: 'text-center'
       },
       {
-        data: null,
+        data: 'next_vessel',
         className: 'text-center',
-        render: function() {
-          return ""; // Selalu kembalikan string kosong
+        render: function(data) {
+          return (data && data.toString().trim() !== '') ? data : '';
         }
       },
       {

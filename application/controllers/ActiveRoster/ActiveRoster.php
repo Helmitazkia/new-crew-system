@@ -65,7 +65,11 @@ class ActiveRoster extends CI_Controller {
                 K.deletests AS kota_deletests,
                 (SELECT rankexp FROM tblseaexp 
                     WHERE idperson = A.idperson AND deletests = '0' 
-                    ORDER BY idexp DESC, todtexp DESC LIMIT 1) AS rankexp
+                    ORDER BY idexp DESC, todtexp DESC LIMIT 1) AS rankexp,
+                (SELECT GROUP_CONCAT(DISTINCT V.nmvsl ORDER BY R.idcrewrotation SEPARATOR ', ')
+                 FROM tblcrewrotation R
+                 LEFT JOIN mstvessel V ON V.kdvsl = R.signonvsl AND V.deletests = '0'
+                 WHERE R.replacement_idperson = A.idperson AND R.status = 'Submit' AND R.deletests = '0') AS next_vessel
             FROM mstpersonal A
             LEFT JOIN (
                 SELECT t.idperson, t.signonvsl, t.signoffdt, t.estsignoffdt
@@ -119,6 +123,7 @@ class ActiveRoster extends CI_Controller {
                 continue;
             }
 
+            $nextVessel = isset($row['next_vessel']) ? trim($row['next_vessel']) : '';
             $data[] = array(
                 'idperson'     => $row['idperson'],
                 'fullName'     => $row['fullName'],
@@ -126,6 +131,7 @@ class ActiveRoster extends CI_Controller {
                 'gender'       => $row['gender'],
                 'religion'     => $row['religion'],
                 'nmvsl'        => $row['nmvsl'],
+                'next_vessel'  => $nextVessel,
                 'dob'          => trim($city . ($dobFormatted ? ', ' . $dobFormatted : '')),
                 'statusPerson' => $statusPerson,
                 'rankexp'      => $row['rankexp'],
