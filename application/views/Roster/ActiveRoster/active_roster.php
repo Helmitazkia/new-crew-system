@@ -77,7 +77,8 @@ $(document).ready(function() {
       {
         data: 'fullName',
         render: function(data, type, row) {
-          return data;
+          var name = data || '-';
+          return '<a href="#" class="crew-name text-dark text-decoration-none" onclick="showCrewDetail(\'' + (row.idperson || '') + '\'); return false;" title="View detail">' + (name.replace(/</g, '&lt;').replace(/>/g, '&gt;')) + '</a>';
         }
       },
       {
@@ -134,45 +135,62 @@ $(document).ready(function() {
         data: 'estsignoffdt',
         className: 'text-center',
         render: function(data, type, row) {
-          // signoffdt ada value = kontrak abis → pakai signoffdt; tidak ada → pakai estsignoffdt (estimasi)
           const hasSignoff = row.signoffdt && row.signoffdt !== '' && row.signoffdt !== '0000-00-00';
           const dateRaw = hasSignoff ? row.signoffdt : (data || '');
           const displayText = hasSignoff ? (row.signoffdt_formatted || '') : (row.estsignoffdt_formatted || '');
-          if (!dateRaw || dateRaw === '0000-00-00') return '<span class="text-muted">-</span>';
+          if (!dateRaw || dateRaw === '0000-00-00') return '<span class="text-muted">-</span><span class="d-none contract-range-label"></span>';
+
+          const dateNow = new Date();
+          const estDate = new Date(dateRaw);
+          dateNow.setHours(0, 0, 0, 0);
+          estDate.setHours(0, 0, 0, 0);
+          let diffDays = Math.ceil((estDate - dateNow) / (1000 * 60 * 60 * 24));
+
+          const getDuration = (totalDays) => {
+            let days = Math.abs(totalDays);
+            let months = Math.floor(days / 30);
+            let remainingDays = days % 30;
+            let result = "";
+            if (months > 0) result += months + " Months ";
+            if (remainingDays > 0) result += remainingDays + " Days";
+            return result.trim();
+          };
+
+          let rangeLabel = '';
+          let noteColor = '';
+          if (diffDays < 0) {
+            rangeLabel = 'Expired Over';
+            noteColor = '#6c757d';
+          } else if (diffDays <= 7) {
+            rangeLabel = '1 Minggu';
+            noteColor = '#dc3545';
+          } else if (diffDays <= 30) {
+            rangeLabel = '1 Bulan';
+            noteColor = '#fd7e14';
+          } else if (diffDays <= 90) {
+            rangeLabel = '3 Bulan';
+            noteColor = '#ffc107';
+          } else if (diffDays <= 180) {
+            rangeLabel = '6 Bulan';
+            noteColor = '#00ff00';
+          } else if (diffDays <= 365) {
+            rangeLabel = '12 Bulan';
+            noteColor = '#0d6efd';
+          } else {
+            rangeLabel = '>12 Bulan';
+            noteColor = '#198754';
+          }
 
           if (type === 'display') {
-            const dateNow = new Date();
-            const estDate = new Date(dateRaw);
-            dateNow.setHours(0, 0, 0, 0);
-            estDate.setHours(0, 0, 0, 0);
-
-            let diffTime = estDate - dateNow;
-            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            let warningMsg = "";
-
-            const getDuration = (totalDays) => {
-              let days = Math.abs(totalDays);
-              let months = Math.floor(days / 30);
-              let remainingDays = days % 30;
-              let result = "";
-              if (months > 0) result += months + " Months ";
-              if (remainingDays > 0) result += remainingDays + " Days";
-              return result.trim();
-            };
-
+            let warningMsg = '';
             if (diffDays < 0) {
-              let duration = getDuration(diffDays);
-              warningMsg =
-                `<br><span style="font-size:10px; color:red; font-weight: bold;">Expired Over ${duration}</span>`;
-            } else if (diffDays <= 90) {
-              let duration = getDuration(diffDays);
-              warningMsg =
-                `<br><span style="font-size:10px; color:orange; font-weight: bold;">Expired In ${duration}</span>`;
+             // warningMsg = `<br><span style="font-size:10px; color:${noteColor}; font-weight: bold;">Expired Over ${getDuration(diffDays)}</span>`;
+            } else {
+              warningMsg = `<br><span style="font-size:10px; color:${noteColor}; font-weight: bold;">Expired In ${getDuration(diffDays)}</span>`;
             }
-
-            return `<div>${displayText}${warningMsg}</div>`;
+            return `<div>${displayText}${warningMsg}<span class="d-none contract-range-label">${rangeLabel}</span></div>`;
           }
-          return dateRaw;
+          return dateRaw + ' ' + rangeLabel;
         }
       },
       {
@@ -238,26 +256,46 @@ $(document).ready(function() {
 
       let listContainer = dropdown.find('.filter-list');
 
-      // ✅ AMBIL DATA SETELAH TABLE READY
-      // Cek apakah column data tersedia sebelum memanggil unique()
-      try {
-        let columnData = table.column(colIndex).data();
-        if (columnData && typeof columnData.unique === 'function') {
-          columnData.unique().sort().each(function(val) {
-            if (val && val !== null && val !== '' && val !== undefined) {
-              // Escape HTML untuk keamanan
-              let displayVal = String(val).replace(/</g, '&lt;').replace(/>/g, '&gt;');
-              listContainer.append(`
-              <label>
-                <input type="checkbox" value="${displayVal}"> ${displayVal}
-              </label>
-            `);
-            }
-          });
+      // ✅ FILTER KHUSUS KOLOM CONTRACT (Minggu/Bulan - mau abis)
+      const contractFilterOptions = [
+        { value: 'Expired Over', color: '#6c757d' },
+        { value: '1 Minggu', color: '#dc3545' },
+        { value: '1 Bulan', color: '#fd7e14' },
+        { value: '3 Bulan', color: '#ffc107' },
+        { value: '6 Bulan', color: '#20c997' },
+        { value: '12 Bulan', color: '#0d6efd' },
+        { value: '>12 Bulan', color: '#198754' }
+      ];
+      if (colIndex === 10) {
+        dropdown.find('.filter-search').hide();
+        contractFilterOptions.forEach(function(opt) {
+          listContainer.append(`
+            <label class="d-flex align-items-center gap-2 contract-filter-opt">
+              <input type="checkbox" value="${(opt.value || '').replace(/"/g, '&quot;')}">
+              <span class="contract-filter-dot" style="background:${opt.color};width:10px;height:10px;border-radius:50%;flex-shrink:0;"></span>
+              <span>${(opt.value || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+            </label>
+          `);
+        });
+      } else {
+        // ✅ AMBIL DATA SETELAH TABLE READY
+        try {
+          let columnData = table.column(colIndex).data();
+          if (columnData && typeof columnData.unique === 'function') {
+            columnData.unique().sort().each(function(val) {
+              if (val && val !== null && val !== '' && val !== undefined) {
+                let displayVal = String(val).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                listContainer.append(`
+                <label>
+                  <input type="checkbox" value="${displayVal}"> ${displayVal}
+                </label>
+              `);
+              }
+            });
+          }
+        } catch (e) {
+          console.warn('Error loading filter data for column ' + colIndex + ':', e);
         }
-      } catch (e) {
-        console.warn('Error loading filter data for column ' + colIndex + ':', e);
-        // Skip column ini jika error
       }
 
       // ✅ DEFAULT FILTER KHUSUS statusPerson
