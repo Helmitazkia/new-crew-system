@@ -606,7 +606,7 @@ $(document).ready(function() {
       infoEmpty: "Showing 0 to 0 of 0 entries"
     },
     order: [
-      [1, "asc"]
+      [0, "desc"]
     ],
     createdRow: function(row, data) {
       $(row).attr("data-batch-id", (data.batch_id || "").toString());

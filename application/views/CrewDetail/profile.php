@@ -1311,6 +1311,8 @@
         background-color: #000099 !important;
         color: #fff !important;
       }
+        .contract-no-icon { font-size: 1rem !important; width: 1.25em; text-align: center; }
+        .contract-no-filelink .contract-no-icon { margin-right: 2px; }
     </style>
 
     <script>
@@ -2132,9 +2134,9 @@
                 var no = meta.row + 1;
                 var below = '';
                 if (row.doc_file && row.doc_file.trim() !== '') {
-                  below = '<div class="mt-1"><a href="<?php echo base_url("uploadFile"); ?>/' + row.doc_file + '" target="_blank" class="text-primary small" title="View file"><i class="fa-solid fa-book"></i></a></div>';
+                  below = '<div class="mt-1"><a href="<?php echo base_url("uploadFile"); ?>/' + row.doc_file + '" target="_blank" class="text-primary small contract-no-filelink" title="View file"><i class="fa-solid fa-book contract-no-icon"></i></a></div>';
                 } else {
-                  below = '<div class="mt-1"><button type="button" class="btn btn-sm btn-outline-info p-1 btn-upload-personaldoc" data-id="' + row.idperdoc + '" data-idperson="' + row.idperson + '" title="Upload File"><i class="fa fa-upload"></i></button></div>';
+                  below = '<div class="mt-1"><button type="button" class="btn btn-sm btn-outline-info p-1 btn-upload-personaldoc" data-id="' + row.idperdoc + '" data-idperson="' + row.idperson + '" title="Upload File"><i class="fa fa-upload contract-no-icon"></i></button></div>';
                 }
                 return '<div>' + no + below + '</div>';
               }
