@@ -591,7 +591,7 @@ $(document).ready(function() {
         }
       }
     ],
-    pageLength: 10,
+    pageLength: 50,
     lengthMenu: [5, 10, 25, 50, 100],
     language: {
       lengthMenu: " _MENU_ &nbsp; Entries",

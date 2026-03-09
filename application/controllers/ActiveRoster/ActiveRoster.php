@@ -44,8 +44,10 @@ class ActiveRoster extends CI_Controller {
         $where = "
             WHERE A.deletests = '0'
             AND (A.fname != '' OR A.mname != '' OR A.lname != '')
+            AND (A.inAktif = '0' OR A.inAktif IS NULL)
+            AND (A.inBlacklist = '0' OR A.inBlacklist IS NULL)
         ";
-
+        
         $sql = "
             SELECT
                 A.idperson,
@@ -78,7 +80,7 @@ class ActiveRoster extends CI_Controller {
                     SELECT idperson, MAX(idcontract) AS max_idcontract
                     FROM tblcontract WHERE deletests = 0 GROUP BY idperson
                 ) x ON x.idperson = t.idperson AND x.max_idcontract = t.idcontract
-            ) C ON A.idperson = C.idperson
+            ) C ON A.idperson = C.idperson 
             LEFT JOIN tblkota K ON A.pob = K.KdKota 
             LEFT JOIN mstvessel D ON D.kdvsl = C.signonvsl
             $where
