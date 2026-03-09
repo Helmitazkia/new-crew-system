@@ -73,9 +73,9 @@ $(document).ready(function() {
       {
         data: 'fullName',
         render: function(data, type, row) {
-          // if (type === 'display') {
-          //   return `<span onclick="showCrewDetail('${row.idperson}')">${data}</=>`;
-          // }
+          if (type === 'display') {
+            return `<span class="text-dark" style="cursor: pointer;" onclick="showCrewDetail('${row.idperson}')">${data}</span>`;
+          }
           return data; // <-- penting buat filter
         }
       },
@@ -108,90 +108,38 @@ $(document).ready(function() {
         className: 'text-center'
       },
 
-      // {
-      //   data: 'statusPerson',
-      //   className: 'text-center',
-      //   render: function(data, type) {
-      //     if (type === 'display') {
-      //       return `<span class="badge ${data === 'On board' ? 'bg-success' : 'bg-danger'}">${data}</span>`;
-      //     }
-      //     return data; // <-- penting
-      //   }
-      // },
       {
         data: 'statusPerson',
         className: 'text-center',
         render: function(data, type, row) {
-          if (type === 'display') {
-            let badgeClass = 'bg-secondary'; // Warna default jika tidak cocok
-            let textColor = 'text-white';
-
-            // Validasi warna berdasarkan masing-masing status
-            switch (data) {
-              case 'On board':
-                badgeClass = 'bg-success';
-                break;
-              case 'Stand By':
-                badgeClass = 'bg-warning';
-                textColor = 'text-dark'; // Kuning biasanya lebih enak dibaca pakai teks gelap
-                break;
-              case 'Pickup':
-                badgeClass = 'bg-info';
-                break;
-              case 'Non Aktif':
-                badgeClass = 'bg-danger';
-                break;
-              case 'Not For Emp':
-                badgeClass = 'bg-dark';
-                break;
-              default:
-                badgeClass = 'bg-secondary';
+          const STATUS_BADGE = {
+            'On board': 'bg-success',
+            'Stand By': 'bg-warning text-dark',
+            'Pickup': 'bg-info text-white',
+            'Non Aktif': 'bg-danger text-white',
+            'Not For Emp': 'bg-dark text-white'
+          };
+          let displayStatus = data;
+          const hasContract = row.signoffdt || row.estsignoffdt;
+          if ((data === 'On board' || data === 'Stand By' || hasContract) && hasContract) {
+            const dateRaw = (row.signoffdt && row.signoffdt !== '0000-00-00') ? row.signoffdt : (row.estsignoffdt || '');
+            displayStatus = 'On board';
+            if (dateRaw && dateRaw !== '0000-00-00') {
+              const today = new Date();
+              const end = new Date(dateRaw);
+              today.setHours(0, 0, 0, 0);
+              end.setHours(0, 0, 0, 0);
+              if (Math.ceil((end - today) / 86400000) < 0) displayStatus = 'Stand By';
             }
-
-            return `<span class="badge ${badgeClass} ${textColor}" style="padding: 5px 10px; border-radius: 12px;">${data}</span>`;
           }
-          return data;
+          if (type === 'display') {
+            const cls = STATUS_BADGE[displayStatus] || 'bg-secondary text-white';
+            const style = (displayStatus === 'On board' || displayStatus === 'Stand By') ? '' : ' style="padding: 5px 10px; border-radius: 12px;"';
+            return `<span class="badge ${cls}"${style}>${displayStatus || '-'}</span>`;
+          }
+          return displayStatus;
         }
       },
-
-
-      // {
-      //   data: 'statusPerson',
-      //   className: 'text-center',
-      //   render: function(data, type) {
-
-      //     // untuk kebutuhan filter / search
-      //     if (type !== 'display') {
-      //       return data;
-      //     }
-
-      //     let badgeClass = 'bg-secondary';
-
-      //     switch (data) {
-      //       case 'On board':
-      //         badgeClass = 'bg-success';
-      //         break;
-
-      //       case 'Stand By':
-      //         badgeClass = 'bg-warning text-dark';
-      //         break;
-
-      //       case 'Non Active':
-      //         badgeClass = 'bg-danger text-dark';
-      //         break;
-
-      //       case 'Pick Up':
-      //         badgeClass = 'bg-primary';
-      //         break;
-
-      //       default:
-      //         badgeClass = 'bg-secondary';
-      //     }
-
-      //     return `<span class="badge ${badgeClass}">${data}</span>`;
-      //   }
-      // },
-
 
       // ACTION (TIDAK IKUT FILTER)
       {
@@ -218,7 +166,6 @@ $(document).ready(function() {
 
   // Fungsi untuk menampilkan detail crew
   function showCrewDetail(idperson) {
-    // Implementasi fungsi showCrewDetail sesuai kebutuhan
     console.log('Show detail for crew ID:', idperson);
     // Contoh: window.location.href = `<?php echo base_url('MasterPersonal/detail/'); ?>${idperson}`;
   }

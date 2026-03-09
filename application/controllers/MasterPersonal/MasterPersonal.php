@@ -59,24 +59,16 @@ class MasterPersonal extends CI_Controller {
                 K.NmKota AS birth_city,
                 A.dob AS birth_date,
                 D.nmvsl,
+                A.inAktif,
+                A.inBlacklist,
+                A.newapplicent,
                 CASE
-                    WHEN A.inBlacklist = '1' AND K.deletests = '0' THEN 'Not For Emp'
-                    WHEN A.newapplicent = '1' AND K.deletests = '0' THEN 'Pickup'
-                    WHEN
-                        A.inAktif = '1'
-                        AND A.inBlacklist = '0'
-                    THEN 'Non Aktif'
-                    WHEN 
-                        C.signoffdt = '0000-00-00'
-                        AND A.inaktif = '0'
-                        AND A.deletests = '0'
-        
-                    THEN 'On board'
-                    WHEN C.signoffdt IS NOT NULL
-                        AND C.signoffdt != '0000-00-00'
-                        AND C.signoffdt <= CURDATE()
-                    THEN 'Stand By'
-                END AS statusPerson
+                    WHEN A.inBlacklist = '1' AND (K.deletests = '0' ) THEN 'Not For Emp'
+                    WHEN A.newapplicent = '1' AND (K.deletests = '0' ) THEN 'Pickup'
+                    WHEN A.inAktif = '1' AND (A.inBlacklist = '0' ) THEN 'Non Aktif'
+                END AS statusPerson,
+                C.signoffdt,
+                C.estsignoffdt
 
             FROM mstpersonal A
         
@@ -91,6 +83,9 @@ class MasterPersonal extends CI_Controller {
                     AND t2.deletests = 0
                 )
             ) C ON A.idperson = C.idperson
+                AND (A.inAktif = '0' OR A.inAktif IS NULL)
+                AND (A.inBlacklist = '0' OR A.inBlacklist IS NULL)
+                AND (A.newapplicent = '0' OR A.newapplicent IS NULL)
 
             LEFT JOIN tblkota K ON A.pob = K.KdKota 
             LEFT JOIN mstvessel D ON D.kdvsl = C.signonvsl
@@ -103,25 +98,37 @@ class MasterPersonal extends CI_Controller {
         
 
         $rows = $this->db->query($sql)->result_array();
-
+        $today = date('Y-m-d');
         $data = array();
+
         foreach ($rows as $row) {
-            $city = $row['birth_city'];
-            $date = $row['birth_date'];
-            $dobFormatted = '';
-            if ($date && $date != '0000-00-00') {
-                $dobFormatted = $dataContext->convertReturnName($date);
+            $dobFormatted = ($row['birth_date'] && $row['birth_date'] != '0000-00-00')
+                ? $dataContext->convertReturnName($row['birth_date']) : '';
+            $dob = trim($row['birth_city'] . ($dobFormatted ? ', ' . $dobFormatted : ''));
+
+            $statusPerson = isset($row['statusPerson']) ? $row['statusPerson'] : null;
+            if ($statusPerson === null || $statusPerson === '') {
+                $signoff = isset($row['signoffdt']) ? $row['signoffdt'] : '';
+                $estSignoff = isset($row['estsignoffdt']) ? $row['estsignoffdt'] : '';
+                $signoffValid = ($signoff !== '' && $signoff !== null && $signoff !== '0000-00-00');
+                if ($signoffValid && $signoff <= $today) {
+                    $statusPerson = 'Stand By';
+                } elseif ($signoff !== '' || $estSignoff !== '') {
+                    $statusPerson = 'On board';
+                }
             }
 
             $data[] = array(
-                'idperson'      => $row['idperson'],
-                'fullName'      => $row['fullName'],
-                'applyfor'      => strtoupper($row['applyfor']),
-                'gender'        => $row['gender'],
-                'religion'      => $row['religion'],
-                'nmvsl'         => $row['nmvsl'],
-                'dob' => trim($city . ($dobFormatted ? ', ' . $dobFormatted : '')),
-                'statusPerson' => $row['statusPerson']
+                'idperson'     => $row['idperson'],
+                'fullName'     => $row['fullName'],
+                'applyfor'     => strtoupper($row['applyfor']),
+                'gender'       => $row['gender'],
+                'religion'     => $row['religion'],
+                'nmvsl'        => $row['nmvsl'],
+                'dob'          => $dob,
+                'statusPerson' => $statusPerson,
+                'signoffdt'    => isset($row['signoffdt']) ? $row['signoffdt'] : '',
+                'estsignoffdt' => isset($row['estsignoffdt']) ? $row['estsignoffdt'] : ''
             );
         }
 

@@ -197,7 +197,7 @@ class Contract extends CI_Controller
     $no_pkl = $this->input->post("no_pkl");
     $estremark = $this->input->post("estremark");
     $signoffremark = $this->input->post("signoffremark");
-    $idcontractRepl = $this->input->post("idcontractRepl") ?: null;
+    $idcontractRepl = $this->input->post("idcontractRepl") ?: '00000';
     $foreigncrew_option = $this->input->post("foreigncrew_option");
     $additional = ($foreigncrew_option === "additional") ? 1 : 0;
     $foreigncrew = ($foreigncrew_option === "foreigncrew") ? 1 : 0;
@@ -279,7 +279,7 @@ class Contract extends CI_Controller
     $no_pkl = $this->input->post("no_pkl");
     $estremark = $this->input->post("estremark");
     $signoffremark = $this->input->post("signoffremark");
-    $idcontractRepl = $this->input->post("idcontractRepl") ?: null;
+    $idcontractRepl = $this->input->post("idcontractRepl") ?: '00000';
     $foreigncrew_option = $this->input->post("foreigncrew_option");
     $additional = ($foreigncrew_option === "additional") ? 1 : 0;
     $foreigncrew = ($foreigncrew_option === "foreigncrew") ? 1 : 0;

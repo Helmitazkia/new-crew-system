@@ -190,7 +190,16 @@ window.showNextPlanDetail = function(idcrewrotation) {
         type: 'GET',
         data: { idperson: idperson },
         dataSrc: function (json) {
-          return json.success ? json.data : [];
+          var data = json.success ? json.data : [];
+          var batchHasJoined = {};
+          data.forEach(function (r) {
+            var bid = (r.batch_id || '').toString();
+            if (r.status === 'Joined') batchHasJoined[bid] = true;
+          });
+          data.forEach(function (r) {
+            r._batchHasJoined = batchHasJoined[(r.batch_id || '').toString()] || false;
+          });
+          return data;
         }
       },
       columns: [
@@ -222,7 +231,10 @@ window.showNextPlanDetail = function(idcrewrotation) {
         {
           data: 'status',
           className: 'text-center',
-          render: function (data) {
+          render: function (data, type, row) {
+            if (row._batchHasJoined && data !== 'Joined') {
+              return  '<span class="badge bg-dark badge-status">Delete</span>';
+            }
             var c = 'bg-secondary';
             if (data === 'Submit') c = 'bg-success';
             else if (data === 'Cancel') c = 'bg-danger';
