@@ -42,12 +42,12 @@
             </div>
             <div class="row g-2 mb-2">
               <div class="col-12">
-                <label class="form-label mb-0 small">Sign off Date (Off Yang Turun)</label>
+                <label class="form-label mb-0 small">Sign off Date ( Off Yang Turun )</label>
                 <input type="date" name="signoffdt_offsigner" id="signoffdt_offsigner" class="form-control form-control-sm">
                 <small class="text-muted d-block mt-1">Single UP: auto dari Sign on Date. Double UP: biarkan kosong. Simpan ke kontrak yang turun jika diisi.</small>
               </div>
               <div class="col-12">
-                <label class="form-label mb-0 small">Sign off remarks (Off Yang Turun)</label>
+                <label class="form-label mb-0 small">Sign off remarks ( Off Yang Turun )</label>
                 <select name="signoffremark_offsigner" id="signoffremark_offsigner" class="form-control selectpicker-on p-10"
                   data-live-search="true" data-size="5"></select>
               </div>
@@ -165,12 +165,12 @@
               </div>
               <div class="row g-2 mb-2">
                 <div class="col-md-6 on-signer-field">
-                  <label class="form-label mb-0 small">Sign off Date (Off Yang Naik)</label>
+                  <label class="form-label mb-0 small">Sign off Date ( Off Yang Naik )</label>
                   <input type="date" name="signoffdt_onsigner" id="signoffdt_onsigner" class="form-control form-control-sm">
                   <small class="text-muted d-block mt-1">Opsional. Simpan ke data yang naik (kontrak replacement) jika diisi.</small>
                 </div>
                 <div class="col-md-6 on-signer-field">
-                  <label class="form-label mb-0 small">Sign off remarks (Off Yang Naik)</label>
+                  <label class="form-label mb-0 small">Sign off remarks ( Off Yang Naik )</label>
                   <select name="signoffremark_onsigner" id="signoffremark_onsigner" class="form-control selectpicker-on p-10"
                     data-live-search="true" data-size="5"></select>
                 </div>

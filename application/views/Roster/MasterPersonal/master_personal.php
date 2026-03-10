@@ -115,7 +115,7 @@ $(document).ready(function() {
           const STATUS_BADGE = {
             'On board': 'bg-success',
             'Stand By': 'bg-warning text-dark',
-            'Pickup': 'bg-info text-white',
+            'New Applicant': 'bg-info text-white',
             'Non Aktif': 'bg-danger text-white',
             'Not For Emp': 'bg-dark text-white'
           };

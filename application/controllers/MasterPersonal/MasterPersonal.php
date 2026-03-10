@@ -63,9 +63,9 @@ class MasterPersonal extends CI_Controller {
                 A.inBlacklist,
                 A.newapplicent,
                 CASE
-                    WHEN A.inBlacklist = '1' AND (K.deletests = '0' ) THEN 'Not For Emp'
-                    WHEN A.newapplicent = '1' AND (K.deletests = '0' ) THEN 'Pickup'
-                    WHEN A.inAktif = '1' AND (A.inBlacklist = '0' ) THEN 'Non Aktif'
+                    WHEN A.inBlacklist = '1' THEN 'Not For Emp'
+                    WHEN A.newapplicent = '1' THEN 'New Applicant'
+                    WHEN A.inAktif = '1' THEN 'Non Aktif'
                 END AS statusPerson,
                 C.signoffdt,
                 C.estsignoffdt
