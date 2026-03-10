@@ -85,12 +85,8 @@ class MasterPersonal extends CI_Controller {
             ) C ON A.idperson = C.idperson
                 AND (A.inAktif = '0' OR A.inAktif IS NULL)
                 AND (A.inBlacklist = '0' OR A.inBlacklist IS NULL)
-                AND (A.newapplicent = '0' OR A.newapplicent IS NULL)
-
             LEFT JOIN tblkota K ON A.pob = K.KdKota 
             LEFT JOIN mstvessel D ON D.kdvsl = C.signonvsl
-   
-
             $where
             ORDER BY fullName ASC
         ";
