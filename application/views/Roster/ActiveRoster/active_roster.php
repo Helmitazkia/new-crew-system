@@ -77,7 +77,8 @@ $(document).ready(function() {
       {
         data: 'fullName',
         render: function(data, type, row) {
-          return data;
+          var name = data || '-';
+          return '<a href="#" class="crew-name text-dark text-decoration-none" onclick="showCrewDetail(\'' + (row.idperson || '') + '\'); return false;" title="View detail">' + (name.replace(/</g, '&lt;').replace(/>/g, '&gt;')) + '</a>';
         }
       },
       {
@@ -97,10 +98,10 @@ $(document).ready(function() {
         className: 'text-center'
       },
       {
-        data: null,
+        data: 'next_vessel',
         className: 'text-center',
-        render: function() {
-          return ""; // Selalu kembalikan string kosong
+        render: function(data) {
+          return (data && data.toString().trim() !== '') ? data : '';
         }
       },
       {
@@ -110,61 +111,86 @@ $(document).ready(function() {
       {
         data: 'statusPerson',
         className: 'text-center',
-        render: function(data, type) {
-          if (type === 'display') {
-            let cls = 'bg-secondary';
-
-            if (data === 'On board') cls = 'bg-success';
-            else if (data === 'Stand By') cls = 'bg-warning text-dark';
-            else if (data === 'Non Aktif') cls = 'bg-danger';
-
-            return `<span class="badge ${cls}">${data}</span>`;
+        render: function(data, type, row) {
+          // Logic samakan Contract: Expired Over (tanggal lewat) = Stand By; Expired In (masih mau abis) = On board
+          const hasSignoff = row.signoffdt && row.signoffdt !== '' && row.signoffdt !== '0000-00-00';
+          const dateRaw = hasSignoff ? row.signoffdt : (row.estsignoffdt || '');
+          let displayStatus = 'On board';
+          if (dateRaw && dateRaw !== '0000-00-00') {
+            const dateNow = new Date();
+            const estDate = new Date(dateRaw);
+            dateNow.setHours(0, 0, 0, 0);
+            estDate.setHours(0, 0, 0, 0);
+            const diffDays = Math.ceil((estDate - dateNow) / (1000 * 60 * 60 * 24));
+            if (diffDays < 0) displayStatus = 'Stand By';  // Expired Over
           }
-          return data; // penting buat search & filter
+          if (type === 'display') {
+            let cls = displayStatus === 'Stand By' ? 'bg-warning text-dark' : 'bg-success';
+            return `<span class="badge ${cls}">${displayStatus}</span>`;
+          }
+          return displayStatus;
         }
       },
       {
         data: 'estsignoffdt',
         className: 'text-center',
         render: function(data, type, row) {
-          if (!data || data === '0000-00-00') return '<span class="text-muted">-</span>';
+          const hasSignoff = row.signoffdt && row.signoffdt !== '' && row.signoffdt !== '0000-00-00';
+          const dateRaw = hasSignoff ? row.signoffdt : (data || '');
+          const displayText = hasSignoff ? (row.signoffdt_formatted || '') : (row.estsignoffdt_formatted || '');
+          if (!dateRaw || dateRaw === '0000-00-00') return '<span class="text-muted">-</span><span class="d-none contract-range-label"></span>';
+
+          const dateNow = new Date();
+          const estDate = new Date(dateRaw);
+          dateNow.setHours(0, 0, 0, 0);
+          estDate.setHours(0, 0, 0, 0);
+          let diffDays = Math.ceil((estDate - dateNow) / (1000 * 60 * 60 * 24));
+
+          const getDuration = (totalDays) => {
+            let days = Math.abs(totalDays);
+            let months = Math.floor(days / 30);
+            let remainingDays = days % 30;
+            let result = "";
+            if (months > 0) result += months + " Months ";
+            if (remainingDays > 0) result += remainingDays + " Days";
+            return result.trim();
+          };
+
+          let rangeLabel = '';
+          let noteColor = '';
+          if (diffDays < 0) {
+            rangeLabel = 'Expired Over';
+            noteColor = '#6c757d';
+          } else if (diffDays <= 7) {
+            rangeLabel = '1 Minggu';
+            noteColor = '#dc3545';
+          } else if (diffDays <= 30) {
+            rangeLabel = '1 Bulan';
+            noteColor = '#fd7e14';
+          } else if (diffDays <= 90) {
+            rangeLabel = '3 Bulan';
+            noteColor = '#ffc107';
+          } else if (diffDays <= 180) {
+            rangeLabel = '6 Bulan';
+            noteColor = '#00ff00';
+          } else if (diffDays <= 365) {
+            rangeLabel = '12 Bulan';
+            noteColor = '#0d6efd';
+          } else {
+            rangeLabel = '>12 Bulan';
+            noteColor = '#198754';
+          }
 
           if (type === 'display') {
-            const dateNow = new Date();
-            const estDate = new Date(data);
-            dateNow.setHours(0, 0, 0, 0);
-            estDate.setHours(0, 0, 0, 0);
-
-            let diffTime = estDate - dateNow;
-            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            let displayText = row.estsignoffdt_formatted;
-            let warningMsg = "";
-
-            const getDuration = (totalDays) => {
-              let days = Math.abs(totalDays);
-              let months = Math.floor(days / 30);
-              let remainingDays = days % 30;
-              let result = "";
-              if (months > 0) result += months + " Months ";
-              if (remainingDays > 0) result += remainingDays + " Days";
-              return result.trim();
-            };
-
+            let warningMsg = '';
             if (diffDays < 0) {
-              // 1. LOGIKA: SUDAH LEWAT (Expired Over)
-              let duration = getDuration(diffDays);
-              warningMsg =
-                `<br><span style="font-size:10px; color:red; font-weight: bold;">Expired Over ${duration}</span>`;
-            } else if (diffDays <= 90) {
-              // 2. LOGIKA: AKAN DATANG (Expired In)
-              let duration = getDuration(diffDays);
-              warningMsg =
-                `<br><span style="font-size:10px; color:orange; font-weight: bold;">Expired In ${duration}</span>`;
+             // warningMsg = `<br><span style="font-size:10px; color:${noteColor}; font-weight: bold;">Expired Over ${getDuration(diffDays)}</span>`;
+            } else {
+              warningMsg = `<br><span style="font-size:10px; color:${noteColor}; font-weight: bold;">Expired In ${getDuration(diffDays)}</span>`;
             }
-
-            return `<div>${displayText}${warningMsg}</div>`;
+            return `<div>${displayText}${warningMsg}<span class="d-none contract-range-label">${rangeLabel}</span></div>`;
           }
-          return data;
+          return dateRaw + ' ' + rangeLabel;
         }
       },
       {
@@ -230,28 +256,67 @@ $(document).ready(function() {
 
       let listContainer = dropdown.find('.filter-list');
 
-      // ✅ AMBIL DATA SETELAH TABLE READY
-      table.column(colIndex).data().unique().sort().each(function(val) {
-        if (val) {
+      // ✅ FILTER KHUSUS KOLOM CONTRACT (Minggu/Bulan - mau abis)
+      const contractFilterOptions = [
+        { value: 'Expired Over', color: '#6c757d' },
+        { value: '1 Minggu', color: '#dc3545' },
+        { value: '1 Bulan', color: '#fd7e14' },
+        { value: '3 Bulan', color: '#ffc107' },
+        { value: '6 Bulan', color: '#20c997' },
+        { value: '12 Bulan', color: '#0d6efd' },
+        { value: '>12 Bulan', color: '#198754' }
+      ];
+      if (colIndex === 10) {
+        dropdown.find('.filter-search').hide();
+        contractFilterOptions.forEach(function(opt) {
           listContainer.append(`
-          <label>
-            <input type="checkbox" value="${val}"> ${val}
-          </label>
-        `);
+            <label class="d-flex align-items-center gap-2 contract-filter-opt">
+              <input type="checkbox" value="${(opt.value || '').replace(/"/g, '&quot;')}">
+              <span class="contract-filter-dot" style="background:${opt.color};width:10px;height:10px;border-radius:50%;flex-shrink:0;"></span>
+              <span>${(opt.value || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+            </label>
+          `);
+        });
+      } else {
+        // ✅ AMBIL DATA SETELAH TABLE READY
+        try {
+          let columnData = table.column(colIndex).data();
+          if (columnData && typeof columnData.unique === 'function') {
+            columnData.unique().sort().each(function(val) {
+              if (val && val !== null && val !== '' && val !== undefined) {
+                let displayVal = String(val).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                listContainer.append(`
+                <label>
+                  <input type="checkbox" value="${displayVal}"> ${displayVal}
+                </label>
+              `);
+              }
+            });
+          }
+        } catch (e) {
+          console.warn('Error loading filter data for column ' + colIndex + ':', e);
         }
-      });
+      }
 
       // ✅ DEFAULT FILTER KHUSUS statusPerson
-      if (table.column(colIndex).dataSrc() === 'statusPerson') {
-        const defaultStatus = ['On board', 'Stand By'];
+      try {
+        let column = table.column(colIndex);
+        if (column && typeof column.dataSrc === 'function') {
+          let dataSrc = column.dataSrc();
+          if (dataSrc === 'statusPerson') {
+            const defaultStatus = ['On board', 'Stand By'];
 
-        dropdown.find('input[type="checkbox"]').each(function() {
-          if (defaultStatus.includes($(this).val())) {
-            $(this).prop('checked', true);
+            dropdown.find('input[type="checkbox"]').each(function() {
+              if (defaultStatus.includes($(this).val())) {
+                $(this).prop('checked', true);
+              }
+            });
+
+            applyDropdownFilter(dropdown, table, colIndex);
           }
-        });
-
-        applyDropdownFilter(dropdown, table, colIndex);
+        }
+      } catch (e) {
+        console.warn('Error setting default filter for column ' + colIndex + ':', e);
       }
 
       function applyDropdownFilter(dropdown, table, colIndex) {
@@ -311,7 +376,7 @@ $(document).ready(function() {
           table.column(colIndex).search('').draw();
         }
         dropdown.show();
-        // $('.filter-dropdown').hide();
+        $('.filter-dropdown').hide();
       });
 
 

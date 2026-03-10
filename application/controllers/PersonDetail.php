@@ -414,6 +414,38 @@ class PersonDetail extends CI_Controller {
     }
 
 
+    public function updateCrewStatus() {
+        $idperson = $this->input->post('idperson');
+        $inAktif = $this->input->post('inAktif');
+        $inBlacklist = $this->input->post('inBlacklist');
+        $newapplicent = $this->input->post('newapplicent');
+        $noncrew = $this->input->post('noncrew');
+
+        if (!$idperson) {
+            echo json_encode(array('status' => false, 'message' => 'ID Person is required'));
+            return;
+        }
+
+        $data = array(
+            'inAktif' => ($inAktif === '1') ? '1' : '0',
+            'inBlacklist' => ($inBlacklist === '1') ? '1' : '0',
+            'newapplicent' => ($newapplicent === '1') ? '1' : '0',
+            'noncrew' => ($noncrew === '1') ? '1' : '0'
+        );
+
+        $this->db->where('idperson', $idperson);
+        $this->db->where('deletests', '0');
+        $this->db->update('mstpersonal', $data);
+
+        $checkPerson = $this->db->get_where('mstpersonal', array('idperson' => $idperson, 'deletests' => '0'))->row();
+        if (!$checkPerson) {
+            echo json_encode(array('status' => false, 'message' => 'Person data not found'));
+            return;
+        }
+        echo json_encode(array('status' => true, 'message' => 'Crew status updated successfully'));
+    }
+
+
     public function updateFamilyInfo() {
         $idperson = $this->input->post('idperson');
         $fatherName = $this->input->post('fatherName');
@@ -869,5 +901,269 @@ class PersonDetail extends CI_Controller {
         ));
     }
 
+    // ==================== Category Personal ID (tblpersonaldoc) ====================
+    // Kolom: idperdoc, idperson, kdcert, doctp, docissctryid, docno, docissdt, docexpdt, docissplc, doc_file, addusrdt, updusrdt, delusrdt, deletests, st_display_report
+
+    /**
+     * Get list of personal docs for DataTables.
+     * Table: tblpersonaldoc WHERE deletests = '0'
+     */
+    public function getPersonalDocList()
+    {
+        $idperson = $this->input->get('idperson');
+        if (empty($idperson)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('success' => false, 'data' => array(), 'message' => 'idperson required'))
+            );
+            return;
+        }
+
+        $sql = "SELECT A.*, B.NmNegara AS country_name
+                FROM tblpersonaldoc A
+                LEFT JOIN tblnegara B ON B.KdNegara = A.docissctryid AND B.Deletests = '0'
+                WHERE A.deletests = '0' AND A.idperson = ?
+                ORDER BY A.idperdoc ASC";
+        $rows = $this->db->query($sql, array($idperson))->result_array();
+        $data = array();
+        foreach ($rows as $row) {
+            $data[] = array(
+                'idperdoc' => $row['idperdoc'],
+                'idperson' => $row['idperson'],
+                'kdcert' => isset($row['kdcert']) ? $row['kdcert'] : '',
+                'doctp' => isset($row['doctp']) ? $row['doctp'] : '',
+                'country_issue' => isset($row['country_name']) ? $row['country_name'] : '',
+                'docissctryid' => isset($row['docissctryid']) ? $row['docissctryid'] : '',
+                'docno' => isset($row['docno']) ? $row['docno'] : '',
+                'docissdt' => isset($row['docissdt']) ? $row['docissdt'] : '',
+                'docissplc' => isset($row['docissplc']) ? $row['docissplc'] : '',
+                'docexpdt' => isset($row['docexpdt']) ? $row['docexpdt'] : '',
+                'doc_file' => isset($row['doc_file']) ? $row['doc_file'] : '',
+            );
+        }
+
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('success' => true, 'data' => $data))
+        );
+    }
+
+    /**
+     * Get single personal doc for edit. Base on idperdoc + idperson.
+     */
+    public function getPersonalDoc()
+    {
+        $idperdoc = $this->input->post('id');
+        $idperson = $this->input->post('idperson');
+        if (empty($idperdoc) || empty($idperson)) {
+            echo json_encode(array('status' => false, 'message' => 'Invalid ID or idperson'));
+            return;
+        }
+        $row = $this->db->query(
+            "SELECT * FROM tblpersonaldoc WHERE idperdoc = ? AND idperson = ? AND deletests = '0'",
+            array($idperdoc, $idperson)
+        )->row_array();
+        if (empty($row)) {
+            echo json_encode(array('status' => false, 'message' => 'Data not found'));
+            return;
+        }
+        $row['country_name'] = $this->getCountryNameById(isset($row['docissctryid']) ? $row['docissctryid'] : '');
+        $this->output->set_content_type('application/json')->set_output(json_encode(array('status' => true, 'data' => $row)));
+    }
+
+    /**
+     * Save personal doc (create or update).
+     */
+    public function savePersonalDoc()
+    {
+        $idperdoc = $this->input->post('idperdoc');
+        $idperson = $this->input->post('idperson');
+        $kdcert = trim($this->input->post('kdcert'));
+        $doctp = trim($this->input->post('doctp'));
+        $docissctryid = $this->input->post('docissctryid');
+        $docno = trim($this->input->post('docno'));
+        $docissdt = $this->input->post('docissdt');
+        $docissplc = trim($this->input->post('docissplc'));
+        $docexpdt = $this->input->post('docexpdt');
+
+        if (empty($idperson)) {
+            echo json_encode(array('status' => false, 'message' => 'ID Person is required'));
+            return;
+        }
+        if ($doctp === '') {
+            echo json_encode(array('status' => false, 'message' => 'Type of Document ID is required'));
+            return;
+        }
+        if ($docno === '') {
+            echo json_encode(array('status' => false, 'message' => 'No Doc is required'));
+            return;
+        }
+        if (empty($docissdt)) {
+            echo json_encode(array('status' => false, 'message' => 'Date of Issue is required'));
+            return;
+        }
+        if (empty($docexpdt)) {
+            echo json_encode(array('status' => false, 'message' => 'Valid Until is required'));
+            return;
+        }
+        if (!empty($docissdt) && !empty($docexpdt) && $docexpdt < $docissdt) {
+            echo json_encode(array('status' => false, 'message' => 'Valid Until must be on or after Date of Issue'));
+            return;
+        }
+
+        $username = $this->session->userdata('username') ?: 'system';
+        $currentDate = date('Y-m-d H:i:s');
+        $docissctryid_kd = '';
+        if (!empty($docissctryid)) {
+            if (is_numeric($docissctryid)) {
+                $docissctryid_kd = $docissctryid;
+            } else {
+                $c = $this->db->get_where('tblnegara', array('NmNegara' => $docissctryid, 'Deletests' => '0'))->row();
+                if ($c) {
+                    $docissctryid_kd = $c->KdNegara;
+                }
+            }
+        }
+
+        $data = array(
+            'idperson' => $idperson,
+            'kdcert' => $kdcert,
+            'doctp' => $doctp,
+            'docissctryid' => $docissctryid_kd,
+            'docno' => $docno,
+            'docissdt' => $docissdt,
+            'docissplc' => $docissplc,
+            'docexpdt' => $docexpdt,
+            'updusrdt' => $currentDate . ' - ' . $username,
+        );
+
+        $inserted_idperdoc = null;
+        if (!empty($idperdoc)) {
+            $this->db->where('idperdoc', $idperdoc);
+            $this->db->where('idperson', $idperson);
+            $this->db->where('deletests', '0');
+            $this->db->update('tblpersonaldoc', $data);
+            $ok = $this->db->affected_rows() >= 0;
+            $inserted_idperdoc = $idperdoc;
+            $message = $ok ? 'Personal document updated successfully' : 'No changes or update failed';
+        } else {
+            $nextId = $this->db->query("SELECT COALESCE(MAX(idperdoc), 0) + 1 AS next_id FROM tblpersonaldoc")->row()->next_id;
+            $data['idperdoc'] = $nextId;
+            $data['addusrdt'] = $currentDate . ' - ' . $username;
+            $this->db->insert('tblpersonaldoc', $data);
+            $ok = $this->db->affected_rows() > 0;
+            $inserted_idperdoc = $nextId;
+            $message = $ok ? 'Personal document added successfully' : 'Failed to add document';
+        }
+
+        if ($ok && $inserted_idperdoc && !empty($_FILES['doc_file']['name'])) {
+            $dataContext = new DataContext();
+            $dir = FCPATH . 'uploadFile/';
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            $fileName = $_FILES['doc_file']['name'];
+            $newFileName = 'personaldoc_' . $idperson . '_' . $inserted_idperdoc . '_' . time();
+            $fileUploadNya = $dataContext->uploadFile(
+                $_FILES['doc_file']['tmp_name'],
+                $dir,
+                $fileName,
+                $newFileName
+            );
+            if ($fileUploadNya != '') {
+                $this->db->where('idperdoc', $inserted_idperdoc);
+                $this->db->where('idperson', $idperson);
+                $this->db->where('deletests', '0');
+                $this->db->update('tblpersonaldoc', array(
+                    'doc_file' => $fileUploadNya,
+                    'updusrdt' => $currentDate . ' - ' . $username,
+                ));
+            }
+        }
+
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('status' => $ok, 'message' => $message))
+        );
+    }
+
+    /**
+     * Soft delete personal doc. Base on idperdoc + idperson.
+     */
+    public function deletePersonalDoc()
+    {
+        $idperdoc = $this->input->post('id');
+        $idperson = $this->input->post('idperson');
+        if (empty($idperdoc) || empty($idperson)) {
+            echo json_encode(array('status' => false, 'message' => 'Invalid ID or idperson'));
+            return;
+        }
+        $username = $this->session->userdata('username') ?: 'system';
+        $currentDate = date('Y-m-d H:i:s');
+        $this->db->where('idperdoc', $idperdoc);
+        $this->db->where('idperson', $idperson);
+        $this->db->where('deletests', '0');
+        $this->db->update('tblpersonaldoc', array('deletests' => '1', 'updusrdt' => $currentDate . ' - ' . $username));
+        $ok = $this->db->affected_rows() > 0;
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('status' => $ok, 'message' => $ok ? 'Document deleted successfully' : 'Delete failed'))
+        );
+    }
+
+    /**
+     * Upload PDF/file for personal doc (doc_file).
+     */
+    public function uploadPersonalDocFile()
+    {
+        $idperdoc = $this->input->post('idperdoc');
+        $idperson = $this->input->post('idperson');
+
+        if (empty($idperdoc) || empty($idperson)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'idperdoc and idperson required'))
+            );
+            return;
+        }
+        if (empty($_FILES['file_personaldoc']['name'])) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'Please select a file'))
+            );
+            return;
+        }
+
+        $dataContext = new DataContext();
+        $dir = FCPATH . 'uploadFile/';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $fileName = $_FILES['file_personaldoc']['name'];
+        $newFileName = 'personaldoc_' . $idperson . '_' . $idperdoc . '_' . time();
+        $fileUploadNya = $dataContext->uploadFile(
+            $_FILES['file_personaldoc']['tmp_name'],
+            $dir,
+            $fileName,
+            $newFileName
+        );
+
+        if ($fileUploadNya == '') {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'Upload failed'))
+            );
+            return;
+        }
+
+        $username = $this->session->userdata('username') ?: 'system';
+        $currentDate = date('Y-m-d H:i:s');
+
+        $this->db->where('idperdoc', $idperdoc);
+        $this->db->where('idperson', $idperson);
+        $this->db->where('deletests', '0');
+        $this->db->update('tblpersonaldoc', array(
+            'doc_file' => $fileUploadNya,
+            'updusrdt' => $currentDate . ' - ' . $username,
+        ));
+
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('status' => true, 'message' => 'File uploaded successfully', 'doc_file' => $fileUploadNya))
+        );
+    }
 
 }

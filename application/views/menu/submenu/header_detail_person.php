@@ -14,13 +14,14 @@
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold"
           id="tabCertificates">Certificates</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabExperience">Experience</button>
-        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Education</button>
-        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Contract</button>
+        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabEducation">Education</button>
+        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabContract">Contract</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabNextplan">Next Plan</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabtraning">Assessment &
           Tranning</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Competence</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">List Report</button>
+        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">List Insident</button>
       </div>
 
     </div>
@@ -95,10 +96,18 @@
 }
 </style>
 
-
-
 <script>
 $(document).ready(function() {
+
+  // Back: gunakan history.back(). Halaman list (Active Roster, dll) pakai stateSave
+  // DataTables + sessionStorage agar saat kembali state tabel (halaman, search, urutan) ter-restore tanpa terasa reload.
+  document.getElementById('btnBack').addEventListener('click', function() {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = "<?php echo base_url(); ?>";
+    }
+  });
 
   // ================= TAB CLICK =================
   $('#tabProfile').on('click', function() {
@@ -121,6 +130,15 @@ $(document).ready(function() {
   $('#tabExperience').on('click', function() {
     setActiveTab('tabExperience');
     loadExperienceTab();
+  });
+  $('#tabEducation').on('click', function() {
+    setActiveTab('tabEducation');
+    loadEducationTab();
+  });
+
+  $('#tabContract').on('click', function() {
+    setActiveTab('tabContract');
+    loadContractTab();
   });
 
   $('#tabNextplan').on('click', function() {
@@ -201,6 +219,36 @@ $(document).ready(function() {
       error: function() {
         $('#contentArea').html(
           '<div class="text-danger">Failed load Experience</div>'
+        );
+      }
+    });
+  }
+
+  function loadEducationTab() {
+    $.ajax({
+      url: "<?php echo base_url('CrewDetail/Education'); ?>",
+      type: "GET",
+      success: function(html) {
+        $('#contentArea').html(html);
+      },
+      error: function() {
+        $('#contentArea').html(
+          '<div class="text-danger">Failed load Education</div>'
+        );
+      }
+    });
+  }
+
+  function loadContractTab() {
+    $.ajax({
+      url: "<?php echo base_url('CrewDetail/Contract'); ?>",
+      type: "GET",
+      success: function(html) {
+        $('#contentArea').html(html);
+      },
+      error: function() {
+        $('#contentArea').html(
+          '<div class="text-danger">Failed load Contract</div>'
         );
       }
     });

@@ -47,7 +47,7 @@ $(document).ready(function() {
           .addClass('btn-info active')
           .removeClass('btn-light');
 
-        loadCrew(1);
+        // loadCrew(1);
       },
       error: function() {
         alert('Gagal membuka Active Roster');
@@ -64,7 +64,7 @@ $(document).ready(function() {
         $('#contentArea').html(html);
       },
       error: function() {
-        alert('Gagal membuka Crew Rotation');
+        $('#contentArea').html('<div class="alert alert-danger">Gagal membuka Crew Rotation</div>');
       }
     });
   });

@@ -1,318 +1,372 @@
 <div class="crew-rotation-content">
   <div class="container-fluid">
     <style>
-      /* ===============================
+    /* ===============================
             GLOBAL TABLE STYLE – CREW PLAN
             =============================== */
-      :root {
-        --crew-blue: #000099;
-        --crew-font-sm: 12px;
-        --crew-font-xs: 11px;
-      }
+    :root {
+      --crew-blue: #000099;
+      --crew-font-sm: 12px;
+      --crew-font-xs: 11px;
+    }
 
-      /* TABLE BASE */
-      .crew-table th,
-      .crew-table td {
-        font-size: var(--crew-font-sm);
-        vertical-align: middle;
-      }
+    /* TABLE BASE */
+    .crew-table th,
+    .crew-table td {
+      font-size: var(--crew-font-sm);
+      vertical-align: middle;
+    }
 
-      .crew-table th {
-        font-weight: 600;
-        text-align: center;
-      }
+    .crew-table th {
+      font-weight: 600;
+      text-align: center;
+    }
 
-      /* BUTTON INSIDE TABLE */
-      .crew-table .btn {
-        font-size: var(--crew-font-xs);
-        padding: 2px 6px;
-      }
+    /* BUTTON INSIDE TABLE */
+    .crew-table .btn {
+      font-size: var(--crew-font-xs);
+      padding: 2px 6px;
+    }
 
-      /* HEADER COLOR (BLUE) */
-      .crew-header th {
-        background-color: var(--crew-blue) !important;
-        color: #fff !important;
-      }
+    /* HEADER COLOR (BLUE) */
+    .crew-header th {
+      /* background-color: var(--crew-blue) !important; */
+      color: #fff !important;
+    }
 
-      /* HEADER GROUP (ONBOARD / REPLACEMENT) */
-      .crew-header-group {
-        background-color: var(--crew-blue) !important;
-        color: #fff !important;
-      }
+    /* HEADER GROUP (ONBOARD / REPLACEMENT) */
+    .crew-header-group {
+      /* background-color: var(--crew-blue) !important; */
+      color: #fff !important;
+    }
 
-      /* BADGE STATUS */
-      .badge-status {
-        font-size: 11px;
-        padding: 4px 8px;
-      }
+    /* BADGE STATUS */
+    .badge-status {
+      font-size: 11px;
+      padding: 4px 8px;
+    }
 
-      /* LINK NAME */
-      .crew-name {
-        font-weight: 600;
-        color: #0d6efd;
-        text-decoration: none;
-      }
+    .batch-toggle {
+      cursor: pointer;
+      min-width: 22px;
+      font-weight: bold;
+      user-select: none;
+    }
+    .batch-toggle:hover {
+      opacity: 0.8;
+    }
 
-      .crew-name:hover {
-        text-decoration: underline;
-      }
+    /* LINK NAME */
+    .crew-name {
+      font-weight: 600;
+      color: #0d6efd;
+      text-decoration: none;
+    }
 
-      /* DataTables Customization */
-      .dataTables_wrapper {
-        padding: 15px 0;
-      }
+    .crew-name:hover {
+      text-decoration: underline;
+    }
 
-      .dataTables_length {
-        padding: 10px 0;
-        margin-bottom: 10px;
-      }
+    /* DataTables Customization */
+    .custom-btn {
+      justify-content: flex-end;
+    }
 
-      .dataTables_length label,
-      .dataTables_filter label {
-        display: flex;
-        align-items: center;
-        margin: 0;
-        padding: 20px 0;
-      }
+    .dataTables_wrapper {
+      padding: 15px 0;
+    }
 
-      .dataTables_length select {
-        width: auto;
-        margin: 0 8px;
-        padding: 4px 8px;
-        border-radius: 4px;
-        border: 1px solid #ced4da;
-      }
+    .dataTables_length {
+      padding: 10px 0;
+      margin-bottom: 10px;
+    }
 
-      .dataTables_filter {
-        text-align: right;
-        margin-bottom: 10px;
-      }
+    .dataTables_length label,
+    .dataTables_filter label {
+      display: flex;
+      align-items: center;
+      margin: 0;
+      padding: 20px 0;
+    }
 
-      .dataTables_filter label {
-        display: inline-flex;
-        align-items: center;
-        margin: 0;
-        padding: 8px 0;
-        font-weight: normal;
-      }
+    .dataTables_length select {
+      width: auto;
+      margin: 0 8px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #ced4da;
+    }
 
-      .dataTables_filter input {
-        margin-left: 10px;
-        padding: 6px 12px;
-        border-radius: 4px;
-        border: 1px solid #ced4da;
-        width: 200px;
-      }
+    .dataTables_filter {
+      text-align: right;
+      margin-bottom: 10px;
+    }
 
-      /* PAGINATION STYLING */
-      .dataTables_paginate {
-        margin-top: 15px;
-        padding-top: 10px;
-        border-top: 1px solid #dee2e6;
-      }
+    .dataTables_filter label {
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+      padding: 8px 0;
+      font-weight: normal;
+    }
 
-      .paginate_button {
-        margin: 0 2px;
-        padding: 6px 12px !important;
-        border-radius: 4px;
-        border: 1px solid #dee2e6;
-        background: #fff !important;
-        color: #0d6efd !important;
-      }
+    .dataTables_filter input {
+      margin-left: 10px;
+      padding: 6px 12px;
+      border-radius: 4px;
+      border: 1px solid #ced4da;
+      width: 200px;
+    }
 
-      .paginate_button.current {
-        background: #0d6efd !important;
-        color: #fff !important;
-        border-color: #0d6efd !important;
-      }
+    /* PAGINATION STYLING */
+    .dataTables_paginate {
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px solid #dee2e6;
+    }
 
-      .paginate_button:hover {
-        background: #e9ecef !important;
-        border-color: #dee2e6;
-      }
+    .paginate_button {
+      margin: 0 2px;
+      padding: 6px 12px !important;
+      border-radius: 4px;
+      border: 1px solid #dee2e6;
+      background: #fff !important;
+      color: #0d6efd !important;
+    }
 
-      /* INFO TEXT STYLING */
-      .dataTables_info {
-        padding: 10px 0;
-        color: #6c757d;
-        font-size: 14px;
-      }
+    .paginate_button.current {
+      background: #0d6efd !important;
+      color: #fff !important;
+      border-color: #0d6efd !important;
+    }
 
-      /* Filter Icon */
-      .filter-icon {
-        cursor: pointer;
-        font-size: 14px;
-        margin-left: 6px;
-        color: #0d6efd;
-      }
+    .paginate_button:hover {
+      background: #e9ecef !important;
+      border-color: #dee2e6;
+    }
 
-      .filter-dropdown {
-        position: absolute;
-        background: #fff;
-        border: 1px solid #ccc;
-        padding: 8px;
-        width: 200px;
-        max-height: 260px;
-        overflow-y: auto;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
-        display: none;
-        z-index: 9999;
-      }
+    /* INFO TEXT STYLING */
+    .dataTables_info {
+      padding: 10px 0;
+      color: #6c757d;
+      font-size: 14px;
+    }
 
-      .filter-dropdown input[type="text"] {
-        width: 100%;
-        margin-bottom: 6px;
-        padding: 4px;
-        font-size: 12px;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-      }
+    /* Baris search di bawah header (column search) */
+    .crew-search-row {
+      background: #f8f9fa !important;
+    }
 
-      .filter-dropdown label {
-        display: block;
-        font-size: 13px;
-        cursor: pointer;
-        padding: 4px 8px;
-        margin: 2px 0;
-        border-radius: 4px;
-      }
+    .crew-search-row th {
+      background: #f8f9fa !important;
+      color: #495057 !important;
+      padding: 6px 8px;
+      vertical-align: middle;
+    }
 
-      .filter-dropdown label:hover {
-        background: #f8f9fa;
-      }
+    .crew-search-row .column-search {
+      width: 100%;
+      max-width: 160px;
+      margin: 0 auto;
+      display: block;
+    }
 
-      .filter-list {
-        max-height: 120px;
-        overflow-y: auto;
-        margin-bottom: 6px;
-      }
+    /* Column Search Input */
+    .column-search {
+      padding: 6px 8px;
+      box-sizing: border-box;
+      font-size: 12px;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      background: #fff !important;
+    }
 
-      /* Column Search Input */
-      .column-search {
-        width: 100%;
-        padding: 6px 8px;
-        box-sizing: border-box;
-        font-size: 12px;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        background: #f8f9fa;
-      }
+    /* Responsive Card */
+    .card {
+      margin-top: 20px;
+      border-radius: 8px;
+    }
 
-      /* Responsive Card */
-      .card {
-        margin-top: 20px;
-        border-radius: 8px;
-      }
+    .card-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-      .card-header {
-        padding: 15px 20px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      }
+    .card-body {
+      padding: 20px;
+      overflow-x: auto;
+    }
 
-      .card-body {
-        padding: 20px;
-        overflow-x: auto;
-      }
+    /* Table responsive fixes */
+    .table-responsive {
+      margin: 0;
+    }
 
-      /* Table responsive fixes */
-      .table-responsive {
-        margin: 0;
-      }
+    /* Custom layout for DataTables controls */
+    .dataTables_wrapper .row {
+      margin: 0;
+    }
 
-      /* Custom layout for DataTables controls */
-      .dataTables_wrapper .row {
-        margin: 0;
-      }
+    .dataTables_wrapper .col-sm-12 {
+      padding: 0;
+    }
 
-      .dataTables_wrapper .col-sm-12 {
-        padding: 0;
-      }
+    /* Ensure proper spacing */
+    .dt-length {
+      float: left;
+    }
 
-      /* Ensure proper spacing */
-      .dt-length {
-        float: left;
-      }
+    .dt-search {
+      float: right;
+    }
 
-      .dt-search {
-        float: right;
-      }
+    .dt-info {
+      float: left;
+      margin-top: 10px;
+    }
 
-      .dt-info {
-        float: left;
-        margin-top: 10px;
-      }
+    .dt-paging {
+      float: right;
+      margin-top: 10px;
+    }
 
-      .dt-paging {
-        float: right;
-        margin-top: 10px;
-      }
+    /* Clear floats */
+    .dataTables_wrapper:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+    
+    /* Filter Icon */
+    .filter-icon {
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 6px;
+      color: #0d6efd;
+    }
+    
+    .filter-dropdown {
+      position: absolute;
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 8px;
+      width: 200px;
+      max-height: 260px;
+      overflow-y: auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
+      display: none;
+      z-index: 9999;
+    }
+    
+    .filter-dropdown input[type="text"] {
+      width: 100%;
+      margin-bottom: 6px;
+      padding: 4px;
+      font-size: 12px;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+    }
+    
+    .filter-dropdown label {
+      display: block;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 4px 8px;
+      margin: 2px 0;
+      border-radius: 4px;
+    }
+    
+    .filter-dropdown label:hover {
+      background: #f8f9fa;
+    }
+    
+    .filter-list {
+      max-height: 120px;
+      overflow-y: auto;
+      margin-bottom: 6px;
+    }
+    
+    .btn-clear-filter {
+      background: transparent;
+      border: 1.5px solid #000099;
+      color: #000099;
+      transition: all .2s ease;
+    }
+    
+    .btn-clear-filter:hover {
+      background: #000099;
+      color: #fff;
+    }
+    
+    .btn-clear-filter i {
+      font-size: 14px;
+    }
 
-      /* Clear floats */
-      .dataTables_wrapper:after {
-        content: "";
-        display: table;
-        clear: both;
-      }
+    /* LINK NAME - hitam, cursor tangan (untuk Next Plan) */
+    .crew-name {
+      font-weight: 600;
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .crew-name:hover {
+      text-decoration: underline;
+      color: #333;
+    }
     </style>
 
     <div class="row">
       <div class="col-md-12">
         <div class="card shadow">
-          <!-- <div class="card-header bg-success text-white fw-semibold d-flex justify-content-between align-items-center" style="padding: 15px 20px;">
-                        <span>👨‍✈️ Crew Rotation Plan</span>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-light btn-sm" onclick="exportTable()">
-                                <i class="fas fa-download"></i> Export
-                            </button>
-                            <button class="btn btn-light btn-sm" onclick="reloadTable()">
-                                <i class="fas fa-sync-alt"></i> Refresh
-                            </button>
-                        </div>
-                    </div> -->
-
           <div class="card-body">
             <div class="table-responsive">
               <table id="crewTable" class="table table-bordered align-middle mb-0 crew-table" style="width:100%">
                 <thead class="crew-header">
                   <tr>
-                    <th rowspan="2">No</th>
-                    <th colspan="5" class="crew-header-group text-center">ONBOARD</th>
-                    <th colspan="3" class="crew-header-group text-center">REPLACEMENT</th>
-                    <th rowspan="2">Status</th>
-                    <th rowspan="2">Next Vessel</th>
+                    <th class="text-center" style="background-color: #000099 !important;">No</th>
+                    <th style="background-color: #000099 !important;">Batch <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Name <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Rank <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">S/ON <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Vessel <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">S/OFF Plan <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Remark <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Remarks Cancel <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Rank <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Name <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Status <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Next Vessel <br><span class="filter-icon">☰</span></th>
+                    <th class="text-center" style="background-color: #000099 !important;">Action</th>
                   </tr>
-                  <tr>
-                    <th>Name <span class="filter-icon">☰</span></th>
-                    <th>Rank <span class="filter-icon">☰</span></th>
-                    <th>S/ON <span class="filter-icon">☰</span></th>
-                    <th>Vessel <span class="filter-icon">☰</span></th>
-                    <th>S/OFF Plan <span class="filter-icon">☰</span></th>
-                    <th>Remark <span class="filter-icon">☰</span></th>
-                    <th>Rank <span class="filter-icon">☰</span></th>
-                    <th>Name <span class="filter-icon">☰</span></th>
-                  </tr>
-                </thead>
-
-                <!-- Search Row -->
-                <thead>
                   <tr>
                     <th></th>
-                    <th><input type="text" class="column-search" placeholder="Search Name"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Rank"></th>
-                    <th><input type="text" class="column-search" placeholder="Search S/ON"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Vessel"></th>
-                    <th><input type="text" class="column-search" placeholder="Search S/OFF"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Remark"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Rank"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Name"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Status"></th>
-                    <th><input type="text" class="column-search" placeholder="Search Next Vessel"></th>
-                  </tr>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
+                    <th></th>
+                </tr>
                 </thead>
-
                 <tbody>
                   <!-- Data akan diisi oleh DataTables -->
                 </tbody>
+                <tfoot>
+                  <tr>
+                    <!-- <td class="text-center fw-bold" style="background-color:#f8f9fa;"></td> -->
+                    <td colspan="7" class="text-center fw-bold" style="background-color:#000099; color:#fff;">ONBOARD</td>
+                    <td colspan="7" class="text-center fw-bold" style="background-color:#000099; color:#fff;">REPLACEMENT</td>
+                    <!-- <td colspan="3" class="text-center fw-bold" style="background-color:#f8f9fa;"></td> -->
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </div>
@@ -322,442 +376,364 @@
   </div>
 </div>
 
+<!-- Modal Crew Rotation Form -->
+<div class="modal fade" id="modalCrewRotationForm" tabindex="-1" aria-labelledby="modalCrewRotationFormLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header text-white" style="background-color:#000099;">
+        <h5 class="modal-title" id="modalCrewRotationFormLabel">Crew Rotation</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body mb-0 pb-8 pt-2" id="modalCrewRotationFormBody">
+        <!-- Form akan di-load via AJAX -->
+        <div class="text-center p-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Remarks Cancel -->
+<div class="modal fade" id="modalRemarksCancel" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header text-white" style="background-color:#000099;">
+        <h5 class="modal-title">Remarks Cancel</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="remarksCancel_idcrewrotation">
+        <label class="form-label fw-semibold">Remarks Cancel</label>
+        <textarea class="form-control" id="remarksCancel_input" rows="4"
+          placeholder="Alasan / keterangan cancel..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-primary" id="btnSubmitRemarksCancel">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-  $(document).ready(function () {
-    // Data dummy untuk crew rotation
-    const crewData = [{
-        no: 1,
-        onboard_name: "Jefri Bernadus",
-        onboard_rank: "A/B",
-        onboard_son: "17-10-2025",
-        onboard_vessel: "MT. ANDHIKA VIDYANATA",
-        onboard_soff: "17-07-2026",
-        remark: "Planned",
-        replacement_rank: "A/B",
-        replacement_name: "-",
-        status: "Submit",
-        next_vessel: "MT. ANDHIKA VIDYANATA"
-      },
-      {
-        no: 2,
-        onboard_name: "Hardi Rama",
-        onboard_rank: "A/B",
-        onboard_son: "17-10-2025",
-        onboard_vessel: "MT. ANDHIKA VIDYANATA",
-        onboard_soff: "17-07-2026",
-        remark: "Planned",
-        replacement_rank: "A/B",
-        replacement_name: "-",
-        status: "Cancel",
-        next_vessel: "MT. ANDHIKA VIDYANATA"
-      },
-      {
-        no: 3,
-        onboard_name: "Hardi Rama",
-        onboard_rank: "A/B",
-        onboard_son: "17-10-2025",
-        onboard_vessel: "MT. ANDHIKA VIDYANATA",
-        onboard_soff: "17-07-2026",
-        remark: "Planned",
-        replacement_rank: "A/B",
-        replacement_name: "-",
-        status: "Joined",
-        next_vessel: "MT. ANDHIKA VIDYANATA"
-      },
-      {
-        no: 4,
-        onboard_name: "Ahmad Yani",
-        onboard_rank: "Captain",
-        onboard_son: "15-01-2025",
-        onboard_vessel: "MV. OCEAN STAR",
-        onboard_soff: "15-10-2025",
-        remark: "Confirmed",
-        replacement_rank: "Captain",
-        replacement_name: "Budi Santoso",
-        status: "Submit",
-        next_vessel: "MV. SEA BREEZE"
-      },
-      {
-        no: 5,
-        onboard_name: "Siti Nurhaliza",
-        onboard_rank: "Chief Officer",
-        onboard_son: "20-02-2025",
-        onboard_vessel: "MT. SAMUDERA JAYA",
-        onboard_soff: "20-11-2025",
-        remark: "Pending",
-        replacement_rank: "Chief Officer",
-        replacement_name: "Rina Melati",
-        status: "Pending",
-        next_vessel: "MT. SAMUDERA JAYA"
-      },
-      {
-        no: 6,
-        onboard_name: "Rudi Hartono",
-        onboard_rank: "Chief Engineer",
-        onboard_son: "10-03-2025",
-        onboard_vessel: "MV. GLOBAL TRADER",
-        onboard_soff: "10-12-2025",
-        remark: "Emergency",
-        replacement_rank: "Chief Engineer",
-        replacement_name: "Joko Widodo",
-        status: "Emergency",
-        next_vessel: "MV. GLOBAL TRADER"
-      },
-      {
-        no: 7,
-        onboard_name: "Dewi Sartika",
-        onboard_rank: "2nd Officer",
-        onboard_son: "05-04-2025",
-        onboard_vessel: "MT. BAHARI MANDIRI",
-        onboard_soff: "05-01-2026",
-        remark: "Planned",
-        replacement_rank: "2nd Officer",
-        replacement_name: "-",
-        status: "Submit",
-        next_vessel: "MT. BAHARI MANDIRI"
-      },
-      {
-        no: 8,
-        onboard_name: "Bambang Pamungkas",
-        onboard_rank: "Oiler",
-        onboard_son: "25-05-2025",
-        onboard_vessel: "MV. MARINE EXPRESS",
-        onboard_soff: "25-02-2026",
-        remark: "Standby",
-        replacement_rank: "Oiler",
-        replacement_name: "Andi Sukirman",
-        status: "Standby",
-        next_vessel: "MV. MARINE EXPRESS"
-      },
-      {
-        no: 9,
-        onboard_name: "Maya Sari",
-        onboard_rank: "Cook",
-        onboard_son: "12-06-2025",
-        onboard_vessel: "MT. NUSANTARA PRIDE",
-        onboard_soff: "12-03-2026",
-        remark: "Planned",
-        replacement_rank: "Cook",
-        replacement_name: "Sari Dewi",
-        status: "Submit",
-        next_vessel: "MT. NUSANTARA PRIDE"
-      },
-      {
-        no: 10,
-        onboard_name: "Eko Prasetyo",
-        onboard_rank: "Bosun",
-        onboard_son: "30-07-2025",
-        onboard_vessel: "MV. PACIFIC WAVE",
-        onboard_soff: "30-04-2026",
-        remark: "Confirmed",
-        replacement_rank: "Bosun",
-        replacement_name: "-",
-        status: "Joined",
-        next_vessel: "MV. PACIFIC WAVE"
-      },
-      {
-        no: 11,
-        onboard_name: "Linda Permata",
-        onboard_rank: "Radio Officer",
-        onboard_son: "18-08-2025",
-        onboard_vessel: "MT. ASIA TRADER",
-        onboard_soff: "18-05-2026",
-        remark: "Pending",
-        replacement_rank: "Radio Officer",
-        replacement_name: "Rita Anggraini",
-        status: "Pending",
-        next_vessel: "MT. ASIA TRADER"
-      },
-      {
-        no: 12,
-        onboard_name: "Agus Salim",
-        onboard_rank: "3rd Engineer",
-        onboard_son: "22-09-2025",
-        onboard_vessel: "MV. OCEAN MASTER",
-        onboard_soff: "22-06-2026",
-        remark: "Planned",
-        replacement_rank: "3rd Engineer",
-        replacement_name: "Tono Wijaya",
-        status: "Submit",
-        next_vessel: "MV. OCEAN MASTER"
-      },
-      {
-        no: 13,
-        onboard_name: "Rina Marlina",
-        onboard_rank: "Steward",
-        onboard_son: "14-10-2025",
-        onboard_vessel: "MT. MARITIM JAYA",
-        onboard_soff: "14-07-2026",
-        remark: "Standby",
-        replacement_rank: "Steward",
-        replacement_name: "Dini Cahaya",
-        status: "Standby",
-        next_vessel: "MT. MARITIM JAYA"
-      },
-      {
-        no: 14,
-        onboard_name: "Fajar Nugroho",
-        onboard_rank: "Electrical Officer",
-        onboard_son: "08-11-2025",
-        onboard_vessel: "MV. GLOBAL HOPE",
-        onboard_soff: "08-08-2026",
-        remark: "Emergency",
-        replacement_rank: "Electrical Officer",
-        replacement_name: "Hendra Gunawan",
-        status: "Emergency",
-        next_vessel: "MV. GLOBAL HOPE"
-      },
-      {
-        no: 15,
-        onboard_name: "Citra Lestari",
-        onboard_rank: "Deck Cadet",
-        onboard_son: "03-12-2025",
-        onboard_vessel: "MT. SAMUDERA MAKMUR",
-        onboard_soff: "03-09-2026",
-        remark: "Planned",
-        replacement_rank: "Deck Cadet",
-        replacement_name: "-",
-        status: "Submit",
-        next_vessel: "MT. SAMUDERA MAKMUR"
-      },
-      {
-        no: 16,
-        onboard_name: "Hendra Kusuma",
-        onboard_rank: "Engine Cadet",
-        onboard_son: "19-01-2025",
-        onboard_vessel: "MV. MARINE KING",
-        onboard_soff: "19-10-2025",
-        remark: "Confirmed",
-        replacement_rank: "Engine Cadet",
-        replacement_name: "Wawan Setiawan",
-        status: "Joined",
-        next_vessel: "MV. MARINE KING"
-      },
-      {
-        no: 17,
-        onboard_name: "Sari Indah",
-        onboard_rank: "Nurse",
-        onboard_son: "11-02-2025",
-        onboard_vessel: "MT. MEDICAL SHIP",
-        onboard_soff: "11-11-2025",
-        remark: "Pending",
-        replacement_rank: "Nurse",
-        replacement_name: "Mira Utami",
-        status: "Pending",
-        next_vessel: "MT. MEDICAL SHIP"
-      },
-      {
-        no: 18,
-        onboard_name: "Joko Susilo",
-        onboard_rank: "Welder",
-        onboard_son: "27-03-2025",
-        onboard_vessel: "MV. INDUSTRIAL ONE",
-        onboard_soff: "27-12-2025",
-        remark: "Planned",
-        replacement_rank: "Welder",
-        replacement_name: "Slamet Riyadi",
-        status: "Submit",
-        next_vessel: "MV. INDUSTRIAL ONE"
-      },
-      {
-        no: 19,
-        onboard_name: "Dian Pelangi",
-        onboard_rank: "Purser",
-        onboard_son: "09-04-2025",
-        onboard_vessel: "MT. PASSENGER EXPRESS",
-        onboard_soff: "09-01-2026",
-        remark: "Standby",
-        replacement_rank: "Purser",
-        replacement_name: "-",
-        status: "Standby",
-        next_vessel: "MT. PASSENGER EXPRESS"
-      },
-      {
-        no: 20,
-        onboard_name: "Teguh Prakoso",
-        onboard_rank: "Safety Officer",
-        onboard_son: "23-05-2025",
-        onboard_vessel: "MV. SAFETY FIRST",
-        onboard_soff: "23-02-2026",
-        remark: "Planned",
-        replacement_rank: "Safety Officer",
-        replacement_name: "Adi Wijaya",
-        status: "Submit",
-        next_vessel: "MV. SAFETY FIRST"
-      }
-    ];
+var baseUrlCrewRotation = "<?php echo base_url('CrewRotation/CrewRotation'); ?>";
 
-    // Inisialisasi DataTable
-    let table = $('#crewTable').DataTable({
-      data: crewData,
-      columns: [{
-          data: 'no',
-          className: 'text-center'
-        },
-        {
-          data: 'onboard_name',
-          render: function (data, type, row) {
-            return `<a href="#" class="crew-name" onclick="showCrewDetail(${row.no})">${data}</a>`;
-          }
-        },
-        {
-          data: 'onboard_rank',
-          className: 'text-center'
-        },
-        {
-          data: 'onboard_son',
-          className: 'text-center'
-        },
-        {
-          data: 'onboard_vessel'
-        },
-        {
-          data: 'onboard_soff',
-          className: 'text-center'
-        },
-        {
-          data: 'remark',
-          className: 'text-center'
-        },
-        {
-          data: 'replacement_rank',
-          className: 'text-center'
-        },
-        {
-          data: 'replacement_name'
-        },
-        {
-          data: 'status',
-          className: 'text-center',
-          render: function (data) {
-            let badgeClass = 'bg-secondary';
-            if (data === 'Submit') badgeClass = 'bg-success';
-            else if (data === 'Cancel') badgeClass = 'bg-danger';
-            else if (data === 'Joined') badgeClass = 'bg-primary';
-            else if (data === 'Pending') badgeClass = 'bg-warning';
-            else if (data === 'Emergency') badgeClass = 'bg-danger';
-            else if (data === 'Standby') badgeClass = 'bg-info';
+function loadCrewRotationList() {
+  $.ajax({
+    url: baseUrlCrewRotation + "/ajaxCrewRotation",
+    type: "GET",
+    success: function(html) {
+      $("#contentArea").html(html);
+    },
+    error: function() {
+      alert("Gagal memuat Crew Rotation");
+    }
+  });
+}
 
-            return `<span class="badge ${badgeClass} badge-status">${data}</span>`;
-          }
-        },
-        {
-          data: 'next_vessel'
-        }
-      ],
-      pageLength: 10,
-      lengthMenu: [5, 10, 25, 50, 100],
-      language: {
-        lengthMenu: ' _MENU_ &nbsp; Entries',
-        search: "Search:",
-        paginate: {
-          first: "First",
-          last: "Last",
-          next: "Next",
-          previous: "Previous"
-        },
-        info: "Showing _START_ to _END_ of _TOTAL_ entries",
-        infoEmpty: "Showing 0 to 0 of 0 entries",
-      },
-      order: [
-        [0, 'asc']
-      ],
-     /// dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>><"row"<"col-sm-12"tr>><"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-      initComplete: function () {
-        // Custom styling untuk info text
-        var info = this.api().page.info();
-        $('.dataTables_info').css({
-          'padding': '10px 0',
-          'color': '#6c757d',
-          'font-size': '14px'
+window.showCrewDetail = function(idcrewrotation) {
+  $('#modalCrewRotationForm').modal('show');
+  // Destroy selectpicker sebelum ganti content (agar dropdown orphan hilang)
+  try {
+    $('#modalCrewRotationFormBody .selectpicker-on').each(function() {
+      var $el = $(this);
+      if ($el.data('selectpicker')) { $el.selectpicker('destroy'); }
+    });
+  } catch (e) { /* ignore */ }
+  $('#modalCrewRotationFormBody').html('<div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+  $.ajax({
+    url: baseUrlCrewRotation + "/detail",
+    type: "GET",
+    data: {
+      idcrewrotation: idcrewrotation
+    },
+    success: function(html) {
+      // Hapus orphan bootstrap-select (dropdown/menu) yang mungkin tertinggal di body
+      try {
+        $('body > .bootstrap-select, body > .dropdown.bootstrap-select').remove();
+        $('#modalCrewRotationForm .bootstrap-select').not('#modalCrewRotationFormBody .bootstrap-select').remove();
+      } catch (e) { /* ignore */ }
+      $('#modalCrewRotationFormBody').html(html);
+    },
+    error: function() {
+      $('#modalCrewRotationFormBody').html('<div class="alert alert-danger">Gagal memuat detail</div>');
+    }
+  });
+};
+
+$(document).ready(function() {
+  var collapsedBatches = {};
+  var BATCH_COL_INDEX = 1;
+  var TOTAL_COLUMNS = 14;
+
+  let table = $('#crewTable').DataTable({
+    dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end custom-btn'>>" +
+      "<'row'<'col-md-12'tr>>" +
+      "<'row mt-2'<'col-md-5'i><'col-md-7'p>>",
+    processing: true,
+    serverSide: false,
+    ajax: {
+      url: baseUrlCrewRotation + "/getAllData_crewRotation",
+      type: "GET",
+      dataSrc: function(json) {
+        var rows = json.success ? json.data : [];
+        var batchIdHasJoined = {};
+        rows.forEach(function(r) {
+          if ((r.status || "").toUpperCase() === "JOINED") batchIdHasJoined[r.batch_id] = true;
         });
+        rows.forEach(function(r) {
+          r._batch_has_joined = !!batchIdHasJoined[r.batch_id];
+        });
+        return rows;
       }
-    });
-
-    // Column Search Functionality /klo ga pake row span bisa gini
-    // $('#crewTable thead tr:eq(1) th').each(function (i) {
-    //   $('input', this).on('keyup change', function () {
-    //     if (table.column(i).search() !== this.value) {
-    //       table
-    //          .column(i)
-    //         .search(this.value)
-    //         .draw();
-    //     }
-    //   });
-    // });
-
-    // Column Search - AMBIL ROW SEARCH TERAKHIR
-    $('#crewTable thead tr:last th').each(function (i) {
-      $('input', this).on('keyup change', function () {
-        if (table.column(i).search() !== this.value) {
-          table
-            .column(i)
-            .search(this.value)
-            .draw();
+    },
+    columns: [
+      // No, Batch = dari rotation
+      {
+        data: null,
+        className: "text-center",
+        orderable: false,
+        render: function(data, type, row, meta) {
+          return meta.row + 1;
         }
+      },
+      {
+        data: "batch_id",
+        className: "text-center",
+        render: function(data) {
+          return data || "-";
+        }
+      },
+      // Onboard (Name, Rank, S/ON, Vessel, S/Off Plan) = dari Old Contract (tblcontract)
+      {
+        data: "onboard_name",
+        render: function(data, type, row) {
+          var name = data || "-";
+          return '<a href="#" class="crew-name" onclick="showCrewDetail(' + row.idcrewrotation +
+            '); return false;" title="Edit">' + name + "</a>";
+        }
+      },
+      {
+        data: "onboard_rank",
+        className: "text-center"
+      },
+      {
+        data: "onboard_son",
+        className: "text-center"
+      },
+      {
+        data: "onboard_vessel"
+      },
+      {
+        data: "onboard_soff",
+        className: "text-center"
+      },
+      // Remark, Remarks Cancel, Replacement, Status, Next Vessel = dari tblcrewrotation
+      {
+        data: "remark",
+        className: "text-center"
+      },
+      {
+        data: "remarks_cancel",
+        className: "text-center"
+      },
+      {
+        data: "replacement_rank",
+        className: "text-center"
+      },
+      {
+        data: "replacement_name"
+      },
+      {
+        data: "status",
+        className: "text-center",
+        render: function(data, type, row) {
+          var displayStatus = data;
+          var badgeClass = "bg-secondary";
+          if (row._batch_has_joined && (data || "").toUpperCase() !== "JOINED") {
+            displayStatus = "Delete";
+            badgeClass = "bg-dark";
+          } else {
+            if (data === "Submit") badgeClass = "bg-success";
+            else if (data === "Cancel") badgeClass = "bg-danger";
+            else if (data === "Joined") badgeClass = "bg-primary";
+            displayStatus = (data === "Submit") ? "Planned" : (data || "");
+          }
+          return '<span class="badge ' + badgeClass + ' badge-status">' + displayStatus + "</span>";
+        }
+      },
+      {
+        data: "next_vessel"
+      },
+      {
+        data: null,
+        orderable: false,
+        searchable: false,
+        className: "text-center",
+        render: function(data, type, row) {
+          var disabled = (row.status === "Cancel" || row.status === "Joined") ? " disabled" : "";
+          var statusOpt =
+            '<select class="form-select form-select-sm d-inline-block w-auto status-select" data-id="' + row
+            .idcrewrotation + '" data-batch-id="' + (row.batch_id || "") + '" data-current="' + (row.status || "") + '"' + disabled + '>' +
+            '<option value="Submit"' + (row.status === "Submit" ? " selected" : "") + '>Planned</option>' +
+            '<option value="Cancel"' + (row.status === "Cancel" ? " selected" : "") + '>Cancel</option>' +
+            '<option value="Joined"' + (row.status === "Joined" ? " selected" : "") +
+            '>Joined</option></select>';
+          return '<div class="d-flex gap-1 justify-content-center flex-wrap">' +
+            '<button type="button" class="btn btn-sm btn-outline-primary" onclick="showCrewDetail(' + row
+            .idcrewrotation + ')" title="Detail"><i class="fa fa-eye"></i></button>' +
+            statusOpt +
+            '<button type="button" class="btn btn-sm btn-outline-danger btn-delete-rotation" data-id="' +
+            row.idcrewrotation + '" title="Delete"><i class="fa fa-trash"></i></button></div>';
+        }
+      }
+    ],
+    pageLength: 50,
+    lengthMenu: [5, 10, 25, 50, 100],
+    language: {
+      lengthMenu: " _MENU_ &nbsp; Entries",
+      search: "",
+      paginate: {
+        first: "First",
+        last: "Last",
+        next: "Next",
+        previous: "Previous"
+      },
+      info: "Showing _START_ to _END_ of _TOTAL_ entries",
+      infoEmpty: "Showing 0 to 0 of 0 entries"
+    },
+    order: [
+      [0, "desc"]
+    ],
+    createdRow: function(row, data) {
+      $(row).attr("data-batch-id", (data.batch_id || "").toString());
+    },
+    drawCallback: function() {
+      var api = this.api();
+      var data = api.rows({ page: "current" }).data();
+      var nodes = api.rows({ page: "current" }).nodes();
+      if (!data.length) return;
+
+      var groups = [];
+      var g = [];
+      for (var i = 0; i < data.length; i++) {
+        var bid = (data[i].batch_id || "").toString();
+        if (g.length && g[0].batch_id !== bid) {
+          groups.push(g);
+          g = [];
+        }
+        g.push({ batch_id: bid, rowIndex: i, node: nodes[i] });
+      }
+      if (g.length) groups.push(g);
+      groups.forEach(function(grp) {
+        if (grp.length === 0) return;
+          var first = grp[0];
+          var firstNode = first.node;
+          var firstCells = firstNode.getElementsByTagName("td");
+          if (firstCells.length <= BATCH_COL_INDEX) return;
+          var batchTd = firstCells[BATCH_COL_INDEX];
+          var isCollapsed = collapsedBatches[first.batch_id];
+          
+          for (var j = 0; j < grp.length; j++) {
+            var rowCells = grp[j].node.getElementsByTagName("td");
+            if (rowCells.length > BATCH_COL_INDEX) {
+              rowCells[BATCH_COL_INDEX].style.display = "";
+            }
+          }
+
+          if (isCollapsed) {
+            for (var j = 1; j < grp.length; j++) {
+              grp[j].node.style.display = "none";
+            }
+            batchTd.rowSpan = 1;
+            batchTd.innerHTML = (first.batch_id || "-") + ' <button type="button" class="btn btn-sm btn-link p-0 batch-toggle" data-batch="' + first.batch_id.replace(/"/g, "&quot;") + '" title="Expand">+</button>';
+          } else {
+            // Tampilkan semua baris
+            for (var j = 0; j < grp.length; j++) {
+              grp[j].node.style.display = "";
+            }
+            // Set rowSpan sesuai jumlah baris
+            batchTd.rowSpan = grp.length;
+            batchTd.innerHTML = (first.batch_id || "-") + ' <button type="button" class="btn btn-sm btn-link p-0 batch-toggle" data-batch="' + first.batch_id.replace(/"/g, "&quot;") + '" title="Collapse">−</button>';
+            for (var j = 1; j < grp.length; j++) {
+              var rowCells = grp[j].node.getElementsByTagName("td");
+              if (rowCells.length > BATCH_COL_INDEX) {
+                rowCells[BATCH_COL_INDEX].style.display = "none";
+                rowCells[BATCH_COL_INDEX].innerHTML = "";
+              }
+            }
+          }
       });
-    });
 
+      $("#crewTable").off("click.batchToggle").on("click.batchToggle", ".batch-toggle", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var batch = $(this).data("batch");
+        if (!batch) return;
+        collapsedBatches[batch] = !collapsedBatches[batch];
+        table.draw(false);
+      });
+    },
+    initComplete: function() {
+      $(".dataTables_info").css({
+        padding: "10px 0",
+        color: "#6c757d",
+        "font-size": "14px"
+      });
+      $(".custom-btn").html(
+        '<button type="button" class="btn btn-primary btn-sm rounded-pill fst-italic" id="btnNewCrewRotation">' +
+        '<i class="fa fa-plus"></i> New</button>'
+      );
+      initDropdownFilters(this.api());
+    }
+  });
 
-    // Filter Dropdown Implementation
-    $('#crewTable thead th').each(function (colIndex) {
+  function initDropdownFilters(table) {
+
+    // Hanya baris header pertama (baris kedua thead adalah filter search)
+    var colCount = table.columns().count();
+    $('#crewTable thead tr:first th').each(function(colIndex) {
       let icon = $(this).find('.filter-icon');
       if (!icon.length) return;
 
-      // Skip the first column (No)
-      if (colIndex === 0) return;
+      // Skip No & Action; pastikan index dalam range kolom table
+      if (colIndex === 0 || colIndex >= colCount - 1) return;
 
-      // Create dropdown
       let dropdown = $(`
-            <div class="filter-dropdown" data-column="${colIndex}">
-                <input type="text" class="filter-search" placeholder="Search...">
-                <div class="filter-list"></div>
-                <hr>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-primary w-100 apply-filter">
-                        Apply
-                    </button>
-                  <button class="btn btn-sm btn-danger w-100 clear-filter">
-                  Clear
-                </button>
-                </div>
-            </div>
-        `).appendTo('body');
+      <div class="filter-dropdown">
+        <input type="text" class="filter-search" placeholder="Search...">
+        <div class="filter-list"></div>
+        <hr>
+        <div class="d-flex gap-2 text-center">
+          <button
+            class="btn btn-sm w-30 apply-filter rounded-pill fst-italic btn-clear-filter" id="clear-filter"> 
+            <i class="fa-solid fa-eraser"></i>
+          </button>
+        </div>
 
-           // CLEAR FILTER
-      dropdown.on('click', '.clear-filter', function (e) {
-        e.stopPropagation();
-
-        // uncheck semua checkbox
-        dropdown.find('input[type="checkbox"]').prop('checked', false);
-
-        // clear search dalam dropdown
-        dropdown.find('.filter-search').val('');
-        dropdown.find('label').show();
-
-        // clear filter DataTable kolom ini
-        table.column(colIndex).search('').draw();
-        dropdown.hide();
-    });
+      </div>
+    `).appendTo('body');
 
       let listContainer = dropdown.find('.filter-list');
 
-      // Get unique data for this column
-      let column = table.column(colIndex);
-      let uniqueData = column.data().unique().sort();
-
-      uniqueData.each(function (val) {
+      // ✅ AMBIL DATA SETELAH TABLE READY; hindari error bila column().data() undefined
+      var colData = table.column(colIndex).data();
+      if (!colData || typeof colData.unique !== 'function') return;
+      colData.unique().sort().each(function(val) {
         if (val) {
           listContainer.append(`
-                    <label>
-                        <input type="checkbox" value="${val}"> ${val}
-                    </label>
-                `);
+          <label>
+            <input type="checkbox" value="${val}"> ${val}
+          </label>
+        `);
         }
       });
 
       // Toggle dropdown
-      icon.on('click', function (e) {
+      icon.on('click', function(e) {
         e.stopPropagation();
         $('.filter-dropdown').hide();
 
@@ -768,72 +744,303 @@
         }).toggle();
       });
 
-      // Prevent dropdown from closing when clicking inside
-      dropdown.on('click', function (e) {
-        e.stopPropagation();
-      });
-
-      // Search inside filter
-      dropdown.find('.filter-search').on('keyup', function () {
+      // Search inside dropdown
+      dropdown.find('.filter-search').on('keyup', function() {
         let keyword = $(this).val().toLowerCase();
-        listContainer.find('label').each(function () {
+        listContainer.find('label').each(function() {
           $(this).toggle($(this).text().toLowerCase().includes(keyword));
         });
       });
 
-      // Clear filter
-      dropdown.on('click', '.clear-filter', function (e) {
-        e.stopPropagation();
-        dropdown.find('input[type="checkbox"]').prop('checked', false);
-        dropdown.find('.filter-search').val('');
-        dropdown.find('label').show();
 
-        table.column(colIndex).search('').draw();
-      });
-
-      // Apply filter
-      dropdown.on('click', '.apply-filter', function () {
+      dropdown.on('change', 'input[type="checkbox"]', function() {
         let selected = [];
-
-        dropdown.find('input[type="checkbox"]:checked').each(function () {
+        dropdown.find('input[type="checkbox"]:checked').each(function() {
           selected.push($(this).val());
         });
 
         if (selected.length > 0) {
-          // Escape regex special characters
-          let escapedValues = selected.map(function (value) {
-            return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-          });
+          let escapedValues = selected.map(v =>
+            v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+          );
           let regex = escapedValues.join('|');
           table.column(colIndex).search(regex, true, false).draw();
         } else {
           table.column(colIndex).search('').draw();
         }
+        dropdown.show();
+        $('.filter-dropdown').hide();
+      });
+
+
+      // Clear filter
+      dropdown.on('click', '.btn-clear-filter', function() {
+        dropdown.find('input').prop('checked', false);
+        dropdown.find('.filter-search').val('');
+        listContainer.find('label').show();
+
+        table.column(colIndex).search('').draw();
         dropdown.hide();
       });
     });
-
-    // Close dropdown when clicking outside
-    $(document).on('click', function () {
+  }
+  
+  $(document).on('click', function(e) {
+    if (!$(e.target).closest('.filter-dropdown').length && !$(e.target).closest('.filter-icon').length) {
       $('.filter-dropdown').hide();
-    });
-
-    // Function to show crew detail
-    window.showCrewDetail = function (crewNo) {
-      alert(`Showing details for crew #${crewNo}`);
-      // In actual implementation, you would show a modal or redirect
-      // $('#nextPlanVesselCard').removeClass('d-none');
-    };
-
-    // Function to export table
-    window.exportTable = function () {
-      alert('Export functionality would be implemented here');
-      // You can use DataTables Buttons extension for export
-    };
-
-    // Function to reload table
-    window.reloadTable = function () {
-      table.draw();
-    };
+    }
   });
+
+  $(document).on("change", ".status-select", function(e) {
+    var $sel = $(this);
+    var id = $sel.data("id");
+    var currentStatus = $sel.data("current");
+    var newStatus = $sel.val();
+    // Tidak ada perubahan (termasuk saat kita reset setelah tolak Joined→Submit)
+    if (newStatus === currentStatus) return;
+    if (currentStatus === "Cancel") {
+      e.preventDefault();
+      e.stopPropagation();
+      $sel.val("Cancel");
+      if (typeof Swal !== "undefined") {
+        Swal.fire({
+          icon: "info",
+          title: "Tidak dapat diubah",
+          text: "Status sudah Cancel. Harus buat data baru."
+        });
+      } else {
+        alert("Status sudah Cancel. Harus buat data baru.");
+      }
+      return false;
+    }
+    if (currentStatus === "Joined" && newStatus === "Submit") {
+      e.preventDefault();
+      e.stopPropagation();
+      $sel.val("Joined");
+      if (typeof Swal !== "undefined") {
+        Swal.fire({
+          icon: "warning",
+          title: "Tidak dapat diubah",
+          text: "Dari Joined tidak bisa kembali ke Submit. Data sudah masuk ke Contract. Hanya bisa di-Cancel jika dibatalkan."
+        });
+      } else {
+        alert("Dari Joined tidak bisa kembali ke Submit. Hanya bisa di-Cancel.");
+      }
+      return false;
+    }
+    if (newStatus === "Cancel") {
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof Swal !== "undefined") {
+        Swal.fire({
+          icon: "question",
+          title: "Ubah ke Cancel?",
+          text: "Anda yakin akan mengubah status menjadi Cancel?",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel"
+        }).then(function(result) {
+          if (result.isConfirmed) {
+            $("#remarksCancel_idcrewrotation").val(id);
+            $("#remarksCancel_input").val("");
+            $("#remarksCancel_feedback").addClass("d-none");
+            $("#modalRemarksCancel").modal("show");
+          } else {
+            $sel.val(currentStatus);
+          }
+        });
+      } else {
+        if (confirm("Ubah ke Cancel? Jika Yes, isi Remarks Cancel.")) {
+          $("#remarksCancel_idcrewrotation").val(id);
+          $("#remarksCancel_input").val("");
+          $("#remarksCancel_feedback").addClass("d-none");
+          $("#modalRemarksCancel").modal("show");
+        } else {
+          $sel.val(currentStatus);
+        }
+      }
+      return false;
+    }
+    $.post(baseUrlCrewRotation + "/updateStatus", {
+        idcrewrotation: id,
+        status: newStatus
+      })
+      .done(function(res) {
+        var r = typeof res === "string" ? JSON.parse(res) : res;
+        if (r.status) {
+          table.ajax.reload(null, false);
+          if (typeof Swal !== "undefined") Swal.fire({
+            icon: "success",
+            title: "Berhasil",
+            text: r.message
+          });
+          else alert(r.message);
+        } else {
+          if (typeof Swal !== "undefined") Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: r.message || "Update failed"
+          });
+          else alert(r.message || "Update failed");
+          $sel.val(currentStatus);
+        }
+      })
+      .fail(function() {
+        if (typeof Swal !== "undefined") Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Request failed"
+        });
+        else alert("Request failed");
+        $sel.val(currentStatus);
+      });
+  });
+
+  $("#btnSubmitRemarksCancel").on("click", function() {
+    var id = $("#remarksCancel_idcrewrotation").val();
+    var remaks = $("#remarksCancel_input").val().trim();
+    // Remarks Cancel tidak mandatory, bisa kosong
+    $.post(baseUrlCrewRotation + "/updateStatus", {
+        idcrewrotation: id,
+        status: "Cancel",
+        remaks_cancel: remaks
+      })
+      .done(function(res) {
+        var r = typeof res === "string" ? JSON.parse(res) : res;
+        $("#modalRemarksCancel").modal("hide");
+        if (r.status) {
+          table.ajax.reload(null, false);
+          if (typeof Swal !== "undefined") Swal.fire({
+            icon: "success",
+            title: "Berhasil",
+            text: r.message
+          });
+          else alert(r.message);
+        } else {
+          if (typeof Swal !== "undefined") Swal.fire({
+            icon: "error",
+            title: "error",
+            text: r.message || "Update failed"
+          });
+          else alert(r.message || "Update failed");
+        }
+      })
+      .fail(function() {
+        $("#modalRemarksCancel").modal("hide");
+        if (typeof Swal !== "undefined") Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Request failed"
+        });
+        else alert("Request failed");
+      });
+  });
+
+  $(document).on("click", ".btn-delete-rotation", function(e) {
+    e.preventDefault();
+    var id = $(this).data("id");
+    if (typeof Swal !== "undefined") {
+      Swal.fire({
+        icon: "warning",
+        title: "Hapus data?",
+        text: "Yakin akan menghapus crew rotation ini?",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Hapus",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#d33"
+      }).then(function(result) {
+        if (result.isConfirmed) {
+          $.post(baseUrlCrewRotation + "/delete_crewRotation", {
+              idcrewrotation: id
+            })
+            .done(function(res) {
+              var r = typeof res === "string" ? JSON.parse(res) : res;
+              if (r.status) {
+                table.ajax.reload(null, false);
+                Swal.fire({
+                  icon: "success",
+                  title: "Terhapus",
+                  text: r.message || "Data berhasil dihapus."
+                });
+              } else {
+                Swal.fire({
+                  icon: "error",
+                  title: "Gagal",
+                  text: r.message || "Delete failed"
+                });
+              }
+            })
+            .fail(function() {
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Request failed"
+              });
+            });
+        }
+      });
+    } else {
+      if (!confirm("Delete this crew rotation record?")) return false;
+      $.post(baseUrlCrewRotation + "/delete_crewRotation", {
+          idcrewrotation: id
+        })
+        .done(function(res) {
+          var r = typeof res === "string" ? JSON.parse(res) : res;
+          if (r.status) {
+            table.ajax.reload(null, false);
+          } else {
+            alert(r.message || "Delete failed");
+          }
+        })
+        .fail(function() {
+          alert("Request failed");
+        });
+    }
+  });
+
+  $(document).on("click", "#btnNewCrewRotation", function() {
+    $('#modalCrewRotationForm').modal('show');
+    // Destroy selectpicker sebelum ganti content (agar dropdown orphan hilang)
+    try {
+      $('#modalCrewRotationFormBody .selectpicker-on').each(function() {
+        var $el = $(this);
+        if ($el.data('selectpicker')) { $el.selectpicker('destroy'); }
+      });
+    } catch (e) { /* ignore */ }
+    $('#modalCrewRotationFormBody').html('<div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+    $.ajax({
+      url: baseUrlCrewRotation + "/detail",
+      type: "GET",
+      success: function(html) {
+        try {
+          $('body > .bootstrap-select, body > .dropdown.bootstrap-select').remove();
+          $('#modalCrewRotationForm .bootstrap-select').not('#modalCrewRotationFormBody .bootstrap-select').remove();
+        } catch (e) { /* ignore */ }
+        $('#modalCrewRotationFormBody').html(html);
+      },
+      error: function() {
+        $('#modalCrewRotationFormBody').html('<div class="alert alert-danger">Gagal memuat form</div>');
+      }
+    });
+  });
+  
+  // Event handler untuk reload table setelah save
+  $(document).on('crewRotationSaved', function() {
+    if (typeof table !== 'undefined') {
+      table.ajax.reload(null, false);
+    }
+  });
+  
+  // Column search (baris search di bawah header)
+  $("#crewTable thead tr:last th").each(function(i) {
+    var $input = $(this).find("input.column-search");
+    if (!$input.length) return;
+    $input.on("keyup change", function() {
+      if (table.column(i).search() !== this.value) {
+        table.column(i).search(this.value).draw();
+      }
+    });
+  });
+
+});
 </script>

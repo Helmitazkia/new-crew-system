@@ -189,7 +189,7 @@
       </div>
 
       <div class="col-lg-2 col-xs-12">
-        <div class="card shadow-sm h-100">
+        <div class="card shadow-sm h-100" id="crewStatusCard">
           <div class="card-header d-flex justify-content-between align-items-center">
             <span class="fw-semibold fst-italic">🟢 Crew Status</span>
 
@@ -208,15 +208,30 @@
 
           <div class="card-body small">
             <div class="row g-2">
-              <div class="col-12">
-                <label class="form-label mb-0 fst-italic fw-semibold">Crew Status</label>
-                <div class="form-view fst-italic">New Applicant</div>
-                <select class="form-select form-edit d-none">
-                  <option selected>New Applicant</option>
-                  <option>Non Aktif</option>
-                  <option>Not for Employed</option>
-                  <option>Non Crew</option>
-                </select>
+              <div class="col-12 form-view" id="crewStatusViewSummary">
+                <label class="form-label mb-1 fst-italic fw-semibold">Crew Status</label>
+                <div class="fst-italic" id="crewStatusSummaryText">-</div>
+              </div>
+              <div class="col-12 form-edit d-none">
+                <label class="form-label mb-1 fst-italic fw-semibold">Crew Status</label>
+                <div class="d-flex flex-column gap-1">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="crewStatus_newApplicant" data-field="crewStatus.newApplicant">
+                    <label class="form-check-label fst-italic" for="crewStatus_newApplicant">New Applicant</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="crewStatus_nonAktif" data-field="crewStatus.nonAktif">
+                    <label class="form-check-label fst-italic" for="crewStatus_nonAktif">Non Aktif</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="crewStatus_blackList" data-field="crewStatus.blackList">
+                    <label class="form-check-label fst-italic" for="crewStatus_blackList">Not for Employed</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="crewStatus_nonCrew" data-field="crewStatus.nonCrew">
+                    <label class="form-check-label fst-italic" for="crewStatus_nonCrew">Non Crew</label>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1123,8 +1138,142 @@
             </div>
           </div>
 
+          <!-- Category Personal ID (below Declaration & Signature) -->
+          <div class="card shadow-sm mt-3" id="personalDocCard">
+            <div class="card-header d-flex justify-content-between align-items-center p-9">
+              <span class="fw-semibold fst-italic">🪪 Personal ID</span>
+              <button type="button" class="btn btn-sm btn-primary" id="btnNewPersonalDoc">
+                <i class="fa fa-plus"></i> Add
+              </button>
+            </div>
+            <div class="card-body small">
+              <div class="table-responsive">
+                <table id="personalDocTable" class="table table-bordered align-middle mb-0 crew-table" style="width:100%;font-size:12px;">
+                  <thead class="crew-header">
+                    <tr>
+                      <th class="text-center">No</th>
+                      <th>Type of Document ID</th>
+                      <th>Country of Issue</th>
+                      <th>No Doc</th>
+                      <th>Date of Issue</th>
+                      <th>Issue at (Place)</th>
+                      <th>Valid Until</th>
+                      <th class="text-center">Action</th>
+                    </tr>
+                  </thead>
+                  <thead>
+                    <tr class="personal-doc-search-row">
+                      <th></th>
+                      <th><input type="text" class="form-control form-control-sm column-search" placeholder="Search"></th>
+                      <th><input type="text" class="form-control form-control-sm column-search" placeholder="Search"></th>
+                      <th><input type="text" class="form-control form-control-sm column-search" placeholder="Search"></th>
+                      <th><input type="text" class="form-control form-control-sm column-search" placeholder="Search"></th>
+                      <th><input type="text" class="form-control form-control-sm column-search" placeholder="Search"></th>
+                      <th><input type="text" class="form-control form-control-sm column-search" placeholder="Search"></th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
 
+          <!-- Modal Add/Edit Personal Doc -->
+          <div class="modal fade" id="personalDocModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header text-white" style="background-color:#000099;">
+                  <h5 class="modal-title" id="personalDocModalTitle">Add Personal Document</h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="personalDocForm">
+                    <input type="hidden" name="idperdoc" id="personalDoc_idperdoc">
+                    <input type="hidden" name="idperson" id="personalDoc_idperson">
+                    <div class="row g-2">
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Kd Cert</label>
+                        <input type="text" class="form-control" name="kdcert" id="personalDoc_kdcert" placeholder="Optional">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Type of Document ID <span class="text-danger">*</span></label>
+                        <select class="form-control" name="doctp" id="personalDoc_doctp">
+                          <option value="KTP">KTP</option>
+                          <option value="KK">KK</option>
+                          <option value="NPWP">NPWP</option>
+                          <option value="NOMOR REKENING">NOMOR REKENING</option>
+                          <option value="SEAMAN BOOK">SEAMAN BOOK</option>
+                          <option value="PASSPORT">PASSPORT</option>
+                        </select>
+                        <!-- <input type="text" class="form-control" name="doctp" id="personalDoc_doctp" placeholder="e.g. Passport, KTP"> -->
+                        <small id="personalDoc_doctpFeedback" class="text-danger d-none">Type of Document ID is required</small>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Country of Issue</label>
+                        <select class="form-control" name="docissctryid" id="personalDoc_docissctryid">
+                          <option value="">- Select -</option>
+                          <?php echo isset($optCountry) ? $optCountry : ''; ?>
+                        </select>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">No Doc <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" name="docno" id="personalDoc_docno" placeholder="Document number">
+                        <small id="personalDoc_docnoFeedback" class="text-danger d-none">No Doc is required</small>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Date of Issue <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" name="docissdt" id="personalDoc_docissdt">
+                        <small id="personalDoc_docissdtFeedback" class="text-danger d-none">Date of Issue is required</small>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Issue at (Place)</label>
+                        <input type="text" class="form-control" name="docissplc" id="personalDoc_docissplc" placeholder="Place of issue">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Valid Until <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" name="docexpdt" id="personalDoc_docexpdt">
+                        <small id="personalDoc_docexpdtFeedback" class="text-danger d-none">Valid Until is required</small>
+                        <small id="personalDoc_docexpdtFeedbackDate" class="text-danger d-none">Valid Until must be on or after Date of Issue</small>
+                      </div>
+                      <div class="col-12 mt-2">
+                        <label class="form-label fw-semibold">Document File (optional)</label>
+                        <input type="file" class="form-control" name="doc_file" id="personalDoc_doc_file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif">
+                        <small class="text-muted">PDF or image. Leave empty to keep existing file.</small>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-primary" id="btnSavePersonalDoc">Save</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
+          <!-- Modal Upload Personal Doc File -->
+          <div class="modal fade" id="uploadPersonalDocModal" tabindex="-1">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header text-white" style="background-color:#000099;">
+                  <h5 class="modal-title">Upload Document File</h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <input type="hidden" id="uploadPersonalDoc_idperdoc">
+                  <input type="hidden" id="uploadPersonalDoc_idperson">
+                  <label class="form-label fw-semibold">Select file (PDF/Image)</label>
+                  <input type="file" class="form-control" id="file_personaldoc_upload" name="file_personaldoc" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif">
+                  <small id="file_personaldoc_uploadFeedback" class="text-danger d-none">Please select a file</small>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-primary" id="btnUploadPersonalDoc">Upload</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
         </div>
       </div>
@@ -1157,6 +1306,28 @@
       .profile-content select {
         font-size: 13px;
       }
+
+      /* Personal ID table - sama seperti Experience */
+      #personalDocTable.crew-table .crew-header th {
+        background-color: #000099 !important;
+        color: #fff !important;
+        font-size: 12px;
+        border-color: rgba(255,255,255,0.2);
+      }
+      #personalDocTable .personal-doc-search-row th {
+        padding: 6px 4px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+      }
+      /* Hilangkan ikon sort di header DataTables */
+      #personalDocTable thead.crew-header th.sorting,
+      #personalDocTable thead.crew-header th.sorting_asc,
+      #personalDocTable thead.crew-header th.sorting_desc {
+        background-color: #000099 !important;
+        color: #fff !important;
+      }
+        .contract-no-icon { font-size: 1rem !important; width: 1.25em; text-align: center; }
+        .contract-no-filelink .contract-no-icon { margin-right: 2px; }
     </style>
 
     <script>
@@ -1242,13 +1413,20 @@
 
             // console.log('CHECKBOX', field, '=>', value);
 
-            $(this).prop('checked', value == 1);
+            $(this).prop('checked', value == 1 || value === true);
 
           });
 
-
-
         });
+
+        // Crew Status summary (view mode)
+        var cs = data.crewStatus || {};
+        var labels = [];
+        if (cs.newApplicant) labels.push('New Applicant');
+        if (cs.nonAktif) labels.push('Non Aktif');
+        if (cs.blackList) labels.push('Not for Employed');
+        if (cs.nonCrew) labels.push('Non Crew');
+        $('#crewStatusSummaryText').text(labels.length ? labels.join(', ') : '-');
 
         // FOTO
         if (data.files && data.files.photo) {
@@ -1366,6 +1544,49 @@
           });
         }
 
+      });
+    </script>
+
+    <script>
+      /* Crew Status (mstpersonal: inAktif, inBlacklist, newapplicent, noncrew) */
+      $(document).ready(function () {
+        var id_person = "<?php echo $idperson; ?>";
+
+        $('#crewStatusCard .btn-save').click(function () {
+          var idperson = $('#contentArea').data('idperson') || id_person;
+          var data = {
+            idperson: idperson,
+            inAktif: $('#crewStatus_nonAktif').is(':checked') ? '1' : '0',
+            inBlacklist: $('#crewStatus_blackList').is(':checked') ? '1' : '0',
+            newapplicent: $('#crewStatus_newApplicant').is(':checked') ? '1' : '0',
+            noncrew: $('#crewStatus_nonCrew').is(':checked') ? '1' : '0'
+          };
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/updateCrewStatus'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+              if (res.status) {
+                loadProfile(id_person);
+                var card = $('#crewStatusCard');
+                card.find('.form-view').removeClass('d-none');
+                card.find('.form-edit').addClass('d-none');
+                card.find('.btn-edit').removeClass('d-none');
+                card.find('.btn-save, .btn-cancel').addClass('d-none');
+                if (typeof Swal !== 'undefined') Swal.fire({ icon: 'success', title: 'Saved', text: res.message });
+                else alert(res.message);
+              } else {
+                if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: res.message || 'Failed to update crew status' });
+                else alert(res.message || 'Failed to update crew status');
+              }
+            },
+            error: function (xhr, status, error) {
+              if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update crew status' });
+              else alert('Failed to update crew status');
+            }
+          });
+        });
       });
     </script>
 
@@ -1931,5 +2152,288 @@
             }
           });
         }
+      });
+    </script>
+
+    <script>
+      /* Category Personal ID - DataTables & CRUD */
+      $(document).ready(function () {
+        var idperson = $('#contentArea').data('idperson');
+        if (!idperson) return;
+
+        function fmtDate(val) {
+          if (!val || val === '0000-00-00' || val === '') return '-';
+          var d = new Date(val);
+          if (isNaN(d.getTime())) return val;
+          return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        var personalDocTable = $('#personalDocTable').DataTable({
+          dom: "<'row mb-2'<'col-md-6'l><'col-md-6 text-end'f>>" +
+               "<'row'<'col-md-12'tr>>" +
+               "<'row mt-2'<'col-md-8'i><'col-md-4 text-end'p>>",
+          processing: true,
+          serverSide: false,
+          searching: true,
+          paging: true,
+          ordering: false,
+          info: true,
+          lengthChange: true,
+          pageLength: 10,
+          lengthMenu: [10, 25, 50, 100],
+          ajax: {
+            url: "<?php echo base_url('PersonDetail/getPersonalDocList'); ?>",
+            type: "GET",
+            data: { idperson: idperson },
+            dataSrc: function (json) {
+              if (json.success) return json.data;
+              return [];
+            }
+          },
+          columns: [
+            {
+              data: null,
+              className: 'text-center',
+              orderable: false,
+              render: function (data, type, row, meta) {
+                var no = meta.row + 1;
+                var below = '';
+                if (row.doc_file && row.doc_file.trim() !== '') {
+                  below = '<div class="mt-1"><a href="<?php echo base_url("uploadFile"); ?>/' + row.doc_file + '" target="_blank" class="text-primary small contract-no-filelink" title="View file"><i class="fa-solid fa-book contract-no-icon"></i></a></div>';
+                } else {
+                  below = '<div class="mt-1"><button type="button" class="btn btn-sm btn-outline-info p-1 btn-upload-personaldoc" data-id="' + row.idperdoc + '" data-idperson="' + row.idperson + '" title="Upload File"><i class="fa fa-upload contract-no-icon"></i></button></div>';
+                }
+                return '<div>' + no + below + '</div>';
+              }
+            },
+            { data: 'doctp' },
+            { data: 'country_issue' },
+            { data: 'docno' },
+            { data: 'docissdt', render: function (d) { return fmtDate(d); } },
+            { data: 'docissplc' },
+            { data: 'docexpdt', render: function (d) { return fmtDate(d); } },
+            {
+              data: null,
+              orderable: false,
+              searchable: false,
+              className: 'text-center',
+              render: function (data, type, row) {
+                return '<button type="button" class="btn btn-sm btn-outline-primary btn-edit-personaldoc" data-id="' + row.idperdoc + '" title="Edit"><i class="fa fa-edit"></i></button> ' +
+                       '<button type="button" class="btn btn-sm btn-outline-danger btn-delete-personaldoc" data-id="' + row.idperdoc + '" title="Delete"><i class="fa fa-trash"></i></button>';
+              }
+            }
+          ],
+          initComplete: function () {
+            $('#personalDocTable thead tr:eq(1) th').each(function (i) {
+              var that = this;
+              $('input', this).off('keyup change').on('keyup change', function () {
+                if (personalDocTable.column(i).search() !== this.value) {
+                  personalDocTable.column(i).search(this.value).draw();
+                }
+              });
+            });
+          },
+          language: {
+            emptyTable: "No personal document data",
+            zeroRecords: "No matching data found",
+            lengthMenu: '_MENU_ &nbsp;Entries',
+            info: 'Showing _START_ to _END_ of _TOTAL_ entries',
+            infoEmpty: 'Showing 0 to 0 of 0 entries',
+            infoFiltered: '(filtered from _MAX_ total entries)',
+            search: 'Search:'
+          }
+        });
+
+        function hidePersonalDocFeedback() {
+          $('#personalDoc_doctpFeedback,#personalDoc_docnoFeedback,#personalDoc_docissdtFeedback,#personalDoc_docexpdtFeedback,#personalDoc_docexpdtFeedbackDate').addClass('d-none');
+          $('#personalDoc_doctp,#personalDoc_docno,#personalDoc_docissdt,#personalDoc_docexpdt').removeClass('is-invalid');
+        }
+
+        function validatePersonalDocForm() {
+          var ok = true;
+          hidePersonalDocFeedback();
+          if (!$('#personalDoc_doctp').val().trim()) {
+            $('#personalDoc_doctpFeedback').removeClass('d-none');
+            $('#personalDoc_doctp').addClass('is-invalid');
+            ok = false;
+          }
+          if (!$('#personalDoc_docno').val().trim()) {
+            $('#personalDoc_docnoFeedback').removeClass('d-none');
+            $('#personalDoc_docno').addClass('is-invalid');
+            ok = false;
+          }
+          if (!$('#personalDoc_docissdt').val()) {
+            $('#personalDoc_docissdtFeedback').removeClass('d-none');
+            $('#personalDoc_docissdt').addClass('is-invalid');
+            ok = false;
+          }
+          if (!$('#personalDoc_docexpdt').val()) {
+            $('#personalDoc_docexpdtFeedback').removeClass('d-none');
+            $('#personalDoc_docexpdt').addClass('is-invalid');
+            ok = false;
+          }
+          var dateIssue = $('#personalDoc_docissdt').val();
+          var validUntil = $('#personalDoc_docexpdt').val();
+          if (dateIssue && validUntil && validUntil < dateIssue) {
+            $('#personalDoc_docexpdtFeedbackDate').removeClass('d-none');
+            $('#personalDoc_docexpdt').addClass('is-invalid');
+            ok = false;
+          }
+          return ok;
+        }
+
+        $('#btnNewPersonalDoc').on('click', function () {
+          $('#personalDocForm')[0].reset();
+          $('#personalDoc_idperdoc').val('');
+          $('#personalDoc_idperson').val(idperson);
+          hidePersonalDocFeedback();
+          $('#personalDocModalTitle').text('Add Personal Document');
+          $('#personalDocModal').modal('show');
+        });
+
+        $('#personalDocTable').on('click', '.btn-edit-personaldoc', function () {
+          var id = $(this).data('id');
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/getPersonalDoc'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: { id: id, idperson: idperson },
+            success: function (res) {
+              if (!res.status) {
+                alert(res.message || 'Data not found');
+                return;
+              }
+              var d = res.data;
+              $('#personalDoc_idperdoc').val(d.idperdoc);
+              $('#personalDoc_idperson').val(d.idperson);
+              $('#personalDoc_kdcert').val(d.kdcert || '');
+              $('#personalDoc_doctp').val(d.doctp || '');
+              $('#personalDoc_docissctryid').val(d.docissctryid || '');
+              $('#personalDoc_docno').val(d.docno || '');
+              $('#personalDoc_docissdt').val(d.docissdt || '');
+              $('#personalDoc_docissplc').val(d.docissplc || '');
+              $('#personalDoc_docexpdt').val(d.docexpdt || '');
+              hidePersonalDocFeedback();
+              $('#personalDoc_doc_file').val('');
+              $('#personalDocModalTitle').text('Edit Personal Document');
+              $('#personalDocModal').modal('show');
+            }
+          });
+        });
+
+        $('#personalDocTable').on('click', '.btn-delete-personaldoc', function () {
+          var id = $(this).data('id');
+          if (!confirm('Delete this personal document?')) return;
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/deletePersonalDoc'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: { id: id, idperson: idperson },
+            success: function (res) {
+              if (res.status) {
+                personalDocTable.ajax.reload(null, false);
+                if (typeof Swal !== 'undefined') Swal.fire({ icon: 'success', title: 'Deleted', text: res.message });
+                else alert(res.message);
+              } else {
+                if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: res.message });
+                else alert(res.message);
+              }
+            }
+          });
+        });
+
+        $('#btnSavePersonalDoc').on('click', function () {
+          if (!validatePersonalDocForm()) return;
+          var fileInput = $('#personalDoc_doc_file')[0];
+          var hasFile = fileInput.files && fileInput.files.length > 0;
+          var ajaxOpt = {
+            url: "<?php echo base_url('PersonDetail/savePersonalDoc'); ?>",
+            type: "POST",
+            dataType: "json",
+            success: function (res) {
+              if (res.status) {
+                personalDocTable.ajax.reload(null, false);
+                $('#personalDocModal').modal('hide');
+                $('#personalDoc_doc_file').val('');
+                if (typeof Swal !== 'undefined') Swal.fire({ icon: 'success', title: 'Saved', text: res.message });
+                else alert(res.message);
+              } else {
+                if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: res.message });
+                else alert(res.message);
+              }
+            }
+          };
+          if (hasFile) {
+            var formData = new FormData();
+            formData.append('idperdoc', $('#personalDoc_idperdoc').val());
+            formData.append('idperson', $('#personalDoc_idperson').val());
+            formData.append('kdcert', $('#personalDoc_kdcert').val().trim());
+            formData.append('doctp', $('#personalDoc_doctp').val().trim());
+            formData.append('docissctryid', $('#personalDoc_docissctryid').val());
+            formData.append('docno', $('#personalDoc_docno').val().trim());
+            formData.append('docissdt', $('#personalDoc_docissdt').val());
+            formData.append('docissplc', $('#personalDoc_docissplc').val().trim());
+            formData.append('docexpdt', $('#personalDoc_docexpdt').val());
+            formData.append('doc_file', fileInput.files[0]);
+            ajaxOpt.data = formData;
+            ajaxOpt.processData = false;
+            ajaxOpt.contentType = false;
+          } else {
+            ajaxOpt.data = {
+              idperdoc: $('#personalDoc_idperdoc').val(),
+              idperson: $('#personalDoc_idperson').val(),
+              kdcert: $('#personalDoc_kdcert').val().trim(),
+              doctp: $('#personalDoc_doctp').val().trim(),
+              docissctryid: $('#personalDoc_docissctryid').val(),
+              docno: $('#personalDoc_docno').val().trim(),
+              docissdt: $('#personalDoc_docissdt').val(),
+              docissplc: $('#personalDoc_docissplc').val().trim(),
+              docexpdt: $('#personalDoc_docexpdt').val()
+            };
+          }
+          $.ajax(ajaxOpt);
+        });
+
+        $('#personalDocTable').on('click', '.btn-upload-personaldoc', function () {
+          $('#uploadPersonalDoc_idperdoc').val($(this).data('id'));
+          $('#uploadPersonalDoc_idperson').val($(this).data('idperson'));
+          $('#file_personaldoc_upload').val('');
+          $('#file_personaldoc_uploadFeedback').addClass('d-none');
+          $('#uploadPersonalDocModal').modal('show');
+        });
+
+        $('#btnUploadPersonalDoc').on('click', function () {
+          var fileInput = $('#file_personaldoc_upload')[0];
+          if (!fileInput.files || !fileInput.files.length) {
+            $('#file_personaldoc_uploadFeedback').removeClass('d-none');
+            $('#file_personaldoc_upload').addClass('is-invalid');
+            return;
+          }
+          $('#file_personaldoc_uploadFeedback').addClass('d-none');
+          $('#file_personaldoc_upload').removeClass('is-invalid');
+          var formData = new FormData();
+          formData.append('idperdoc', $('#uploadPersonalDoc_idperdoc').val());
+          formData.append('idperson', $('#uploadPersonalDoc_idperson').val());
+          formData.append('file_personaldoc', fileInput.files[0]);
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/uploadPersonalDocFile'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (r) {
+              if (r.status) {
+                $('#uploadPersonalDocModal').modal('hide');
+                personalDocTable.ajax.reload(null, false);
+                if (typeof Swal !== 'undefined') Swal.fire({ icon: 'success', title: 'Uploaded', text: r.message });
+                else alert(r.message);
+              } else {
+                if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: r.message });
+                else alert(r.message);
+              }
+            }
+          });
+        });
       });
     </script>
