@@ -4,12 +4,21 @@
       <!-- FOTO -->
       <div class="col-lg-3 col-md-4 col-sm-12 text-center">
         <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <img src="<?php echo base_url('assets/img/banner/andhika-lines.png'); ?>" class="img-fluid rounded mb-3"
-              alt="Crew Photo">
-            <h6 class="fw-bold mb-0 crew-name" data-field="identity.fullName">A. LOLO</h6>
-            <small class="text-muted crew-id" data-field="identity.idperson">ID : 004059</small>
+          <div class="card-body position-relative">
+            <div class="crew-photo-wrap position-relative mb-3">
+              <img class="img-fluid rounded d-block mx-auto" style="max-height: 240px; object-fit: cover;"
+                alt="Crew Photo" data-field="identity.pictureProfile" id="crewPhoto" src="">
+            </div>
+            <div id="profilePhotoAlert" class="alert alert-success small py-2 d-none mb-0"></div>
+            <h6 class="fw-bold mb-0 crew-name" data-field="identity.fullName"></h6>
+            <small class="text-muted crew-id" data-field="identity.idperson"></small>
 
+             <input type="file" id="profilePhotoInput" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp" class="d-none">
+              <div class="text-center mt-2">
+                <button type="button" class="btn btn-sm btn-outline-primary" id="btnEditPhoto" title="Edit Foto">
+                  <i class="fa fa-camera"></i> Edit Foto
+                </button>
+              </div>
           </div>
         </div>
       </div>
@@ -1428,11 +1437,12 @@
         if (cs.nonCrew) labels.push('Non Crew');
         $('#crewStatusSummaryText').text(labels.length ? labels.join(', ') : '-');
 
-        // FOTO
-        if (data.files && data.files.photo) {
+        // FOTO (pictureProfile ada di data.identity)
+        var pic = (data.identity && data.identity.pictureProfile) ? data.identity.pictureProfile : (data.pictureProfile || '');
+        if (pic) {
           $('#crewPhoto').attr(
             'src',
-            "<?php echo base_url('uploads/crew/'); ?>" + data.files.photo
+            "<?php echo base_url('imgProfile');?>/" + pic
           );
         }
 
@@ -1462,6 +1472,50 @@
       }
     </script>
 
+    <script>
+      /* Edit / Upload Foto Profil */
+      $(document).ready(function () {
+        var id_person = "<?php echo $idperson; ?>";
+        var baseUrlImg = "<?php echo base_url('imgProfile'); ?>/";
+        $('#btnEditPhoto').on('click', function () {
+          $('#profilePhotoInput').trigger('click');
+        });
+        $('#profilePhotoInput').on('change', function () {
+          var file = this.files[0];
+          if (!file) return;
+          var fd = new FormData();
+          fd.append('idperson', id_person);
+          fd.append('profile_photo', file);
+          $('#profilePhotoAlert').addClass('d-none');
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/uploadProfilePhoto'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: fd,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+              if (res.status && res.pictureProfile) {
+                $('#crewPhoto').attr('src', baseUrlImg + res.pictureProfile);
+                $('#profilePhotoAlert').removeClass('d-none').text(res.message).addClass('alert-success').removeClass('alert-danger');
+                setTimeout(function () { $('#profilePhotoAlert').addClass('d-none'); }, 3000);
+              } else {
+                $('#profilePhotoAlert').removeClass('d-none').text(res.message || 'Upload gagal').addClass('alert-danger').removeClass('alert-success');
+              }
+            },
+            error: function (xhr) {
+              var msg = 'Upload gagal';
+              try {
+                var r = JSON.parse(xhr.responseText);
+                if (r.message) msg = r.message;
+              } catch (e) {}
+              $('#profilePhotoAlert').removeClass('d-none').text(msg).addClass('alert-danger').removeClass('alert-success');
+            }
+          });
+          this.value = '';
+        });
+      });
+    </script>
 
     <script>
       /*Actin Basic Identity Save*/

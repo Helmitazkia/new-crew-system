@@ -227,7 +227,7 @@ $(document).ready(function() {
           if (row.certificate_file) {
             return '<a href="<?php echo base_url("uploadCertificate"); ?>/' +
               row.certificate_file +
-              '" target="_blank">' + data + '</a>';
+              '" target="_blank" style="color: black; text-decoration: none;">' + data + '</a>';
           }
           return data;
         }
