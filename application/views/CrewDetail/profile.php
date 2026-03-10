@@ -189,7 +189,7 @@
       </div>
 
       <div class="col-lg-2 col-xs-12">
-        <div class="card shadow-sm h-100">
+        <div class="card shadow-sm h-100" id="crewStatusCard">
           <div class="card-header d-flex justify-content-between align-items-center">
             <span class="fw-semibold fst-italic">🟢 Crew Status</span>
 
@@ -208,15 +208,30 @@
 
           <div class="card-body small">
             <div class="row g-2">
-              <div class="col-12">
-                <label class="form-label mb-0 fst-italic fw-semibold">Crew Status</label>
-                <div class="form-view fst-italic">New Applicant</div>
-                <select class="form-select form-edit d-none">
-                  <option selected>New Applicant</option>
-                  <option>Non Aktif</option>
-                  <option>Not for Employed</option>
-                  <option>Non Crew</option>
-                </select>
+              <div class="col-12 form-view" id="crewStatusViewSummary">
+                <label class="form-label mb-1 fst-italic fw-semibold">Crew Status</label>
+                <div class="fst-italic" id="crewStatusSummaryText">-</div>
+              </div>
+              <div class="col-12 form-edit d-none">
+                <label class="form-label mb-1 fst-italic fw-semibold">Crew Status</label>
+                <div class="d-flex flex-column gap-1">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="crewStatus_newApplicant" data-field="crewStatus.newApplicant">
+                    <label class="form-check-label fst-italic" for="crewStatus_newApplicant">New Applicant</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="crewStatus_nonAktif" data-field="crewStatus.nonAktif">
+                    <label class="form-check-label fst-italic" for="crewStatus_nonAktif">Non Aktif</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="crewStatus_blackList" data-field="crewStatus.blackList">
+                    <label class="form-check-label fst-italic" for="crewStatus_blackList">Not for Employed</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="crewStatus_nonCrew" data-field="crewStatus.nonCrew">
+                    <label class="form-check-label fst-italic" for="crewStatus_nonCrew">Non Crew</label>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1398,13 +1413,20 @@
 
             // console.log('CHECKBOX', field, '=>', value);
 
-            $(this).prop('checked', value == 1);
+            $(this).prop('checked', value == 1 || value === true);
 
           });
 
-
-
         });
+
+        // Crew Status summary (view mode)
+        var cs = data.crewStatus || {};
+        var labels = [];
+        if (cs.newApplicant) labels.push('New Applicant');
+        if (cs.nonAktif) labels.push('Non Aktif');
+        if (cs.blackList) labels.push('Not for Employed');
+        if (cs.nonCrew) labels.push('Non Crew');
+        $('#crewStatusSummaryText').text(labels.length ? labels.join(', ') : '-');
 
         // FOTO
         if (data.files && data.files.photo) {
@@ -1522,6 +1544,49 @@
           });
         }
 
+      });
+    </script>
+
+    <script>
+      /* Crew Status (mstpersonal: inAktif, inBlacklist, newapplicent, noncrew) */
+      $(document).ready(function () {
+        var id_person = "<?php echo $idperson; ?>";
+
+        $('#crewStatusCard .btn-save').click(function () {
+          var idperson = $('#contentArea').data('idperson') || id_person;
+          var data = {
+            idperson: idperson,
+            inAktif: $('#crewStatus_nonAktif').is(':checked') ? '1' : '0',
+            inBlacklist: $('#crewStatus_blackList').is(':checked') ? '1' : '0',
+            newapplicent: $('#crewStatus_newApplicant').is(':checked') ? '1' : '0',
+            noncrew: $('#crewStatus_nonCrew').is(':checked') ? '1' : '0'
+          };
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/updateCrewStatus'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+              if (res.status) {
+                loadProfile(id_person);
+                var card = $('#crewStatusCard');
+                card.find('.form-view').removeClass('d-none');
+                card.find('.form-edit').addClass('d-none');
+                card.find('.btn-edit').removeClass('d-none');
+                card.find('.btn-save, .btn-cancel').addClass('d-none');
+                if (typeof Swal !== 'undefined') Swal.fire({ icon: 'success', title: 'Saved', text: res.message });
+                else alert(res.message);
+              } else {
+                if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: res.message || 'Failed to update crew status' });
+                else alert(res.message || 'Failed to update crew status');
+              }
+            },
+            error: function (xhr, status, error) {
+              if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update crew status' });
+              else alert('Failed to update crew status');
+            }
+          });
+        });
       });
     </script>
 

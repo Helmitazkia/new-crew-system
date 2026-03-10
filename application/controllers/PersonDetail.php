@@ -414,6 +414,38 @@ class PersonDetail extends CI_Controller {
     }
 
 
+    public function updateCrewStatus() {
+        $idperson = $this->input->post('idperson');
+        $inAktif = $this->input->post('inAktif');
+        $inBlacklist = $this->input->post('inBlacklist');
+        $newapplicent = $this->input->post('newapplicent');
+        $noncrew = $this->input->post('noncrew');
+
+        if (!$idperson) {
+            echo json_encode(array('status' => false, 'message' => 'ID Person is required'));
+            return;
+        }
+
+        $data = array(
+            'inAktif' => ($inAktif === '1') ? '1' : '0',
+            'inBlacklist' => ($inBlacklist === '1') ? '1' : '0',
+            'newapplicent' => ($newapplicent === '1') ? '1' : '0',
+            'noncrew' => ($noncrew === '1') ? '1' : '0'
+        );
+
+        $this->db->where('idperson', $idperson);
+        $this->db->where('deletests', '0');
+        $this->db->update('mstpersonal', $data);
+
+        $checkPerson = $this->db->get_where('mstpersonal', array('idperson' => $idperson, 'deletests' => '0'))->row();
+        if (!$checkPerson) {
+            echo json_encode(array('status' => false, 'message' => 'Person data not found'));
+            return;
+        }
+        echo json_encode(array('status' => true, 'message' => 'Crew status updated successfully'));
+    }
+
+
     public function updateFamilyInfo() {
         $idperson = $this->input->post('idperson');
         $fatherName = $this->input->post('fatherName');
