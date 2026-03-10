@@ -156,7 +156,8 @@ class PersonDetail extends CI_Controller {
                 : '',
                 'pob'           => $dataContext->getCityNameById($row->pob),
                 'religion'      => $row->religion,
-                'maritalStatus' => $row->maritalstsid
+                'maritalStatus' => $row->maritalstsid,
+                'pictureProfile'         => $row->pic
             ),
 
             /* ================= FAMILY ================= */
@@ -1163,6 +1164,80 @@ class PersonDetail extends CI_Controller {
 
         $this->output->set_content_type('application/json')->set_output(
             json_encode(array('status' => true, 'message' => 'File uploaded successfully', 'doc_file' => $fileUploadNya))
+        );
+    }
+
+    /**
+     * Upload foto profil crew. Simpan ke folder imgProfile dan update mstpersonal.pic.
+     */
+    public function uploadProfilePhoto()
+    {
+        $idperson = $this->input->post('idperson');
+        if (empty($idperson)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'idperson required'))
+            );
+            return;
+        }
+        if (empty($_FILES['profile_photo']['name'])) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'Pilih file foto terlebih dahulu'))
+            );
+            return;
+        }
+
+        $allowedExt = array('jpg', 'jpeg', 'png', 'gif', 'webp');
+        $ext = strtolower(pathinfo($_FILES['profile_photo']['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, $allowedExt)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'Hanya file gambar (JPG, PNG, GIF, WebP) yang diizinkan'))
+            );
+            return;
+        }
+        if (@getimagesize($_FILES['profile_photo']['tmp_name']) === false) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'File bukan gambar valid'))
+            );
+            return;
+        }
+
+        $dataContext = new DataContext();
+        $dir = FCPATH . 'imgProfile';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        $fileName = $_FILES['profile_photo']['name'];
+        $newFileName = 'pic_' . $idperson . '_' . time() . '.' . $ext;
+        $fileUploadNya = $dataContext->uploadFile(
+            $_FILES['profile_photo']['tmp_name'],
+            $dir,
+            $fileName,
+            $newFileName
+        );
+
+        if ($fileUploadNya == '') {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'Upload gagal'))
+            );
+            return;
+        }
+
+        $username = $this->session->userdata('username') ?: 'system';
+        $currentDate = date('Y-m-d H:i:s');
+        $this->db->where('idperson', $idperson);
+        $this->db->where('deletests', '0');
+        $this->db->update('mstpersonal', array(
+            'pic' => $fileUploadNya,
+            'updusrdt' => $currentDate . ' - ' . $username
+        ));
+
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array(
+                'status' => true,
+                'message' => 'Foto profil berhasil diunggah',
+                'pictureProfile' => $fileUploadNya
+            ))
         );
     }
 
