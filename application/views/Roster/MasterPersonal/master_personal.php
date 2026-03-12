@@ -74,7 +74,7 @@ $(document).ready(function() {
         data: 'fullName',
         render: function(data, type, row) {
           if (type === 'display') {
-            return `<span class="text-dark" style="cursor: pointer;" onclick="showCrewDetail('${row.idperson}')">${data}</span>`;
+            return `<span class="crew-name-link text-dark" onclick="showCrewDetail('${row.idperson}')">${data}</span>`;
           }
           return data; // <-- penting buat filter
         }
@@ -152,7 +152,7 @@ $(document).ready(function() {
             return `
                 <button class="btn btn-sm btn-outline-primary"
                   onclick="showCrewDetail('${row.idperson}')">
-                  <i class="fa fa-eye"></i>
+                  <i class="fa fa-edit"></i>
                 </button>`;
           }
           return '';
@@ -352,6 +352,20 @@ $(document).on('click', function(e) {
 .crew-header-group {
   background-color: var(--crew-blue) !important;
   color: #fff !important;
+}
+
+/* Nama crew: outline/garis saat hover */
+.crew-name-link {
+  cursor: pointer;
+  outline: none;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  border-radius: 3px;
+  transition: outline 0.15s ease, box-shadow 0.15s ease;
+}
+.crew-name-link:hover {
+  outline: 1px solid var(--crew-blue);
+  box-shadow: 0 0 0 1px var(--crew-blue);
 }
 
 /* DataTables Customization */

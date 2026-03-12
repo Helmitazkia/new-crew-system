@@ -83,9 +83,10 @@ class CrewRotation extends CI_Controller
     private function _getPersonActiveRosterOptionsArray()
     {
         $sql = "SELECT P.idperson, TRIM(CONCAT_WS(' ', P.fname, P.mname, P.lname)) AS fullName,
-                C.signoffdt, C.estsignoffdt
+                C.signoffdt, C.estsignoffdt,
+                P.newapplicent
                 FROM mstpersonal P
-                INNER JOIN (
+                LEFT JOIN (
                     SELECT t.idperson, t.signoffdt, t.estsignoffdt
                     FROM tblcontract t
                     INNER JOIN (
@@ -103,7 +104,8 @@ class CrewRotation extends CI_Controller
                 'value'      => $r->idperson,
                 'text'       => $r->fullName . ' (' . $r->idperson . ')',
                 'signoffdt'  => isset($r->signoffdt) ? $r->signoffdt : '',
-                'estsignoffdt' => isset($r->estsignoffdt) ? $r->estsignoffdt : ''
+                'estsignoffdt' => isset($r->estsignoffdt) ? $r->estsignoffdt : '',
+                'newapplicent' => isset($r->newapplicent) ? $r->newapplicent : ''
             );
         }
         return $out;

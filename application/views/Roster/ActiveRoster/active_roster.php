@@ -78,7 +78,7 @@ $(document).ready(function() {
         data: 'fullName',
         render: function(data, type, row) {
           var name = data || '-';
-          return '<a href="#" class="crew-name text-dark text-decoration-none" onclick="showCrewDetail(\'' + (row.idperson || '') + '\'); return false;" title="View detail">' + (name.replace(/</g, '&lt;').replace(/>/g, '&gt;')) + '</a>';
+          return '<a href="#" class="crew-name crew-name-link text-dark text-decoration-none" onclick="showCrewDetail(\'' + (row.idperson || '') + '\'); return false;" title="View detail">' + (name.replace(/</g, '&lt;').replace(/>/g, '&gt;')) + '</a>';
         }
       },
       {
@@ -123,6 +123,7 @@ $(document).ready(function() {
             estDate.setHours(0, 0, 0, 0);
             const diffDays = Math.ceil((estDate - dateNow) / (1000 * 60 * 60 * 24));
             if (diffDays < 0) displayStatus = 'Stand By';  // Expired Over
+            
           }
           if (type === 'display') {
             let cls = displayStatus === 'Stand By' ? 'bg-warning text-dark' : 'bg-success';
@@ -160,25 +161,25 @@ $(document).ready(function() {
           let noteColor = '';
           if (diffDays < 0) {
             rangeLabel = 'Expired Over';
-            noteColor = '#6c757d';
+            noteColor = '#202020';
           } else if (diffDays <= 7) {
             rangeLabel = '1 Minggu';
-            noteColor = '#dc3545';
+            noteColor = '#CC0000';
           } else if (diffDays <= 30) {
             rangeLabel = '1 Bulan';
-            noteColor = '#fd7e14';
+            noteColor = '#FF9900';
           } else if (diffDays <= 90) {
             rangeLabel = '3 Bulan';
-            noteColor = '#ffc107';
+            noteColor = '#FFCC00';
           } else if (diffDays <= 180) {
             rangeLabel = '6 Bulan';
-            noteColor = '#00ff00';
+            noteColor = '#00CC00';
           } else if (diffDays <= 365) {
             rangeLabel = '12 Bulan';
-            noteColor = '#0d6efd';
+            noteColor = '#00CC00';
           } else {
             rangeLabel = '>12 Bulan';
-            noteColor = '#198754';
+            noteColor = '#000066';
           }
 
           if (type === 'display') {
@@ -203,7 +204,7 @@ $(document).ready(function() {
             return `
                 <button class="btn btn-sm btn-outline-primary"
                   onclick="showCrewDetail('${row.idperson}')">
-                  <i class="fa fa-eye"></i>
+                  <i class="fa fa-edit"></i>
                 </button>`;
           }
           return '';
@@ -258,13 +259,13 @@ $(document).ready(function() {
 
       // ✅ FILTER KHUSUS KOLOM CONTRACT (Minggu/Bulan - mau abis)
       const contractFilterOptions = [
-        { value: 'Expired Over', color: '#6c757d' },
-        { value: '1 Minggu', color: '#dc3545' },
-        { value: '1 Bulan', color: '#fd7e14' },
-        { value: '3 Bulan', color: '#ffc107' },
-        { value: '6 Bulan', color: '#20c997' },
-        { value: '12 Bulan', color: '#0d6efd' },
-        { value: '>12 Bulan', color: '#198754' }
+        { value: 'Expired Over', color: '#202020' },
+        { value: '1 Minggu', color: '#CC0000' },
+        { value: '1 Bulan', color: '#FF9900' },
+        { value: '3 Bulan', color: '#FFCC00' },
+        { value: '6 Bulan', color: '#00CC00' },
+        { value: '12 Bulan', color: '#00CC00' },
+        { value: '>12 Bulan', color: '#000066' }
       ];
       if (colIndex === 10) {
         dropdown.find('.filter-search').hide();
@@ -573,6 +574,20 @@ $(document).on('click', function(e) {
 .crew-header-group {
   background-color: var(--crew-blue) !important;
   color: #fff !important;
+}
+
+/* Nama crew: outline/garis saat hover */
+.crew-name-link {
+  cursor: pointer;
+  outline: none;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  border-radius: 3px;
+  transition: outline 0.15s ease, box-shadow 0.15s ease;
+}
+.crew-name-link:hover {
+  outline: 1px solid var(--crew-blue);
+  box-shadow: 0 0 0 1px var(--crew-blue);
 }
 
 /* DataTables Customization */

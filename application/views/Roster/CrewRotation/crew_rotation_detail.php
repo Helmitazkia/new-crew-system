@@ -284,6 +284,38 @@
   white-space: normal !important;
   text-align: left;
 }
+
+/* Replacement select: show selected as chips with × (email-like) */
+.crew-rotation-detail-content .bootstrap-select.replacement-select .filter-option-inner-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.crew-rotation-detail-content .bootstrap-select.replacement-select .repl-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  background: #e9ecef;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.crew-rotation-detail-content .bootstrap-select.replacement-select .repl-chip-remove {
+  cursor: pointer;
+  color: #6c757d;
+  font-weight: 700;
+  padding: 0 2px;
+  line-height: 1;
+  border: none;
+  background: none;
+  font-size: 14px;
+}
+.crew-rotation-detail-content .bootstrap-select.replacement-select .repl-chip-remove:hover {
+  color: #dc3545;
+}
 </style>
 
 <script>
@@ -297,6 +329,10 @@
 
   // Validasi sama dengan active_roster.php: Expired Over (tanggal lewat) = Stand By; Expired In = On board
   function computeStatusFromRow(row) {
+
+    if (row.newapplicent == '1') {
+      return 'Stand By';
+    }
     var hasSignoff = row.signoffdt && row.signoffdt !== '' && row.signoffdt !== '0000-00-00';
     var dateRaw = hasSignoff ? row.signoffdt : (row.estsignoffdt || '');
     if (!dateRaw || dateRaw === '0000-00-00') return 'On board';
@@ -429,8 +465,70 @@
         opts.size = 8;
       }
       $el.selectpicker(opts);
+      if ($el.attr('id') === 'replacement_idperson') {
+        $el.parent('.bootstrap-select').addClass('replacement-select');
+      }
     }
   });
+
+  function renderReplacementChips() {
+    var $sel = $('#replacement_idperson');
+    if (!$sel.length) return;
+    var $wrap = $sel.parent('.bootstrap-select');
+    if (!$wrap.length) return;
+    var $label = $wrap.find('.filter-option-inner-inner');
+    if (!$label.length) return;
+
+    var selected = $sel.find('option:selected').map(function() {
+      return { value: this.value, text: $(this).text() };
+    }).get();
+
+    if (!selected || selected.length === 0) {
+      $label.text('- Select replacement(s) -');
+      return;
+    }
+
+    $label.empty();
+    selected.forEach(function(o) {
+      if (!o.value) return;
+      var $chip = $('<span class="repl-chip"></span>').attr('data-value', o.value);
+      $chip.append($('<span class="repl-chip-text"></span>').text(o.text));
+      $chip.append(
+        $('<button type="button" class="repl-chip-remove" aria-label="Remove">×</button>').attr('data-value', o.value)
+      );
+      $label.append($chip);
+    });
+  }
+
+  // Remove handler inside button label (avoid opening dropdown)
+  $(document).off('mousedown.replChip click.replChip', '.bootstrap-select.replacement-select .repl-chip-remove');
+  $(document).on('mousedown.replChip', '.bootstrap-select.replacement-select .repl-chip-remove', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  });
+  $(document).on('click.replChip', '.bootstrap-select.replacement-select .repl-chip-remove', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var removeVal = ($(this).attr('data-value') || '').toString();
+    var $sel = $('#replacement_idperson');
+    var cur = $sel.val();
+    if (!Array.isArray(cur)) cur = cur ? [cur] : [];
+    var next = cur.filter(function(v) { return v !== removeVal; });
+    $sel.selectpicker('val', next);
+    renderReplacementChips();
+  });
+
+  $('#replacement_idperson')
+    .off('loaded.bs.select.replChip changed.bs.select.replChip')
+    .on('loaded.bs.select.replChip changed.bs.select.replChip', function() {
+      renderReplacementChips();
+    });
+
+  // initial render (in case value already set before init)
+  if ($('#replacement_idperson').data('selectpicker')) {
+    $('#replacement_idperson').selectpicker('refresh');
+  }
+  renderReplacementChips();
   function toggleSignoffdtRequiredStar() {
     var status = ($('#status').val() || '').trim();
     $('#signoffdtRequiredStar').toggle(status.toUpperCase() === 'JOINED');
