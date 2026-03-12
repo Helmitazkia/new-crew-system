@@ -253,7 +253,7 @@ window.showNextPlanDetail = function(idcrewrotation) {
         info: 'Showing _START_ to _END_ of _TOTAL_ entries',
         infoEmpty: 'No records'
       },
-      order: [[1, 'asc'], [4, 'desc']],
+      order: [[1, 'desc'],],
       createdRow: function (row, data) {
         $(row).attr('data-batch-id', (data.batch_id || '').toString());
       },

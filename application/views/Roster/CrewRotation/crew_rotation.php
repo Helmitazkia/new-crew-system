@@ -194,12 +194,15 @@
 
     .card-body {
       padding: 20px;
-      overflow-x: auto;
+      overflow-x: visible;
     }
 
     /* Table responsive fixes */
     .table-responsive {
       margin: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 20px; /* space for horizontal scrollbar */
     }
 
     /* Custom layout for DataTables controls */
@@ -584,7 +587,7 @@ $(document).ready(function() {
             '>Joined</option></select>';
           return '<div class="d-flex gap-1 justify-content-center flex-wrap">' +
             '<button type="button" class="btn btn-sm btn-outline-primary" onclick="showCrewDetail(' + row
-            .idcrewrotation + ')" title="Detail"><i class="fa fa-eye"></i></button>' +
+            .idcrewrotation + ')" title="Detail"><i class="fa fa-edit"></i></button>' +
             statusOpt +
             '<button type="button" class="btn btn-sm btn-outline-danger btn-delete-rotation" data-id="' +
             row.idcrewrotation + '" title="Delete"><i class="fa fa-trash"></i></button></div>';
@@ -596,12 +599,6 @@ $(document).ready(function() {
     language: {
       lengthMenu: " _MENU_ &nbsp; Entries",
       search: "",
-      paginate: {
-        first: "First",
-        last: "Last",
-        next: "Next",
-        previous: "Previous"
-      },
       info: "Showing _START_ to _END_ of _TOTAL_ entries",
       infoEmpty: "Showing 0 to 0 of 0 entries"
     },
