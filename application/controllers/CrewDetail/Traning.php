@@ -21,9 +21,33 @@ class Traning extends CI_Controller {
         }
     }
 
+    private function _getRankOptionsArray()
+    {
+        $rows = $this->MCrewscv->getData("kdrank, nmrank", "mstrank", "deletests = '0' AND urutan > 0", "urutan ASC, nmrank ASC");
+        $out = array(array("value" => "", "text" => "- Select -"));
+        foreach ($rows as $r) {
+            $out[] = array("value" => $r->kdrank, "text" => $r->nmrank);
+        }
+        return $out;
+    }
+
+    private function _getVesselOptionsArray()
+    {
+        $rows = $this->MCrewscv->getData("kdvsl, nmvsl", "mstvessel", "deletests = '0' AND st_display = 'Y'", "nmvsl ASC");
+        $out = array(array("value" => "", "text" => "- Select -"));
+        foreach ($rows as $r) {
+            $out[] = array("value" => $r->kdvsl, "text" => $r->nmvsl);
+        }
+        return $out;
+    }
+
     public function index()
     {
-        $this->load->view('CrewDetail/training');
+        $data = array(
+            "optionsRankJson" => json_encode($this->_getRankOptionsArray()),
+            "optionsVesselJson" => json_encode($this->_getVesselOptionsArray()),
+        );
+        $this->load->view('CrewDetail/training', $data);
     }
 
     /**
@@ -88,6 +112,176 @@ class Traning extends CI_Controller {
 
         header('Content-Type: application/json');
         echo json_encode(array('success' => true, 'message' => 'Data saved successfully'));
+    }
+
+    /**
+     * GET: List Training Crew by idperson (name from JOIN mstpersonal).
+     */
+    public function getAllData_crewtraining()
+    {
+        $idperson = $this->input->get('idperson');
+        if (empty($idperson)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('success' => false, 'data' => array(), 'message' => 'idperson required'))
+            );
+            return;
+        }
+        $sql = "SELECT A.*, TRIM(CONCAT_WS(' ', P.fname, P.mname, P.lname)) AS name, D.nmvsl, R.nmrank AS rank_nm
+            FROM tblcrewtraining A
+            LEFT JOIN mstpersonal P ON P.idperson = A.idperson
+            LEFT JOIN mstvessel D ON D.kdvsl = A.kdvsl AND D.deletests = '0'
+            LEFT JOIN mstrank R ON R.kdrank = A.rank AND R.deletests = '0'
+            WHERE A.deletests = '0' AND A.idperson = ?
+            ORDER BY A.start_date_training DESC, A.idcrewtraining DESC";
+        $rows = $this->db->query($sql, array($idperson))->result_array();
+        $data = array();
+        foreach ($rows as $row) {
+            $data[] = array(
+                'idcrewtraining' => $row['idcrewtraining'],
+                'idperson' => $row['idperson'],
+                'name' => isset($row['name']) ? $row['name'] : '',
+                'rank' => isset($row['rank']) ? $row['rank'] : '',
+                'rank_display' => isset($row['rank_nm']) ? $row['rank_nm'] : (isset($row['rank']) ? $row['rank'] : ''),
+                'kdvsl' => isset($row['kdvsl']) ? $row['kdvsl'] : '',
+                'vessel' => isset($row['nmvsl']) ? $row['nmvsl'] : '',
+                'total_training' => $row['total_training'],
+                'start_date_training' => $row['start_date_training'],
+                'end_date_training' => $row['end_date_training'],
+                'finish_date_training' => $row['finish_date_training'],
+                'status' => isset($row['status']) ? $row['status'] : '',
+                'remarks' => isset($row['remarks']) ? $row['remarks'] : '',
+            );
+        }
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('success' => true, 'data' => $data))
+        );
+    }
+
+    public function get_crewtraining_by_id()
+    {
+        $idcrewtraining = $this->input->post('idcrewtraining');
+        $idperson = $this->input->post('idperson');
+        if (empty($idcrewtraining) || empty($idperson)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('success' => false, 'message' => 'idcrewtraining and idperson required'))
+            );
+            return;
+        }
+        $sql = "SELECT idcrewtraining, idperson, rank, kdvsl, total_training,
+                start_date_training, end_date_training, finish_date_training, status, remarks
+                FROM tblcrewtraining
+                WHERE deletests = '0' AND idcrewtraining = ? AND idperson = ?";
+        $row = $this->db->query($sql, array($idcrewtraining, $idperson))->row_array();
+        if (!$row) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('success' => false, 'message' => 'Data not found'))
+            );
+            return;
+        }
+        $this->output->set_content_type('application/json')->set_output(json_encode($row));
+    }
+
+    public function save_crewtraining()
+    {
+        $idperson = $this->input->post('idperson');
+        if (empty($idperson)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'idperson required'))
+            );
+            return;
+        }
+        $this->db->select_max('idcrewtraining');
+        $q = $this->db->get('tblcrewtraining');
+        $r = $q->row();
+        $newId = ($r && $r->idcrewtraining) ? (int)$r->idcrewtraining + 1 : 1;
+
+        $rank = $this->input->post('rank') !== null ? trim($this->input->post('rank')) : '';
+        $kdvsl = $this->input->post('kdvsl') !== null ? trim($this->input->post('kdvsl')) : '';
+        $total_training = $this->input->post('total_training') !== null ? (int)$this->input->post('total_training') : null;
+        $start_date_training = $this->input->post('start_date_training') ?: null;
+        $end_date_training = $this->input->post('end_date_training') ?: null;
+        $finish_date_training = $this->input->post('finish_date_training') ?: null;
+        $status = $this->input->post('status') !== null ? trim($this->input->post('status')) : '';
+        $remarks = $this->input->post('remarks') !== null ? trim($this->input->post('remarks')) : '';
+
+        if ($start_date_training === '') $start_date_training = null;
+        if ($end_date_training === '') $end_date_training = null;
+        if ($finish_date_training === '') $finish_date_training = null;
+
+        $data = array(
+            'idcrewtraining' => $newId,
+            'idperson' => $idperson,
+            'rank' => substr($rank, 0, 50),
+            'kdvsl' => substr($kdvsl, 0, 20),
+            'total_training' => $total_training,
+            'start_date_training' => $start_date_training,
+            'end_date_training' => $end_date_training,
+            'finish_date_training' => $finish_date_training,
+            'status' => substr($status, 0, 20),
+            'remarks' => substr($remarks, 0, 500),
+            'deletests' => '0',
+        );
+        $this->db->insert('tblcrewtraining', $data);
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('status' => true, 'message' => 'Data saved successfully'))
+        );
+    }
+
+    public function update_crewtraining()
+    {
+        $idcrewtraining = $this->input->post('idcrewtraining');
+        $idperson = $this->input->post('idperson');
+        if (empty($idcrewtraining) || empty($idperson)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'idcrewtraining and idperson required'))
+            );
+            return;
+        }
+        $rank = $this->input->post('rank') !== null ? trim($this->input->post('rank')) : '';
+        $kdvsl = $this->input->post('kdvsl') !== null ? trim($this->input->post('kdvsl')) : '';
+        $total_training = $this->input->post('total_training') !== null ? (int)$this->input->post('total_training') : null;
+        $start_date_training = $this->input->post('start_date_training') ?: null;
+        $end_date_training = $this->input->post('end_date_training') ?: null;
+        $finish_date_training = $this->input->post('finish_date_training') ?: null;
+        $status = $this->input->post('status') !== null ? trim($this->input->post('status')) : '';
+        $remarks = $this->input->post('remarks') !== null ? trim($this->input->post('remarks')) : '';
+
+        if ($start_date_training === '') $start_date_training = null;
+        if ($end_date_training === '') $end_date_training = null;
+        if ($finish_date_training === '') $finish_date_training = null;
+
+        $data = array(
+            'rank' => substr($rank, 0, 50),
+            'kdvsl' => substr($kdvsl, 0, 20),
+            'total_training' => $total_training,
+            'start_date_training' => $start_date_training,
+            'end_date_training' => $end_date_training,
+            'finish_date_training' => $finish_date_training,
+            'status' => substr($status, 0, 20),
+            'remarks' => substr($remarks, 0, 500),
+        );
+        $this->db->where('idcrewtraining', $idcrewtraining);
+        $this->db->where('idperson', $idperson);
+        $this->db->update('tblcrewtraining', $data);
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('status' => true, 'message' => 'Data updated successfully'))
+        );
+    }
+
+    public function delete_crewtraining()
+    {
+        $idcrewtraining = $this->input->post('idcrewtraining');
+        if (empty($idcrewtraining)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'idcrewtraining required'))
+            );
+            return;
+        }
+        $this->db->where('idcrewtraining', $idcrewtraining);
+        $this->db->update('tblcrewtraining', array('deletests' => '1'));
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('status' => true, 'message' => 'Data deleted successfully'))
+        );
     }
 
 }
