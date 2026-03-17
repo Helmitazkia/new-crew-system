@@ -21,348 +21,437 @@ class Traning extends CI_Controller {
         }
     }
 
-    public function index()
+    private function _getRankOptionsArray()
     {
-        $this->load->view('CrewDetail/training');
+        $rows = $this->MCrewscv->getData("kdrank, nmrank", "mstrank", "deletests = '0' AND urutan > 0", "urutan ASC, nmrank ASC");
+        $out = array(array("value" => "", "text" => "- Select -"));
+        foreach ($rows as $r) {
+            $out[] = array("value" => $r->kdrank, "text" => $r->nmrank);
+        }
+        return $out;
     }
 
-//     public function getFamilyData()
-//     {
-//         $idPerson = $this->input->post('idperson');
+    private function _getVesselOptionsArray()
+    {
+        $rows = $this->MCrewscv->getData("kdvsl, nmvsl", "mstvessel", "deletests = '0' AND st_display = 'Y'", "nmvsl ASC");
+        $out = array(array("value" => "", "text" => "- Select -"));
+        foreach ($rows as $r) {
+            $out[] = array("value" => $r->kdvsl, "text" => $r->nmvsl);
+        }
+        return $out;
+    }
 
-//         if (!$idPerson) {
-//             echo json_encode(array(
-//                 'status' => false,
-//                 'message' => 'ID Person not found'
-//             ));
-//             return;
-//         }
+    private function _getCertificateMatrixOptionsArray()
+    {
+        $sql = "SELECT id, rank_id, rank_name, certificate_name 
+                  FROM mstcertificatematrix 
+                 WHERE 1=1 
+              ORDER BY rank_name ASC, certificate_name ASC";
+        $rows = $this->db->query($sql)->result();
+        $out = array();
+        foreach ($rows as $r) {
+           // $label = trim(($r->rank_name ? $r->rank_name . " - " : "") . $r->certificate_name);
+           $label = $r->certificate_name;
+            $out[] = array("value" => $r->id, "text" => $label);
+        }
+        
+        return $out;
+    }
 
-//         // 1. Ambil data dari mstpersonal (father, mother, wife)
-//         $sqlPersonal = "SELECT 
-//                             fathernm, 
-//                             mothernm, 
-//                             wname, 
-//                             next_of_kin,
-//                             famaddrs
-//                         FROM mstpersonal 
-//                         WHERE idperson = ?
-//                         AND deletests = '0'";
-        
-//         $personalData = $this->db->query($sqlPersonal, array($idPerson))->row();
-        
-//         // 2. Ambil data children dari tblfamily
-//         $sqlFamily = "SELECT 
-//                         idfm, idperson, fmrel,
-//                         CASE 
-//                             WHEN fmsex = '1' THEN 'Male'
-//                             WHEN fmsex = '2' THEN 'Female'
-//                         END AS gender,
-//                         fmfname, fmlname, fmdob,
-//                         fmpassno, fmissdt, fmplc, fmexpdt, fmvisa
-//                     FROM tblfamily
-//                     WHERE idperson = ?
-//                     AND Deletests = '0'
-//                     AND UPPER(fmrel) = 'CHILD'
-//                     ORDER BY fmfname ASC";
-        
-//         $childrenData = $this->db->query($sqlFamily, array($idPerson))->result();
-        
-//         // 3. Format response seperti di getDataProses()
-//         $familyData = array(
-//             'father' => array(
-//                 'fullName' => $personalData ? $personalData->fathernm : '',
-//                 'name' => $personalData ? $personalData->fathernm : ''
-//             ),
-//             'mother' => array(
-//                 'fullName' => $personalData ? $personalData->mothernm : '',
-//                 'name' => $personalData ? $personalData->mothernm : ''
-//             ),
-//             'wife' => array(
-//                 'fullName' => $personalData ? $personalData->wname : '',
-//                 'name' => $personalData ? $personalData->wname : ''
-//             ),
-//             'nextOfKin' => $personalData ? $personalData->next_of_kin : '',
-//             'address' => $personalData ? $personalData->famaddrs : '',
-//             'children' => array()
-//         );
-        
-//         // 4. Format children data
-//         foreach ($childrenData as $child) {
-//             $firstName = trim($child->fmfname);
-//             $lastName = trim($child->fmlname);
-//             $fullName = trim($firstName . ' ' . $lastName);
-            
-//             $familyData['children'][] = array(
-//                 'idfm' => $child->idfm,
-//                 'firstName' => $firstName,
-//                 'lastName' => $lastName,
-//                 'fullName' => $fullName,
-//                 'gender' => $child->gender,
-//                 'dob' => !empty($child->fmdob) && $child->fmdob != '0000-00-00' 
-//                         ? date('d M Y', strtotime($child->fmdob)) 
-//                         : '-',
-//                 'passportNo' => $child->fmpassno,
-//                 'issueDate' => !empty($child->fmissdt) && $child->fmissdt != '0000-00-00' 
-//                             ? date('d M Y', strtotime($child->fmissdt)) 
-//                             : '-',
-//                 'issuePlace' => $child->fmplc,
-//                 'expiryDate' => !empty($child->fmexpdt) && $child->fmexpdt != '0000-00-00' 
-//                                 ? date('d M Y', strtotime($child->fmexpdt)) 
-//                                 : '-',
-//                 'visa' => $child->fmvisa
-//             );
-//         }
+    public function index()
+    {
+        $data = array(
+            "optionsRankJson" => json_encode($this->_getRankOptionsArray()),
+            "optionsVesselJson" => json_encode($this->_getVesselOptionsArray()),
+            "optionsCertificateMatrixJson" => json_encode($this->_getCertificateMatrixOptionsArray()),
+        );
+        $this->load->view('CrewDetail/training', $data);
+    }
 
-//         echo json_encode(array(
-//             'status' => true,
-//             'data'   => $familyData
-//         ));
-//     }
+    /**
+     * GET: Load assessment & training data from mstpersonal by idperson.
+     * Returns: scormarlintes, scorces, ismeval, ismdate, scor_psychometric, scor_otg
+     */
+    public function get_training()
+    {
+        $idperson = $this->input->get('idperson');
+        if (empty($idperson)) {
+            header('Content-Type: application/json');
+            echo json_encode(array('success' => false, 'message' => 'idperson required'));
+            return;
+        }
+        $sql = "SELECT scormarlintes, scorces, ismeval, ismdate, scor_psychometric, scor_otg
+                FROM mstpersonal
+                WHERE idperson = ? LIMIT 1";
+        $row = $this->db->query($sql, array($idperson))->row_array();
+        if (!$row) {
+            header('Content-Type: application/json');
+            echo json_encode(array('success' => true, 'data' => array(
+                'scormarlintes' => '', 'scorces' => '', 'ismeval' => '', 'ismdate' => '',
+                'scor_psychometric' => '', 'scor_otg' => ''
+            )));
+            return;
+        }
+        header('Content-Type: application/json');
+        echo json_encode(array('success' => true, 'data' => $row));
+    }
 
-// public function saveChild() {
-//     $idfm = $this->input->post('idfm');
-//     $idperson = $this->input->post('idperson');
-//     $fmrel = $this->input->post('fmrel');
-//     $fmsex = $this->input->post('fmsex');
-//     $fmfname = $this->input->post('fmfname');
-//     $fmlname = $this->input->post('fmlname');
-//     $fmdob = $this->input->post('fmdob');
-//     $fmpassno = $this->input->post('fmpassno');
-//     $fmissdt = $this->input->post('fmissdt');
-//     $fmplc = $this->input->post('fmplc');
-//     $fmexpdt = $this->input->post('fmexpdt');
-//     $fmvisa = $this->input->post('fmvisa');
-    
-//     // Validasi required fields
-//     if (empty($idperson) || empty($fmfname) || empty($fmsex)) {
-//         echo json_encode(array(
-//             'status' => false,
-//             'message' => 'Required fields are missing'
-//         ));
-//         return;
-//     }
-    
-//     // Ambil username dari session atau default
-//     $username = $this->session->userdata('userName') ?: 'system';
+    /**
+     * POST: Save/Update assessment & training in mstpersonal by idperson.
+     * Fields: idperson, txtCesScore->scorces, txtmarlinTest->scormarlintes,
+     * txtEvaluation->ismeval, txtDate_training->ismdate, scor_psychometric, scor_otg
+     */
+    public function save_training()
+    {
+        $idperson = $this->input->post('idperson');
+        if (empty($idperson)) {
+            header('Content-Type: application/json');
+            echo json_encode(array('success' => false, 'message' => 'idperson required'));
+            return;
+        }
+        $scorces           = $this->input->post('txtCesScore') !== null ? trim($this->input->post('txtCesScore')) : '';
+        $scormarlintes     = $this->input->post('txtmarlinTest') !== null ? trim($this->input->post('txtmarlinTest')) : '';
+        $ismeval           = $this->input->post('txtEvaluation') !== null ? trim($this->input->post('txtEvaluation')) : '';
+        $ismdate           = $this->input->post('txtDate_training') !== null ? trim($this->input->post('txtDate_training')) : '';
+        $scor_psychometric = $this->input->post('scor_psychometric') !== null ? trim($this->input->post('scor_psychometric')) : '';
+        $scor_otg          = $this->input->post('scor_otg') !== null ? trim($this->input->post('scor_otg')) : '';
 
-//     $currentDate = date('Y-m-d H:i:s');
-    
-//     $data = array(
-//         'idperson' => $idperson,
-//         'fmrel' => !empty($fmrel) ? strtoupper($fmrel) : 'CHILD',
-//         'fmsex' => $fmsex,
-//         'fmfname' => $fmfname,
-//         'fmlname' => $fmlname,
-//         'fmdob' => !empty($fmdob) ? $fmdob : '',
-//         'fmpassno' => $fmpassno,
-//         'fmissdt' => !empty($fmissdt) ? $fmissdt : '',
-//         'fmplc' => $fmplc,
-//         'fmexpdt' => !empty($fmexpdt) ? $fmexpdt : '',
-//         'fmvisa' => $fmvisa,
-//         'deletests' => '0'
-//     );
-    
-//     if (empty($idfm)) {
-//         // CREATE NEW
-//         // Generate ID (contoh: CH + timestamp + random)
-//         $newId = 'CH' . date('YmdHis') . rand(100, 999);
-//         $data['idfm'] = $newId;
-        
-//         // Tambahkan field untuk create
-//         $data['addusrdt'] = $currentDate;
-//         // Jika ada field untuk user yang create, tambahkan:
-//         // $data['addusr'] = $username;
-        
-//         $this->db->insert('tblfamily', $data);
-//         $insertId = $newId;
-        
-//         $message = 'Child added successfully';
-//     } else {
-//         // UPDATE EXISTING
-//         // Hapus field create jika ada
-//         unset($data['addusrdt']);
-//         // unset($data['addusr']);
-        
-//         // Tambahkan field untuk update
-//         $data['updusrdt'] = $username . '-' . $currentDate;
-//         // Jika ada field untuk user yang update, tambahkan:
-//         // $data['updusr'] = $username;
+        $data = array(
+            'scorces'           => substr($scorces, 0, 20),
+            'scormarlintes'     => substr($scormarlintes, 0, 20),
+            'ismeval'           => substr($ismeval, 0, 100),
+            'ismdate'           => $ismdate !== '' ? $ismdate : null,
+            'scor_psychometric' => substr($scor_psychometric, 0, 20),
+            'scor_otg'          => substr($scor_otg, 0, 20)
+        );
 
-//         //var_dump($data); // Debugging line to check data being updated
-        
-//         $this->db->where('idfm', $idfm);
-//         $this->db->update('tblfamily', $data);
-//         $insertId = $idfm;
-        
-//         $message = 'Child updated successfully';
-//     }
-    
-//     if ($this->db->affected_rows() > 0) {
-//         echo json_encode(array(
-//             'status' => true,
-//             'message' => $message,
-//             'data' => array('idfm' => $insertId)
-//         ));
-//     } else {
-//         echo json_encode(array(
-//             'status' => false,
-//             'message' => 'No changes made or failed to save child data'
-//         ));
-//     }
-// }
+        $this->db->where('idperson', $idperson);
+        $this->db->update('mstpersonal', $data);
 
+        header('Content-Type: application/json');
+        echo json_encode(array('success' => true, 'message' => 'Data saved successfully'));
+    }
 
-// // Method untuk get data child (untuk edit)
-// public function getChildData() {
-//     $idfm = $this->input->post('idfm');
-    
-//     if (!$idfm) {
-//         echo json_encode(array(
-//             'status' => false,
-//             'message' => 'Child ID not found'
-//         ));
-//         return;
-//     }
-    
-//     $sql = "SELECT 
-//                 idfm, idperson, fmrel, fmsex,
-//                 fmfname, fmlname, fmdob,
-//                 fmpassno, fmissdt, fmplc, fmexpdt, fmvisa
-//             FROM tblfamily
-//             WHERE idfm = ?
-//             AND deletests = '0'";
-    
-//     $query = $this->db->query($sql, array($idfm));
-    
-//     if ($query->num_rows() > 0) {
-//         $row = $query->row();
-        
-//         // Format tanggal untuk ditampilkan di input date
-//         $fmdob_formatted = (!empty($row->fmdob) && $row->fmdob != '0000-00-00') ? $row->fmdob : '';
-//         $fmissdt_formatted = (!empty($row->fmissdt) && $row->fmissdt != '0000-00-00') ? $row->fmissdt : '';
-//         $fmexpdt_formatted = (!empty($row->fmexpdt) && $row->fmexpdt != '0000-00-00') ? $row->fmexpdt : '';
-        
-//         echo json_encode(array(
-//             'status' => true,
-//             'data' => array(
-//                 'idfm' => $row->idfm,
-//                 'idperson' => $row->idperson,
-//                 'fmrel' => $row->fmrel,
-//                 'fmsex' => $row->fmsex,
-//                 'fmfname' => $row->fmfname,
-//                 'fmlname' => $row->fmlname,
-//                 'fmdob' => $fmdob_formatted,
-//                 'fmpassno' => $row->fmpassno,
-//                 'fmissdt' => $fmissdt_formatted,
-//                 'fmplc' => $row->fmplc,
-//                 'fmexpdt' => $fmexpdt_formatted,
-//                 'fmvisa' => $row->fmvisa
-//             )
-//         ));
-//     } else {
-//         echo json_encode(array(
-//             'status' => false,
-//             'message' => 'Child data not found'
-//         ));
-//     }
-// }
+    /**
+     * GET: List Training Crew by idperson (name from JOIN mstpersonal).
+     */
+    public function getAllData_crewtraining()
+    {
+        $idperson = $this->input->get('idperson');
+        if (empty($idperson)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('success' => false, 'data' => array(), 'message' => 'idperson required'))
+            );
+            return;
+        }
+        $sql = "SELECT A.*, TRIM(CONCAT_WS(' ', P.fname, P.mname, P.lname)) AS name, D.nmvsl, R.nmrank AS rank_nm
+            FROM tblcrewtraining A
+            LEFT JOIN mstpersonal P ON P.idperson = A.idperson
+            LEFT JOIN mstvessel D ON D.kdvsl = A.kdvsl AND D.deletests = '0'
+            LEFT JOIN mstrank R ON R.kdrank = A.rank AND R.deletests = '0'
+            WHERE A.deletests = '0' AND A.idperson = ?
+            ORDER BY A.start_date_training DESC, A.idcrewtraining DESC";
+        $rows = $this->db->query($sql, array($idperson))->result_array();
+        $data = array();
+        foreach ($rows as $row) {
+            $data[] = array(
+                'idcrewtraining' => $row['idcrewtraining'],
+                'idperson' => $row['idperson'],
+                'name' => isset($row['name']) ? $row['name'] : '',
+                'rank' => isset($row['rank']) ? $row['rank'] : '',
+                'rank_display' => isset($row['rank_nm']) ? $row['rank_nm'] : (isset($row['rank']) ? $row['rank'] : ''),
+                'kdvsl' => isset($row['kdvsl']) ? $row['kdvsl'] : '',
+                'vessel' => isset($row['nmvsl']) ? $row['nmvsl'] : '',
+                'total_training' => $row['total_training'],
+                'start_date_training' => $row['start_date_training'],
+                'end_date_training' => $row['end_date_training'],
+                'finish_date_training' => $row['finish_date_training'],
+                'status' => isset($row['status']) ? $row['status'] : '',
+                'remarks' => isset($row['remarks']) ? $row['remarks'] : '',
+            );
+        }
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('success' => true, 'data' => $data))
+        );
+    }
 
-// // Method untuk delete child
-// public function deleteChild() {
-//     $idfm = $this->input->post('idfm');
-    
-//     if (!$idfm) {
-//         echo json_encode(array(
-//             'status' => false,
-//             'message' => 'Child ID not found'
-//         ));
-//         return;
-//     }
-    
-//     // Soft delete
-//     $data = array(
-//         'deletests' => '1',
-//         'delusrdt' => date('Y-m-d H:i:s'),
-//         // Jika ada field untuk user yang delete, tambahkan:
-//         // 'delusr' => $this->session->userdata('username') ?: 'system'
-//     );
-    
-//     $this->db->where('idfm', $idfm);
-//     $this->db->update('tblfamily', $data);
-    
-//     if ($this->db->affected_rows() > 0) {
-//         echo json_encode(array(
-//             'status' => true,
-//             'message' => 'Child deleted successfully'
-//         ));
-//     } else {
-//         echo json_encode(array(
-//             'status' => false,
-//             'message' => 'Failed to delete child or child already deleted'
-//         ));
-//     }
-// }
+    public function get_crewtraining_by_id()
+    {
+        $idcrewtraining = $this->input->post('idcrewtraining');
+        $idperson = $this->input->post('idperson');
+        if (empty($idcrewtraining) || empty($idperson)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('success' => false, 'message' => 'idcrewtraining and idperson required'))
+            );
+            return;
+        }
+        $sql = "SELECT idcrewtraining, idperson, rank, kdvsl, total_training,
+                start_date_training, end_date_training, finish_date_training, status, remarks
+                FROM tblcrewtraining
+                WHERE deletests = '0' AND idcrewtraining = ? AND idperson = ?";
+        $row = $this->db->query($sql, array($idcrewtraining, $idperson))->row_array();
+        if (!$row) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('success' => false, 'message' => 'Data not found'))
+            );
+            return;
+        }
+        $this->output->set_content_type('application/json')->set_output(json_encode($row));
+    }
 
-// public function updateFamilyInfo() {
-//     $idperson = $this->input->post('idperson');
-//     $fatherName = $this->input->post('fatherName');
-//     $motherName = $this->input->post('motherName');
-//     $wifeName = $this->input->post('wifeName');
-//     $address = $this->input->post('address');
-    
-//     // Validasi
-//     if (!$idperson) {
-//         echo json_encode(array(
-//             'status' => false,
-//             'message' => 'ID Person is required'
-//         ));
-//         return;
-//     }
-    
-//     // Ambil username dan timestamp
-//     $username = $this->session->userdata('username') ?: 'system';
-//     $currentDate = date('Y-m-d H:i:s');
-    
-//     // Data untuk update
-//     $data = array(
-//         'fathernm' => $fatherName,
-//         'mothernm' => $motherName,
-//         'wname' => $wifeName,
-//         'famaddrs' => $address,
-//         'updusrdt' => $currentDate . ' - ' . $username // Format sesuai request Anda
-//     );
-    
-//     // Update data di mstpersonal
-//     $this->db->where('idperson', $idperson);
-//     $this->db->where('deletests', '0');
-//     $this->db->update('mstpersonal', $data);
-    
-//     if ($this->db->affected_rows() > 0) {
-//         echo json_encode(array(
-//             'status' => true,
-//             'message' => 'Family information updated successfully'
-//         ));
-//     } else {
-//         // Cek apakah data person exists
-//         $checkPerson = $this->db->get_where('mstpersonal', array(
-//             'idperson' => $idperson,
-//             'deletests' => '0'
-//         ))->row();
-        
-//         if (!$checkPerson) {
-//             echo json_encode(array(
-//                 'status' => false,
-//                 'message' => 'Person data not found'
-//             ));
-//         } else {
-//             echo json_encode(array(
-//                 'status' => true,
-//                 'message' => 'No changes made (data already up to date)'
-//             ));
-//         }
-//     }
-// }
+    public function save_crewtraining()
+    {
+        $idperson = $this->input->post('idperson');
+        if (empty($idperson)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'idperson required'))
+            );
+            return;
+        }
+        $this->db->select_max('idcrewtraining');
+        $q = $this->db->get('tblcrewtraining');
+        $r = $q->row();
+        $newId = ($r && $r->idcrewtraining) ? (int)$r->idcrewtraining + 1 : 1;
+
+        $rank = $this->input->post('rank') !== null ? trim($this->input->post('rank')) : '';
+        $kdvsl = $this->input->post('kdvsl') !== null ? trim($this->input->post('kdvsl')) : '';
+        $total_training = $this->input->post('total_training') !== null ? (int)$this->input->post('total_training') : null;
+        $start_date_training = $this->input->post('start_date_training') ?: null;
+        $end_date_training = $this->input->post('end_date_training') ?: null;
+        $finish_date_training = $this->input->post('finish_date_training') ?: null;
+        $status = $this->input->post('status') !== null ? trim($this->input->post('status')) : '';
+        $remarks = $this->input->post('remarks') !== null ? trim($this->input->post('remarks')) : '';
+
+        if ($start_date_training === '') $start_date_training = null;
+        if ($end_date_training === '') $end_date_training = null;
+        if ($finish_date_training === '') $finish_date_training = null;
+
+        $data = array(
+            'idcrewtraining' => $newId,
+            'idperson' => $idperson,
+            'rank' => substr($rank, 0, 50),
+            'kdvsl' => substr($kdvsl, 0, 20),
+            'total_training' => $total_training,
+            'start_date_training' => $start_date_training,
+            'end_date_training' => $end_date_training,
+            'finish_date_training' => $finish_date_training,
+            'status' => substr($status, 0, 20),
+            'remarks' => substr($remarks, 0, 500),
+            'deletests' => '0',
+        );
+        $this->db->insert('tblcrewtraining', $data);
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('status' => true, 'message' => 'Data saved successfully'))
+        );
+    }
+
+    public function update_crewtraining()
+    {
+        $idcrewtraining = $this->input->post('idcrewtraining');
+        $idperson = $this->input->post('idperson');
+        if (empty($idcrewtraining) || empty($idperson)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'idcrewtraining and idperson required'))
+            );
+            return;
+        }
+        $rank = $this->input->post('rank') !== null ? trim($this->input->post('rank')) : '';
+        $kdvsl = $this->input->post('kdvsl') !== null ? trim($this->input->post('kdvsl')) : '';
+        $total_training = $this->input->post('total_training') !== null ? (int)$this->input->post('total_training') : null;
+        $start_date_training = $this->input->post('start_date_training') ?: null;
+        $end_date_training = $this->input->post('end_date_training') ?: null;
+        $finish_date_training = $this->input->post('finish_date_training') ?: null;
+        $status = $this->input->post('status') !== null ? trim($this->input->post('status')) : '';
+        $remarks = $this->input->post('remarks') !== null ? trim($this->input->post('remarks')) : '';
+
+        if ($start_date_training === '') $start_date_training = null;
+        if ($end_date_training === '') $end_date_training = null;
+        if ($finish_date_training === '') $finish_date_training = null;
+
+        $data = array(
+            'rank' => substr($rank, 0, 50),
+            'kdvsl' => substr($kdvsl, 0, 20),
+            'total_training' => $total_training,
+            'start_date_training' => $start_date_training,
+            'end_date_training' => $end_date_training,
+            'finish_date_training' => $finish_date_training,
+            'status' => substr($status, 0, 20),
+            'remarks' => substr($remarks, 0, 500),
+        );
+        $this->db->where('idcrewtraining', $idcrewtraining);
+        $this->db->where('idperson', $idperson);
+        $this->db->update('tblcrewtraining', $data);
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('status' => true, 'message' => 'Data updated successfully'))
+        );
+    }
+
+    public function delete_crewtraining()
+    {
+        $idcrewtraining = $this->input->post('idcrewtraining');
+        if (empty($idcrewtraining)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'idcrewtraining required'))
+            );
+            return;
+        }
+        $this->db->where('idcrewtraining', $idcrewtraining);
+        $this->db->update('tblcrewtraining', array('deletests' => '1'));
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('status' => true, 'message' => 'Data deleted successfully'))
+        );
+    }
+
+    public function get_training_matrix()
+    {
+        $idperson = $this->input->get('idperson');
+        if (empty($idperson)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('success' => false, 'data' => array(), 'message' => 'idperson required'))
+            );
+            return;
+        }
+        $sql = "SELECT A.idcrewtraining_matrix, A.idperson, A.cert_matrix_id,
+                       A.completed, A.remarks, B.rank_id, B.rank_name, B.certificate_name
+                  FROM tblcrewtraining_matrix A
+                  LEFT JOIN mstcertificatematrix B ON B.id = A.cert_matrix_id
+                 WHERE A.deletests = 0 AND A.idperson = ?
+                 ORDER BY B.rank_name ASC, B.certificate_name ASC, A.idcrewtraining_matrix ASC";
+        $rows = $this->db->query($sql, array($idperson))->result_array();
+        $data = array();
+        foreach ($rows as $row) {
+            $data[] = array(
+                'idcrewtraining_matrix' => $row['idcrewtraining_matrix'],
+                'idperson' => $row['idperson'],
+                'cert_matrix_id' => $row['cert_matrix_id'],
+                'rank_name' => isset($row['rank_name']) ? $row['rank_name'] : '',
+                'training_name' => isset($row['certificate_name']) ? $row['certificate_name'] : '',
+                'completed' => (int)$row['completed'],
+                'remarks' => isset($row['remarks']) ? $row['remarks'] : '',
+            );
+        }
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('success' => true, 'data' => $data))
+        );
+    }
+
+    public function get_training_matrix_by_id()
+    {
+        $id = $this->input->post('idcrewtraining_matrix');
+        $idperson = $this->input->post('idperson');
+        if (empty($id) || empty($idperson)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('success' => false, 'message' => 'idcrewtraining_matrix and idperson required'))
+            );
+            return;
+        }
+        $sql = "SELECT idcrewtraining_matrix, idperson, cert_matrix_id, completed, remarks
+                  FROM tblcrewtraining_matrix
+                 WHERE deletests = 0 AND idcrewtraining_matrix = ? AND idperson = ?";
+        $row = $this->db->query($sql, array($id, $idperson))->row_array();
+        if (!$row) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('success' => false, 'message' => 'Data not found'))
+            );
+            return;
+        }
+        $this->output->set_content_type('application/json')->set_output(json_encode($row));
+    }
+
+    public function save_training_matrix()
+    {
+        $idperson = $this->input->post('idperson');
+        $cert_matrix_id = $this->input->post('cert_matrix_id');
+        if (empty($idperson) || empty($cert_matrix_id)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'idperson and cert_matrix_id required'))
+            );
+            return;
+        }
+        $completed = $this->input->post('completed') ? 1 : 0;
+        $remarks = $this->input->post('remarks') !== null ? trim($this->input->post('remarks')) : '';
+
+        $username = $this->session->userdata("userName") ?: "system";
+        $currentDate = date("Ymd/H:i:s");
+
+        $data = array(
+            'idperson' => $idperson,
+            'cert_matrix_id' => (int)$cert_matrix_id,
+            'completed' => $completed,
+            'remarks' => substr($remarks, 0, 500) ?: null,
+            'deletests' => 0,
+            'addusrdt' => $username . "/" . $currentDate,
+        );
+        $this->db->insert('tblcrewtraining_matrix', $data);
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('status' => true, 'message' => 'Training added successfully'))
+        );
+    }
+
+    public function update_training_matrix()
+    {
+        $id = $this->input->post('idcrewtraining_matrix');
+        $idperson = $this->input->post('idperson');
+        if (empty($id) || empty($idperson)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'idcrewtraining_matrix and idperson required'))
+            );
+            return;
+        }
+        $completed = $this->input->post('completed') ? 1 : 0;
+        $remarks = $this->input->post('remarks') !== null ? trim($this->input->post('remarks')) : '';
+        $cert_matrix_id = $this->input->post('cert_matrix_id');
+
+        $username = $this->session->userdata("userName") ?: "system";
+        $currentDate = date("Ymd/H:i:s");
+
+        $data = array(
+            'completed' => $completed,
+            'cert_matrix_id' => (int)$cert_matrix_id,
+            'remarks' => substr($remarks, 0, 500) ?: null,
+            'updusrdt' => $username . "/" . $currentDate,
+        );
+        $this->db->where('idcrewtraining_matrix', $id);
+        $this->db->where('idperson', $idperson);
+        $this->db->update('tblcrewtraining_matrix', $data);
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('status' => true, 'message' => 'Training updated successfully'))
+        );
+    }
+
+    public function update_training_completed()
+    {
+        $id = $this->input->post('idcrewtraining_matrix');
+        $completed = $this->input->post('completed');
+        if (empty($id)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'idcrewtraining_matrix required'))
+            );
+            return;
+        }
+        $completedVal = ($completed == 1 || $completed === '1') ? 1 : 0;
+        $this->db->where('idcrewtraining_matrix', $id);
+        $this->db->update('tblcrewtraining_matrix', array('completed' => $completedVal));
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('status' => true, 'message' => 'Completed updated'))
+        );
+    }
+
+    public function delete_training_matrix()
+    {
+        $id = $this->input->post('idcrewtraining_matrix');
+        if (empty($id)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'idcrewtraining_matrix required'))
+            );
+            return;
+        }
+        $this->db->where('idcrewtraining_matrix', $id);
+        $this->db->update('tblcrewtraining_matrix', array('deletests' => 1));
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('status' => true, 'message' => 'Training deleted successfully'))
+        );
+    }
 
 }
 ?>

@@ -212,10 +212,13 @@ class PersonDetail extends CI_Controller {
 
             /* ================= ASSESSMENT ================= */
             'assessment' => array(
-                'cesScore'    => $row->scorces,
-                'marlinScore' => $row->scormarlintes,
-                'trainingDate'=> $row->ismdate,
-                'evaluation'  => $row->ismeval
+                'cesScore'       => $row->scorces,
+                'marlinScore'    => $row->scormarlintes,
+                'psychometricScore' => isset($row->scor_psychometric) ? $row->scor_psychometric : '',
+                'otgScore'       => isset($row->scor_otg) ? $row->scor_otg : '',
+                'trainingDate'   => !empty($row->ismdate) && $row->ismdate !== '0000-00-00' ? date('d M Y', strtotime($row->ismdate)) : '',
+                'trainingDateForEdit' => !empty($row->ismdate) && $row->ismdate !== '0000-00-00' ? date('Y-m-d', strtotime($row->ismdate)) : '',
+                'evaluation'     => $row->ismeval
             ),
 
             /* ================= CAREER ================= */

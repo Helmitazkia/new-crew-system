@@ -710,10 +710,27 @@
 
         <div class="row">
           <div class="col-6 mb-4">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-sm h-100" id="assessmentCard">
+              <div
+                class="alert alert-success d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="assessment-success-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                  <use xlink:href="#check-circle-fill" />
+                </svg>
+                <div class="flex-grow-1"><span id="assessment-success-message"></span></div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+              <div
+                class="alert alert-danger d-flex align-items-center fw-semibold fst-italic alert-dismissible fade show d-none"
+                role="alert" id="assessment-danger-alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                  <use xlink:href="#exclamation-triangle-fill" />
+                </svg>
+                <div class="flex-grow-1"><span id="assessment-error-message"></span></div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
               <div class="card-header d-flex justify-content-between align-items-center">
                 <span class="fw-semibold fst-italic">📋 Assessment & Training</span>
-
                 <div class="action-btn">
                   <button class="btn btn-sm btn-outline-primary btn-edit">
                     <i class="fa fa-edit"></i> Edit
@@ -729,52 +746,36 @@
 
               <div class="card-body small">
                 <div class="row g-2">
-
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">CES Score</label>
                     <div class="form-view fst-italic" data-field="assessment.cesScore"></div>
-                    <input type="number" class="form-control form-edit d-none" value="85"
-                      data-field="assessment.cesScore">
+                    <input type="number" class="form-control form-edit d-none" data-field="assessment.cesScore" placeholder="">
                   </div>
-
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Marlin Test Score</label>
                     <div class="form-view fst-italic" data-field="assessment.marlinScore"></div>
-                    <input type="number" class="form-control form-edit d-none" value="78"
-                      data-field="assessment.marlinScore">
+                    <input type="number" class="form-control form-edit d-none" data-field="assessment.marlinScore" placeholder="">
                   </div>
-
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Psychometric Score</label>
-                    <div class="form-view fst-italic" data-field="assessment.cesScore"></div>
-                    <input type="number" class="form-control form-edit d-none" value="85"
-                      data-field="assessment.cesScore">
+                    <div class="form-view fst-italic" data-field="assessment.psychometricScore"></div>
+                    <input type="number" class="form-control form-edit d-none" data-field="assessment.psychometricScore" placeholder="">
                   </div>
-
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">OTG Score</label>
-                    <div class="form-view fst-italic" data-field="assessment.cesScore"></div>
-                    <input type="number" class="form-control form-edit d-none" value="85"
-                      data-field="assessment.cesScore">
+                    <div class="form-view fst-italic" data-field="assessment.otgScore"></div>
+                    <input type="number" class="form-control form-edit d-none" data-field="assessment.otgScore" placeholder="">
                   </div>
-
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Training Date</label>
                     <div class="form-view fst-italic" data-field="assessment.trainingDate"></div>
-                    <input type="date" class="form-control form-edit d-none" value="2024-08-15"
-                      data-field="assessment.trainingDate">
+                    <input type="date" class="form-control form-edit d-none" data-field="assessment.trainingDateForEdit">
                   </div>
-
                   <div class="col-md-6">
                     <label class="form-label mb-0 fst-italic fw-semibold">Evaluation</label>
                     <div class="form-view fst-italic" data-field="assessment.evaluation"></div>
-                    <select class="form-select form-edit d-none" data-field="assessment.evaluation">
-                      <option value="Recommended">Recommended</option>
-                      <option value="Need Improvement">Need Improvement</option>
-                      <option value="Not Recommended">Not Recommended</option>
-                    </select>
+                    <input type="text" class="form-control form-edit d-none" data-field="assessment.evaluation" placeholder="">
                   </div>
-
                 </div>
               </div>
             </div>
@@ -1638,6 +1639,65 @@
             error: function (xhr, status, error) {
               if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update crew status' });
               else alert('Failed to update crew status');
+            }
+          });
+        });
+      });
+    </script>
+
+    <script>
+      /* Assessment & Training save (CrewDetail/Traning/save_training) */
+      $(document).ready(function () {
+        var id_person = "<?php echo $idperson; ?>";
+        var alert_success = $('#assessment-success-alert');
+        var alert_error = $('#assessment-danger-alert');
+        var success_message = $('#assessment-success-message');
+        var error_message = $('#assessment-error-message');
+
+        $('#assessmentCard .btn-save').click(function () {
+          alert_success.addClass('d-none');
+          alert_error.addClass('d-none');
+          var idperson = $('#contentArea').data('idperson') || id_person;
+          if (!idperson) {
+            error_message.text('idperson not found.');
+            alert_error.removeClass('d-none');
+            return;
+          }
+          var data = {
+            idperson: idperson,
+            txtCesScore: $('input[data-field="assessment.cesScore"]').val(),
+            txtmarlinTest: $('input[data-field="assessment.marlinScore"]').val(),
+            txtEvaluation: $('input[data-field="assessment.evaluation"]').val(),
+            txtDate_training: $('input[data-field="assessment.trainingDateForEdit"]').val(),
+            scor_psychometric: $('input[data-field="assessment.psychometricScore"]').val(),
+            scor_otg: $('input[data-field="assessment.otgScore"]').val()
+          };
+          $.ajax({
+            url: "<?php echo base_url('CrewDetail/Traning/save_training'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            success: function (res) {
+              if (res.success) {
+                loadProfile(id_person);
+                var card = $('#assessmentCard');
+                card.find('.form-view').removeClass('d-none');
+                card.find('.form-edit').addClass('d-none');
+                card.find('.btn-edit').removeClass('d-none');
+                card.find('.btn-save, .btn-cancel').addClass('d-none');
+                success_message.text(res.message || 'Data saved successfully');
+                alert_success.removeClass('d-none');
+                setTimeout(function () { alert_success.addClass('d-none'); }, 3000);
+              } else {
+                error_message.text(res.message || 'Save failed.');
+                alert_error.removeClass('d-none');
+                setTimeout(function () { alert_error.addClass('d-none'); }, 5000);
+              }
+            },
+            error: function () {
+              error_message.text('Request failed.');
+              alert_error.removeClass('d-none');
+              setTimeout(function () { alert_error.addClass('d-none'); }, 5000);
             }
           });
         });
