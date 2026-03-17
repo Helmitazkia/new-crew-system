@@ -3,7 +3,7 @@
     <!-- =========================
      LEFT : ASSESSMENT & TRAINING
      ========================= -->
-    <div class="col-6 mb-4">
+    <div class="col-4 mb-4">
       <div class="card shadow-sm h-100">
 
         <div class="card-header d-flex justify-content-between align-items-center">
@@ -89,40 +89,27 @@
 
 
     <!-- =========================
-     RIGHT : TRAINING LIST (Collapsible)
+     RIGHT : TRAINING LIST (DataTable)
      ========================= -->
-    <div class="col-6 mb-4">
+    <div class="col-8 mb-4">
       <div class="card shadow-sm h-100">
-        <div class="card-header d-flex justify-content-between align-items-center py-2" data-bs-toggle="collapse" data-bs-target="#trainingListCollapse" aria-expanded="false" aria-controls="trainingListCollapse" style="cursor:pointer;">
+        <div class="card-header d-flex justify-content-between align-items-center py-2">
           <span class="fw-semibold fst-italic">📚 Training List</span>
-          <span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
+          <button type="button" class="btn btn-primary btn-sm rounded-pill fst-italic" id="btnNewTrainingMatrix"><i class="fa fa-plus"></i> New</button>
         </div>
-        <div class="collapse" id="trainingListCollapse">
-          <div class="card-body p-0">
-            <div class="table-responsive" style="max-height:420px; overflow-y:auto;">
-              <table class="table table-sm table-bordered mb-0 training-table">
-                <thead class="table-light sticky-top">
-                  <tr>
-                    <th width="70%" class="text-center fst-italic" style="background-color:#000099; color:#FFFFFF;">Training Name</th>
-                    <th width="30%" class="text-center fst-italic" style="background-color:#000099; color:#FFFFFF;">Completed</th>
-                  </tr>
-                </thead>
-                <tbody id="trainingTableBody">
-                  <tr><td>PERSONAL SAFETY</td><td class="text-center"><input type="checkbox" checked></td></tr>
-                  <tr><td>ISM CODE</td><td class="text-center"><input type="checkbox"></td></tr>
-                  <tr><td>PORT STATE CONTROL INSPECTIONS</td><td class="text-center"><input type="checkbox" checked></td></tr>
-                  <tr><td>SECURITY AWARENESS</td><td class="text-center"><input type="checkbox"></td></tr>
-                  <tr><td>RISK ASSESSMENT AND MANAGEMENT</td><td class="text-center"><input type="checkbox" checked></td></tr>
-                  <tr><td>AWARENESS OF LIFEBOAT RELEASE AND RETRIEVAL SYSTEMS</td><td class="text-center"><input type="checkbox"></td></tr>
-                  <tr><td>CYBER WELLNESS</td><td class="text-center"><input type="checkbox"></td></tr>
-                  <tr><td>PIRACY AND ARMED ROBBERY 1</td><td class="text-center"><input type="checkbox" checked></td></tr>
-                  <tr><td>PERSONAL SURVIVAL, SURVIVAL CRAFT</td><td class="text-center"><input type="checkbox"></td></tr>
-                  <tr><td>PERSONAL SURVIVAL, RESCUE AND ABANDONING SHIP</td><td class="text-center"><input type="checkbox" checked></td></tr>
-                  <tr><td>BEHAVIOR BASED SAFETY</td><td class="text-center"><input type="checkbox"></td></tr>
-                  <tr><td>INCIDENT INVESTIGATION, CAUSE AND EFFECT</td><td class="text-center"><input type="checkbox"></td></tr>
-                </tbody>
-              </table>
-            </div>
+        <div class="card-body p-2">
+          <div class="table-responsive">
+            <table id="trainingMatrixTable" class="table table-sm table-bordered mb-0" style="width:100%">
+              <thead>
+                <tr>
+                  <th style="width:10%; background-color:#000099; color:#FFFFFF;font-size:12px;" class="text-center">No</th>
+                  <th style="width:70%; background-color:#000099; color:#FFFFFF;font-size:12px;" class="text-center">Training Name</th>
+                  <th style="width:10%; background-color:#000099; color:#FFFFFF;font-size:12px;" class="text-center">Completed</th>
+                  <th style="width:20%; background-color:#000099; color:#FFFFFF;font-size:12px;" class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody style="font-size:13px;">
+            </table>
           </div>
         </div>
       </div>
@@ -246,6 +233,42 @@
   </div>
 </div>
 
+<!-- Modal Add/Edit Training List (Matrix) -->
+<div class="modal fade" id="trainingMatrixModal" tabindex="-1">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header text-white" style="background-color:#000099;">
+        <h5 class="modal-title" id="trainingMatrixModalTitle">Add List Training</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="trainingMatrixForm">
+          <input type="hidden" name="idcrewtraining_matrix" id="idcrewtraining_matrix">
+          <input type="hidden" name="idperson" id="idperson_matrix" value="">
+          <div class="mb-2">
+            <label class="form-label mb-0 fst-italic fw-semibold">Training Name <span class="text-danger">*</span></label>
+            <select name="cert_matrix_id" id="cert_matrix_id" class="form-control selectpicker" data-live-search="true" data-size="8"></select>
+            <small id="cert_matrix_id_fb" class="text-danger d-none">Training Name is required</small>
+          </div>
+          <div class="mb-2 form-check">
+            <input type="checkbox" class="form-check-input" id="completed_matrix" name="completed" value="1">
+            <label class="form-check-label" for="completed_matrix">Completed</label>
+          </div>
+          <div class="mb-2">
+            <label class="form-label mb-0 fst-italic fw-semibold">Remarks</label>
+            <textarea name="remarks" id="remarks_matrix" class="form-control" rows="2" maxlength="500"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" id="btnSaveTrainingMatrix">Save</button>
+        <button type="button" class="btn btn-warning d-none" id="btnUpdateTrainingMatrix">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <style>
   .crew-table th, .crew-table td { font-size: 12px; vertical-align: middle; }
   .crew-table th { font-weight: 600; }
@@ -262,10 +285,7 @@
   var error_message = $('#training-error-message');
   var optionsRankCrewTraining = <?php echo isset($optionsRankJson) ? $optionsRankJson : '[]'; ?>;
   var optionsVesselCrewTraining = <?php echo isset($optionsVesselJson) ? $optionsVesselJson : '[]'; ?>;
-
-  // Collapse icon toggle (Training List card)
-  $('#trainingListCollapse').on('show.bs.collapse', function () { $('.collapse-icon i').removeClass('fa-chevron-down').addClass('fa-chevron-up'); });
-  $('#trainingListCollapse').on('hide.bs.collapse', function () { $('.collapse-icon i').removeClass('fa-chevron-up').addClass('fa-chevron-down'); });
+  var optionsCertificateMatrix = <?php echo isset($optionsCertificateMatrixJson) ? $optionsCertificateMatrixJson : '[]'; ?>;
 
   function loadTrainingData() {
     var idperson = $('#contentArea').data('idperson');
@@ -449,6 +469,246 @@
         infoFiltered: '(filtered from _MAX_ total entries)',
         search: 'Search:'
       }
+    });
+
+    // =========================
+    // Training List (matrix) DataTable
+    // =========================
+
+    var $certSel = $('#cert_matrix_id');
+    if ($certSel.length) {
+      $certSel.empty();
+      // Tambah option kosong di paling atas supaya default benar-benar "belum pilih"
+      $certSel.append($('<option></option>').val('').text('- Select Training -'));
+      $.each(optionsCertificateMatrix, function (i, o) {
+        $certSel.append($('<option></option>').val(o.value).text(o.text));
+      });
+      $certSel.selectpicker({
+        noneSelectedText: '- Select Training -',
+        liveSearch: true,
+        size: 5
+      });
+      // Pastikan tidak ada nilai yang terpilih saat awal
+      $certSel.selectpicker('val', '');
+    }
+
+    var trainingMatrixTable = $('#trainingMatrixTable').DataTable({
+      dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end tm-btn-wrap'>>" +
+           "<'row'<'col-md-12'tr>>" +
+           "<'row mt-2'<'col-md-6'i><'col-md-6 d-flex justify-content-end'p>>",
+      processing: true,
+      serverSide: false,
+      searching: false,
+      paging: true,
+      pageLength: 5,
+      lengthMenu: [5,10, 25, 50, 100],
+      ajax: {
+        url: baseUrlTraining + '/get_training_matrix',
+        type: 'GET',
+        data: { idperson: idperson },
+        dataSrc: function (json) {
+          if (json.success) return json.data;
+          return [];
+        }
+      },
+      columns: [
+        { data: null, className: 'text-center', orderable: false, render: function (data, type, row, meta) { return meta.row + 1; } },
+        { data: 'training_name'},
+        {
+          data: 'completed',
+          className: 'text-center',
+          orderable: false,
+          render: function (d, type, row) {
+            var checked = (d === 1 || d === '1') ? 'checked' : '';
+            return '<input type="checkbox" class="form-check-input tm-completed" data-id="' + row.idcrewtraining_matrix + '" ' + checked + ' />';
+          }
+        },
+        {
+          data: null,
+          className: 'text-center',
+          orderable: false,
+          searchable: false,
+          render: function (data, type, row) {
+            return '<button type="button" class="btn btn-sm btn-outline-primary tm-edit" data-id="' + row.idcrewtraining_matrix + '"><i class="fa fa-edit"></i></button> ' +
+                   '<button type="button" class="btn btn-sm btn-outline-danger tm-delete" data-id="' + row.idcrewtraining_matrix + '"><i class="fa fa-trash"></i></button>';
+          }
+        }
+      ],
+      initComplete: function () {
+        //$('.tm-btn-wrap').html('<button type="button" class="btn btn-primary btn-sm rounded-pill fst-italic" id="btnNewTrainingMatrix"><i class="fa fa-plus"></i> New</button>');
+      },
+      language: {
+        emptyTable: 'No training data',
+        zeroRecords: 'No matching training found',
+        lengthMenu: '_MENU_ &nbsp;Entries',
+        info: 'Showing _START_ to _END_ of _TOTAL_ entries',
+        infoEmpty: 'Showing 0 to 0 of 0 entries',
+        infoFiltered: '(filtered from _MAX_ total entries)',
+        search: 'Search:'
+      }
+    });
+
+    function validateTrainingMatrixForm() {
+      var ok = true;
+      $('#cert_matrix_id_fb').addClass('d-none');
+      $('#cert_matrix_id').closest('.bootstrap-select').removeClass('is-invalid');
+      var val = $('#cert_matrix_id').val();
+      if (!val || (typeof val === 'string' && val.trim() === '')) {
+        $('#cert_matrix_id_fb').removeClass('d-none');
+        $('#cert_matrix_id').closest('.bootstrap-select').addClass('is-invalid');
+        ok = false;
+      }
+      return ok;
+    }
+
+    function hideTrainingMatrixFeedback() {
+      $('#cert_matrix_id_fb').addClass('d-none');
+      $('#cert_matrix_id').closest('.bootstrap-select').removeClass('is-invalid');
+    }
+
+    $(document).on('click', '#btnNewTrainingMatrix', function () {
+      $('#trainingMatrixForm')[0].reset();
+      $('#idcrewtraining_matrix').val('');
+      $('#cert_matrix_id').selectpicker('val', '');
+      $('#completed_matrix').prop('checked', false);
+      hideTrainingMatrixFeedback();
+      $('#trainingMatrixModalTitle').text('Add List Training');
+      $('#btnSaveTrainingMatrix').removeClass('d-none');
+      $('#btnUpdateTrainingMatrix').addClass('d-none');
+      $('#trainingMatrixModal').modal('show');
+    });
+
+    $('#trainingMatrixTable').on('click', '.tm-edit', function () {
+      var id = $(this).data('id');
+      $('#trainingMatrixForm')[0].reset();
+      hideTrainingMatrixFeedback();
+      $('#trainingMatrixModalTitle').text('Edit List Training');
+      $('#btnSaveTrainingMatrix').addClass('d-none');
+      $('#btnUpdateTrainingMatrix').removeClass('d-none');
+      $.ajax({
+        url: baseUrlTraining + '/get_training_matrix_by_id',
+        type: 'POST',
+        dataType: 'json',
+        data: { idcrewtraining_matrix: id, idperson: idperson },
+        success: function (r) {
+          if (!r || r.success === false) {
+            if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: (r && r.message) || 'Data not found' });
+            else alert((r && r.message) || 'Data not found');
+            return;
+          }
+          $('#idcrewtraining_matrix').val(r.idcrewtraining_matrix);
+          $('#idperson_matrix').val(r.idperson);
+          $('#cert_matrix_id').selectpicker('val', (r.cert_matrix_id || '').toString().trim());
+          $('#completed_matrix').prop('checked', r.completed == 1 || r.completed === '1');
+          $('#remarks_matrix').val(r.remarks || '');
+          $('#trainingMatrixModal').modal('show');
+        }
+      });
+    });
+
+    $('#btnSaveTrainingMatrix').on('click', function () {
+      if (!validateTrainingMatrixForm()) return;
+      var fd = new FormData($('#trainingMatrixForm')[0]);
+      fd.set('idperson', idperson);
+      $.ajax({
+        url: baseUrlTraining + '/save_training_matrix',
+        type: 'POST',
+        data: fd,
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+        success: function (r) {
+          if (r.status) {
+            $('#trainingMatrixModal').modal('hide');
+            if (typeof Swal !== 'undefined') Swal.fire({ title: r.message, icon: 'success' });
+            else alert(r.message);
+            trainingMatrixTable.ajax.reload(null, false);
+          } else {
+            if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: r.message || 'Save failed' });
+            else alert(r.message || 'Save failed');
+          }
+        }
+      });
+    });
+
+    $('#btnUpdateTrainingMatrix').on('click', function () {
+      if (!validateTrainingMatrixForm()) return;
+      var fd = new FormData($('#trainingMatrixForm')[0]);
+      fd.set('idperson', idperson);
+      $.ajax({
+        url: baseUrlTraining + '/update_training_matrix',
+        type: 'POST',
+        data: fd,
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+        success: function (r) {
+          if (r.status) {
+            $('#trainingMatrixModal').modal('hide');
+            if (typeof Swal !== 'undefined') Swal.fire({ title: r.message, icon: 'success' });
+            else alert(r.message);
+            trainingMatrixTable.ajax.reload(null, false);
+          } else {
+            if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: r.message || 'Update failed' });
+            else alert(r.message || 'Update failed');
+          }
+        }
+      });
+    });
+
+    $('#trainingMatrixTable').on('change', '.tm-completed', function () {
+      var id = $(this).data('id');
+      var checked = $(this).is(':checked') ? 1 : 0;
+      $.ajax({
+        url: baseUrlTraining + '/update_training_completed',
+        type: 'POST',
+        dataType: 'json',
+        data: { idcrewtraining_matrix: id, completed: checked }
+      });
+    });
+
+    $('#trainingMatrixTable').on('click', '.tm-delete', function () {
+      var id = $(this).data('id');
+      var doDelete = function () {
+        $.ajax({
+          url: baseUrlTraining + '/delete_training_matrix',
+          type: 'POST',
+          dataType: 'json',
+          data: { idcrewtraining_matrix: id },
+          success: function (r) {
+            if (r.status) {
+              if (typeof Swal !== 'undefined') Swal.fire({ title: r.message, icon: 'success' });
+              else alert(r.message);
+              trainingMatrixTable.ajax.reload(null, false);
+            } else {
+              if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: r.message || 'Delete failed' });
+              else alert(r.message || 'Delete failed');
+            }
+          }
+        });
+      };
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        }).then(function (result) {
+          if (result.isConfirmed) doDelete();
+        });
+      } else {
+        if (confirm('Delete this training?')) doDelete();
+      }
+    });
+
+    $('#trainingMatrixModal').on('hidden.bs.modal', function () {
+      $('#idcrewtraining_matrix').val('');
+      $('#btnSaveTrainingMatrix').removeClass('d-none');
+      $('#btnUpdateTrainingMatrix').addClass('d-none');
+      hideTrainingMatrixFeedback();
     });
 
     $(document).on('click', '#btnNewCrewTraining', function () {
