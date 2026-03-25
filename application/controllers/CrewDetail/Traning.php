@@ -167,6 +167,7 @@ class Traning extends CI_Controller {
                 'end_date_training' => $row['end_date_training'],
                 'finish_date_training' => $row['finish_date_training'],
                 'status' => isset($row['status']) ? $row['status'] : '',
+                'detail_training' => isset($row['detail_training']) ? $row['detail_training'] : '',
                 'remarks' => isset($row['remarks']) ? $row['remarks'] : '',
             );
         }
@@ -186,7 +187,7 @@ class Traning extends CI_Controller {
             return;
         }
         $sql = "SELECT idcrewtraining, idperson, rank, kdvsl, total_training,
-                start_date_training, end_date_training, finish_date_training, status, remarks
+                start_date_training, end_date_training, finish_date_training, status, detail_training, remarks
                 FROM tblcrewtraining
                 WHERE deletests = '0' AND idcrewtraining = ? AND idperson = ?";
         $row = $this->db->query($sql, array($idcrewtraining, $idperson))->row_array();
@@ -220,6 +221,7 @@ class Traning extends CI_Controller {
         $end_date_training = $this->input->post('end_date_training') ?: null;
         $finish_date_training = $this->input->post('finish_date_training') ?: null;
         $status = $this->input->post('status') !== null ? trim($this->input->post('status')) : '';
+        $detail_training = $this->input->post('detail_training') !== null ? trim($this->input->post('detail_training')) : '';
         $remarks = $this->input->post('remarks') !== null ? trim($this->input->post('remarks')) : '';
 
         if ($start_date_training === '') $start_date_training = null;
@@ -236,6 +238,7 @@ class Traning extends CI_Controller {
             'end_date_training' => $end_date_training,
             'finish_date_training' => $finish_date_training,
             'status' => substr($status, 0, 20),
+            'detail_training' => substr($detail_training, 0, 500),
             'remarks' => substr($remarks, 0, 500),
             'deletests' => '0',
         );
@@ -262,6 +265,7 @@ class Traning extends CI_Controller {
         $end_date_training = $this->input->post('end_date_training') ?: null;
         $finish_date_training = $this->input->post('finish_date_training') ?: null;
         $status = $this->input->post('status') !== null ? trim($this->input->post('status')) : '';
+        $detail_training = $this->input->post('detail_training') !== null ? trim($this->input->post('detail_training')) : '';
         $remarks = $this->input->post('remarks') !== null ? trim($this->input->post('remarks')) : '';
 
         if ($start_date_training === '') $start_date_training = null;
@@ -276,6 +280,7 @@ class Traning extends CI_Controller {
             'end_date_training' => $end_date_training,
             'finish_date_training' => $finish_date_training,
             'status' => substr($status, 0, 20),
+            'detail_training' => substr($detail_training, 0, 500),
             'remarks' => substr($remarks, 0, 500),
         );
         $this->db->where('idcrewtraining', $idcrewtraining);

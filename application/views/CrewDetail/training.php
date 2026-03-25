@@ -94,7 +94,7 @@
     <div class="col-8 mb-4">
       <div class="card shadow-sm h-100">
         <div class="card-header d-flex justify-content-between align-items-center py-2">
-          <span class="fw-semibold fst-italic">📚 Training List</span>
+          <span class="fw-semibold fst-italic">📚 Planned Training List</span>
           <button type="button" class="btn btn-primary btn-sm rounded-pill fst-italic" id="btnNewTrainingMatrix"><i class="fa fa-plus"></i> New</button>
         </div>
         <div class="card-body p-2">
@@ -105,6 +105,7 @@
                   <th style="width:10%; background-color:#000099; color:#FFFFFF;font-size:12px;" class="text-center">No</th>
                   <th style="width:70%; background-color:#000099; color:#FFFFFF;font-size:12px;" class="text-center">Training Name</th>
                   <th style="width:10%; background-color:#000099; color:#FFFFFF;font-size:12px;" class="text-center">Completed</th>
+                  <!-- <th style="width:20%; background-color:#000099; color:#FFFFFF;font-size:12px;" class="text-center">Remarks</th> -->
                   <th style="width:20%; background-color:#000099; color:#FFFFFF;font-size:12px;" class="text-center">Action</th>
                 </tr>
               </thead>
@@ -218,6 +219,13 @@
               <small id="status_crewtraining_fb" class="text-danger d-none">Status is required</small>
             </div>
             <div class="col-md-12 mb-2">
+              <label>Training Name <span class="text-danger">*</span></label>
+              <select id="detail_training_ids" class="form-control" multiple></select>
+              <input type="hidden" name="detail_training" id="detail_training" value="">
+              <small id="detail_training_fb" class="text-danger d-none">Training Name is required</small>
+              <small class="text-muted d-block">Bisa pilih multiple</small>
+            </div>
+            <div class="col-md-12 mb-2">
               <label>Remarks</label>
               <textarea name="remarks" id="remarks_crewtraining" class="form-control" rows="2" maxlength="500"></textarea>
             </div>
@@ -246,17 +254,17 @@
           <input type="hidden" name="idcrewtraining_matrix" id="idcrewtraining_matrix">
           <input type="hidden" name="idperson" id="idperson_matrix" value="">
           <div class="mb-2">
-            <label class="form-label mb-0 fst-italic fw-semibold">Training Name <span class="text-danger">*</span></label>
+            <label class="form-label mb-0 fst-italic fw-semibold">Planned Training Name <span class="text-danger">*</span></label>
             <select name="cert_matrix_id" id="cert_matrix_id" class="form-control selectpicker" data-live-search="true" data-size="8"></select>
-            <small id="cert_matrix_id_fb" class="text-danger d-none">Training Name is required</small>
+            <small id="cert_matrix_id_fb" class="text-danger d-none">Planned Training Name is required</small>
           </div>
           <div class="mb-2 form-check">
             <input type="checkbox" class="form-check-input" id="completed_matrix" name="completed" value="1">
             <label class="form-check-label" for="completed_matrix">Completed</label>
           </div>
-          <div class="mb-2">
+          <div class="mb-2 d-none">
             <label class="form-label mb-0 fst-italic fw-semibold">Remarks</label>
-            <textarea name="remarks" id="remarks_matrix" class="form-control" rows="2" maxlength="500"></textarea>
+            <textarea name="remarks" id="remarks_matrix" class="form-control" rows="2" maxlength="500" ></textarea>
           </div>
         </form>
       </div>
@@ -407,6 +415,36 @@
     $vslSelect.empty().append(optionsVesselCrewTraining.map(function (o) { return $('<option></option>').val(o.value).text(o.text)[0]; }));
     $vslSelect.selectpicker({ noneSelectedText: '- Select -', liveSearch: true, size: 5 });
 
+    // Detail Training (multiple) options from mstcertificatematrix (Select2 tags with x)
+    var $detailSel = $('#detail_training_ids');
+    if ($detailSel.length) {
+      $detailSel.empty();
+      $.each(optionsCertificateMatrix || [], function (i, o) {
+        $detailSel.append($('<option></option>').val(o.value).text(o.text));
+      });
+      if ($detailSel.data('select2')) {
+        try { $detailSel.select2('destroy'); } catch (e) {}
+      }
+      $detailSel.select2({
+        placeholder: '- Select -',
+        width: '100%',
+        dropdownParent: $('#crewTrainingModal')
+      });
+      $detailSel.val(null).trigger('change');
+      $('#detail_training').val('');
+    }
+
+    // Sync select2 selections -> hidden CSV field
+    $(document).on('change', '#detail_training_ids', function () {
+      var ids = $('#detail_training_ids').val() || [];
+      $('#detail_training').val(ids.join(','));
+      // clear validation when user picks something
+      if (ids.length) {
+        $('#detail_training_fb').addClass('d-none');
+        $('#detail_training_ids').removeClass('is-invalid');
+      }
+    });
+
     var crewTrainingTable = $('#crewTrainingTable').DataTable({
       dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end crew-training-btn'>>" +
            "<'row'<'col-md-12'tr>>" +
@@ -523,6 +561,7 @@
             return '<input type="checkbox" class="form-check-input tm-completed" data-id="' + row.idcrewtraining_matrix + '" ' + checked + ' />';
           }
         },
+        // {data: 'remarks'},
         {
           data: null,
           className: 'text-center',
@@ -721,6 +760,8 @@
       $('#rank_crewtraining').selectpicker('val', '');
       $('#kdvsl_crewtraining').selectpicker('val', '');
       $('#status_crewtraining').val('');
+      $('#detail_training_ids').val(null).trigger('change');
+      $('#detail_training').val('');
       hideCrewTrainingFeedback();
       $('#crewTrainingModal').modal('show');
     });
@@ -746,6 +787,11 @@
           $('#end_date_training').val(r.end_date_training && r.end_date_training !== '0000-00-00' ? r.end_date_training : '');
           $('#finish_date_training').val(r.finish_date_training && r.finish_date_training !== '0000-00-00' ? r.finish_date_training : '');
           $('#status_crewtraining').val(r.status || '');
+          // set multiselect from CSV
+          var csv = (r.detail_training || '').toString().trim();
+          var arr = csv ? csv.split(',').map(function (s) { return s.trim(); }).filter(function (x) { return x !== ''; }) : [];
+          $('#detail_training_ids').val(arr).trigger('change');
+          $('#detail_training').val(arr.join(','));
           $('#remarks_crewtraining').val(r.remarks || '');
           hideCrewTrainingFeedback();
           $('#crewTrainingModal').modal('show');
@@ -755,8 +801,8 @@
 
     function validateCrewTrainingForm() {
       var ok = true;
-      $('#rank_crewtraining_fb, #kdvsl_crewtraining_fb, #total_training_fb, #start_date_training_fb, #status_crewtraining_fb').addClass('d-none');
-      $('#rank_crewtraining, #kdvsl_crewtraining, #total_training, #start_date_training, #status_crewtraining').removeClass('is-invalid');
+      $('#rank_crewtraining_fb, #kdvsl_crewtraining_fb, #total_training_fb, #start_date_training_fb, #status_crewtraining_fb, #detail_training_fb').addClass('d-none');
+      $('#rank_crewtraining, #kdvsl_crewtraining, #total_training, #start_date_training, #status_crewtraining, #detail_training_ids').removeClass('is-invalid');
 
       var rankVal = $('#rank_crewtraining').val();
       if (!rankVal || (typeof rankVal === 'string' && rankVal.trim() === '')) {
@@ -778,16 +824,25 @@
       if (!statusVal || (typeof statusVal === 'string' && statusVal.trim() === '')) {
         $('#status_crewtraining_fb').removeClass('d-none'); $('#status_crewtraining').addClass('is-invalid'); ok = false;
       }
+      var detailIds = $('#detail_training_ids').val() || [];
+      if (!detailIds.length) {
+        $('#detail_training_fb').removeClass('d-none');
+        $('#detail_training_ids').addClass('is-invalid');
+        ok = false;
+      }
       return ok;
     }
 
     function hideCrewTrainingFeedback() {
-      $('#rank_crewtraining_fb, #kdvsl_crewtraining_fb, #total_training_fb, #start_date_training_fb, #status_crewtraining_fb').addClass('d-none');
-      $('#rank_crewtraining, #kdvsl_crewtraining, #total_training, #start_date_training, #status_crewtraining').removeClass('is-invalid');
+      $('#rank_crewtraining_fb, #kdvsl_crewtraining_fb, #total_training_fb, #start_date_training_fb, #status_crewtraining_fb, #detail_training_fb').addClass('d-none');
+      $('#rank_crewtraining, #kdvsl_crewtraining, #total_training, #start_date_training, #status_crewtraining, #detail_training_ids').removeClass('is-invalid');
     }
 
     $('#btnSaveCrewTraining').on('click', function () {
       if (!validateCrewTrainingForm()) return;
+      // sync multiselect (detail_training_ids) to hidden CSV field
+      var ids = $('#detail_training_ids').val() || [];
+      $('#detail_training').val(ids.join(','));
       var fd = new FormData($('#crewTrainingForm')[0]);
       fd.set('idperson', idperson);
       $.ajax({
@@ -813,6 +868,9 @@
 
     $('#btnUpdateCrewTraining').on('click', function () {
       if (!validateCrewTrainingForm()) return;
+      // sync multiselect (detail_training_ids) to hidden CSV field
+      var ids = $('#detail_training_ids').val() || [];
+      $('#detail_training').val(ids.join(','));
       var fd = new FormData($('#crewTrainingForm')[0]);
       fd.set('idperson', idperson);
       $.ajax({
