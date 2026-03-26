@@ -58,11 +58,22 @@ class Traning extends CI_Controller {
         return $out;
     }
 
+    private function _getVendorOptionsArray()
+    {
+        $rows = $this->db->query("SELECT id_vendor, vendor_name FROM master_vendor_training WHERE deletests = '0' ORDER BY vendor_name ASC")->result();
+        $out = array(array("value" => "", "text" => "- Select -"));
+        foreach ($rows as $r) {
+            $out[] = array("value" => $r->id_vendor, "text" => $r->vendor_name);
+        }
+        return $out;
+    }
+
     public function index()
     {
         $data = array(
             "optionsRankJson" => json_encode($this->_getRankOptionsArray()),
             "optionsVesselJson" => json_encode($this->_getVesselOptionsArray()),
+            "optionsVendorJson" => json_encode($this->_getVendorOptionsArray()),
             "optionsCertificateMatrixJson" => json_encode($this->_getCertificateMatrixOptionsArray()),
         );
         $this->load->view('CrewDetail/training', $data);
@@ -144,11 +155,12 @@ class Traning extends CI_Controller {
             );
             return;
         }
-        $sql = "SELECT A.*, TRIM(CONCAT_WS(' ', P.fname, P.mname, P.lname)) AS name, D.nmvsl, R.nmrank AS rank_nm
+        $sql = "SELECT A.*, TRIM(CONCAT_WS(' ', P.fname, P.mname, P.lname)) AS name, D.nmvsl, R.nmrank AS rank_nm, V.vendor_name
             FROM tblcrewtraining A
             LEFT JOIN mstpersonal P ON P.idperson = A.idperson
             LEFT JOIN mstvessel D ON D.kdvsl = A.kdvsl AND D.deletests = '0'
             LEFT JOIN mstrank R ON R.kdrank = A.rank AND R.deletests = '0'
+            LEFT JOIN master_vendor_training V ON V.id_vendor = A.vendor AND V.deletests = '0'
             WHERE A.deletests = '0' AND A.idperson = ?
             ORDER BY A.start_date_training DESC, A.idcrewtraining DESC";
         $rows = $this->db->query($sql, array($idperson))->result_array();
@@ -162,6 +174,10 @@ class Traning extends CI_Controller {
                 'rank_display' => isset($row['rank_nm']) ? $row['rank_nm'] : (isset($row['rank']) ? $row['rank'] : ''),
                 'kdvsl' => isset($row['kdvsl']) ? $row['kdvsl'] : '',
                 'vessel' => isset($row['nmvsl']) ? $row['nmvsl'] : '',
+                'vendor' => isset($row['vendor']) ? $row['vendor'] : '',
+                'vendor_name' => isset($row['vendor_name']) ? $row['vendor_name'] : '',
+                'location' => isset($row['location']) ? $row['location'] : '',
+                'file_traning' => isset($row['file_traning']) ? $row['file_traning'] : '',
                 'total_training' => $row['total_training'],
                 'start_date_training' => $row['start_date_training'],
                 'end_date_training' => $row['end_date_training'],
@@ -186,7 +202,7 @@ class Traning extends CI_Controller {
             );
             return;
         }
-        $sql = "SELECT idcrewtraining, idperson, rank, kdvsl, total_training,
+        $sql = "SELECT idcrewtraining, idperson, rank, kdvsl, vendor, location, file_traning, total_training,
                 start_date_training, end_date_training, finish_date_training, status, detail_training, remarks
                 FROM tblcrewtraining
                 WHERE deletests = '0' AND idcrewtraining = ? AND idperson = ?";
@@ -216,6 +232,8 @@ class Traning extends CI_Controller {
 
         $rank = $this->input->post('rank') !== null ? trim($this->input->post('rank')) : '';
         $kdvsl = $this->input->post('kdvsl') !== null ? trim($this->input->post('kdvsl')) : '';
+        $vendor = $this->input->post('vendor') !== null ? trim($this->input->post('vendor')) : '';
+        $location = $this->input->post('location') !== null ? trim($this->input->post('location')) : '';
         $total_training = $this->input->post('total_training') !== null ? (int)$this->input->post('total_training') : null;
         $start_date_training = $this->input->post('start_date_training') ?: null;
         $end_date_training = $this->input->post('end_date_training') ?: null;
@@ -228,11 +246,36 @@ class Traning extends CI_Controller {
         if ($end_date_training === '') $end_date_training = null;
         if ($finish_date_training === '') $finish_date_training = null;
 
+        $file_traning = null;
+        if (isset($_FILES['file_traning']['name']) && $_FILES['file_traning']['name'] != '') {
+            $config['upload_path'] = './uploadFile/';
+            $config['allowed_types'] = '*';
+            $config['max_size'] = 10240;
+            $config['file_name'] = 'training_' . $idperson . '_' . time();
+            
+            $CI =& get_instance();
+            $CI->load->library('upload', $config);
+            if (!isset($CI->upload)) {
+                require_once BASEPATH . 'libraries/Upload.php';
+                $CI->upload = new CI_Upload($config);
+            }
+            $CI->upload->initialize($config);
+            
+            if (!is_dir('./uploadFile/')) { mkdir('./uploadFile/', 0777, true); }
+            if ($CI->upload->do_upload('file_traning')) {
+                $uploadData = $CI->upload->data();
+                $file_traning = $uploadData['file_name'];
+            }
+        }
+
         $data = array(
             'idcrewtraining' => $newId,
             'idperson' => $idperson,
             'rank' => substr($rank, 0, 50),
             'kdvsl' => substr($kdvsl, 0, 20),
+            'vendor' => $vendor !== '' ? (int)$vendor : null,
+            'location' => substr($location, 0, 255),
+            'file_traning' => $file_traning,
             'total_training' => $total_training,
             'start_date_training' => $start_date_training,
             'end_date_training' => $end_date_training,
@@ -260,6 +303,8 @@ class Traning extends CI_Controller {
         }
         $rank = $this->input->post('rank') !== null ? trim($this->input->post('rank')) : '';
         $kdvsl = $this->input->post('kdvsl') !== null ? trim($this->input->post('kdvsl')) : '';
+        $vendor = $this->input->post('vendor') !== null ? trim($this->input->post('vendor')) : '';
+        $location = $this->input->post('location') !== null ? trim($this->input->post('location')) : '';
         $total_training = $this->input->post('total_training') !== null ? (int)$this->input->post('total_training') : null;
         $start_date_training = $this->input->post('start_date_training') ?: null;
         $end_date_training = $this->input->post('end_date_training') ?: null;
@@ -275,6 +320,8 @@ class Traning extends CI_Controller {
         $data = array(
             'rank' => substr($rank, 0, 50),
             'kdvsl' => substr($kdvsl, 0, 20),
+            'vendor' => $vendor !== '' ? (int)$vendor : null,
+            'location' => substr($location, 0, 255),
             'total_training' => $total_training,
             'start_date_training' => $start_date_training,
             'end_date_training' => $end_date_training,
@@ -283,6 +330,28 @@ class Traning extends CI_Controller {
             'detail_training' => substr($detail_training, 0, 500),
             'remarks' => substr($remarks, 0, 500),
         );
+
+        if (isset($_FILES['file_traning']['name']) && $_FILES['file_traning']['name'] != '') {
+            $config['upload_path'] = './uploadFile/';
+            $config['allowed_types'] = '*';
+            $config['max_size'] = 10240;
+            $config['file_name'] = 'training_' . $idperson . '_' . time();
+            
+            $CI =& get_instance();
+            $CI->load->library('upload', $config);
+            if (!isset($CI->upload)) {
+                require_once BASEPATH . 'libraries/Upload.php';
+                $CI->upload = new CI_Upload($config);
+            }
+            $CI->upload->initialize($config);
+
+            if (!is_dir('./uploadFile/')) { mkdir('./uploadFile/', 0777, true); }
+            if ($CI->upload->do_upload('file_traning')) {
+                $uploadData = $CI->upload->data();
+                $data['file_traning'] = $uploadData['file_name'];
+            }
+        }
+
         $this->db->where('idcrewtraining', $idcrewtraining);
         $this->db->where('idperson', $idperson);
         $this->db->update('tblcrewtraining', $data);

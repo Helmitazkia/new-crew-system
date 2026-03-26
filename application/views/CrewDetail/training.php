@@ -133,6 +133,7 @@
                   <th>Name</th>
                   <th>Rank</th>
                   <th>Vessel</th>
+                  <th class="text-left">Vendor</th>
                   <th class="text-center">Total Training</th>
                   <th>Start Date</th>
                   <th>End Date</th>
@@ -145,6 +146,7 @@
               <thead>
                 <tr>
                   <th></th>
+                  <th><input type="text" class="column-search form-control form-control-sm" placeholder="Search"></th>
                   <th><input type="text" class="column-search form-control form-control-sm" placeholder="Search"></th>
                   <th><input type="text" class="column-search form-control form-control-sm" placeholder="Search"></th>
                   <th><input type="text" class="column-search form-control form-control-sm" placeholder="Search"></th>
@@ -179,15 +181,19 @@
           <input type="hidden" name="idcrewtraining" id="idcrewtraining">
           <input type="hidden" name="idperson" id="idperson_crewtraining">
           <div class="row">
-            <div class="col-md-6 mb-2">
+            <div class="col-md-4 mb-2">
               <label>Rank <span class="text-danger">*</span></label>
               <select name="rank" id="rank_crewtraining" class="form-control" data-live-search="true" data-size="5"></select>
               <small id="rank_crewtraining_fb" class="text-danger d-none">Rank is required</small>
             </div>
-            <div class="col-md-6 mb-2">
+            <div class="col-md-4 mb-2">
               <label>Vessel <span class="text-danger">*</span></label>
               <select name="kdvsl" id="kdvsl_crewtraining" class="form-control" data-live-search="true" data-size="5"></select>
               <small id="kdvsl_crewtraining_fb" class="text-danger d-none">Vessel is required</small>
+            </div>
+            <div class="col-md-4 mb-2">
+              <label>Vendor</label>
+              <select name="vendor" id="vendor_crewtraining" class="form-control" data-live-search="true" data-size="5"></select>
             </div>
             <div class="col-md-4 mb-2">
               <label>Total Training <span class="text-danger">*</span></label>
@@ -217,6 +223,15 @@
                 <option value="Expired">Expired</option>
               </select>
               <small id="status_crewtraining_fb" class="text-danger d-none">Status is required</small>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label>Location</label>
+              <input type="text" name="location" id="location_crewtraining" class="form-control" maxlength="255" placeholder="Location">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label>File Training</label>
+              <input type="file" name="file_traning" id="file_traning_crewtraining" class="form-control">
+              <small class="text-muted d-block" id="current_file_traning"></small>
             </div>
             <div class="col-md-12 mb-2">
               <label>Training Name <span class="text-danger">*</span></label>
@@ -293,6 +308,7 @@
   var error_message = $('#training-error-message');
   var optionsRankCrewTraining = <?php echo isset($optionsRankJson) ? $optionsRankJson : '[]'; ?>;
   var optionsVesselCrewTraining = <?php echo isset($optionsVesselJson) ? $optionsVesselJson : '[]'; ?>;
+  var optionsVendorCrewTraining = <?php echo isset($optionsVendorJson) ? $optionsVendorJson : '[]'; ?>;
   var optionsCertificateMatrix = <?php echo isset($optionsCertificateMatrixJson) ? $optionsCertificateMatrixJson : '[]'; ?>;
 
   function loadTrainingData() {
@@ -415,6 +431,11 @@
     $vslSelect.empty().append(optionsVesselCrewTraining.map(function (o) { return $('<option></option>').val(o.value).text(o.text)[0]; }));
     $vslSelect.selectpicker({ noneSelectedText: '- Select -', liveSearch: true, size: 5 });
 
+    var $vendorSelect = $('#vendor_crewtraining');
+    if ($vendorSelect.data('selectpicker')) { try { $vendorSelect.selectpicker('destroy'); } catch (e) {} }
+    $vendorSelect.empty().append(optionsVendorCrewTraining.map(function (o) { return $('<option></option>').val(o.value).text(o.text)[0]; }));
+    $vendorSelect.selectpicker({ noneSelectedText: '- Select -', liveSearch: true, size: 5 });
+
     // Detail Training (multiple) options from mstcertificatematrix (Select2 tags with x)
     var $detailSel = $('#detail_training_ids');
     if ($detailSel.length) {
@@ -465,10 +486,19 @@
         }
       },
       columns: [
-        { data: null, className: 'text-center', orderable: false, render: function (data, type, row, meta) { return meta.row + 1; } },
+        { 
+          data: null, 
+          className: 'text-center', 
+          orderable: false, 
+          render: function (data, type, row, meta) { 
+            var fileLink = row.file_traning ? '<br><a href="' + "<?php echo base_url('uploadFile') . '/' ; ?>" + row.file_traning + '" target="_blank" class="btn btn-sm btn-outline-primary mt-1" style="padding: 2px 5px; font-size: 15px;" title="View File"><i class="fa fa-book"></i></a>' : '';
+            return (meta.row + 1) + fileLink; 
+          } 
+        },
         { data: 'name' },
         { data: 'rank_display' },
         { data: 'vessel' },
+        { data: 'vendor_name' },
         { data: 'total_training', className: 'text-center', render: function (v) { return v != null && v !== '' ? v : '-'; } },
         { data: 'start_date_training', render: function (d) { return fmtDate(d); } },
         { data: 'end_date_training', render: function (d) { return fmtDate(d); } },
@@ -759,7 +789,11 @@
       $('#btnUpdateCrewTraining').addClass('d-none');
       $('#rank_crewtraining').selectpicker('val', '');
       $('#kdvsl_crewtraining').selectpicker('val', '');
+      $('#vendor_crewtraining').selectpicker('val', '');
       $('#status_crewtraining').val('');
+      $('#location_crewtraining').val('');
+      $('#file_traning_crewtraining').val('');
+      $('#current_file_traning').text('');
       $('#detail_training_ids').val(null).trigger('change');
       $('#detail_training').val('');
       hideCrewTrainingFeedback();
@@ -782,6 +816,14 @@
           $('#idperson_crewtraining').val(r.idperson);
           $('#rank_crewtraining').selectpicker('val', (r.rank || '').toString().trim());
           $('#kdvsl_crewtraining').selectpicker('val', (r.kdvsl || '').toString().trim());
+          $('#vendor_crewtraining').selectpicker('val', (r.vendor || '').toString().trim());
+          $('#location_crewtraining').val(r.location || '');
+          $('#file_traning_crewtraining').val('');
+          if (r.file_traning) {
+              $('#current_file_traning').html('Current file: <a href="<?php echo base_url('uploadFile') . '/' ; ?>' + r.file_traning + '" target="_blank">' + r.file_traning + '</a>');
+          } else {
+              $('#current_file_traning').text('');
+          }
           $('#total_training').val(r.total_training != null ? r.total_training : '');
           $('#start_date_training').val(r.start_date_training && r.start_date_training !== '0000-00-00' ? r.start_date_training : '');
           $('#end_date_training').val(r.end_date_training && r.end_date_training !== '0000-00-00' ? r.end_date_training : '');
