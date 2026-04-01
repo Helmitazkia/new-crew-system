@@ -134,7 +134,7 @@
                   <th>Rank</th>
                   <th>Vessel</th>
                   <th class="text-left">Vendor</th>
-                  <th class="text-center">Total Training</th>
+                  <th class="text-center">Total Modul Training</th>
                   <th>Start Date</th>
                   <th>End Date</th>
                   <th>Finish Date</th>
@@ -277,7 +277,7 @@
             <input type="checkbox" class="form-check-input" id="completed_matrix" name="completed" value="1">
             <label class="form-check-label" for="completed_matrix">Completed</label>
           </div>
-          <div class="mb-2 d-none">
+          <div class="mb-2">
             <label class="form-label mb-0 fst-italic fw-semibold">Remarks</label>
             <textarea name="remarks" id="remarks_matrix" class="form-control" rows="2" maxlength="500" ></textarea>
           </div>
@@ -435,6 +435,16 @@
     if ($vendorSelect.data('selectpicker')) { try { $vendorSelect.selectpicker('destroy'); } catch (e) {} }
     $vendorSelect.empty().append(optionsVendorCrewTraining.map(function (o) { return $('<option></option>').val(o.value).text(o.text)[0]; }));
     $vendorSelect.selectpicker({ noneSelectedText: '- Select -', liveSearch: true, size: 5 });
+
+    function toggleFileTrainingDisabled() {
+      if ($('#vendor_crewtraining').val() == "1") {
+        $('#file_traning_crewtraining').prop('disabled', true).val('');
+      } else {
+        $('#file_traning_crewtraining').prop('disabled', false);
+      }
+    }
+    
+    $('#vendor_crewtraining').on('change', toggleFileTrainingDisabled);
 
     // Detail Training (multiple) options from mstcertificatematrix (Select2 tags with x)
     var $detailSel = $('#detail_training_ids');
@@ -790,6 +800,7 @@
       $('#rank_crewtraining').selectpicker('val', '');
       $('#kdvsl_crewtraining').selectpicker('val', '');
       $('#vendor_crewtraining').selectpicker('val', '');
+      toggleFileTrainingDisabled();
       $('#status_crewtraining').val('');
       $('#location_crewtraining').val('');
       $('#file_traning_crewtraining').val('');
@@ -817,6 +828,7 @@
           $('#rank_crewtraining').selectpicker('val', (r.rank || '').toString().trim());
           $('#kdvsl_crewtraining').selectpicker('val', (r.kdvsl || '').toString().trim());
           $('#vendor_crewtraining').selectpicker('val', (r.vendor || '').toString().trim());
+          toggleFileTrainingDisabled();
           $('#location_crewtraining').val(r.location || '');
           $('#file_traning_crewtraining').val('');
           if (r.file_traning) {
