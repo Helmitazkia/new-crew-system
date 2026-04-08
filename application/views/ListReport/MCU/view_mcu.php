@@ -1,0 +1,664 @@
+<!-- ============================================================
+     MCU Module View — Loaded via AJAX into list_report.php
+     Features: DataTables, Detail Modal, Delete, Generate PDF
+     ============================================================ -->
+
+<div class="card shadow-sm border-0" id="mcuModuleWrapper">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="mcuTable" class="table table-bordered align-middle mb-0 crew-table" style="width:100%">
+                <thead class="crew-header">
+                    <tr>
+                        <th class="text-center" style="width:50px;">No</th>
+                        <th class="text-center">Name Klinik</th>
+                        <th class="text-center">Date MCU</th>
+                        <th class="text-center" style="width:110px;">Status</th>
+                        <th class="text-center">Remarks Reject</th>
+                        <th class="text-center">Date Approve / Reject</th>
+                        <th class="text-center" style="width:130px;">Action</th>
+                    </tr>
+                </thead>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th><input type="text" class="column-search" placeholder="Search"></th>
+                        <th><input type="text" class="column-search" placeholder="Search"></th>
+                        <th><input type="text" class="column-search" placeholder="Search"></th>
+                        <th><input type="text" class="column-search" placeholder="Search"></th>
+                        <th><input type="text" class="column-search" placeholder="Search"></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     MODAL: Detail MCU
+     ============================================================ -->
+<div class="modal fade" id="modalDetailMcu" tabindex="-1" aria-labelledby="modalDetailMcuLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow">
+            <!-- Header -->
+            <div class="modal-header" style="background: linear-gradient(135deg, #000099 0%, #1a237e 100%); color: #fff;">
+                <h6 class="modal-title fw-bold" id="modalDetailMcuLabel">
+                    <i class="fa fa-file-text-o me-2"></i>Detail MCU Report
+                </h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Body -->
+            <div class="modal-body p-0" id="modalDetailMcuBody">
+                <!-- Spinner saat loading -->
+                <div id="detailSpinner" class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+
+                <!-- Content (hidden saat loading) -->
+                <div id="detailContent" class="d-none">
+                    <!-- Status Badge -->
+                    <div class="px-4 pt-3 pb-2">
+                        <span id="detailStatusBadge" class="badge rounded-pill px-3 py-2 fs-7"></span>
+                    </div>
+
+                    <!-- Clinic Info -->
+                    <div class="px-4 py-2">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="p-3 rounded-3" style="background: #f8f9ff;">
+                                    <small class="text-muted d-block mb-1">Nama Klinik</small>
+                                    <span class="fw-bold text-dark" id="detailClinicName">-</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 rounded-3" style="background: #f8f9ff;">
+                                    <small class="text-muted d-block mb-1">Tanggal MCU</small>
+                                    <span class="fw-bold text-dark" id="detailDateMcu">-</span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="p-3 rounded-3" style="background: #f8f9ff;">
+                                    <small class="text-muted d-block mb-1">Alamat</small>
+                                    <span class="text-dark" id="detailAddress">-</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 rounded-3" style="background: #f8f9ff;">
+                                    <small class="text-muted d-block mb-1">Telp</small>
+                                    <span class="text-dark" id="detailTelp">-</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 rounded-3" style="background: #f8f9ff;">
+                                    <small class="text-muted d-block mb-1">Fax</small>
+                                    <span class="text-dark" id="detailFax">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-2 mx-4">
+
+                    <!-- MCU Checklist -->
+                    <div class="px-4 py-2">
+                        <h6 class="fw-bold mb-3" style="color: #000099;">
+                            <i class="fa fa-check-square-o me-2"></i>Jenis Pemeriksaan MCU
+                        </h6>
+                        <div class="row g-2" id="detailMcuChecklist">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <hr class="my-2 mx-4">
+
+                    <!-- Crew List -->
+                    <div class="px-4 py-2">
+                        <h6 class="fw-bold mb-3" style="color: #000099;">
+                            <i class="fa fa-users me-2"></i>Daftar Crew
+                        </h6>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 12px;">
+                                <thead style="background-color: #e8eaf6;">
+                                    <tr>
+                                        <th class="text-center" style="width: 40px;">No</th>
+                                        <th class="text-center">Nama</th>
+                                        <th class="text-center">Jabatan</th>
+                                        <th class="text-center">Kapal</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detailCrewTableBody">
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Signature QR (if approved/rejected) -->
+                    <div class="px-4 py-3 text-center d-none" id="detailSignatureArea">
+                        <small class="text-muted d-block mb-2">Digital Signature</small>
+                        <img id="detailSignatureImg" src="" alt="QR Signature" style="max-height: 80px;">
+                    </div>
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">
+                    Tutup
+                </button>
+                <button type="button" class="btn btn-sm btn-primary" id="btnGeneratePdfFromDetail">
+                    Print PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden form for PDF generation -->
+<form id="formGeneratePdf" method="POST" target="_blank" style="display:none;">
+    <input type="hidden" name="persons" id="pdfPersons">
+    <input type="hidden" name="mcu" id="pdfMcu">
+    <input type="hidden" name="date_mcu" id="pdfDateMcu">
+    <input type="hidden" name="clinic_name" id="pdfClinicName">
+    <input type="hidden" name="status_mcu" id="pdfStatusMcu">
+    <input type="hidden" name="signature_qr" id="pdfSignatureQr">
+    <input type="hidden" name="address_clinic" id="pdfAddressClinic">
+    <input type="hidden" name="telp" id="pdfTelp">
+    <input type="hidden" name="fax" id="pdfFax">
+    <input type="hidden" name="header_mcu" id="pdfHeaderMcu">
+</form>
+
+<!-- ============================================================
+     STYLES
+     ============================================================ -->
+<style>
+/* Table Styles */
+.crew-table th,
+.crew-table td {
+  font-size: var(--crew-font-sm, 12px);
+  vertical-align: middle;
+}
+.crew-table th {
+  font-weight: 600;
+  text-align: center;
+}
+.crew-table .btn {
+  font-size: var(--crew-font-xs, 11px);
+  padding: 4px 8px;
+}
+.crew-header th {
+  background-color: var(--crew-blue, #000099) !important;
+  color: #fff !important;
+}
+
+/* Column Search */
+.column-search {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+/* DataTables Customization */
+.dataTables_wrapper { padding: 15px 0; }
+.dataTables_length { padding: 10px 0; margin-bottom: 10px; }
+.dataTables_length label,
+.dataTables_filter label {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 20px 0;
+}
+.dataTables_length select {
+  width: auto;
+  margin: 0 8px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+}
+.dataTables_filter {
+  text-align: right;
+  margin-bottom: 10px;
+}
+.dataTables_filter label {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 8px 0;
+  font-weight: normal;
+}
+.dataTables_filter input {
+  margin-left: 10px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  width: 200px;
+}
+.dataTables_paginate {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #dee2e6;
+}
+.paginate_button {
+  margin: 0 2px;
+  padding: 6px 12px !important;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  background: #fff !important;
+  color: #0d6efd !important;
+  cursor: pointer;
+}
+.paginate_button.current {
+  background: #0d6efd !important;
+  color: #fff !important;
+  border-color: #0d6efd !important;
+}
+.paginate_button:hover {
+  background: #e9ecef !important;
+  border-color: #dee2e6;
+}
+.dataTables_info {
+  padding: 10px 0;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+/* MCU Checklist Item */
+.mcu-check-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  transition: background-color 0.2s;
+}
+.mcu-check-item.checked {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+.mcu-check-item.unchecked {
+  background-color: #fafafa;
+  color: #9e9e9e;
+}
+.mcu-check-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.mcu-check-item.checked .mcu-check-icon {
+  background-color: #4caf50;
+  color: white;
+}
+.mcu-check-item.unchecked .mcu-check-icon {
+  background-color: #e0e0e0;
+  color: #bdbdbd;
+}
+</style>
+
+<!-- ============================================================
+     JAVASCRIPT LOGIC
+     ============================================================ -->
+<script>
+$(document).ready(function() {
+
+    var BASE_URL = '<?php echo base_url("ListReport/Mcu/"); ?>';
+
+    // Get idperson from contentArea
+    var idperson = $('#contentArea').data('idperson');
+    if (!idperson) {
+        console.error('ID Person tidak ditemukan');
+        return;
+    }
+
+    // MCU checklist labels
+    var MCU_LABELS = [
+        'Medical Check Up Standart Perla',
+        'Medical Check Up Kerajaan Malaysia',
+        'Medical Check Up Panama + ECG + Renal Function + Lever Function + Glukosa at Random',
+        'Pemeriksaan Gigi & Gusi (Dental+Gum)',
+        'Drug & Alcoholic Test 6 (six) items',
+        'HIV Test',
+        'Chemical Contamination Test',
+        'Sleep Apnea Syndrome',
+        'Biaya dibebankan Perusahaan',
+        'Biaya dibebankan Crew',
+        'Treadmill'
+    ];
+
+    // Status mapping
+    var STATUS_MAP = {
+        0: { label: 'Pending',  class: 'text-bg-warning' },
+        1: { label: 'Approved', class: 'text-bg-success' },
+        2: { label: 'Rejected', class: 'text-bg-danger'  }
+    };
+
+    // ================================
+    // Current detail data (for PDF)
+    // ================================
+    var currentDetailData = null;
+
+    // ================================
+    // DataTables Initialization
+    // ================================
+    console.log(idperson);
+    var mcuTable = $('#mcuTable').DataTable({
+
+        processing: true,
+        serverSide: false,
+        searching: true,
+        paging: true,
+        info: true,
+        lengthChange: true,
+        pageLength: 10,
+        lengthMenu: [10, 25, 50, 100],
+        order: [],
+        ajax: {
+            url: BASE_URL + '/get_report_mcu',
+            type: 'POST',
+            data: {
+                idperson: idperson
+            },
+            dataSrc: function(json) {
+                return json.success ? json.data : [];
+            },
+            error: function(xhr, error, thrown) {
+                console.error('AJAX Error:', error, thrown);
+            }
+        },
+        columns: [
+            {
+                data: null,
+                className: 'fw-bold text-center',
+                orderable: false,
+                searchable: false,
+                render: function(data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
+                }
+            },
+            { data: 'clinic_name', className: 'text-center' },
+            { data: 'date_mcu', className: 'text-center' },
+            {
+                data: 'status_mcu',
+                className: 'text-center',
+                render: function(data) {
+                    var s = STATUS_MAP[data] || STATUS_MAP[0];
+                    return '<span class="badge ' + s.class + '">' + s.label + '</span>';
+                }
+            },
+            {
+                data: 'remarks_reject',
+                className: 'text-dark text-center',
+                render: function(data) {
+                    if (!data) return '';
+                    return '<span style="font-size:12px;">' + data + '</span>';
+                }
+            },
+            { data: 'upuserdate', className: 'fw-bold text-center' },
+            {
+                data: null,
+                className: 'text-center',
+                orderable: false,
+                searchable: false,
+                render: function(data) {
+                    return '<div class="btn-group btn-group-sm" role="group">' +
+                        '<button type="button" class="btn btn-outline-primary btn-view-mcu" title="Detail" data-id="' + data.id_report_mcu + '">' +
+                            '<i class="fa fa-eye"></i>' +
+                        '</button>' +
+                        '<button type="button" class="btn btn-outline-danger btn-delete-mcu" title="Delete" data-id="' + data.id_report_mcu + '">' +
+                            '<i class="fa fa-trash"></i>' +
+                        '</button>' +
+                    '</div>';
+                }
+            }
+        ],
+        initComplete: function() {
+            this.api().columns().every(function() {
+                var column = this;
+                var header = $(column.header());
+                if (header.find('.column-search').length) {
+                    header.find('.column-search').on('keyup change', function() {
+                        if (column.search() !== this.value) {
+                            column.search(this.value).draw();
+                        }
+                    });
+                }
+            });
+        },
+        language: {
+            lengthMenu: '_MENU_ &nbsp;Entries',
+            info: 'Showing _START_ to _END_ of _TOTAL_ entries',
+            infoEmpty: 'Showing 0 to 0 of 0 entries',
+            infoFiltered: '(filtered from _MAX_ total entries)',
+            search: 'Search:',
+            emptyTable: 'Tidak ada data MCU',
+            zeroRecords: 'Data tidak ditemukan'
+        }
+    });
+
+    // Column search sync
+    $('#mcuTable thead tr:last th').each(function(i) {
+        $('input', this).on('keyup change', function() {
+            if (mcuTable.column(i).search() !== this.value) {
+                mcuTable.column(i).search(this.value).draw();
+            }
+        });
+    });
+
+    // ================================
+    // VIEW DETAIL
+    // ================================
+    $('#mcuTable').on('click', '.btn-view-mcu', function() {
+        var id = $(this).data('id');
+
+        $('#detailSpinner').show();
+        $('#detailContent').addClass('d-none');
+        currentDetailData = null;
+
+        var modal = new bootstrap.Modal(document.getElementById('modalDetailMcu'));
+        modal.show();
+
+        $.ajax({
+            url: BASE_URL + '/get_report_mcu_detail',
+            type: 'POST',
+            data: { id_report: id, idperson: idperson },
+            dataType: 'json',
+            success: function(res) {
+                $('#detailSpinner').hide();
+
+                if (!res.success) {
+                    $('#detailContent').removeClass('d-none').html(
+                        '<div class="text-center py-4 text-danger"><i class="fa fa-warning fa-2x mb-2"></i><p>' + (res.message || 'Data tidak ditemukan') + '</p></div>'
+                    );
+                    return;
+                }
+
+                currentDetailData = res.data;
+                var report  = res.data.report;
+                var persons = res.data.persons;
+
+                var s = STATUS_MAP[report.status_mcu] || STATUS_MAP[0];
+                $('#detailStatusBadge').attr('class', 'badge rounded-pill px-3 py-2 fs-7 ' + s.class).text(s.label);
+
+                $('#detailClinicName').text(report.clinic_name || '-');
+                $('#detailDateMcu').text(report.date_mcu ? formatDate(report.date_mcu) : '-');
+                $('#detailAddress').text(report.address_clinic || '-');
+                $('#detailTelp').text(report.telp || '-');
+                $('#detailFax').text(report.fax || '-');
+
+                var checklistHtml = '';
+                for (var i = 1; i <= 11; i++) {
+                    var val = parseInt(report['answer_' + i]) || 0;
+                    var cls = val ? 'checked' : 'unchecked';
+                    var icon = val ? '<i class="fa fa-check"></i>' : '';
+                    checklistHtml += 
+                        '<div class="col-md-6 col-lg-6">' +
+                            '<div class="mcu-check-item ' + cls + '">' +
+                                '<span class="mcu-check-icon">' + icon + '</span>' +
+                                '<span>' + i + '. ' + MCU_LABELS[i-1] + '</span>' +
+                            '</div>' +
+                        '</div>';
+                }
+                $('#detailMcuChecklist').html(checklistHtml);
+
+                var crewHtml = '';
+                if (persons.length > 0) {
+                    $.each(persons, function(idx, p) {
+                        crewHtml += 
+                            '<tr>' +
+                                '<td class="text-center">' + (idx + 1) + '</td>' +
+                                '<td>' + (p.name_person || '-') + '</td>' +
+                                '<td class="text-center">' + (p.rank || '-') + '</td>' +
+                                '<td class="text-center">' + (p.vessel_name || '-') + '</td>' +
+                            '</tr>';
+                    });
+                } else {
+                    crewHtml = '<tr><td colspan="4" class="text-center text-muted">Tidak ada data crew</td></tr>';
+                }
+                $('#detailCrewTableBody').html(crewHtml);
+                console.log("report.signature_qr",report.signature_qr);
+                if ((report.status_mcu == 1 || report.status_mcu == 2) && report.signature_qr) {
+                    $('#detailSignatureImg').attr('src', '<?php echo base_url("assets/imgQRCodeCrewCV"); ?>/' + report.signature_qr);
+                    $('#detailSignatureArea').removeClass('d-none');
+                } else {
+                    $('#detailSignatureArea').addClass('d-none');
+                }
+
+                $('#detailContent').removeClass('d-none');
+            },
+            error: function() {
+                $('#detailSpinner').hide();
+                $('#detailContent').removeClass('d-none').html(
+                    '<div class="text-center py-4 text-danger"><i class="fa fa-warning fa-2x mb-2"></i><p>Gagal memuat data</p></div>'
+                );
+            }
+        });
+    });
+
+    // ================================
+    // DELETE MCU
+    // ================================
+    $('#mcuTable').on('click', '.btn-delete-mcu', function() {
+        var id = $(this).data('id');
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Hapus Data MCU?',
+                text: 'Data yang dihapus tidak dapat dikembalikan.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fa fa-trash me-1"></i> Ya, Hapus',
+                cancelButtonText: 'Batal'
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    doDeleteMcu(id);
+                }
+            });
+        } else {
+            if (confirm('Apakah Anda yakin ingin menghapus data MCU ini?')) {
+                doDeleteMcu(id);
+            }
+        }
+    });
+
+    function doDeleteMcu(id) {
+        $.ajax({
+            url: BASE_URL + '/delete_list_mcu',
+            type: 'POST',
+            data: { id_report: id, idperson: idperson },
+            dataType: 'json',
+            success: function(res) {
+                if (res.success) {
+                    mcuTable.ajax.reload(null, false);
+                    showNotification('success', res.message || 'Data berhasil dihapus');
+                } else {
+                    showNotification('error', res.message || 'Gagal menghapus data');
+                }
+            },
+            error: function() {
+                showNotification('error', 'Terjadi kesalahan server');
+            }
+        });
+    }
+
+    // ================================
+    // GENERATE PDF
+    // ================================
+    $('#btnGeneratePdfFromDetail').on('click', function() {
+        if (!currentDetailData) {
+            showNotification('warning', 'Data detail belum dimuat');
+            return;
+        }
+
+        var report  = currentDetailData.report;
+        var persons = currentDetailData.persons;
+
+        var personArr = [];
+        $.each(persons, function(i, p) {
+            personArr.push({
+                name_person: p.name_person,
+                rank: p.rank,
+                vessel_name: p.vessel_name
+            });
+        });
+
+        var mcuArr = [];
+        for (var i = 1; i <= 11; i++) {
+            mcuArr.push(report['answer_' + i] || '0');
+        }
+
+        var $form = $('#formGeneratePdf');
+        $form.attr('action', BASE_URL + '/generatePDF_MCU');
+        $('#pdfPersons').val(JSON.stringify(personArr));
+        $('#pdfMcu').val(mcuArr.join(','));
+        $('#pdfDateMcu').val(report.date_mcu || '');
+        $('#pdfClinicName').val(report.clinic_name || '');
+        $('#pdfStatusMcu').val(report.status_mcu || '0');
+        $('#pdfSignatureQr').val(report.signature_qr || '');
+        $('#pdfAddressClinic').val(report.address_clinic || '');
+        $('#pdfTelp').val(report.telp || '');
+        $('#pdfFax').val(report.fax || '');
+        $('#pdfHeaderMcu').val(report.header_mcu || '');
+
+        $form.submit();
+    });
+
+    // ================================
+    // HELPER FUNCTIONS
+    // ================================
+    function formatDate(dateStr) {
+        if (!dateStr) return '-';
+        var d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        return ('0' + d.getDate()).slice(-2) + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    function showNotification(type, message) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: type,
+                title: type === 'success' ? 'Berhasil!' : (type === 'error' ? 'Error!' : 'Peringatan'),
+                text: message,
+                timer: 2500,
+                showConfirmButton: false,
+                toast: true,
+                position: 'top-end'
+            });
+        } else {
+            alert(message);
+        }
+    }
+
+});
+</script>

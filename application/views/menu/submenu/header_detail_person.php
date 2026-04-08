@@ -19,8 +19,8 @@
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabNextplan">Next Plan</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabtraning">Assessment &
           Tranning</button>
-        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Competence</button>
-        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">List Report</button>
+        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabCompotents">Competence</button>
+        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabListReport">List Report</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">List Insident</button>
       </div>
 
@@ -149,6 +149,16 @@ $(document).ready(function() {
   $('#tabtraning').on('click', function() {
     setActiveTab('tabtraning');
     loadTraningtab();
+  });
+
+  $('#tabCompotents').on('click', function() {
+    setActiveTab('tabCompotents');
+    loadCompotentsTab();
+  });
+
+  $('#tabListReport').on('click', function() {
+    setActiveTab('tabListReport');
+    loadListReportTab();
   });
 
   // ================= SET ACTIVE TAB =================
@@ -285,6 +295,44 @@ $(document).ready(function() {
       error: function() {
         $('#contentArea').html(
           '<div class="text-danger">Failed load family</div>'
+        );
+      },
+      complete: function() {
+        $('#loginLoading').hide();
+      }
+    });
+  }
+
+  function loadCompotentsTab() {
+    $('#loginLoading').show();
+    $.ajax({
+      url: "<?php echo base_url('CrewDetail/Compotents'); ?>",
+      type: "GET",
+      success: function(html) {
+        $('#contentArea').html(html);
+      },
+      error: function() {
+        $('#contentArea').html(
+          '<div class="text-danger">Failed load Competence</div>'
+        );
+      },
+      complete: function() {
+        $('#loginLoading').hide();
+      }
+    });
+  }
+
+  function loadListReportTab() {
+    $('#loginLoading').show();
+    $.ajax({
+      url: "<?php echo base_url('CrewDetail/ListReport'); ?>",
+      type: "GET",
+      success: function(html) {
+        $('#contentArea').html(html);
+      },
+      error: function() {
+        $('#contentArea').html(
+          '<div class="text-danger">Failed load List Report</div>'
         );
       },
       complete: function() {
