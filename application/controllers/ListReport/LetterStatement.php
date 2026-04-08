@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class PrintCv extends CI_Controller {
+class LetterStatement extends CI_Controller {
 
     public function __construct()
     {
@@ -18,6 +18,6 @@ class PrintCv extends CI_Controller {
 
     public function view()
     {
-        $this->load->view('ListReport/PrintCv/view_printcv');
+        $this->load->view('ListReport/LetterStatement/view_letter_statement');
     }
 }
