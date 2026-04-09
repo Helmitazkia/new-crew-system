@@ -73,7 +73,7 @@
     <table width="100%" cellpadding="5" cellspacing="0" style="font-family:'Times New Roman';">
       <tr>
         <!-- KIRI : LOGO -->
-        <td width="10%" align="left" valign="middle">
+        <td width="8%" align="center" valign="middle"  style="padding-top:10px;">
           <img src="./assets/img/Logo_Andhika_2017.jpg" style="height:40px;">
         </td>
 

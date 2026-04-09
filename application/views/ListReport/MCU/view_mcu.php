@@ -136,6 +136,18 @@
                         </div>
                     </div>
 
+                    <hr class="my-2 mx-4">
+
+                    <!-- Biaya Dibebankan (answer_9 & answer_10) — di bawah crew table, sama seperti PDF -->
+                    <div class="px-4 py-2">
+                        <h6 class="fw-bold mb-3" style="color: #000099;">
+                            <i class="fa fa-money me-2"></i>Harap Biaya Dibebankan Pada
+                        </h6>
+                        <div class="row g-2" id="detailBiayaSection">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
                     <!-- Signature QR (if approved/rejected) -->
                     <div class="px-4 py-3 text-center d-none" id="detailSignatureArea">
                         <small class="text-muted d-block mb-2">Digital Signature</small>
@@ -319,19 +331,18 @@ $(document).ready(function() {
         return;
     }
 
-    // MCU checklist labels
-    var MCU_LABELS = [
-        'Medical Check Up Standart Perla',
-        'Medical Check Up Kerajaan Malaysia',
-        'Medical Check Up Panama + ECG + Renal Function + Lever Function + Glukosa at Random',
-        'Pemeriksaan Gigi & Gusi (Dental+Gum)',
-        'Drug & Alcoholic Test 6 (six) items',
-        'HIV Test',
-        'Chemical Contamination Test',
-        'Sleep Apnea Syndrome',
-        'Biaya dibebankan Perusahaan',
-        'Biaya dibebankan Crew',
-        'Treadmill'
+    // MCU checklist labels (matching PDF template)
+    // Mapping: index 0-7 = answer_1 to answer_8, index 8 = answer_11 (Treadmill)
+    var MCU_ITEMS = [
+        { answer: 'answer_1',  num: 1, label: 'Medical Check Up Standart Perla' },
+        { answer: 'answer_2',  num: 2, label: 'Medical Check Up Kerajaan Malaysia' },
+        { answer: 'answer_3',  num: 3, label: 'Medical Check Up Panama + ECG + Renal Function + Lever Function + Glukosa at Random', bold: true },
+        { answer: 'answer_4',  num: 4, label: 'Pemeriksaan Gigi & Gusi (Dental+Gum)' },
+        { answer: 'answer_5',  num: 5, label: 'Drug & Alcoholic Test 6 (six) items', bold: true },
+        { answer: 'answer_6',  num: 6, label: 'HIV Test' },
+        { answer: 'answer_7',  num: 7, label: 'Chemical Contamination Test' },
+        { answer: 'answer_8',  num: 8, label: 'Sleep Apnea Syndrome' },
+        { answer: 'answer_11', num: 9, label: 'Treadmill' }
     ];
 
     // Status mapping
@@ -494,20 +505,46 @@ $(document).ready(function() {
                 $('#detailTelp').text(report.telp || '-');
                 $('#detailFax').text(report.fax || '-');
 
+                // MCU Checklist (9 items matching PDF)
                 var checklistHtml = '';
-                for (var i = 1; i <= 11; i++) {
-                    var val = parseInt(report['answer_' + i]) || 0;
+                $.each(MCU_ITEMS, function(idx, item) {
+                    var val = parseInt(report[item.answer]) || 0;
                     var cls = val ? 'checked' : 'unchecked';
                     var icon = val ? '<i class="fa fa-check"></i>' : '';
+                    var labelText = item.bold ? '<strong>' + item.num + '. ' + item.label + '</strong>' : item.num + '. ' + item.label;
                     checklistHtml += 
                         '<div class="col-md-6 col-lg-6">' +
                             '<div class="mcu-check-item ' + cls + '">' +
                                 '<span class="mcu-check-icon">' + icon + '</span>' +
-                                '<span>' + i + '. ' + MCU_LABELS[i-1] + '</span>' +
+                                '<span>' + labelText + '</span>' +
                             '</div>' +
                         '</div>';
-                }
+                });
                 $('#detailMcuChecklist').html(checklistHtml);
+
+                // Biaya dibebankan (answer_9 = Perusahaan, answer_10 = Crew)
+                var biayaHtml = '';
+                var biaya9 = parseInt(report.answer_9) || 0;
+                var biaya10 = parseInt(report.answer_10) || 0;
+                var cls9 = biaya9 ? 'checked' : 'unchecked';
+                var cls10 = biaya10 ? 'checked' : 'unchecked';
+                var icon9 = biaya9 ? '<i class="fa fa-check"></i>' : '';
+                var icon10 = biaya10 ? '<i class="fa fa-check"></i>' : '';
+                var headerMcu = report.header_mcu || 'PT. Andhini Eka Karya Sejahtera';
+                biayaHtml += 
+                    '<div class="col-md-6">' +
+                        '<div class="mcu-check-item ' + cls9 + '">' +
+                            '<span class="mcu-check-icon">' + icon9 + '</span>' +
+                            '<span>' + headerMcu + '</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="col-md-6">' +
+                        '<div class="mcu-check-item ' + cls10 + '">' +
+                            '<span class="mcu-check-icon">' + icon10 + '</span>' +
+                            '<span>Crew yang bersangkutan</span>' +
+                        '</div>' +
+                    '</div>';
+                $('#detailBiayaSection').html(biayaHtml);
 
                 var crewHtml = '';
                 if (persons.length > 0) {
