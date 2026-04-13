@@ -118,6 +118,7 @@ class MCrewscv extends CI_Model
 		return $getIdNya;
 	}
 
+
 	function updateDataDb6($tbl = "",$dataUpdate = "",$whereNya = "")
 	{
 		$this->db6 = $this->load->database('myapps', TRUE);
