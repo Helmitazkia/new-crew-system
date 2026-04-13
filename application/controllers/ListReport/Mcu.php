@@ -441,9 +441,90 @@ class Mcu extends CI_Controller {
     /**
      * Approve MCU + generate QR + email ke klinik
      */
+
+  	function getBatchNo()
+    {
+        $batchNo = "1";
+        $sql = " SELECT (batchno + 1) AS batchNo FROM tblempnosurat ORDER BY batchno DESC LIMIT 0,1 ";
+        $data = $this->MCrewscv->getDataQueryDB6($sql);
+
+        // print_r($data);exit;
+
+        if(count($data) > 0)
+        {
+            $batchNo = $data[0]->batchNo;
+        }
+
+        return $batchNo;
+    }
+
+    function createNo($noNya = "",$cdCmp = "",$cdKeluar = "",$cdTtd = "",$bln = "",$thn = "")
+    {
+        $dt = strlen($noNya);
+        $outNo = "";
+        if($dt == 1)
+        {
+            $outNo = "000".$noNya;
+        }
+        else if($dt == 2)
+        {
+            $outNo = "00".$noNya;
+        }
+        else if($dt == 3)
+        {
+            $outNo = "0".$noNya;
+        }
+        else{
+            $outNo = $noNya;
+        }		
+
+        if($cdKeluar == $cdTtd)
+        {
+            $cdOutTtd = $cdKeluar;
+        }else{
+            $cdOutTtd = $cdKeluar."-".$cdTtd;
+        }
+
+        $outNo = $outNo."/".$cdCmp."/".$cdOutTtd."/".$bln.$thn;
+        
+        return $outNo;
+    }
+
+
     public function approve_mcu()
     {
+           
         $hashId = $this->input->post('hash_id', true);
+
+        $dateNow = date("Y-m-d");
+		$yearNow = date("Y");
+		$monthNow = date("m");
+		$noSurat = "1";
+		$initDivisi = "DKP";
+		$initCmp = "AES";
+		$insSql = array();
+		$imgName = "";
+
+        $batchno = $this->getBatchNo();
+        $formatNoSrt = $this->createNo($noSurat,$initCmp,$initDivisi,$initDivisi,$monthNow,$yearNow);
+        
+        $department = strtoupper($rsl[0]->department);
+        
+        $insSql["batchno"] = $batchno;
+        $insSql["cmpcode"] = $initCmp;
+        $insSql["nosurat"] = $formatNoSrt;
+        $insSql["issueddiv"] = $initDivisi;
+        $insSql["signedby"] = $initDivisi;
+        $insSql["address"] = "Crewing New System";
+        $insSql["tglsurat"] = $dateNow;
+        $insSql["ket"] = "MCU Crewing";
+        $insSql["copydoc"] = "0";
+        $insSql["canceldoc"] = "0";
+        $insSql["createdby"] = "Eva Marliana (Crew Manager)";
+        $this->MCrewscv->insDataDb6($insSql,"tblEmpNoSurat");
+
+        // $batchParams = base64_encode($batchno);
+
 
         if (empty($hashId)) {
             show_error('Invalid MCU ID');
@@ -462,7 +543,7 @@ class Mcu extends CI_Controller {
         )->row();
 
         // 2. Create QR Code
-        $qrImg = $this->_createQRCode($idReport, 'approveCM');
+        $qrImg = $this->_createQRCode($batchno, 'approveCM');
 
         // 3. Update status
         $this->db->where('id', $idReport);
@@ -490,6 +571,33 @@ class Mcu extends CI_Controller {
         $hashId         = $this->input->post('hash_id', true);
         $remarks_reject = $this->input->post('remarks_reject', true);
 
+        $dateNow = date("Y-m-d");
+		$yearNow = date("Y");
+		$monthNow = date("m");
+		$noSurat = "1";
+		$initDivisi = "DKP";
+		$initCmp = "AES";
+		$insSql = array();
+		$imgName = "";
+
+        $batchno = $this->getBatchNo();
+        $formatNoSrt = $this->createNo($noSurat,$initCmp,$initDivisi,$initDivisi,$monthNow,$yearNow);
+        
+        $department = strtoupper($rsl[0]->department);
+        
+        $insSql["batchno"] = $batchno;
+        $insSql["cmpcode"] = $initCmp;
+        $insSql["nosurat"] = $formatNoSrt;
+        $insSql["issueddiv"] = $initDivisi;
+        $insSql["signedby"] = $initDivisi;
+        $insSql["address"] = "Crewing New System";
+        $insSql["tglsurat"] = $dateNow;
+        $insSql["ket"] = "MCU Crewing";
+        $insSql["copydoc"] = "0";
+        $insSql["canceldoc"] = "0";
+        $insSql["createdby"] = "Eva Marliana (Crew Manager)";
+        $this->MCrewscv->insDataDb6($insSql,"tblEmpNoSurat");
+
         if (empty($hashId)) {
             show_error('Invalid MCU ID');
         }
@@ -504,7 +612,7 @@ class Mcu extends CI_Controller {
             show_error('Remark reject wajib diisi');
         }
 
-        $qrImg = $this->_createQRCode($idReport, 'rejectCM');
+        $qrImg = $this->_createQRCode($batchno, 'rejectCM');
 
         $this->db->where('id', $idReport);
         $this->db->update('report_mcu', array(
