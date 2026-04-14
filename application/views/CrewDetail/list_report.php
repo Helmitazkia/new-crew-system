@@ -62,12 +62,12 @@
     <!-- Main Content -->
     <div class="col-md-9 col-lg-10 p-3" id="mainReportContent" style="min-height: 80vh;">
         <!-- Content loaded via AJAX -->
-        <div id="reportLoadingSpinner" class="d-none text-center py-5">
+        <!-- <div id="reportLoadingSpinner" class="d-none text-center py-5">
             <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
                 <span class="visually-hidden">Loading...</span>
             </div>
             <p class="mt-3 text-muted fw-semibold">Memuat data...</p>
-        </div>
+        </div> -->
         <div id="reportContentArea"></div>
     </div>
 </div>
