@@ -161,7 +161,7 @@
                     Tutup
                 </button>
                 <button type="button" class="btn btn-sm btn-primary" id="btnGeneratePdfFromDetail">
-                    Print PDF
+                    Print <i class="fa fa-print ms-1"></i>
                 </button>
             </div>
         </div>

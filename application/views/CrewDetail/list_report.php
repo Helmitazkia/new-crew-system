@@ -115,7 +115,8 @@ $(document).ready(function() {
     // Route map: reportType → AJAX URL
     // ================================
     var reportRoutes = {
-        'mcu': '<?php echo base_url("CrewDetail/ListReport/view_mcu"); ?>'
+        'mcu': '<?php echo base_url("CrewDetail/ListReport/view_mcu"); ?>',
+        'defreafing': '<?php echo base_url("ListReport/Defreafing/view"); ?>'
         // Tambahkan modul lain di sini nanti:
         // 'printcv': '<?php echo base_url("CrewDetail/ListReport/view_printcv"); ?>',
         // 'acceptentce': '<?php echo base_url("CrewDetail/ListReport/view_acceptentce"); ?>',
