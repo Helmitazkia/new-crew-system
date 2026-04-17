@@ -18,6 +18,9 @@
                 <a class="nav-link active rounded-pill text-white fw-bold fst-italic shadow-sm" style="background-color: #1c278e;" href="#" data-report="mcu">MCU</a>
             </li>
             <li class="nav-item mb-3">
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="mlcdeclaration">MLC Declaration Form</a>
+            </li>
+            <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="letterstatement">Letter Statemment</a>
             </li>
             <li class="nav-item mb-3">
@@ -43,9 +46,6 @@
             </li>
             <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementemployment">Statement of Employment</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="mlcdeclaration">MLC Declaration Form</a>
             </li>
             <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="seafarer">Seafarer Employment Agreement</a>
@@ -116,7 +116,8 @@ $(document).ready(function() {
     // ================================
     var reportRoutes = {
         'mcu': '<?php echo base_url("CrewDetail/ListReport/view_mcu"); ?>',
-        'defreafing': '<?php echo base_url("ListReport/Defreafing/view"); ?>'
+        'defreafing': '<?php echo base_url("ListReport/Defreafing/view"); ?>',
+        'mlcdeclaration': '<?php echo base_url("ListReport/Mlc/view"); ?>'
         // Tambahkan modul lain di sini nanti:
         // 'printcv': '<?php echo base_url("CrewDetail/ListReport/view_printcv"); ?>',
         // 'acceptentce': '<?php echo base_url("CrewDetail/ListReport/view_acceptentce"); ?>',
