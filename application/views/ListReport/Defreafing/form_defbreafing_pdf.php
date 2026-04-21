@@ -349,6 +349,10 @@
             </table>
         </div>
     </div>
+    <div style="position: fixed; bottom: 20px; margin-left: 80px; color: gray; font-size: 12px; font-style: italic;">
+    <span>CD. 42 / 1-03-2017</span>
+    </div>
+
 
 </body>
 

@@ -21,6 +21,9 @@
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="mlcdeclaration">MLC Declaration Form</a>
             </li>
             <li class="nav-item mb-3">
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="databank">Data Bank</a>
+            </li>
+            <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="letterstatement">Letter Statemment</a>
             </li>
             <li class="nav-item mb-3">
@@ -40,9 +43,6 @@
             </li>
             <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="spj">SPJ</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="databank">Data Bank</a>
             </li>
             <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementemployment">Statement of Employment</a>
@@ -117,7 +117,8 @@ $(document).ready(function() {
     var reportRoutes = {
         'mcu': '<?php echo base_url("CrewDetail/ListReport/view_mcu"); ?>',
         'defreafing': '<?php echo base_url("ListReport/Defreafing/view"); ?>',
-        'mlcdeclaration': '<?php echo base_url("ListReport/Mlc/view"); ?>'
+        'mlcdeclaration': '<?php echo base_url("ListReport/Mlc/view"); ?>',
+        'databank': '<?php echo base_url("ListReport/Bank/view"); ?>'
         // Tambahkan modul lain di sini nanti:
         // 'printcv': '<?php echo base_url("CrewDetail/ListReport/view_printcv"); ?>',
         // 'acceptentce': '<?php echo base_url("CrewDetail/ListReport/view_acceptentce"); ?>',

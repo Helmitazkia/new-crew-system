@@ -131,9 +131,16 @@
       </tr>
       <tr>
         <td>
-          <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px;"
-            style="font-family: 'DejaVu Sans'; font-size: 16px;"><?php echo ($mcu->mcu2==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
-          2. Medical Check Up Kerajaan Malaysia
+          <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+            <tr>
+              <td style="padding: 0 6px 0 0; vertical-align: top; border: none; width: 25px;">
+                <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo ($mcu->mcu2==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
+              </td>
+              <td style="padding: 0; vertical-align: top; border: none;">
+                2. Medical Check Up Kerajaan Malaysia,Panama, Marshall Islands, Liberia, Singapore, Cyprus,Shipowner, OGUK, <br>& Netherlands
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
       <tr>
@@ -252,6 +259,9 @@
       Crew Manager
     </div>
 
+  </div>
+  <div style="position: fixed; bottom: 20px; margin-left: 80px; color: gray; font-size: 12px; font-style: italic;">
+    <span>CD-26/15/05/2015</span>
   </div>
 
 </body>

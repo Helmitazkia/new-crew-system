@@ -335,7 +335,7 @@ $(document).ready(function() {
     // Mapping: index 0-7 = answer_1 to answer_8, index 8 = answer_11 (Treadmill)
     var MCU_ITEMS = [
         { answer: 'answer_1',  num: 1, label: 'Medical Check Up Standart Perla' },
-        { answer: 'answer_2',  num: 2, label: 'Medical Check Up Kerajaan Malaysia' },
+        { answer: 'answer_2',  num: 2, label: 'Medical Check Up Kerajaan Malaysia,Panama, Marshall Islands, Liberia, Singapore, Cyprus,Shipowner, OGUK, & Netherlands' },
         { answer: 'answer_3',  num: 3, label: 'Medical Check Up Panama + ECG + Renal Function + Lever Function + Glukosa at Random', bold: true },
         { answer: 'answer_4',  num: 4, label: 'Pemeriksaan Gigi & Gusi (Dental+Gum)' },
         { answer: 'answer_5',  num: 5, label: 'Drug & Alcoholic Test 6 (six) items', bold: true },
