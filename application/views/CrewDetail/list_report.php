@@ -24,10 +24,10 @@
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="databank">Data Bank</a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="letterstatement">Letter Statemment</a>
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementemploye">Statement Of Employe</a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementemploye">Statement Of Employe</a>
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="letterstatement">Letter Statemment</a>
             </li>
             <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="transmital">Transmital</a>
@@ -118,7 +118,8 @@ $(document).ready(function() {
         'mcu': '<?php echo base_url("CrewDetail/ListReport/view_mcu"); ?>',
         'defreafing': '<?php echo base_url("ListReport/Defreafing/view"); ?>',
         'mlcdeclaration': '<?php echo base_url("ListReport/Mlc/view"); ?>',
-        'databank': '<?php echo base_url("ListReport/Bank/view"); ?>'
+        'databank': '<?php echo base_url("ListReport/Bank/view"); ?>',
+        'statementemploye': '<?php echo base_url("ListReport/Soe/view"); ?>'
         // Tambahkan modul lain di sini nanti:
         // 'printcv': '<?php echo base_url("CrewDetail/ListReport/view_printcv"); ?>',
         // 'acceptentce': '<?php echo base_url("CrewDetail/ListReport/view_acceptentce"); ?>',
