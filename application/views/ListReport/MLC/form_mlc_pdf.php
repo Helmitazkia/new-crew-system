@@ -180,5 +180,9 @@
             </td>
         </tr>
     </table>
+
+  <div style="position: fixed; bottom: 20px; margin-left: 80px; color: gray; font-size: 12px; font-style: italic;">
+    <span>CD.31 MLC Declaration Form / Rev.00-15 /May/.2015</span>
+  </div>
 </body>
 </html>
