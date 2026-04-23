@@ -638,12 +638,14 @@ function renderChildren(children) {
 }
 
 function loadChildData(idfm) {
+  let idperson = $('#contentArea').data('idperson');
   $.ajax({
     url: "<?php echo base_url('CrewDetail/Family/getChildData'); ?>",
     type: "POST",
     dataType: "json",
     data: {
-      idfm: idfm
+      idfm: idfm,
+      idperson: idperson
     },
     success: function(res) {
       // console.log('Child data response:', res);

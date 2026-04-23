@@ -21,8 +21,8 @@
                 <img src="<?php echo base_url('assets/img/Logo_Andhika_2017.jpg'); ?>" style="width:100px;">
             </td>
             <td width="50%" class="text-center" valign="middle">
-                <div style="font-size:22px; font-weight:bold; letter-spacing:2px;">
-                    STATEMENT/<span class="italic">PERNYATAAN</span>
+                <div style="font-size:18px; font-weight:bold; letter-spacing:2px;">
+                    STATEMENT FREE OF CHARGE
                 </div>
             </td>
             <td width="30%" class="text-right" valign="top" style="font-size:11px;">
@@ -72,7 +72,7 @@
     </div>
 
     <!-- Tanda Tangan diposisikan mutlak di bagian bawah kertas -->
-    <div style="position: absolute; bottom: 90px; left: 35px; right: 35px;">
+    <div style="left: 35px; right: 35px;margin-top: 50px;">
         <table border="0" cellpadding="0" cellspacing="0" width="100%">
             <tr>
                 <td width="50%" align="left" valign="top">

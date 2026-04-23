@@ -119,7 +119,8 @@ $(document).ready(function() {
         'defreafing': '<?php echo base_url("ListReport/Defreafing/view"); ?>',
         'mlcdeclaration': '<?php echo base_url("ListReport/Mlc/view"); ?>',
         'databank': '<?php echo base_url("ListReport/Bank/view"); ?>',
-        'statementemploye': '<?php echo base_url("ListReport/Soe/view"); ?>'
+        'statementemploye': '<?php echo base_url("ListReport/Soe/view"); ?>',
+        'covid19': '<?php echo base_url("ListReport/Covid19/view"); ?>'
         // Tambahkan modul lain di sini nanti:
         // 'printcv': '<?php echo base_url("CrewDetail/ListReport/view_printcv"); ?>',
         // 'acceptentce': '<?php echo base_url("CrewDetail/ListReport/view_acceptentce"); ?>',

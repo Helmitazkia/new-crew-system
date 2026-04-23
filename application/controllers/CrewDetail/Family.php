@@ -216,6 +216,7 @@ public function saveChild() {
 // Method untuk get data child (untuk edit)
 public function getChildData() {
     $idfm = $this->input->post('idfm');
+    $idperson = $this->input->post('idperson');
     
     if (!$idfm) {
         echo json_encode(array(
@@ -230,10 +231,10 @@ public function getChildData() {
                 fmfname, fmlname, fmdob,
                 fmpassno, fmissdt, fmplc, fmexpdt, fmvisa
             FROM tblfamily
-            WHERE idfm = ?
+            WHERE idfm = ? AND idperson = ?
             AND deletests = '0'";
     
-    $query = $this->db->query($sql, array($idfm));
+    $query = $this->db->query($sql, array($idfm, $idperson));
     
     if ($query->num_rows() > 0) {
         $row = $query->row();

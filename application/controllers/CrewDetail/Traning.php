@@ -282,7 +282,7 @@ class Traning extends CI_Controller {
             'finish_date_training' => $finish_date_training,
             'status' => substr($status, 0, 20),
             'detail_training' => substr($detail_training, 0, 500),
-            'remarks' => substr($remarks, 0, 500),
+            'remarks' => $remarks,
             'deletests' => '0',
         );
         $this->db->insert('tblcrewtraining', $data);
@@ -328,7 +328,7 @@ class Traning extends CI_Controller {
             'finish_date_training' => $finish_date_training,
             'status' => substr($status, 0, 20),
             'detail_training' => substr($detail_training, 0, 500),
-            'remarks' => substr($remarks, 0, 500),
+            'remarks' => $remarks,
         );
 
         if (isset($_FILES['file_traning']['name']) && $_FILES['file_traning']['name'] != '') {
