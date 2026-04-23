@@ -2,7 +2,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-end mb-3">
             <button class="btn btn-primary btn-sm rounded shadow-sm" id="btnGlobalAddCovid19" style="background-color: #000999; border-color: #000999;">
-                <i class="fa fa-plus me-1"></i> Add Covid-19
+                <i class="fa fa-plus me-1"></i> Add Health
             </button>
         </div>
         <div class="table-responsive">
@@ -42,7 +42,7 @@
             <!-- Header -->
             <div class="modal-header" style="background: linear-gradient(135deg, #000999 0%, #1a237e 100%); color: #fff;">
                 <h6 class="modal-title fw-bold" id="modalAddCovid19Title">
-                    <i class="fa fa-plus-circle me-2"></i>Tambah Data Covid-19 Prevention
+                    <i class="fa fa-plus-circle me-2"></i>Tambah Data Health and Pandemic
                 </h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -59,7 +59,7 @@
                     
                     <div class="card shadow-sm border-0 mb-4">
                          <div class="card-header bg-white fw-bold text-primary border-bottom">
-                            <i class="fa fa-medkit me-2"></i>Covid-19 Prevention Form
+                            <i class="fa fa-medkit me-2"></i>Health and Pandemic Form
                         </div>
                         <div class="card-body">
                             <div class="row g-3">
@@ -220,7 +220,7 @@ $(document).ready(function() {
     // Get idperson from contentArea
     var idperson = $('#contentArea').data('idperson');
     if (!idperson) {
-        console.error('ID Person tidak ditemukan untuk Covid 19');
+        console.error('ID Person tidak ditemukan untuk Health and Pandemic Guidelines');
         return;
     }
 
@@ -330,7 +330,7 @@ $(document).ready(function() {
     function openAddCovid19Modal() {
         $('#formAddCovid19')[0].reset();
         $('#covid19_idperson').val(idperson);
-        $('#modalAddCovid19Title').html('<i class="fa fa-plus-circle me-2"></i>Tambah Data Covid-19 Prevention');
+        $('#modalAddCovid19Title').html('<i class="fa fa-plus-circle me-2"></i>Tambah Data Health and Pandemic');
 
         // Apply Layout Mode: Create
         $('#btnSubmitCovid19').removeClass('d-none');
@@ -405,7 +405,7 @@ $(document).ready(function() {
 
         $('#formAddCovid19')[0].reset();
         $('#pdf_id_report_covid19').val(id);
-        $('#modalAddCovid19Title').html('<i class="fa fa-file-text-o me-2"></i>Detail Data Covid-19 Prevention');
+        $('#modalAddCovid19Title').html('<i class="fa fa-file-text-o me-2"></i>Detail Data Health and Pandemic ');
 
         // Apply Layout Mode: View
         $('#btnSubmitCovid19').addClass('d-none');

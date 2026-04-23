@@ -5,6 +5,11 @@
 
 <div class="card shadow-sm border-0" id="mcuModuleWrapper">
     <div class="card-body">
+        <div class="d-flex justify-content-end mb-3">
+            <button type="button" class="btn btn-primary btn-sm" id="btnAddMcu" style="background-color: #000999; border-color: #000999;">
+                <i class="fa fa-plus me-1"></i> Add MCU
+            </button>
+        </div>
         <div class="table-responsive">
             <table id="mcuTable" class="table table-bordered align-middle mb-0 crew-table" style="width:100%">
                 <thead class="crew-header">
@@ -165,6 +170,98 @@
                 </button>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     MODAL: Add MCU
+     ============================================================ -->
+<div class="modal fade" id="modalAddMcu" tabindex="-1" aria-labelledby="modalAddMcuLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <form id="formAddMcu" class="modal-content border-0 shadow">
+            <!-- Header -->
+            <div class="modal-header" style="background: linear-gradient(135deg, #000099 0%, #1a237e 100%); color: #fff;">
+                <h6 class="modal-title fw-bold" id="modalAddMcuLabel">
+                    <i class="fa fa-plus-circle me-2"></i>Add MCU
+                </h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Body -->
+            <div class="modal-body p-0">
+                <div class="px-4 py-3">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" style="font-size: 13px;">Klinik</label>
+                                <select class="form-control selectpicker" data-live-search="true" data-size="5" name="id_clinic" id="addClinic" required>
+                                    <!-- <option value="">- Pilih Klinik -</option> -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold" style="font-size: 13px;">Tanggal MCU</label>
+                                <input type="date" class="form-control form-control-sm" name="date_mcu" id="addDateMcu" required>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold" style="font-size: 13px;">Header MCU</label>
+                                <select class="form-control selectpicker" data-live-search="true" data-size="5" name="header_mcu" id="addHeaderMcu" required>
+                                    <!-- <option value=""></option> -->
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-3">
+                        <h6 class="fw-bold mb-3" style="color: #000099;">
+                            <i class="fa fa-users me-2"></i>Data Crew
+                        </h6>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-4">
+                                <input type="text" class="form-control form-control-sm" id="addCrewName" placeholder="Nama Crew" required readonly style="background-color: #f1f3f8;">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control form-control-sm" id="addCrewRank" placeholder="Jabatan" required readonly style="background-color: #f1f3f8;">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control form-control-sm" id="addCrewVessel" placeholder="Kapal" required readonly style="background-color: #f1f3f8;">
+                            </div>
+                        </div>
+                        
+                        <hr class="my-3">
+                        <h6 class="fw-bold mb-3" style="color: #000099;">
+                            <i class="fa fa-check-square-o me-2"></i>Jenis Pemeriksaan MCU
+                        </h6>
+                        <div class="row g-2" id="addMcuChecklist">
+                            <!-- Populated via JS -->
+                        </div>
+                        
+                        <hr class="my-3">
+                        <h6 class="fw-bold mb-3" style="color: #000099;">
+                            <i class="fa fa-money me-2"></i>Harap Biaya Dibebankan Pada
+                        </h6>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <div class="mcu-check-item unchecked add-mcu-biaya-item" id="itemAddMcuBiaya1" style="cursor: pointer;">
+                                    <span class="mcu-check-icon"><i class="fa fa-check d-none"></i></span>
+                                    <span id="lblAddMcuBiaya1" style="font-size: 13px;">PT. Andhini Eka Karya Sejahtera</span>
+                                    <input type="hidden" id="addMcuBiaya1" value="0">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mcu-check-item unchecked add-mcu-biaya-item" id="itemAddMcuBiaya2" style="cursor: pointer;">
+                                    <span class="mcu-check-icon"><i class="fa fa-check d-none"></i></span>
+                                    <span id="lblAddMcuBiaya2" style="font-size: 13px;">Crew yang bersangkutan</span>
+                                    <input type="hidden" id="addMcuBiaya2" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <!-- Footer -->
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-sm btn-primary" id="btnSubmitAddMcu">Simpan</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -696,6 +793,199 @@ $(document).ready(function() {
             alert(message);
         }
     }
+
+    // ================================
+    // ADD MCU REPORT
+    // ================================
+    function loadClinics() {
+        $.ajax({
+            url: BASE_URL + '/get_data_m_master_mcu',
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                if (res.success) {
+                    var options = '<option value="">- Pilih Klinik -</option>';
+                    $.each(res.data, function(i, k) {
+                        options += '<option value="' + k.id + '">' + k.clinic_name + '</option>';
+                    });
+                    $('#addClinic').html(options);
+                    if ($().selectpicker) {
+                        $('#addClinic').selectpicker('refresh');
+                    }
+                }
+            }
+        });
+    }
+
+    function loadCompanyBaseVessel() {
+        $.ajax({
+            url: BASE_URL + '/get_CompanyBaseVessel',
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                if (res.success) {
+                    var options = '<option value="">- Pilih Header MCU -</option>';
+                    options += '<option value="PT. Andhini Eka Karya Sejahtera">PT. Andhini Eka Karya Sejahtera</option>';
+                    $.each(res.data, function(i, k) {
+                        if (k.nmcmp !== "PT. Andhini Eka Karya Sejahtera") {
+                            options += '<option value="' + k.nmcmp + '">' + k.nmcmp + '</option>';
+                        }
+                    });
+                    $('#addHeaderMcu').html(options);
+                    if ($().selectpicker) {
+                        $('#addHeaderMcu').selectpicker('refresh');
+                    }
+                }
+            }
+        });
+    }
+
+    $('#addHeaderMcu').on('change', function() {
+        var val = $(this).val();
+        if (val) {
+            $('#lblAddMcuBiaya1').text(val);
+        } else {
+            $('#lblAddMcuBiaya1').text('PT. Andhini Eka Karya Sejahtera');
+        }
+    });
+
+    function fetchCrewData() {
+        $.ajax({
+            url: BASE_URL + '/get_crew_info_by_idperson',
+            type: 'POST',
+            data: { idperson: idperson },
+            dataType: 'json',
+            success: function(res) {
+                if (res.success && res.data) {
+                    $('#addCrewName').val(res.data.nama_crew);
+                    $('#addCrewRank').val(res.data.jabatan);
+                    $('#addCrewVessel').val(res.data.vessel_name);
+                }
+            }
+        });
+    }
+
+    function renderAddMcuChecklist() {
+        var checklistHtml = '';
+        $.each(MCU_ITEMS, function(idx, item) {
+            var mcuIndex = parseInt(item.answer.replace('answer_', '')) - 1;
+            var labelText = item.bold ? '<strong>' + item.num + '. ' + item.label + '</strong>' : item.num + '. ' + item.label;
+            
+            checklistHtml += 
+                '<div class="col-md-6 col-lg-6">' +
+                    '<div class="mcu-check-item unchecked add-mcu-check-item" style="cursor: pointer;" data-index="' + mcuIndex + '">' +
+                        '<span class="mcu-check-icon"><i class="fa fa-check d-none"></i></span>' +
+                        '<span style="font-size: 13px;">' + labelText + '</span>' +
+                        '<input type="hidden" class="chk-add-mcu-hidden" data-index="' + mcuIndex + '" value="0">' +
+                    '</div>' +
+                '</div>';
+        });
+        $('#addMcuChecklist').html(checklistHtml);
+    }
+    
+    // Call once
+    renderAddMcuChecklist();
+
+    // Toggle Checkboxes for Add Modal
+    $(document).off('click', '.add-mcu-check-item, .add-mcu-biaya-item').on('click', '.add-mcu-check-item, .add-mcu-biaya-item', function() {
+        var $this = $(this);
+        var $icon = $this.find('.fa-check');
+        var $input = $this.find('input[type="hidden"]');
+        
+        if ($this.hasClass('unchecked')) {
+            $this.removeClass('unchecked').addClass('checked');
+            $icon.removeClass('d-none');
+            $input.val('1');
+        } else {
+            $this.removeClass('checked').addClass('unchecked');
+            $icon.addClass('d-none');
+            $input.val('0');
+        }
+    });
+
+    $('#btnAddMcu').on('click', function() {
+        $('#formAddMcu')[0].reset();
+        $('#lblAddMcuBiaya1').text('PT. Andhini Eka Karya Sejahtera');
+        
+        // Reset checkboxes
+        $('.add-mcu-check-item, .add-mcu-biaya-item').removeClass('checked').addClass('unchecked');
+        $('.add-mcu-check-item .fa-check, .add-mcu-biaya-item .fa-check').addClass('d-none');
+        $('input.chk-add-mcu-hidden, #addMcuBiaya1, #addMcuBiaya2').val('0');
+        
+        fetchCrewData();
+        
+        // Prevent double loading by checking if options are already loaded
+        if ($('#addClinic option').length <= 1) {
+            loadClinics();
+        }
+        if ($('#addHeaderMcu option').length <= 1) {
+            loadCompanyBaseVessel();
+        }
+        
+        if ($().selectpicker) {
+            $('#addClinic').selectpicker('val', '');
+            $('#addHeaderMcu').selectpicker('val', '');
+        }
+        
+        var modal = new bootstrap.Modal(document.getElementById('modalAddMcu'));
+        modal.show();
+    });
+
+    $('#formAddMcu').on('submit', function(e) {
+        e.preventDefault();
+        
+        var btn = $('#btnSubmitAddMcu');
+        var originalText = btn.html();
+        btn.html('<i class="fa fa-spinner fa-spin"></i> Processing...').prop('disabled', true);
+        
+        var mcuData = [];
+        for(var i=0; i<11; i++) mcuData.push(0);
+        
+        $('.chk-add-mcu-hidden').each(function() {
+            if ($(this).val() === '1') {
+                var idx = $(this).data('index');
+                mcuData[idx] = 1;
+            }
+        });
+        
+        if ($('#addMcuBiaya1').val() === '1') mcuData[8] = 1;
+        if ($('#addMcuBiaya2').val() === '1') mcuData[9] = 1;
+        
+        var crewList = [{
+            name_crew: $('#addCrewName').val(),
+            jabatan: $('#addCrewRank').val(),
+            vessel_name: $('#addCrewVessel').val()
+        }];
+        
+        var formData = {
+            id_clinic: $('#addClinic').val(),
+            date_mcu: $('#addDateMcu').val(),
+            header_mcu: $('#addHeaderMcu').val(),
+            mcu: mcuData,
+            crew_list: crewList
+        };
+        
+        $.ajax({
+            url: BASE_URL + '/submit_report_mcu',
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            success: function(res) {
+                btn.html(originalText).prop('disabled', false);
+                if (res.success) {
+                    $('#modalAddMcu').modal('hide');
+                    showNotification('success', res.message || 'Data berhasil ditambahkan');
+                    mcuTable.ajax.reload(null, false);
+                } else {
+                    showNotification('error', res.message || 'Gagal menambahkan data');
+                }
+            },
+            error: function() {
+                btn.html(originalText).prop('disabled', false);
+                showNotification('error', 'Terjadi kesalahan server');
+            }
+        });
+    });
 
 });
 </script>

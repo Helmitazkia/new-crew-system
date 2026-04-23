@@ -205,6 +205,54 @@ class Mcu extends CI_Controller {
         ));
     }
 
+    /**
+     * Get crew info for auto-filling based on idperson using tblcontract
+     */
+    public function get_crew_info_by_idperson()
+    {
+        $idperson = $this->input->post('idperson', true);
+
+        // Join to tblcontract to get rank and vessel based on latest contract
+        $sql = "
+            SELECT 
+                CONCAT_WS(' ', A.fname, A.mname, A.lname) AS nama_crew,
+                C.nmrank AS jabatan,
+                D.nmvsl AS vessel_name
+            FROM mstpersonal A
+            LEFT JOIN tblcontract B ON A.idperson = B.idperson AND B.deletests = '0'
+            LEFT JOIN mstrank C ON C.kdrank = B.signonrank AND C.deletests = '0'
+            LEFT JOIN mstvessel D ON D.kdvsl = B.signonvsl AND D.deletests = '0'
+            WHERE A.idperson = ?
+            ORDER BY B.signondt DESC, B.idcontract DESC
+            LIMIT 1
+        ";
+
+        $data = $this->db->query($sql, array($idperson))->row();
+
+        // If no contract found, fallback to mstpersonal
+        if ($data && (empty($data->jabatan) || empty($data->vessel_name))) {
+            $sqlFallback = "
+                SELECT 
+                    CONCAT_WS(' ', fname, mname, lname) AS nama_crew,
+                    applyfor AS jabatan,
+                    vesselfor AS vessel_name
+                FROM mstpersonal
+                WHERE idperson = ?
+                LIMIT 1
+            ";
+            $dataFallback = $this->db->query($sqlFallback, array($idperson))->row();
+            if ($dataFallback) {
+                if (empty($data->jabatan)) $data->jabatan = $dataFallback->jabatan;
+                if (empty($data->vessel_name)) $data->vessel_name = $dataFallback->vessel_name;
+            }
+        }
+
+        echo json_encode(array(
+            'success' => !empty($data),
+            'data'    => $data
+        ));
+    }
+
     // ============================================================
     // CRUD OPERATIONS
     // ============================================================
@@ -410,7 +458,7 @@ class Mcu extends CI_Controller {
             return;
         }
 
-        $persons = $this->_getPersonsByReport($id_report,"");
+        $persons = $this->_getPersonsforPrint($id_report);
 
         // Map answers to mcu object
         $mcu = new stdClass();
@@ -435,7 +483,7 @@ class Mcu extends CI_Controller {
             'header_mcu'     => $report->header_mcu
         );
 
-        $this->load->view('frontend/print_approve_mcu', $data);
+        $this->load->view('ListReport/MCU/print_approve_mcu', $data);
     }
 
     /**
@@ -508,7 +556,7 @@ class Mcu extends CI_Controller {
         $batchno = $this->getBatchNo();
         $formatNoSrt = $this->createNo($noSurat,$initCmp,$initDivisi,$initDivisi,$monthNow,$yearNow);
         
-        $department = strtoupper($rsl[0]->department);
+        //$department = strtoupper($rsl[0]->department);
         
         $insSql["batchno"] = $batchno;
         $insSql["cmpcode"] = $initCmp;
@@ -555,12 +603,12 @@ class Mcu extends CI_Controller {
 
         // 4. Email ke klinik jika ada
         $idEnc = base64_encode(base64_encode(base64_encode($idReport)));
-        $link  = base_url("report/print_approve_mcu/$idEnc");
+        $link  = base_url("ListReport/Mcu/print_approve_mcu/$idEnc");
         if ($klinik && !empty($klinik->email)) {
             $this->_sendEmailToClinic($idReport, $klinik->email, $link);
         }
 
-        redirect('report/print_approve_mcu/' . $hashId);
+        redirect('ListReport/Mcu/print_approve_mcu/' . $hashId);
     }
 
     /**
@@ -673,6 +721,18 @@ class Mcu extends CI_Controller {
         return $this->db->query($sql, array($id_report,$id_person))->result();
     }
 
+    private function _getPersonsforPrint($id_report)
+    {
+        $sql = "
+            SELECT id, id_report_mcu, id_person, name_person, rank, vessel_name
+            FROM report_mcu_person
+            WHERE id_report_mcu = ? 
+            ORDER BY id ASC
+        ";
+
+        return $this->db->query($sql, array($id_report))->result();
+    }
+
     /**
      * Initialize PHPMailer with SMTP config
      */
@@ -731,6 +791,12 @@ class Mcu extends CI_Controller {
     private function _createQRCode($id, $type = 'approveCM')
     {
         $this->load->library('ciqrcode');
+        if (!isset($this->ciqrcode)) {
+            if (!class_exists('Ciqrcode')) {
+                require_once APPPATH . 'libraries/Ciqrcode.php';
+            }
+            $this->ciqrcode = new Ciqrcode();
+        }
 
         $config = array(
             'cacheable' => true,
@@ -774,10 +840,10 @@ class Mcu extends CI_Controller {
         $header = $this->db->query($sqlHeader, array($idReport))->row();
         if (!$header) return;
 
-        $persons = $this->_getPersonsByReport($idReport,"");
+        $persons = $this->_getPersonsforPrint($idReport);
 
         $idEnc = base64_encode(base64_encode(base64_encode($idReport)));
-        $link  = base_url("report/print_approve_mcu/$idEnc");
+        $link  = base_url("ListReport/Mcu/print_approve_mcu/$idEnc");
 
         $cmEmail = "helmi.tazkia@andhika.com";
         $this->_sendEmailMCU($cmEmail, $header, $persons, $link);
@@ -836,7 +902,7 @@ class Mcu extends CI_Controller {
         $header = $this->db->query($sqlHeader, array($idReport))->row();
         if (!$header) return;
 
-        $persons = $this->_getPersonsByReport($idReport);
+        $persons = $this->_getPersonsforPrint($idReport);
 
         try {
             $mail = $this->_initMailer();
