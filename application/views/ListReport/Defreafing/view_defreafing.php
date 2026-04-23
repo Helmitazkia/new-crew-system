@@ -5,12 +5,11 @@
 
 <div class="card shadow-sm border-0" id="debModuleWrapper">
     <div class="card-body">
-        <!-- <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="card-title fw-bold text-primary mb-0"><i class="fa fa-file-text-o me-2"></i> Debriefing Report</h6>
-            <button class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm" id="btnAddDebriefing">
+        <div class="d-flex justify-content-end mb-3">
+            <button class="btn btn-primary btn-sm rounded shadow-sm" id="btnAddDebriefing" style="background-color: #000999; border-color: #000999;">
                 <i class="fa fa-plus me-1"></i> Add Debriefing
             </button>
-        </div> -->
+        </div>
         <div class="table-responsive">
             <table id="debriefingTable" class="table table-bordered align-middle mb-0 crew-table" style="width:100%">
                 <thead class="crew-header">

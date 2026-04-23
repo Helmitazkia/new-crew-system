@@ -12,19 +12,19 @@
         <table style="width:100%; border-collapse:collapse; margin-bottom:10px;">
             <tr>
                 <td style="width:80px; vertical-align:top;">
-                    <img src="<?php echo base_url('assets/img/Logo Andhika 2017.jpg'); ?>" alt="Logo"
+                    <img src="<?php echo base_url('assets/img/Logo_Andhika_2017.jpg'); ?>" alt="Logo"
                         style="width:80px; height:auto;">
                 </td>
 
                 <td style="text-align:center; vertical-align:middle;">
-                    <div style="font-size:15px; font-weight:bold;">STATEMENT/<i>PERNYATAAN</i><br>DATA BANK</div>
+                    <div style="font-size:15px; font-weight:bold;">STATEMENT/PERNYATAAN<br>DATA BANK</div>
                 </td>
 
                 <td style="width:170px; text-align:right; vertical-align:top;">
                     <div style="font-size:11px; font-weight:bold;">SRPS LICENSE NO:</div>
                     <div style="font-size:10px;">SIUPPAK 12.12 Tahun 2014</div>
                     <div style="margin-top:3px;">
-                        <img src="<?php echo base_url('assets/img/Bureau Veritas Logo.jpg'); ?>" alt="BV"
+                        <img src="<?php echo base_url('assets/img/Bureau_Veritas_Logo.jpg'); ?>" alt="BV"
                             style="width:65px; margin-right:3px;">
                         <img src="<?php echo base_url('assets/img/iso.jpg'); ?>" alt="ISO" style="width:65px;">
                     </div>
@@ -92,7 +92,7 @@
         semua konsekuensi dari isi form ini.
     </div>
 
-    <table style="width:100%; margin-top:30px; font-size:13px; border-collapse:collapse;" border="1">
+    <table style="width:100%; margin-top:30px; font-size:13px; border-collapse:collapse;">
         <tr>
             <td style="width:50%; vertical-align:top; text-align:left;">
                 Jakarta, <?php echo date('d F Y', strtotime($crew->created_at)); ?><br><br><br><br><br><br><br>
@@ -106,6 +106,11 @@
             </td>
         </tr>
     </table>
+
+    <div style="position: fixed; bottom: 20px; margin-left: 80px; color: gray; font-size: 12px; font-style: italic;">
+    <span>CD-29/15/15/15</span>
+    </div>
+
 
 
 </body>
