@@ -63,7 +63,7 @@
 
                 <div style="flex:1; text-align:center; margin-top:10px;">
                   <div style="font-size:20px; font-weight:bold; letter-spacing:2px;">
-                    STATEMENT/PERNYATAAN
+                    STATEMENT FREE OF CHARGE
                   </div>
                 </div>
 

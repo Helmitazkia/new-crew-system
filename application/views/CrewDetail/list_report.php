@@ -24,10 +24,10 @@
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="databank">Data Bank</a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementemploye">Statement Of Employe</a>
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementemploye">Statement of free of charge</a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="letterstatement">Letter Statemment</a>
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementcontractacceptance">Statement of Contract Acceptance  </a>
             </li>
             <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="transmital">Transmital</a>
@@ -42,16 +42,10 @@
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="pkl">PKL</a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="spj">SPJ</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementemployment">Statement of Employment</a>
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="spj">Official Travel Letter</a>
             </li>
             <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="seafarer">Seafarer Employment Agreement</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="vaccine">Vaccine</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="perfeval">Perfom Evaluation</a>
