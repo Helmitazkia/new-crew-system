@@ -114,10 +114,10 @@ $(document).ready(function() {
         'mlcdeclaration': '<?php echo base_url("ListReport/Mlc/view"); ?>',
         'databank': '<?php echo base_url("ListReport/Bank/view"); ?>',
         'statementemploye': '<?php echo base_url("ListReport/Soe/view"); ?>',
-        'covid19': '<?php echo base_url("ListReport/Covid19/view"); ?>'
+        'covid19': '<?php echo base_url("ListReport/Covid19/view"); ?>',
+        'statementcontractacceptance': '<?php echo base_url("ListReport/AcceptentceLetter/view"); ?>'
         // Tambahkan modul lain di sini nanti:
         // 'printcv': '<?php echo base_url("CrewDetail/ListReport/view_printcv"); ?>',
-        // 'acceptentce': '<?php echo base_url("CrewDetail/ListReport/view_acceptentce"); ?>',
     };
 
     // ================================
