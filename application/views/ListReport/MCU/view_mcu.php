@@ -219,10 +219,10 @@
                                 <input type="text" class="form-control form-control-sm" id="addCrewName" placeholder="Nama Crew" required readonly style="background-color: #f1f3f8;">
                             </div>
                             <div class="col-md-4">
-                                <input type="text" class="form-control form-control-sm" id="addCrewRank" placeholder="Jabatan" required readonly style="background-color: #f1f3f8;">
+                                <input type="text" class="form-control form-control-sm" id="addCrewRank" placeholder="Jabatan" required>
                             </div>
                             <div class="col-md-4">
-                                <input type="text" class="form-control form-control-sm" id="addCrewVessel" placeholder="Kapal" required readonly style="background-color: #f1f3f8;">
+                                <input type="text" class="form-control form-control-sm" id="addCrewVessel" placeholder="Kapal" required>
                             </div>
                         </div>
                         
@@ -269,6 +269,7 @@
 <form id="formGeneratePdf" method="POST" target="_blank" style="display:none;">
     <input type="hidden" name="persons" id="pdfPersons">
     <input type="hidden" name="mcu" id="pdfMcu">
+    <input type="hidden" name="sub_data" id="pdfSubData">
     <input type="hidden" name="date_mcu" id="pdfDateMcu">
     <input type="hidden" name="clinic_name" id="pdfClinicName">
     <input type="hidden" name="status_mcu" id="pdfStatusMcu">
@@ -432,14 +433,32 @@ $(document).ready(function() {
     // Mapping: index 0-7 = answer_1 to answer_8, index 8 = answer_11 (Treadmill)
     var MCU_ITEMS = [
         { answer: 'answer_1',  num: 1, label: 'Medical Check Up Standart Perla' },
-        { answer: 'answer_2',  num: 2, label: 'Medical Check Up Kerajaan Malaysia,Panama, Marshall Islands, Liberia, Singapore, Cyprus,Shipowner, OGUK, & Netherlands' },
+        { answer: 'answer_2',  num: 2, label: 'Medical Check Up', subItems: [
+            { id: 'sub_answer_2_1', label: 'Kerajaan Malaysia' },
+            { id: 'sub_answer_2_2', label: 'Marshall Islands' },
+            { id: 'sub_answer_2_3', label: 'Liberia' },
+            { id: 'sub_answer_2_4', label: 'Singapore' },
+            { id: 'sub_answer_2_5', label: 'Cyprus' },
+            { id: 'sub_answer_2_6', label: 'Shipowner' },
+            { id: 'sub_answer_2_7', label: 'OGUK' },
+            { id: 'sub_answer_2_8', label: 'Netherlands' }
+        ] },
         { answer: 'answer_3',  num: 3, label: 'Medical Check Up Panama + ECG + Renal Function + Lever Function + Glukosa at Random', bold: true },
         { answer: 'answer_4',  num: 4, label: 'Pemeriksaan Gigi & Gusi (Dental+Gum)' },
-        { answer: 'answer_5',  num: 5, label: 'Drug & Alcoholic Test 6 (six) items', bold: true },
+        { answer: 'answer_5',  num: 5, label: 'Drug & Alcoholic Test 6 (six) items', bold: true, subItems: [
+            { id: 'sub_answer_5_1', label: 'Cocain metabolic' },
+            { id: 'sub_answer_5_2', label: 'Marijuana metabolic' },
+            { id: 'sub_answer_5_3', label: 'Morphine / Opiates' },
+            { id: 'sub_answer_5_4', label: 'Pencyclidine' },
+            { id: 'sub_answer_5_5', label: 'Amphetamine' },
+            { id: 'sub_answer_5_6', label: 'Alcohol metabolic' }
+        ] },
         { answer: 'answer_6',  num: 6, label: 'HIV Test' },
         { answer: 'answer_7',  num: 7, label: 'Chemical Contamination Test' },
         { answer: 'answer_8',  num: 8, label: 'Sleep Apnea Syndrome' },
-        { answer: 'answer_11', num: 9, label: 'Treadmill' }
+        { answer: 'answer_11', num: 9, label: 'Treadmill' },
+        { answer: 'answer_12', num: 10, label: 'PEME Gard' },
+        { answer: 'answer_13', num: 11, label: 'Stool culture' }
     ];
 
     // Status mapping
@@ -610,12 +629,29 @@ $(document).ready(function() {
                     var icon = val ? '<i class="fa fa-check"></i>' : '';
                     var labelText = item.bold ? '<strong>' + item.num + '. ' + item.label + '</strong>' : item.num + '. ' + item.label;
                     checklistHtml += 
-                        '<div class="col-md-6 col-lg-6">' +
+                        '<div class="col-md-12">' +
                             '<div class="mcu-check-item ' + cls + '">' +
                                 '<span class="mcu-check-icon">' + icon + '</span>' +
-                                '<span>' + labelText + '</span>' +
-                            '</div>' +
-                        '</div>';
+                                '<span style="color: #000;">' + labelText + '</span>' +
+                            '</div>';
+                            
+                    if (item.subItems) {
+                        checklistHtml += '<div class="row g-1 mt-1 ms-4">';
+                        $.each(item.subItems, function(sIdx, sItem) {
+                            var sVal = parseInt(report[sItem.id]) || 0;
+                            var sCls = sVal ? 'checked' : 'unchecked';
+                            var sIcon = sVal ? '<i class="fa fa-check"></i>' : '';
+                            checklistHtml += 
+                                '<div class="col-md-12">' +
+                                    '<div class="mcu-check-item ' + sCls + '" style="padding: 4px 8px;">' +
+                                        '<span class="mcu-check-icon" style="width:16px;height:16px;font-size:10px;">' + sIcon + '</span>' +
+                                        '<span style="font-size: 11px; color: #000;">' + sItem.label + '</span>' +
+                                    '</div>' +
+                                '</div>';
+                        });
+                        checklistHtml += '</div>';
+                    }
+                    checklistHtml += '</div>';
                 });
                 $('#detailMcuChecklist').html(checklistHtml);
 
@@ -747,9 +783,16 @@ $(document).ready(function() {
         });
 
         var mcuArr = [];
-        for (var i = 1; i <= 11; i++) {
+        for (var i = 1; i <= 13; i++) {
             mcuArr.push(report['answer_' + i] || '0');
         }
+
+        var subArr = {};
+        if (report) {
+            for(var i=1; i<=8; i++) subArr['sub_answer_2_'+i] = report['sub_answer_2_'+i] || '0';
+            for(var i=1; i<=6; i++) subArr['sub_answer_5_'+i] = report['sub_answer_5_'+i] || '0';
+        }
+        $('#pdfSubData').val(JSON.stringify(subArr));
 
         var $form = $('#formGeneratePdf');
         $form.attr('action', BASE_URL + '/generatePDF_MCU');
@@ -872,13 +915,28 @@ $(document).ready(function() {
             var labelText = item.bold ? '<strong>' + item.num + '. ' + item.label + '</strong>' : item.num + '. ' + item.label;
             
             checklistHtml += 
-                '<div class="col-md-6 col-lg-6">' +
+                '<div class="col-md-12">' +
                     '<div class="mcu-check-item unchecked add-mcu-check-item" style="cursor: pointer;" data-index="' + mcuIndex + '">' +
                         '<span class="mcu-check-icon"><i class="fa fa-check d-none"></i></span>' +
-                        '<span style="font-size: 13px;">' + labelText + '</span>' +
+                        '<span style="font-size: 13px; color: #000;">' + labelText + '</span>' +
                         '<input type="hidden" class="chk-add-mcu-hidden" data-index="' + mcuIndex + '" value="0">' +
-                    '</div>' +
-                '</div>';
+                    '</div>';
+            
+            if (item.subItems) {
+                checklistHtml += '<div class="row g-1 mt-1 ms-4">';
+                $.each(item.subItems, function(sIdx, sItem) {
+                    checklistHtml += 
+                        '<div class="col-md-12">' +
+                            '<div class="mcu-check-item unchecked add-mcu-subcheck-item" style="cursor: pointer; padding: 4px 8px;">' +
+                                '<span class="mcu-check-icon" style="width:16px;height:16px;font-size:10px;"><i class="fa fa-check d-none"></i></span>' +
+                                '<span style="font-size: 11px; color: #000;">' + sItem.label + '</span>' +
+                                '<input type="hidden" class="chk-add-mcu-sub-hidden" data-id="' + sItem.id + '" value="0">' +
+                            '</div>' +
+                        '</div>';
+                });
+                checklistHtml += '</div>';
+            }
+            checklistHtml += '</div>';
         });
         $('#addMcuChecklist').html(checklistHtml);
     }
@@ -887,7 +945,7 @@ $(document).ready(function() {
     renderAddMcuChecklist();
 
     // Toggle Checkboxes for Add Modal
-    $(document).off('click', '.add-mcu-check-item, .add-mcu-biaya-item').on('click', '.add-mcu-check-item, .add-mcu-biaya-item', function() {
+    $(document).off('click', '.add-mcu-check-item, .add-mcu-biaya-item, .add-mcu-subcheck-item').on('click', '.add-mcu-check-item, .add-mcu-biaya-item, .add-mcu-subcheck-item', function() {
         var $this = $(this);
         var $icon = $this.find('.fa-check');
         var $input = $this.find('input[type="hidden"]');
@@ -908,9 +966,9 @@ $(document).ready(function() {
         $('#lblAddMcuBiaya1').text('PT. Andhini Eka Karya Sejahtera');
         
         // Reset checkboxes
-        $('.add-mcu-check-item, .add-mcu-biaya-item').removeClass('checked').addClass('unchecked');
-        $('.add-mcu-check-item .fa-check, .add-mcu-biaya-item .fa-check').addClass('d-none');
-        $('input.chk-add-mcu-hidden, #addMcuBiaya1, #addMcuBiaya2').val('0');
+        $('.add-mcu-check-item, .add-mcu-biaya-item, .add-mcu-subcheck-item').removeClass('checked').addClass('unchecked');
+        $('.add-mcu-check-item .fa-check, .add-mcu-biaya-item .fa-check, .add-mcu-subcheck-item .fa-check').addClass('d-none');
+        $('input.chk-add-mcu-hidden, input.chk-add-mcu-sub-hidden, #addMcuBiaya1, #addMcuBiaya2').val('0');
         
         fetchCrewData();
         
@@ -939,7 +997,7 @@ $(document).ready(function() {
         btn.html('<i class="fa fa-spinner fa-spin"></i> Processing...').prop('disabled', true);
         
         var mcuData = [];
-        for(var i=0; i<11; i++) mcuData.push(0);
+        for(var i=0; i<13; i++) mcuData.push(0);
         
         $('.chk-add-mcu-hidden').each(function() {
             if ($(this).val() === '1') {
@@ -950,6 +1008,12 @@ $(document).ready(function() {
         
         if ($('#addMcuBiaya1').val() === '1') mcuData[8] = 1;
         if ($('#addMcuBiaya2').val() === '1') mcuData[9] = 1;
+        
+        // Collect sub checks
+        var subData = {};
+        $('.chk-add-mcu-sub-hidden').each(function() {
+            subData[$(this).data('id')] = $(this).val();
+        });
         
         var crewList = [{
             name_crew: $('#addCrewName').val(),
@@ -962,6 +1026,7 @@ $(document).ready(function() {
             date_mcu: $('#addDateMcu').val(),
             header_mcu: $('#addHeaderMcu').val(),
             mcu: mcuData,
+            sub_data: subData,
             crew_list: crewList
         };
         
