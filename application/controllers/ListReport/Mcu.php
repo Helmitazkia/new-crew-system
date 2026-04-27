@@ -297,6 +297,8 @@ class Mcu extends CI_Controller {
             return;
         }
 
+        $subData    = isset($post['sub_data']) ? $post['sub_data'] : array();
+
         // 2. Insert report_answer_mcu
         $answerData = array(
             'id_report_mcu' => $idReportMcu,
@@ -304,6 +306,14 @@ class Mcu extends CI_Controller {
         );
         for ($i = 0; $i < 13; $i++) {
             $answerData['answer_' . ($i + 1)] = isset($mcu[$i]) ? $mcu[$i] : NULL;
+        }
+
+        // Sub answers
+        for ($i = 1; $i <= 8; $i++) {
+            $answerData['sub_answer_2_' . $i] = isset($subData['sub_answer_2_'.$i]) ? $subData['sub_answer_2_'.$i] : '0';
+        }
+        for ($i = 1; $i <= 6; $i++) {
+            $answerData['sub_answer_5_' . $i] = isset($subData['sub_answer_5_'.$i]) ? $subData['sub_answer_5_'.$i] : '0';
         }
 
         $this->db->insert('report_answer_mcu', $answerData);
@@ -381,6 +391,10 @@ class Mcu extends CI_Controller {
         $fax            = $this->input->post('fax', TRUE);
         $header_mcu     = $this->input->post('header_mcu', TRUE);
 
+        $subDataJson    = $this->input->post('sub_data');
+        $subData = json_decode($subDataJson, true);
+        if (!$subData) $subData = array();
+
         if (empty($personsJson) || empty($mcu)) {
             echo "Data MCU tidak lengkap";
             exit;
@@ -406,6 +420,7 @@ class Mcu extends CI_Controller {
         $data = array(
             'persons'        => $persons,
             'mcu'            => $mcuObj,
+            'subData'        => $subData,
             'date_mcu'       => $date_mcu,
             'clinic_name'    => $clinic_name,
             'address_clinic' => $address_clinic,
@@ -468,6 +483,16 @@ class Mcu extends CI_Controller {
             $mcu->$prop = (int) $report->$ans;
         }
 
+        $subData = array();
+        for ($i = 1; $i <= 8; $i++) {
+            $prop = 'sub_answer_2_' . $i;
+            $subData[$prop] = isset($report->$prop) ? $report->$prop : '0';
+        }
+        for ($i = 1; $i <= 6; $i++) {
+            $prop = 'sub_answer_5_' . $i;
+            $subData[$prop] = isset($report->$prop) ? $report->$prop : '0';
+        }
+
         $data = array(
             'clinic_name'    => $report->clinic_name,
             'address_clinic' => $report->address_clinic,
@@ -475,6 +500,7 @@ class Mcu extends CI_Controller {
             'fax'            => $report->fax,
             'date_mcu'       => $report->date_mcu,
             'mcu'            => $mcu,
+            'subData'        => $subData,
             'persons'        => $persons,
             'id_report'      => $id_report,
             'hash_id'        => $hashId,
@@ -608,6 +634,7 @@ class Mcu extends CI_Controller {
             $this->_sendEmailToClinic($idReport, $klinik->email, $link);
         }
 
+        $this->session->set_flashdata('swal_success', 'Approve MCU berhasil diproses!');
         redirect('ListReport/Mcu/print_approve_mcu/' . $hashId);
     }
 
@@ -671,7 +698,8 @@ class Mcu extends CI_Controller {
             'signature_qr'   => $qrImg
         ));
 
-        redirect('report/print_approve_mcu/' . $hashId);
+        $this->session->set_flashdata('swal_success', 'Reject MCU berhasil diproses!');
+        redirect('ListReport/Mcu/print_approve_mcu/' . $hashId);
     }
 
     // ============================================================
@@ -694,6 +722,10 @@ class Mcu extends CI_Controller {
                 c.header_mcu,
                 c.answer_1, c.answer_2, c.answer_3, c.answer_4, c.answer_5,
                 c.answer_6, c.answer_7, c.answer_8, c.answer_9, c.answer_10, c.answer_11, c.answer_12, c.answer_13,
+                c.sub_answer_2_1, c.sub_answer_2_2, c.sub_answer_2_3, c.sub_answer_2_4,
+                c.sub_answer_2_5, c.sub_answer_2_6, c.sub_answer_2_7, c.sub_answer_2_8,
+                c.sub_answer_5_1, c.sub_answer_5_2, c.sub_answer_5_3, c.sub_answer_5_4,
+                c.sub_answer_5_5, c.sub_answer_5_6,
                 a.status_mcu,
                 a.signature_qr
             FROM report_mcu AS a

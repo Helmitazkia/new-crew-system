@@ -137,7 +137,37 @@
                 <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo ($mcu->mcu2==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
               </td>
               <td style="padding: 0; vertical-align: top; border: none;">
-                2. Medical Check Up Kerajaan Malaysia,Panama, Marshall Islands, Liberia, Singapore, Cyprus,Shipowner, OGUK, <br>& Netherlands
+                2. Medical Check Up
+                <table class="table table-borderless table-sm mt-1" style="font-size:11px;">
+                  <tr>
+                    <td style="width:25%;">
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_1']) && $subData['sub_answer_2_1']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Kerajaan Malaysia
+                    </td>
+                    <td style="width:25%;">
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_2']) && $subData['sub_answer_2_2']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Marshall Islands
+                    </td>
+                    <td style="width:25%;">
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_3']) && $subData['sub_answer_2_3']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Liberia
+                    </td>
+                    <td style="width:25%;">
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_4']) && $subData['sub_answer_2_4']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Singapore
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_5']) && $subData['sub_answer_2_5']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Cyprus
+                    </td>
+                    <td>
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_6']) && $subData['sub_answer_2_6']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Shipowner
+                    </td>
+                    <td>
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_7']) && $subData['sub_answer_2_7']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> OGUK
+                    </td>
+                    <td>
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_8']) && $subData['sub_answer_2_8']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Netherlands
+                    </td>
+                  </tr>
+                </table>
               </td>
             </tr>
           </table>
@@ -169,13 +199,21 @@
                 SUDAH FIT dan biayanya dibebankan<br>
                 kepada PT. Andhini Eka Karya Sejahtera
               </td>
-              <td style="width:55%;">
-                Cocain metabolic<br>
-                Marijuana metabolic<br>
-                Morphine / Opiates<br>
-                Pencyclidine<br>
-                Amphetamine<br>
-                Alcohol metabolic
+              <td style="width:45%;">
+                <table style="width:100%;font-size:11px;">
+                  <tr>
+                    <td style="width:50%;"><span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_1']) && $subData['sub_answer_5_1']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Cocain metabolic</td>
+                    <td style="width:50%;"><span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_4']) && $subData['sub_answer_5_4']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Pencyclidine</td>
+                  </tr>
+                  <tr>
+                    <td><span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_2']) && $subData['sub_answer_5_2']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Marijuana metabolic</td>
+                    <td><span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_5']) && $subData['sub_answer_5_5']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Amphetamine</td>
+                  </tr>
+                  <tr>
+                    <td><span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_3']) && $subData['sub_answer_5_3']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Morphine / Opiates</td>
+                    <td><span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_6']) && $subData['sub_answer_5_6']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Alcohol metabolic</td>
+                  </tr>
+                </table>
               </td>
             </tr>
           </table>
