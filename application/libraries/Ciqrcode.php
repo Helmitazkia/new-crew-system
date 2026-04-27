@@ -9,16 +9,18 @@ class Ciqrcode
 	
 	function __construct($config = array()) {
 		// call original library
-		include "qrcode/qrconst.php";
-		include "qrcode/qrtools.php";
-		include "qrcode/qrspec.php";
-		include "qrcode/qrimage.php";
-		include "qrcode/qrinput.php";
-		include "qrcode/qrbitstream.php";
-		include "qrcode/qrsplit.php";
-		include "qrcode/qrrscode.php";
-		include "qrcode/qrmask.php";
-		include "qrcode/qrencode.php";
+		$dir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+		include_once $dir . "qrcode/qrconst.php";
+		include_once $dir . "qrcode/qrtools.php";
+		include_once $dir . "qrcode/qrspec.php";
+		include_once $dir . "qrcode/qrimage.php";
+		include_once $dir . "qrcode/qrinput.php";
+		include_once $dir . "qrcode/qrbitstream.php";
+		include_once $dir . "qrcode/qrsplit.php";
+		include_once $dir . "qrcode/qrrscode.php";
+		include_once $dir . "qrcode/qrmask.php";
+		include_once $dir . "qrcode/qrencode.php";
+
 		
 		$this->initialize($config);
 	}
@@ -78,15 +80,12 @@ class Ciqrcode
 			if (isset($params['size'])) $size = min(max((int)$params['size'], 1), 10);
 			
 			QRcode::png($params['data'], $params['savename'], $level, $size, 2);
-			// QRcode::jpg($params['data'], $params['savename'], $level, $size, 2);
 
 			if (isset($params['logo']))
 			{
 				$logo = $params['logo'];
 				$QR = imagecreatefrompng($params['savename']);
-				// $QR = imagecreatefromjpeg($params['savename']);
 
-				// $logopng = imagecreatefromjpeg($logo);
 				$logopng = imagecreatefrompng($logo);
 			    $QR_width = imagesx($QR);
 			    $QR_height = imagesy($QR);
@@ -98,8 +97,7 @@ class Ciqrcode
 			    imagecopyresampled($out, $QR, 0, 0, 0, 0, $QR_width, $QR_height, $QR_width, $QR_height);
 			    imagecopyresampled($out, $logopng, $QR_width/2.65, $QR_height/2.65, 0, 0, $QR_width/4, $QR_height/4, $newwidth, $newheight);
 
-			    // imagepng($out,$params['savename']);
-			    imagejpeg($out,$params['savename']);
+			    imagepng($out,$params['savename']);
 				imagedestroy($out);
 			}
 			return $params['savename'];

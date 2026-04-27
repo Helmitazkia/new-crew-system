@@ -9,7 +9,7 @@
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="acceptentce">Acceptentce Letter</a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="covid19">Covid 19 Prevention</a>
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="covid19">Health and Pandemic</a>
             </li>
             <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="defreafing">Defreafing</a>
@@ -24,10 +24,10 @@
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="databank">Data Bank</a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementemploye">Statement Of Employe</a>
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementemploye">Statement of free of charge</a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="letterstatement">Letter Statemment</a>
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementcontractacceptance">Statement of Contract Acceptance  </a>
             </li>
             <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="transmital">Transmital</a>
@@ -42,16 +42,10 @@
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="pkl">PKL</a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="spj">SPJ</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementemployment">Statement of Employment</a>
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="spj">Official Travel Letter</a>
             </li>
             <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="seafarer">Seafarer Employment Agreement</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="vaccine">Vaccine</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="perfeval">Perfom Evaluation</a>
@@ -120,10 +114,10 @@ $(document).ready(function() {
         'mlcdeclaration': '<?php echo base_url("ListReport/Mlc/view"); ?>',
         'databank': '<?php echo base_url("ListReport/Bank/view"); ?>',
         'statementemploye': '<?php echo base_url("ListReport/Soe/view"); ?>',
-        'covid19': '<?php echo base_url("ListReport/Covid19/view"); ?>'
+        'covid19': '<?php echo base_url("ListReport/Covid19/view"); ?>',
+        'statementcontractacceptance': '<?php echo base_url("ListReport/AcceptentceLetter/view"); ?>'
         // Tambahkan modul lain di sini nanti:
         // 'printcv': '<?php echo base_url("CrewDetail/ListReport/view_printcv"); ?>',
-        // 'acceptentce': '<?php echo base_url("CrewDetail/ListReport/view_acceptentce"); ?>',
     };
 
     // ================================
