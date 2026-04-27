@@ -209,6 +209,20 @@
           9. Treadmill
         </td>
       </tr>
+      <tr>
+        <td>
+          <span class="box"
+            style="font-family: 'DejaVu Sans'; font-size: 16px;"><?php echo ($mcu->mcu12==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
+          10. PEME Gard
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span class="box"
+            style="font-family: 'DejaVu Sans'; font-size: 16px;"><?php echo ($mcu->mcu13==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
+          11. Stool culture
+        </td>
+      </tr>
     </table>
 
     <p class="mt">Pemeriksaan dilaksanakan untuk crew kami:</p>

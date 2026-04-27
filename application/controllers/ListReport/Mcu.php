@@ -302,7 +302,7 @@ class Mcu extends CI_Controller {
             'id_report_mcu' => $idReportMcu,
             'header_mcu'    => $header_mcu
         );
-        for ($i = 0; $i < 11; $i++) {
+        for ($i = 0; $i < 13; $i++) {
             $answerData['answer_' . ($i + 1)] = isset($mcu[$i]) ? $mcu[$i] : NULL;
         }
 
@@ -398,7 +398,7 @@ class Mcu extends CI_Controller {
 
         // Build MCU checkbox object
         $mcuObj = new stdClass();
-        for ($i = 0; $i < 11; $i++) {
+        for ($i = 0; $i < 13; $i++) {
             $prop = 'mcu' . ($i + 1);
             $mcuObj->$prop = isset($mcu[$i]) ? $mcu[$i] : 0;
         }
@@ -462,7 +462,7 @@ class Mcu extends CI_Controller {
 
         // Map answers to mcu object
         $mcu = new stdClass();
-        for ($i = 1; $i <= 11; $i++) {
+        for ($i = 1; $i <= 13; $i++) {
             $prop = 'mcu' . $i;
             $ans  = 'answer_' . $i;
             $mcu->$prop = (int) $report->$ans;
@@ -693,7 +693,7 @@ class Mcu extends CI_Controller {
                 a.date_mcu,
                 c.header_mcu,
                 c.answer_1, c.answer_2, c.answer_3, c.answer_4, c.answer_5,
-                c.answer_6, c.answer_7, c.answer_8, c.answer_9, c.answer_10, c.answer_11,
+                c.answer_6, c.answer_7, c.answer_8, c.answer_9, c.answer_10, c.answer_11, c.answer_12, c.answer_13,
                 a.status_mcu,
                 a.signature_qr
             FROM report_mcu AS a

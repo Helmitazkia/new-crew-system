@@ -219,10 +219,10 @@
                                 <input type="text" class="form-control form-control-sm" id="addCrewName" placeholder="Nama Crew" required readonly style="background-color: #f1f3f8;">
                             </div>
                             <div class="col-md-4">
-                                <input type="text" class="form-control form-control-sm" id="addCrewRank" placeholder="Jabatan" required readonly style="background-color: #f1f3f8;">
+                                <input type="text" class="form-control form-control-sm" id="addCrewRank" placeholder="Jabatan" required>
                             </div>
                             <div class="col-md-4">
-                                <input type="text" class="form-control form-control-sm" id="addCrewVessel" placeholder="Kapal" required readonly style="background-color: #f1f3f8;">
+                                <input type="text" class="form-control form-control-sm" id="addCrewVessel" placeholder="Kapal" required>
                             </div>
                         </div>
                         
@@ -439,7 +439,9 @@ $(document).ready(function() {
         { answer: 'answer_6',  num: 6, label: 'HIV Test' },
         { answer: 'answer_7',  num: 7, label: 'Chemical Contamination Test' },
         { answer: 'answer_8',  num: 8, label: 'Sleep Apnea Syndrome' },
-        { answer: 'answer_11', num: 9, label: 'Treadmill' }
+        { answer: 'answer_11', num: 9, label: 'Treadmill' },
+        { answer: 'answer_12', num: 10, label: 'PEME Gard' },
+        { answer: 'answer_13', num: 11, label: 'Stool culture' }
     ];
 
     // Status mapping
@@ -747,7 +749,7 @@ $(document).ready(function() {
         });
 
         var mcuArr = [];
-        for (var i = 1; i <= 11; i++) {
+        for (var i = 1; i <= 13; i++) {
             mcuArr.push(report['answer_' + i] || '0');
         }
 
@@ -939,7 +941,7 @@ $(document).ready(function() {
         btn.html('<i class="fa fa-spinner fa-spin"></i> Processing...').prop('disabled', true);
         
         var mcuData = [];
-        for(var i=0; i<11; i++) mcuData.push(0);
+        for(var i=0; i<13; i++) mcuData.push(0);
         
         $('.chk-add-mcu-hidden').each(function() {
             if ($(this).val() === '1') {
