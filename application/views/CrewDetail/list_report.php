@@ -6,9 +6,6 @@
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="printcv">Print CV</a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="acceptentce">Acceptentce Letter</a>
-            </li>
-            <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="covid19">Health and Pandemic</a>
             </li>
             <li class="nav-item mb-3">

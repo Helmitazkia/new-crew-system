@@ -21,7 +21,7 @@
           Tranning</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabCompotents">Competence</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabListReport">List Report</button>
-        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">List Insident</button>
+        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">List Incident</button>
       </div>
 
     </div>
