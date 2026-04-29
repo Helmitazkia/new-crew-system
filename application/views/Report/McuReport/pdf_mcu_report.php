@@ -61,12 +61,15 @@
 <body>
 
   <div class="page">
+    <!-- <?php if ($status_mcu == 2): ?>
+    <img src="./assets/img/rejected.jpg" width="80" height="80" style="position: absolute; top: 20px; left: 45%; z-index: -1; opacity: 0.5;">
+    <?php endif; ?> -->
 
     <!-- HEADER -->
     <table width="100%" cellpadding="5" cellspacing="0" style="font-family:'Times New Roman';">
       <tr>
         <!-- KIRI : LOGO -->
-        <td width="8%" align="center" valign="middle" style="padding-top:10px;">
+        <td width="8%" align="center" valign="middle"  style="padding-top:10px;">
           <img src="./assets/img/Logo_Andhika_2017.jpg" style="height:40px;">
         </td>
 
@@ -127,54 +130,37 @@
           <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
             <tr>
               <td style="padding: 0 6px 0 0; vertical-align: top; border: none; width: 25px;">
-                <span class="box"
-                  style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo ($mcu->mcu2==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
+                <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo ($mcu->mcu2==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
               </td>
               <td style="padding: 0; vertical-align: top; border: none;">
                 2. Medical Check Up
                 <table class="table table-borderless table-sm mt-1" style="font-size:11px;">
                   <tr>
                     <td style="width:25%;">
-                      <span class="box"
-                        style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_1']) && $subData['sub_answer_2_1']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
-                      Kerajaan Malaysia
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_1']) && $subData['sub_answer_2_1']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Kerajaan Malaysia
                     </td>
                     <td style="width:25%;">
-                      <span class="box"
-                        style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_2']) && $subData['sub_answer_2_2']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
-                      Marshall Islands
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_2']) && $subData['sub_answer_2_2']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Marshall Islands
                     </td>
                     <td style="width:25%;">
-                      <span class="box"
-                        style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_3']) && $subData['sub_answer_2_3']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
-                      Liberia
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_3']) && $subData['sub_answer_2_3']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Liberia
                     </td>
                     <td style="width:25%;">
-                      <span class="box"
-                        style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_4']) && $subData['sub_answer_2_4']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
-                      Singapore
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_4']) && $subData['sub_answer_2_4']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Singapore
                     </td>
                   </tr>
                   <tr>
                     <td>
-                      <span class="box"
-                        style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_5']) && $subData['sub_answer_2_5']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
-                      Cyprus
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_5']) && $subData['sub_answer_2_5']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Cyprus
                     </td>
                     <td>
-                      <span class="box"
-                        style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_6']) && $subData['sub_answer_2_6']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
-                      Shipowner
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_6']) && $subData['sub_answer_2_6']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Shipowner
                     </td>
                     <td>
-                      <span class="box"
-                        style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_7']) && $subData['sub_answer_2_7']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
-                      OGUK
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_7']) && $subData['sub_answer_2_7']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> OGUK
                     </td>
                     <td>
-                      <span class="box"
-                        style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_8']) && $subData['sub_answer_2_8']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
-                      Netherlands
+                      <span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_2_8']) && $subData['sub_answer_2_8']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Netherlands
                     </td>
                   </tr>
                 </table>
@@ -212,28 +198,16 @@
               <td style="width:45%;">
                 <table style="width:100%;font-size:11px;">
                   <tr>
-                    <td style="width:50%;"><span class="box"
-                        style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_1']) && $subData['sub_answer_5_1']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
-                      Cocain metabolic</td>
-                    <td style="width:50%;"><span class="box"
-                        style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_4']) && $subData['sub_answer_5_4']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
-                      Pencyclidine</td>
+                    <td style="width:50%;"><span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_1']) && $subData['sub_answer_5_1']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Cocain metabolic</td>
+                    <td style="width:50%;"><span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_4']) && $subData['sub_answer_5_4']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Pencyclidine</td>
                   </tr>
                   <tr>
-                    <td><span class="box"
-                        style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_2']) && $subData['sub_answer_5_2']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
-                      Marijuana metabolic</td>
-                    <td><span class="box"
-                        style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_5']) && $subData['sub_answer_5_5']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
-                      Amphetamine</td>
+                    <td><span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_2']) && $subData['sub_answer_5_2']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Marijuana metabolic</td>
+                    <td><span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_5']) && $subData['sub_answer_5_5']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Amphetamine</td>
                   </tr>
                   <tr>
-                    <td><span class="box"
-                        style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_3']) && $subData['sub_answer_5_3']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
-                      Morphine / Opiates</td>
-                    <td><span class="box"
-                        style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_6']) && $subData['sub_answer_5_6']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span>
-                      Alcohol metabolic</td>
+                    <td><span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_3']) && $subData['sub_answer_5_3']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Morphine / Opiates</td>
+                    <td><span class="box" style="font-family: 'DejaVu Sans'; font-size: 16px; margin-right: 0;"><?php echo (isset($subData['sub_answer_5_6']) && $subData['sub_answer_5_6']==1)?'✓':'&nbsp;&nbsp;&nbsp;'; ?></span> Alcohol metabolic</td>
                   </tr>
                 </table>
               </td>
@@ -340,10 +314,9 @@
 
   <?php if ($status_mcu == 2): ?>
   <div style="position: absolute; top: 80px; left: 0; width: 100%; text-align: center; z-index: -1;">
-    <img src="./assets/img/rejected.jpg" width="80" height="80">
+      <img src="./assets/img/rejected.jpg" width="80" height="80">
   </div>
   <?php endif; ?>
-
 </body>
 
 </html>
