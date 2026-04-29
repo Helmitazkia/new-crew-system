@@ -141,20 +141,41 @@ class McuReport extends CI_Controller {
         $keyword = $this->input->post('keyword', true);
         $keyword = $this->db->escape_like_str($keyword);
 
-        $sql = "
-            SELECT 
-                A.idperson,
-                CONCAT_WS(' ', A.fname, A.mname, A.lname) AS nama_crew,
-                A.applyfor,
-                A.vesselfor
-            FROM mstpersonal A
+        if (empty($keyword)) {
+            $sql = "
+                SELECT 
+                    A.idperson,
+                    CONCAT_WS(' ', A.fname, A.mname, A.lname) AS nama_crew,
+                    A.applyfor,
+                    A.vesselfor
+                FROM mstpersonal A
+                WHERE A.deletests = '0'
+                AND (A.fname NOT IN ('', '-', ' ')  
+                AND A.mname NOT IN ('', '-', ' ')  
+                AND A.lname NOT IN ('', '-', ' ')) 
+                ORDER BY A.fname ASC
+                LIMIT 10
+            ";
+        }else {
+            $sql = "
+                SELECT 
+                    A.idperson,
+                    CONCAT_WS(' ', A.fname, A.mname, A.lname) AS nama_crew,
+                    A.applyfor,
+                    A.vesselfor
+                FROM mstpersonal A
             WHERE 
                 A.fname LIKE '%$keyword%'
                 OR A.mname LIKE '%$keyword%'
                 OR A.lname LIKE '%$keyword%'
+            AND A.deletests = '0'
+            AND (A.fname NOT IN ('', '-', ' ')  
+            AND A.mname NOT IN ('', '-', ' ')  
+            AND A.lname NOT IN ('', '-', ' ')) 
             ORDER BY A.fname ASC
-            LIMIT 20
+            LIMIT 10
         ";
+        }
 
         $data   = $this->MCrewscv->getDataQuery($sql);
         $result = array();
@@ -503,7 +524,7 @@ class McuReport extends CI_Controller {
             'header_mcu'     => $report->header_mcu
         );
 
-        $this->load->view('ListReport/MCU/print_approve_mcu', $data);
+        $this->load->view('Report/McuReport/print_mcu_report', $data);
     }
 
     /**
@@ -623,13 +644,13 @@ class McuReport extends CI_Controller {
 
         // 4. Email ke klinik jika ada
         $idEnc = base64_encode(base64_encode(base64_encode($idReport)));
-        $link  = base_url("ListReport/Mcu/print_approve_mcu/$idEnc");
+        $link  = base_url("Report/McuReport/print_mcu_report/$idEnc");
         if ($klinik && !empty($klinik->email)) {
             $this->_sendEmailToClinic($idReport, $klinik->email, $link);
         }
 
         $this->session->set_flashdata('swal_success', 'Approve MCU berhasil diproses!');
-        redirect('ListReport/Mcu/print_approve_mcu/' . $hashId);
+        redirect('Report/McuReport/print_mcu_report/' . $hashId);
     }
 
     /**
@@ -693,7 +714,7 @@ class McuReport extends CI_Controller {
         ));
 
         $this->session->set_flashdata('swal_success', 'Reject MCU berhasil diproses!');
-        redirect('ListReport/Mcu/print_approve_mcu/' . $hashId);
+        redirect('Report/McuReport/print_mcu_report/' . $hashId);
     }
 
     // ============================================================
@@ -869,7 +890,7 @@ class McuReport extends CI_Controller {
         $persons = $this->_getPersonsforPrint($idReport);
 
         $idEnc = base64_encode(base64_encode(base64_encode($idReport)));
-        $link  = base_url("ListReport/Mcu/print_approve_mcu/$idEnc");
+        $link  = base_url("Report/McuReport/print_approve_mcu/$idEnc");
 
         $cmEmail = "helmi.tazkia@andhika.com";
         $this->_sendEmailMCU($cmEmail, $header, $persons, $link);

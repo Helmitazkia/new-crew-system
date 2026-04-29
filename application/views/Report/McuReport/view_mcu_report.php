@@ -218,7 +218,7 @@
                             <table class="table table-bordered table-sm align-middle" id="tblAddCrewList">
                                 <thead style="background-color: #e8eaf6;">
                                     <tr>
-                                        <th>Search / Select Crew</th>
+                                        <th>Nama Crew</th>
                                         <th>Jabatan</th>
                                         <th>Kapal</th>
                                         <th class="text-center" style="width: 50px;">
@@ -903,7 +903,7 @@ $(document).ready(function() {
 
         $row.find('.select2-crew').select2({
             theme: 'bootstrap-5',
-            placeholder: 'Cari Nama Crew...',
+            placeholder: 'Search Crew...',
             dropdownParent: $('#modalAddMcu'),
             ajax: {
                 url: BASE_URL + '/get_crew_by_name',
