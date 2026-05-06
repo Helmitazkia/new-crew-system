@@ -30,10 +30,10 @@
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="pklattachment">PKL Attachment</a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="transmital">Transmital</a>
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementwages">Statement Of Wages</a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementwages">Statement Of Wages</a>
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="transmital">Transmital</a>
             </li>
             <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="covid19_2">Covid 19 Prevention</a>
@@ -117,7 +117,8 @@ $(document).ready(function() {
         'covid19': '<?php echo base_url("ListReport/Covid19/view"); ?>',
         'statementcontractacceptance': '<?php echo base_url("ListReport/AcceptentceLetter/view"); ?>',
         'printcv': '<?php echo base_url("ListReport/PrintCv/view"); ?>',
-        'pklattachment': '<?php echo base_url("ListReport/PKLAttachment/view"); ?>'
+        'pklattachment': '<?php echo base_url("ListReport/PKLAttachment/view"); ?>',
+        'statementwages': '<?php echo base_url("ListReport/Wages/view"); ?>'
     };
 
     // ================================

@@ -167,7 +167,7 @@
       <div class="modal-footer bg-light" style="justify-content:flex-end;">
           <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Tutup</button>
           <button type="button" class="btn btn-sm btn-primary px-4" id="btnSubmitAcceptance">Simpan & Print</button>
-          <button type="button" class="btn btn-sm btn-primary px-4 d-none" id="btnGeneratePdfFromModalAcc">Print <i class="fa fa-print ms-1"></i></button>
+          <button type="button" class="btn btn-sm btn-primary px-4 d-none" id="btnGeneratePdfFromModalAcc">Print</button>
       </div>
 
     </div>
