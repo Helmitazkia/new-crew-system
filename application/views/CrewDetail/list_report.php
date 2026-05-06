@@ -112,9 +112,8 @@ $(document).ready(function() {
         'databank': '<?php echo base_url("ListReport/Bank/view"); ?>',
         'statementemploye': '<?php echo base_url("ListReport/Soe/view"); ?>',
         'covid19': '<?php echo base_url("ListReport/Covid19/view"); ?>',
-        'statementcontractacceptance': '<?php echo base_url("ListReport/AcceptentceLetter/view"); ?>'
-        // Tambahkan modul lain di sini nanti:
-        // 'printcv': '<?php echo base_url("CrewDetail/ListReport/view_printcv"); ?>',
+        'statementcontractacceptance': '<?php echo base_url("ListReport/AcceptentceLetter/view"); ?>',
+        'printcv': '<?php echo base_url("ListReport/PrintCv/view"); ?>'
     };
 
     // ================================
