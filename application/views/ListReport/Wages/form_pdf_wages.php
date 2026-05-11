@@ -85,24 +85,33 @@
                 berikut:</i>
         </p>
 
+        <?php
+        function f_rupiah($angka) {
+            if ($angka == '' || $angka == null) return '0';
+            $formatted = number_format((float)$angka, 2, ',', '.');
+            return str_replace(',00', '', $formatted);
+        }
+        ?>
         <table style="width:100%; border-collapse:collapse; margin-top:6px; font-size:11px; text-align:center;">
             <tr style="background:#f2f2f2; font-weight:bold;">
                 <td style="border:1px solid #000; padding:6px;">Basic Wages</td>
                 <td style="border:1px solid #000; padding:6px;">FOT</td>
                 <td style="border:1px solid #000; padding:6px;">Tanker Allow.</td>
-                <td style="border:1px solid #000; padding:6px;">Leave Pay</td>
+                <td style="border:1px solid #000; padding:6px;">Total Pay</td>
                 <td style="border:1px solid #000; padding:6px;">B/S (%)</td>
                 <td style="border:1px solid #000; padding:6px;">H/S (%)</td>
-                <td style="border:1px solid #000; padding:6px;">Total Pay</td>
+                <td style="border:1px solid #000; padding:6px;">Leave Pay</td>
+                <td style="border:1px solid #000; padding:6px;">Total Wages</td>
             </tr>
             <tr>
-                <td style="border:1px solid #000; padding:6px;"><?php echo $crew->basic_wages; ?></td>
-                <td style="border:1px solid #000; padding:6px;"><?php echo $crew->fot; ?></td>
-                <td style="border:1px solid #000; padding:6px;"><?php echo $crew->tanker_allow; ?></td>
-                <td style="border:1px solid #000; padding:6px;"><?php echo $crew->leave_pay; ?></td>
-                <td style="border:1px solid #000; padding:6px;"><?php echo $crew->bs_percent; ?></td>
-                <td style="border:1px solid #000; padding:6px;"><?php echo $crew->hs_percent; ?></td>
-                <td style="border:1px solid #000; padding:6px;"><?php echo $crew->total_pay; ?></td>
+                <td style="border:1px solid #000; padding:6px;"><?php echo f_rupiah($crew->basic_wages); ?></td>
+                <td style="border:1px solid #000; padding:6px;"><?php echo f_rupiah($crew->fot); ?></td>
+                <td style="border:1px solid #000; padding:6px;"><?php echo f_rupiah($crew->tanker_allow); ?></td>
+                <td style="border:1px solid #000; padding:6px;"><?php echo f_rupiah($crew->total_pay); ?></td>
+                <td style="border:1px solid #000; padding:6px;"><?php echo f_rupiah($crew->bs_percent); ?></td>
+                <td style="border:1px solid #000; padding:6px;"><?php echo f_rupiah($crew->hs_percent); ?></td>
+                <td style="border:1px solid #000; padding:6px;"><?php echo f_rupiah($crew->leave_pay); ?></td>
+                <td style="border:1px solid #000; padding:6px;"><?php echo f_rupiah((floatval($crew->total_pay) + floatval($crew->leave_pay))); ?></td>
             </tr>
         </table>
 

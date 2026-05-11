@@ -127,34 +127,38 @@
                       <th style="border:1px solid #222; padding:8px; background:#fafafa;">Basic Wages</th>
                       <th style="border:1px solid #222; padding:8px; background:#fafafa;">FOT</th>
                       <th style="border:1px solid #222; padding:8px; background:#fafafa;">Tanker Allow.</th>
-                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">Leave Pay</th>
+                      <th style="border:1px solid #222; padding:8px; background:#e0e0e0;">Total Pay</th>
                       <th style="border:1px solid #222; padding:8px; background:#fafafa;">B/S (%)</th>
                       <th style="border:1px solid #222; padding:8px; background:#fafafa;">H/S (%)</th>
-                      <th style="border:1px solid #222; padding:8px; background:#e0e0e0;">Total Pay</th>
+                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">Leave Pay</th>
+                      <th style="border:1px solid #222; padding:8px; background:#e0e0e0;">Total Wages</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td style="border:1px solid #222; padding:6px;">
-                          <input type="number" step="any" name="basic_wages" id="valBasic" class="form-control form-control-sm text-center wage-calc" required>
+                          <input type="text" name="basic_wages" id="valBasic" class="form-control form-control-sm text-center wage-calc" required>
                       </td>
                       <td style="border:1px solid #222; padding:6px;">
-                          <input type="number" step="any" name="fot" id="valFot" class="form-control form-control-sm text-center wage-calc" required>
+                          <input type="text" name="fot" id="valFot" class="form-control form-control-sm text-center wage-calc" required>
                       </td>
                       <td style="border:1px solid #222; padding:6px;">
-                          <input type="number" step="any" name="tanker_allow" id="valTanker" class="form-control form-control-sm text-center wage-calc" required>
-                      </td>
-                      <td style="border:1px solid #222; padding:6px;">
-                          <input type="number" step="any" name="leave_pay" id="valLeave" class="form-control form-control-sm text-center wage-calc" required>
-                      </td>
-                      <td style="border:1px solid #222; padding:6px;">
-                          <input type="number" step="any" name="bs_percent" id="valBs" class="form-control form-control-sm text-center wage-calc" required>
-                      </td>
-                      <td style="border:1px solid #222; padding:6px;">
-                          <input type="number" step="any" name="hs_percent" id="valHs" class="form-control form-control-sm text-center wage-calc" required>
+                          <input type="text" name="tanker_allow" id="valTanker" class="form-control form-control-sm text-center wage-calc" required>
                       </td>
                       <td style="border:1px solid #222; padding:6px; background:#f2f2f2;">
-                          <input type="number" step="any" name="total_pay" id="valTotal" class="form-control form-control-sm text-center fw-bold" readonly style="background:#e9ecef;">
+                          <input type="text" name="total_pay" id="valTotal" class="form-control form-control-sm text-center fw-bold" readonly style="background:#e9ecef;">
+                      </td>
+                      <td style="border:1px solid #222; padding:6px;">
+                          <input type="text" name="bs_percent" id="valBs" class="form-control form-control-sm text-center wage-calc" required>
+                      </td>
+                      <td style="border:1px solid #222; padding:6px;">
+                          <input type="text" name="hs_percent" id="valHs" class="form-control form-control-sm text-center wage-calc" required>
+                      </td>
+                      <td style="border:1px solid #222; padding:6px;">
+                          <input type="text" name="leave_pay" id="valLeave" class="form-control form-control-sm text-center wage-calc" required>
+                      </td>
+                      <td style="border:1px solid #222; padding:6px; background:#f2f2f2;">
+                          <input type="text" id="valTotalWages" class="form-control form-control-sm text-center fw-bold" readonly style="background:#e9ecef;">
                       </td>
                     </tr>
                   </tbody>
@@ -246,18 +250,46 @@ $(document).ready(function() {
         return;
     }
 
-    // Auto calculate Total Pay
+    function formatNumber(num) {
+        if (num === null || num === undefined || num === '') return '';
+        var str = num.toString().replace(/\./g, ',');
+        var parts = str.split(',');
+        var whole = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        var decimal = parts.length > 1 ? ',' + parts[1] : '';
+        return whole + decimal;
+    }
+
+    function unformatNumber(str) {
+        if (!str) return 0;
+        return parseFloat(str.toString().replace(/\./g, '').replace(/,/g, '.')) || 0;
+    }
+
+    // Auto calculate Total Pay and Total Wages
     $('.wage-calc').on('input', function() {
-        var basic = parseFloat($('#valBasic').val()) || 0;
-        var fot = parseFloat($('#valFot').val()) || 0;
-        var tanker = parseFloat($('#valTanker').val()) || 0;
-        var leave = parseFloat($('#valLeave').val()) || 0;
-        var bs = parseFloat($('#valBs').val()) || 0;
-        var hs = parseFloat($('#valHs').val()) || 0;
+        // Format while typing
+        var raw = $(this).val();
+        var isNegative = raw.startsWith('-');
+        raw = raw.replace(/[^0-9,]/g, '');
         
-        var total = basic + fot + tanker + leave + bs + hs;
-        // Optionally round to 2 decimals: total = total.toFixed(2);
-        $('#valTotal').val(total);
+        var parts = raw.split(',');
+        var whole = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        var decimal = parts.length > 1 ? ',' + parts[1] : '';
+        var formatted = (isNegative ? '-' : '') + whole + decimal;
+        
+        $(this).val(formatted);
+
+        var basic = unformatNumber($('#valBasic').val());
+        var fot = unformatNumber($('#valFot').val());
+        var tanker = unformatNumber($('#valTanker').val());
+        var leave = unformatNumber($('#valLeave').val());
+        var bs = unformatNumber($('#valBs').val());
+        var hs = unformatNumber($('#valHs').val());
+        
+        var total_pay = basic + fot + tanker;
+        $('#valTotal').val(formatNumber(total_pay));
+
+        var total_wages = total_pay + leave;
+        $('#valTotalWages').val(formatNumber(total_wages));
     });
 
     var wgTable = $('#wagesTable').DataTable({
@@ -406,13 +438,17 @@ $(document).ready(function() {
         $('#txtWgSignName').text(btn.data('name'));
 
         // Load inputs and set to readonly
-        $('#valBasic').val(btn.data('bw')).prop('readonly', true);
-        $('#valFot').val(btn.data('fot')).prop('readonly', true);
-        $('#valTanker').val(btn.data('tanker')).prop('readonly', true);
-        $('#valLeave').val(btn.data('leave')).prop('readonly', true);
-        $('#valBs').val(btn.data('bs')).prop('readonly', true);
-        $('#valHs').val(btn.data('hs')).prop('readonly', true);
-        $('#valTotal').val(btn.data('total'));
+        $('#valBasic').val(formatNumber(btn.data('bw'))).prop('readonly', true);
+        $('#valFot').val(formatNumber(btn.data('fot'))).prop('readonly', true);
+        $('#valTanker').val(formatNumber(btn.data('tanker'))).prop('readonly', true);
+        $('#valLeave').val(formatNumber(btn.data('leave'))).prop('readonly', true);
+        $('#valBs').val(formatNumber(btn.data('bs'))).prop('readonly', true);
+        $('#valHs').val(formatNumber(btn.data('hs'))).prop('readonly', true);
+        
+        var total_pay = parseFloat(btn.data('total')) || 0;
+        var leave_pay = parseFloat(btn.data('leave')) || 0;
+        $('#valTotal').val(formatNumber(total_pay));
+        $('#valTotalWages').val(formatNumber(total_pay + leave_pay));
 
         $('#btnSubmitWages').addClass('d-none');
         $('#btnGeneratePdfFromModalWg').removeClass('d-none');
@@ -422,7 +458,20 @@ $(document).ready(function() {
 
     // SUBMIT
     $('#btnSubmitWages').on('click', function() {
+        // Unformat before submitting
+        $('.wage-calc, #valTotal').each(function() {
+            var uf = unformatNumber($(this).val());
+            $(this).val(uf);
+        });
+
         var formData = new FormData($('#formAddWages')[0]);
+        
+        // Re-format back so UI remains correctly displayed
+        $('.wage-calc, #valTotal').each(function() {
+            var rf = formatNumber($(this).val());
+            $(this).val(rf);
+        });
+
         var btn = $(this);
         
         // Simple validation

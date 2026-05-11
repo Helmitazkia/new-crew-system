@@ -3,14 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>PKL ATTACHMENT</title>
+    <title>PKL ADDENDUM</title>
 </head>
 
 <body
     style="background:#fff; padding:20px 30px; font-family:'Times New Roman', serif; font-size:14px; line-height:1.5;">
 
     <h2 style="text-align:center; margin:0 0 20px 0; font-weight:bold; text-decoration:underline;">
-        PKL ATTACHMENT
+       SANKSI DAN PELANGGARAN
     </h2>
 
     <p>Yang bertanda tangan di bawah ini:</p>

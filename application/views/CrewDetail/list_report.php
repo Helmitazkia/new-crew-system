@@ -27,7 +27,7 @@
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementcontractacceptance">Statement of Contract Acceptance  </a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="pklattachment">PKL Attachment</a>
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="pklattachment">PKL Addendum</a>
             </li>
             <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementwages">Statement Of Wages</a>

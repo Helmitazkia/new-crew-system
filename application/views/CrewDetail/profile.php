@@ -504,7 +504,7 @@
                   </div>
 
                   <div class="col-md-6">
-                    <label class="form-label mb-0 fst-italic fw-semibold">Home Tel.</label>
+                    <label class="form-label mb-0 fst-italic fw-semibold">Emergency Contact</label>
                     <div class="form-view fst-italic" data-field="contact.home"></div>
                     <input type="text" class="form-control form-edit d-none" data-field="contact.home">
                   </div>

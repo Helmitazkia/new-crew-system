@@ -154,7 +154,7 @@ class McuReport extends CI_Controller {
                 AND A.mname NOT IN ('', '-', ' ')  
                 AND A.lname NOT IN ('', '-', ' ')) 
                 ORDER BY A.fname ASC
-                LIMIT 10
+                LIMIT 30
             ";
         }else {
             $sql = "
@@ -169,11 +169,7 @@ class McuReport extends CI_Controller {
                 OR A.mname LIKE '%$keyword%'
                 OR A.lname LIKE '%$keyword%'
             AND A.deletests = '0'
-            AND (A.fname NOT IN ('', '-', ' ')  
-            AND A.mname NOT IN ('', '-', ' ')  
-            AND A.lname NOT IN ('', '-', ' ')) 
             ORDER BY A.fname ASC
-            LIMIT 10
         ";
         }
 
