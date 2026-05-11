@@ -3,7 +3,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-end mb-3">
             <button class="btn btn-primary btn-sm rounded shadow-sm" id="btnAddPklAttachment" style="background-color: #000999; border-color: #000999;">
-                <i class="fa fa-plus me-1"></i> Add PKL Attachment
+                <i class="fa fa-plus me-1"></i> Add PKL Addendum
             </button>
         </div>
         <div class="table-responsive">
@@ -43,7 +43,7 @@
       
       <div class="modal-header" style="background: linear-gradient(135deg, #000999 0%, #1a237e 100%); color: #fff;">
           <h6 class="modal-title fw-bold">
-              <i class="fa fa-file-text-o me-2"></i>PKL Attachment
+              <i class="fa fa-file-text-o me-2"></i>PKL Addendum
           </h6>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
       </div>
@@ -56,7 +56,7 @@
               <input type="hidden" name="vessel" id="pkl_vessel">
 
               <h2 style="text-align:center; margin:0 0 20px 0; font-weight:bold; text-decoration:underline;">
-                  PKL ATTACHMENT
+                  SANKSI DAN PELANGGARAN
               </h2>
 
               <p>Yang bertanda tangan di bawah ini:</p>
