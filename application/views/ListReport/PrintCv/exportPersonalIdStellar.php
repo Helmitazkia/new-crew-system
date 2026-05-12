@@ -16,10 +16,10 @@ ob_start();
 				<thead>
 					<tr>
 						<td style="width:660px;">
-							<img style="width:128px;" src="<?php echo base_url('image/stellar.png'); ?>">
+							<img style="width:128px;" src="./image/stellar.png">
 						</td>
 						<td style="width:90px;vertical-align:top;text-align:center;" rowspan="2">
-							<?php echo $photo; ?>
+							<img src="./imgProfile/<?php echo $photo; ?>" style="width:90px;height:120px;border:1px ridge;">
 						</td>
 					</tr>
 					<tr>
