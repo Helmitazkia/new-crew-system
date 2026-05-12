@@ -18,7 +18,7 @@
     <table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-bottom: 15px;">
         <tr>
             <td width="20%" valign="top">
-                <img src="<?php echo base_url('assets/img/Logo_Andhika_2017.jpg'); ?>" style="width:100px;">
+                <img src="<?php echo FCPATH.'assets/img/Logo_Andhika_2017.jpg'; ?>" style="width:100px;">
             </td>
             <td width="50%" class="text-center" valign="middle">
                 <div style="font-size:18px; font-weight:bold; letter-spacing:2px;">
@@ -29,8 +29,8 @@
                 <div class="font-bold">SRPS LICENSE NO:</div>
                 <div>SIUKAK 236.121 - R Tahun 2025</div>
                 <div style="margin-top:6px;">
-                    <img src="<?php echo base_url('assets/img/Bureau_Veritas_Logo.jpg'); ?>" class="logo-bureau">
-                    <img src="<?php echo base_url('assets/img/Iso.jpg'); ?>" style="width:70px;">
+                    <img src="<?php echo FCPATH . 'assets/img/Bureau_Veritas_Logo.jpg'; ?>" class="logo-bureau">
+                    <img src="<?php echo FCPATH . 'assets/img/Iso.jpg'; ?>" style="width:70px;">
                 </div>
             </td>
         </tr>

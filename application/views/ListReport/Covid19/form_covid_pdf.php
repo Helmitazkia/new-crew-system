@@ -25,9 +25,8 @@
                 <div style="font-size:11px; font-weight:bold;">SRPS LICENSE NO:</div>
                 <div style="font-size:10px;">SIUKAK 236.121-R Tahun 2025</div>
                 <div style="margin-top:3px;">
-                    <img src="<?php echo base_url('assets/img/Bureau_Veritas_Logo.jpg'); ?>" alt="BV"
-                        style="width:65px; margin-right:3px;">
-                    <img src="<?php echo base_url('assets/img/iso.jpg'); ?>" alt="ISO" style="width:65px;">
+                    <?php echo "<img src='" . base_url('assets/img/Bureau_Veritas_Logo.jpg') . "' alt='BV' style='width:65px; margin-right:3px;' />"; ?>
+                    <?php echo "<img src='" . base_url('assets/img/iso.jpg') . "' alt='ISO' style='width:65px;' />"; ?>
                 </div>
             </td>
         </tr>

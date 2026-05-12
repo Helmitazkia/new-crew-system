@@ -1254,14 +1254,17 @@ class PrintCv extends CI_Controller {
 			$dataOut['trDocPersonal'] = $this->getDocPersonalStellar($idPerson,"docPersonalStellar");
 
 			$photo = $rsl[0]->pic;
-			if($photo != "")
-			{
-				$photo = "<img src=\"".base_url('imgProfile/'.$photo)."\" style=\"width:90px;height:120px;border:1px ridge;\">";
-			}
+			// if($photo != "")
+			// {
+			// 	$photo = "<img src=\"" './imgProfile/'.$photo)."\" style=\"width:90px;height:120px;border:1px ridge;\">";
+			// }
 
 			$dataOut['photo'] = $photo;
 		}
 		
+		
+		// var_dump($dataOut['photo']);
+		// exit();
 		$this->load->view("ListReport/PrintCv/exportPersonalIdStellar",$dataOut);
 	} 
 

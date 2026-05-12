@@ -108,7 +108,7 @@ class McuReport extends CI_Controller {
     {
         $sql = "
             SELECT id, clinic_name, address_clinic, telp, fax, email
-            FROM master_mcu
+            FROM master_mcu WHERE sts_delete = '0' 
         ";
 
         $data   = $this->MCrewscv->getDataQuery($sql);
@@ -622,13 +622,14 @@ class McuReport extends CI_Controller {
         }
 
         // 1. Get klinik email
-        $klinik = $this->db->query(
-            "SELECT b.email FROM report_mcu AS a INNER JOIN master_mcu AS b ON a.id_master_mcu = b.id WHERE a.id = ? LIMIT 1",
-            array($idReport)
-        )->row();
+        $sql_klinik = "SELECT b.email FROM report_mcu AS a INNER JOIN master_mcu AS b ON a.id_master_mcu = b.id WHERE a.id = '".$idReport."'";
+        $klinik = $this->MCrewscv->getDataQuery($sql_klinik);
 
         // 2. Create QR Code
         $qrImg = $this->_createQRCode($batchno, 'approveCM');
+
+        // Kembalikan koneksi ke database default
+        $this->db = $this->load->database('default', TRUE);
 
         // 3. Update status
         $this->db->where('id', $idReport);
@@ -699,6 +700,9 @@ class McuReport extends CI_Controller {
         }
 
         $qrImg = $this->_createQRCode($batchno, 'rejectCM');
+
+        // Kembalikan koneksi ke database default
+        $this->db = $this->load->database('default', TRUE);
 
         $this->db->where('id', $idReport);
         $this->db->update('report_mcu', array(
