@@ -204,9 +204,9 @@
       </div>
 
       <div class="modal-footer bg-light" style="justify-content:flex-end;">
-          <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Tutup</button>
-          <button type="button" class="btn btn-sm btn-primary px-4" id="btnSubmitWages">Simpan & Print</button>
-          <button type="button" class="btn btn-sm btn-primary px-4 d-none" id="btnGeneratePdfFromModalWg">Print</button>
+          <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal" style="font-family: 'Times New Roman', Times, serif;"> Tutup</button>
+          <button type="button" class="btn btn-sm btn-primary px-4" id="btnSubmitWages" style="font-family: 'Times New Roman', Times, serif;"><i class="fa fa-save me-1" ></i> Save & Print</button>
+          <button type="button" class="btn btn-sm btn-primary px-4 d-none" id="btnGeneratePdfFromModalWg" style="font-family: 'Times New Roman', Times, serif;"><i class="fa fa-print me-1" ></i> Print</button>
       </div>
 
     </div>

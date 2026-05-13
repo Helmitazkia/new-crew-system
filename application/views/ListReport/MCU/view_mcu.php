@@ -162,12 +162,8 @@
             </div>
             <!-- Footer -->
             <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">
-                    Tutup
-                </button>
-                <button type="button" class="btn btn-sm btn-primary" id="btnGeneratePdfFromDetail">
-                    Print <i class="fa fa-print ms-1"></i>
-                </button>
+                <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal" style="font-family: 'Times New Roman', Times, serif;">Tutup</button>
+                <button type="button" class="btn btn-sm btn-primary" id="btnGeneratePdfFromDetail" style="font-family: 'Times New Roman', Times, serif;"><i class="fa fa-print"></i> Print</button>
             </div>
         </div>
     </div>
@@ -258,8 +254,8 @@
                 </div>
             <!-- Footer -->
             <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-sm btn-primary" id="btnSubmitAddMcu">Simpan</button>
+                <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal" style="font-family: 'Times New Roman', Times, serif;">Tutup</button>
+                <button type="submit" class="btn btn-sm btn-primary" id="btnSubmitAddMcu" style="font-family: 'Times New Roman', Times, serif;"><i class="fa fa-save"></i> Save</button>
             </div>
         </form>
     </div>

@@ -33,6 +33,9 @@
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementwages">Statement Of Wages</a>
             </li>
             <li class="nav-item mb-3">
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="introduction">Introduction</a>
+            </li>
+            <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="transmital">Transmital</a>
             </li>
             <li class="nav-item mb-3">
@@ -118,7 +121,8 @@ $(document).ready(function() {
         'statementcontractacceptance': '<?php echo base_url("ListReport/AcceptentceLetter/view"); ?>',
         'printcv': '<?php echo base_url("ListReport/PrintCv/view"); ?>',
         'pklattachment': '<?php echo base_url("ListReport/PKLAttachment/view"); ?>',
-        'statementwages': '<?php echo base_url("ListReport/Wages/view"); ?>'
+        'statementwages': '<?php echo base_url("ListReport/Wages/view"); ?>',
+        'introduction': '<?php echo base_url("ListReport/Introduction/view"); ?>'
     };
 
     // ================================
