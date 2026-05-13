@@ -221,7 +221,7 @@
       </div> <!-- End Modal Body -->
 
       <div class="modal-footer" style="border-top:none; justify-content:flex-end; padding: 15px;">
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" style="font-family: 'Times New Roman', Times, serif;">Tutup</button>
         <input type="hidden" name="idperson" id="hid_idperson">
         <input type="hidden" name="company" id="hid_entitas">
         <input type="hidden" name="vessel" id="hid_vessel">

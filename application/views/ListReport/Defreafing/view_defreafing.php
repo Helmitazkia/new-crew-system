@@ -175,8 +175,8 @@
             </div>
             <!-- Footer -->
             <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-sm btn-primary px-4" id="btnSubmitDebriefing">Simpan</button>
+                <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal" style="font-family: 'Times New Roman', Times, serif;">Tutup</button>
+                <button type="button" class="btn btn-sm btn-primary px-4" id="btnSubmitDebriefing" style="font-family: 'Times New Roman', Times, serif;"><i class="fa fa-save"></i> Save</button>
             </div>
         </div>
     </div>
@@ -300,8 +300,8 @@
                 </div>
             </div>
             <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-sm btn-primary" id="btnGeneratePdfFromDetailDeb">Print <i class="fa fa-print ms-1"></i></button>
+                <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal" style="font-family: 'Times New Roman', Times, serif;">Tutup</button>
+                <button type="button" class="btn btn-sm btn-primary" id="btnGeneratePdfFromDetailDeb" style="font-family: 'Times New Roman', Times, serif;"><i class="fa fa-print"></i> Print</button>
             </div>
         </div>
     </div>
