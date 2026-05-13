@@ -29,7 +29,7 @@ class Introduction extends CI_Controller {
               C.nmrank as rank,
               D.nmvsl as vessel,
               E.nmcmp as company,
-              B.signonport
+              B.signonport as port
             from
               mstpersonal A
             left join tblcontract B on

@@ -123,7 +123,7 @@ $total = (float)$report->successor_bs + (float)$report->successor_ot + (float)$r
     Total: Rp. <?php echo number_format($total, 0, ',', '.'); ?>
 </div>
 
-<div style="margin-top:18px; font-size:13px; line-height:1.5;">
+<div style="margin-top:14px; font-size:13px; line-height:1.5;">
     3. Selesai pelaksanaan sign off, agar off signer menghadapi Direksi <?php echo htmlspecialchars($report->company); ?> Cq. Manager Personalia Laut untuk menerima instruksi selanjutnya.<br>
 
     <i>After completing the contract, off signer must report to <?php echo htmlspecialchars($report->company); ?> Director Cq. Marine Personal Division Manager to receive next instruction.
@@ -139,7 +139,7 @@ $total = (float)$report->successor_bs + (float)$report->successor_ot + (float)$r
     <i>Please follow with full responsibility.</i>
 </div>
 
-<div style="margin-top:35px; width:100%; font-size:13px;">
+<div style="margin-top:12px; width:100%; font-size:13px;">
     <table style="border:none;">
         <tr>
             <td style="border:none; text-align:left; vertical-align:top;">
@@ -154,7 +154,7 @@ $total = (float)$report->successor_bs + (float)$report->successor_ot + (float)$r
     </table>
 </div>
 
-<div style="margin-top:80px; text-align:right; font-size:14px; font-weight:bold;">
+<div style="margin-top:65px; text-align:right; font-size:14px; font-weight:bold;">
     Eva Marliana<br>
     <span style="font-weight:normal;">Crewing Manager</span>
 </div>
