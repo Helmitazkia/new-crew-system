@@ -33,22 +33,19 @@
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementwages">Statement Of Wages</a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="introduction">Introduction</a>
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="introduction"> Introduction Letter</a>
+            </li>
+                <li class="nav-item mb-3">
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="spj">Official Travel Letter</a>
+            </li>
+            <li class="nav-item mb-3">
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="seafarer">Seafarer Employment Agreement</a>
             </li>
             <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="transmital">Transmital</a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="covid19_2">Covid 19 Prevention</a>
-            </li>
-            <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="pkl">PKL</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="spj">Official Travel Letter</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="seafarer">Seafarer Employment Agreement</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="perfeval">Perfom Evaluation</a>
@@ -122,7 +119,8 @@ $(document).ready(function() {
         'printcv': '<?php echo base_url("ListReport/PrintCv/view"); ?>',
         'pklattachment': '<?php echo base_url("ListReport/PKLAttachment/view"); ?>',
         'statementwages': '<?php echo base_url("ListReport/Wages/view"); ?>',
-        'introduction': '<?php echo base_url("ListReport/Introduction/view"); ?>'
+        'introduction': '<?php echo base_url("ListReport/Introduction/view"); ?>',
+        'spj': '<?php echo base_url("ListReport/Spj/view"); ?>'
     };
 
     // ================================
