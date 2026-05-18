@@ -33,22 +33,19 @@
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementwages">Statement Of Wages</a>
             </li>
             <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="introduction">Introduction</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="transmital">Transmital</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="covid19_2">Covid 19 Prevention</a>
-            </li>
-            <li class="nav-item mb-3">
-                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="pkl">PKL</a>
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="introduction"> Introduction Letter</a>
             </li>
             <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="spj">Official Travel Letter</a>
             </li>
             <li class="nav-item mb-3">
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="transmital">Transmital</a>
+            </li>
+            <li class="nav-item mb-3">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="seafarer">Seafarer Employment Agreement</a>
+            </li>
+            <li class="nav-item mb-3">
+                <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="pkl">PKL</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="perfeval">Perfom Evaluation</a>
@@ -122,7 +119,8 @@ $(document).ready(function() {
         'printcv': '<?php echo base_url("ListReport/PrintCv/view"); ?>',
         'pklattachment': '<?php echo base_url("ListReport/PKLAttachment/view"); ?>',
         'statementwages': '<?php echo base_url("ListReport/Wages/view"); ?>',
-        'introduction': '<?php echo base_url("ListReport/Introduction/view"); ?>'
+        'introduction': '<?php echo base_url("ListReport/Introduction/view"); ?>',
+        'spj': '<?php echo base_url("ListReport/Spj/view"); ?>'
     };
 
     // ================================
@@ -191,6 +189,23 @@ $(document).ready(function() {
     $('.sidebar-report .nav-link').on('click', function(e) {
         e.preventDefault();
         
+        var reportType = $(this).data('report');
+
+        // Untuk Transmital, langsung open tab baru untuk export PDF
+        if (reportType === 'transmital') {
+            var idperson = $('#contentArea').data('idperson');
+            if (idperson) {
+                window.open('<?php echo base_url("ListReport/Transmital/transmital"); ?>' + '/' + idperson, '_blank');
+            } else {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'ID Person tidak ditemukan!' });
+                } else {
+                    alert('ID Person tidak ditemukan!');
+                }
+            }
+            return; // Stop eksekusi agar tidak melakukan AJAX load dan tidak mengubah style tab aktif
+        }
+
         // Remove active styling from all tabs
         $('.sidebar-report .nav-link')
             .removeClass('active rounded-pill text-white shadow-sm')
@@ -203,7 +218,6 @@ $(document).ready(function() {
             .removeClass('text-dark')
             .css('background-color', '#1c278e');
 
-        var reportType = $(this).data('report');
         loadReportContent(reportType);
     });
 
