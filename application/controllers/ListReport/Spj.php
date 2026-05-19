@@ -116,14 +116,17 @@ class Spj extends CI_Controller {
         $sql = "
             SELECT 
                 CONCAT_WS(' ', A.fname, A.mname, A.lname) AS nama_crew,
-                C.nmrank AS jabatan
+                C.nmrank AS jabatan,
+                D.nmvsl AS vessel_name
             FROM mstpersonal A
             LEFT JOIN tblcontract B ON A.idperson = B.idperson AND B.deletests = '0'
             LEFT JOIN mstrank C ON C.kdrank = B.signonrank AND C.deletests = '0'
+            LEFT JOIN mstvessel D ON D.kdvsl = B.signonvsl AND D.deletests = '0'
             WHERE A.idperson = ?
             ORDER BY B.signondt DESC, B.idcontract DESC
             LIMIT 1
         ";
+        
         $data = $this->db->query($sql, array($idperson))->row();
         if ($data && empty($data->jabatan)) {
             $sqlFallback = "SELECT CONCAT_WS(' ', fname, mname, lname) AS nama_crew, applyfor AS jabatan FROM mstpersonal WHERE idperson = ? LIMIT 1";
@@ -161,12 +164,16 @@ class Spj extends CI_Controller {
                 mp.mname,
                 mp.lname,
                 v.nmvsl AS vessel_name,
-                ccmp.nmcmp AS company_name
+                ccmp.nmcmp AS company_name,
+                v2.nmvsl AS contract_vessel_name
             FROM spj s
             LEFT JOIN mstpersonal mp ON mp.idperson = s.idperson
             LEFT JOIN mstvessel v ON TRIM(v.nmvsl) = TRIM(s.destination)
             LEFT JOIN mstcmprec ccmp ON ccmp.kdcmp = v.kdcmp
+            LEFT JOIN tblcontract tc ON tc.idperson = s.idperson AND tc.deletests = '0'
+            LEFT JOIN mstvessel v2 ON v2.kdvsl = tc.signonvsl AND v2.deletests = '0'
             WHERE s.id = '".$id."' AND s.deletests = '0'
+            ORDER BY tc.signondt DESC, tc.idcontract DESC
             LIMIT 1
         ";
 

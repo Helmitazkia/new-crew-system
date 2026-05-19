@@ -414,6 +414,10 @@ $(document).ready(function() {
                 if(res.success && res.data) {
                     $('#crew_name').val(res.data.nama_crew);
                     $('#crew_rank').val(res.data.jabatan);
+                    if(res.data.vessel_name) {
+                        $('#vessel_name_cc').text(res.data.vessel_name);
+                        $('#purpose').val('Sign on to  ' + res.data.vessel_name);
+                    }
                 }
             }
         });
@@ -542,9 +546,7 @@ $(document).ready(function() {
         $(this).closest('tr').remove();
     });
 
-    $('#purpose').on('input', function() {
-        $('#vessel_name_cc').text($(this).val() || '[Nama Kapal]');
-    });
+    // Removed purpose input listener for vessel_name_cc
 
     // ================================
     // Save Form
