@@ -136,7 +136,7 @@
     <div style="font-size:12px;">
         <i>(Cc)</i><br>
         1. Manager Adm & Keu<br>
-        2. Master <?php echo $crew->purpose ?: ''; ?><br>
+        2. Master <?php echo $crew->contract_vessel_name ?: ''; ?><br>
         3. File
     </div>
 
