@@ -240,8 +240,8 @@
                 <button type="button" class="btn btn-secondary btn-sm px-3" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary btn-sm px-4" id="btnSaveAndPrint"><i
                         class="fa fa-save me-1"></i> Save & Print</button>
-                <button type="button" class="btn btn-success btn-sm px-4 d-none" id="btnPrintFromModal"><i
-                        class="fa fa-print me-1"></i> Print</button>
+                <button type="button" class="btn btn-success btn-sm px-4 d-none" id="btnUpdateFromModal"><i
+                        class="fa fa-edit me-1"></i> Update</button>
             </div>
         </div>
     </div>
@@ -563,7 +563,7 @@
             // Disable readonly states for form fields
             toggleFormFieldsReadonly(false);
             $('#btnSaveAndPrint').removeClass('d-none');
-            $('#btnPrintFromModal').addClass('d-none');
+            $('#btnUpdateFromModal').addClass('d-none');
 
             // Fetch crew personal details for auto-populating
             $.ajax({
@@ -647,7 +647,7 @@
                         toggleFormFieldsReadonly(true);
 
                         $('#btnSaveAndPrint').addClass('d-none');
-                        $('#btnPrintFromModal').removeClass('d-none');
+                        $('#btnUpdateFromModal').removeClass('d-none');
 
                         $('#pklModal').modal('show');
                     } else {
@@ -737,10 +737,70 @@
             printPKL(id);
         });
 
-        // Print Action from Modal
-        $('#btnPrintFromModal').on('click', function () {
-            var id = $('#txtIdHistoryPkl').val();
-            if (id) printPKL(id);
+        // Update Action from Modal
+        $('#btnUpdateFromModal').on('click', function () {
+            var btn = $(this);
+
+            // Remove existing error highlights
+            $('.mandatory').removeClass('is-invalid');
+
+            let isValid = true;
+            let firstInvalid = null;
+
+            $('.mandatory').each(function () {
+                let val = $(this).val();
+                if (val === null || val === undefined || $.trim(val) === '' || val === '0' ||
+                    val === 0) {
+                    $(this).addClass('is-invalid');
+                    isValid = false;
+                    if (!firstInvalid) {
+                        firstInvalid = $(this);
+                    }
+                }
+            });
+
+            if (!isValid) {
+                notifyUser('warning', 'Harap isi semua kolom mandatory yang bertanda *');
+                if (firstInvalid) {
+                    firstInvalid.focus();
+                }
+                return;
+            }
+
+            let duration = parseInt($('#txtDuration').val()) || 0;
+            if (duration > 50) {
+                $('#txtDuration').addClass('is-invalid');
+                notifyUser('warning', 'Duration / Jangka Waktu tidak boleh lebih dari 50 bulan.');
+                $('#txtDuration').focus();
+                return;
+            }
+
+            var formData = $('#formPklData').serialize();
+            formData += '&id_history_wages=' + $('#txtIdHistoryPkl').val();
+            formData += '&idperson=' + $('#txtIdPerson').val();
+
+            btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin me-1"></i> Updating...');
+
+            $.ajax({
+                url: BASE_URL_PKL + '/updateVesselData',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function (res) {
+                    btn.prop('disabled', false).html('<i class="fa fa-edit me-1"></i> Update');
+                    if (res.success) {
+                        $('#pklModal').modal('hide');
+                        pklTable.ajax.reload(null, false);
+                        notifyUser('success', res.message);
+                    } else {
+                        notifyUser('error', res.message || 'Gagal update data');
+                    }
+                },
+                error: function () {
+                    btn.prop('disabled', false).html('<i class="fa fa-edit me-1"></i> Update');
+                    notifyUser('error', 'Terjadi kesalahan sistem saat update data');
+                }
+            });
         });
 
         function printPKL(id) {
@@ -841,14 +901,23 @@
         function toggleFormFieldsReadonly(isReadonly) {
             $('#formPklData input, #formPklData textarea, #formPklData select').each(function () {
                 var id = $(this).attr('id');
+                var alwaysEnabled = ['txtVesselFor', 'txtFlag', 'txtImo', 'txtGrtHp', 'txtCompetencyCert', 'txtSafetyCert', 'txtDuration', 'txtBasicWage', 'txtFixOvertime', 'txtLeavePay', 'txtTankerAllowance'];
+                
                 // Keep Full Name, Vessel Name, and Company Name always read-only
-                if (id !== 'txtFullnameInput' && id !== 'txtVesselName' && id !==
-                    'txtCompanyNameInput') {
-                    $(this).prop('disabled', isReadonly);
-                    if (isReadonly) {
-                        $(this).addClass('bg-light');
-                    } else {
+                if (id === 'txtFullnameInput' || id === 'txtVesselName' || id === 'txtCompanyNameInput') {
+                    $(this).prop('disabled', true);
+                    $(this).addClass('bg-light');
+                } else {
+                    if (isReadonly && alwaysEnabled.includes(id)) {
+                        $(this).prop('disabled', false);
                         $(this).removeClass('bg-light');
+                    } else {
+                        $(this).prop('disabled', isReadonly);
+                        if (isReadonly) {
+                            $(this).addClass('bg-light');
+                        } else {
+                            $(this).removeClass('bg-light');
+                        }
                     }
                 }
             });

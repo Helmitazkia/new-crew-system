@@ -522,6 +522,157 @@ class Pkl extends CI_Controller {
         }
     }
 
+    function updateVesselData()
+    {
+        $id_history_wages  = $this->input->post('id_history_wages');
+        $idperson          = $this->input->post('idperson');
+        $dob               = $this->input->post('dob');
+        $kodepelaut        = $this->input->post('kodepelaut');
+        $passportno        = $this->input->post('passportno');
+        $seamanbookno      = $this->input->post('seamanbookno');
+        $address           = $this->input->post('paddress');
+        $txtVesselFor      = $this->input->post('txtVesselFor');
+        $flag              = $this->input->post('flag');
+        $imo               = $this->input->post('imo');
+        $grt_hp            = trim($this->input->post('grt_hp'));
+        $txtSafetyCert     = $this->input->post('txtSafetyCert');
+        $txtCompetencyCert = $this->input->post('txtCompetencyCert');
+        
+        // Strip dots from wage inputs
+        $txtBasicWage      = (int)str_replace('.', '', $this->input->post('txtBasicWage'));
+        $txtFixOvertime    = (int)str_replace('.', '', $this->input->post('txtFixOvertime'));
+        $txtLeavePay       = (int)str_replace('.', '', $this->input->post('txtLeavePay'));
+        $txtduration       = $this->input->post('txtduration');
+        $txtTankerAllowance= (int)str_replace('.', '', $this->input->post('txtTankerAllowance'));
+
+        $username = $this->session->userdata('userName');
+        $date = date('Y-m-d H:i:s');
+
+        if (empty($id_history_wages)) {
+            echo json_encode(array('success' => false, 'message' => 'ID History PKL kosong'));
+            return;
+        }
+
+        // Get crew data
+        $sqlCrew = "
+            SELECT 
+                TRIM(CONCAT(p.fname, ' ', p.mname, ' ', p.lname)) AS fullname,
+                p.dob, k.NmKota AS pob, p.paddress,
+                p.telpno, p.applyfor, p.kodepelaut, p.passportno, p.seamanbookno
+            FROM mstpersonal p
+            LEFT JOIN tblkota k ON k.KdKota = p.pob
+            WHERE p.idperson = '".$idperson."' AND p.deletests = 0
+            LIMIT 1
+        ";
+        $crewData = $this->MCrewscv->getDataQuery($sqlCrew);
+        if (empty($crewData)) {
+            echo json_encode(array('success' => false, 'message' => 'Data crew tidak ditemukan'));
+            return;
+        }
+        $crew = $crewData[0];
+
+        if (empty($dob)) $dob = $crew->dob;
+        if (empty($kodepelaut)) $kodepelaut = $crew->kodepelaut;
+        if (empty($passportno)) $passportno = $crew->passportno;
+        if (empty($seamanbookno)) $seamanbookno = $crew->seamanbookno;
+        if (empty($address)) $address = $crew->paddress;
+
+        // Get vessel data
+        $sqlVessel = "
+            SELECT 
+                v.kdvsl, v.nmvsl, v.imo, v.grt, v.serpel AS competency_cert,
+                v.descvsl AS safety_cert,
+                c.nmcmp AS company_name
+            FROM mstvessel v
+            LEFT JOIN mstcmprec c ON c.kdcmp = v.kdcmp AND c.deletests = 0
+            WHERE v.kdvsl = '".$txtVesselFor."' AND v.deletests = 0
+            LIMIT 1
+        ";
+        
+        $vesselData = $this->MCrewscv->getDataQuery($sqlVessel);
+        $companyName = '';
+        $vesselName = '';
+
+        if (!empty($vesselData)) {
+            $vesselName = $vesselData[0]->nmvsl;
+            $companyName = $vesselData[0]->company_name;
+            if (empty($flag)) $flag = 'INDONESIA';
+            if (empty($imo)) $imo = $vesselData[0]->imo;
+            if (empty($grt_hp)) $grt_hp = $vesselData[0]->grt;
+            if (empty($txtCompetencyCert)) $txtCompetencyCert = $vesselData[0]->competency_cert;
+            if (empty($txtSafetyCert)) $txtSafetyCert = $vesselData[0]->safety_cert;
+        }
+
+        // Load default database connection for both operations
+        $this->db = $this->load->database('default', TRUE);
+
+        // Update mstpersonal table
+        // $updateData = array(
+        //     'dob'             => $dob,
+        //     'kodepelaut'      => $kodepelaut,
+        //     'paddress'        => $address,
+        //     'passportno'      => $passportno,
+        //     'seamanbookno'    => $seamanbookno,
+        //     'vesselfor'       => $txtVesselFor,
+        //     'duration'        => $txtduration,
+        //     'flag'            => $flag,
+        //     'imo'             => $imo,
+        //     'grt_hp'          => $grt_hp,
+        //     'competency_cert' => $txtCompetencyCert,
+        //     'safety_cert'     => $txtSafetyCert,
+        //     'updusrdt'        => $username . "#" . $date
+        // );
+        // $this->db->where('idperson', $idperson);
+        // $this->db->update('mstpersonal', $updateData);
+
+        // Calculate total wage
+        $totalWage = $txtBasicWage + $txtFixOvertime + $txtLeavePay + $txtTankerAllowance;
+
+        // Update history_pkl_wages
+        $updateDataHistory = array(
+            'vessel_name'     => $vesselName,
+            'company_name'    => $companyName,
+            'basic_wage'      => $txtBasicWage,
+            'fix_overtime'    => $txtFixOvertime,
+            'leave_pay'       => $txtLeavePay,
+            'tanker_allowance'=> $txtTankerAllowance,
+            'total_wage'      => $totalWage,
+            'duration_months' => $txtduration,
+            'dob'             => $dob,
+            'seafarer_code'   => $kodepelaut,
+            'address'         => $address,
+            'passport_no'     => $passportno,
+            'seaman_book_no'  => $seamanbookno,
+            'flag'            => $flag,
+            'imo'             => $imo,
+            'grt_hp'          => $grt_hp,
+            'competency_cert' => $txtCompetencyCert,
+            'safety_cert'     => $txtSafetyCert,
+            'updated_at'      => $date
+        );
+
+        $this->db->where('id_history_wages', $id_history_wages);
+        $update = $this->db->update('history_pkl_wages', $updateDataHistory);
+
+        if ($update) {
+            echo json_encode(array(
+                'success' => true,
+                'message' => 'Data kapal & gaji berhasil diupdate',
+                'vessel_name' => $vesselName,
+                'company_name' => $companyName,
+                'data_saved' => array(
+                    'total_wage' => $totalWage,
+                    'inserted_id' => $id_history_wages
+                )
+            ));
+        } else {
+            echo json_encode(array(
+                'success' => false,
+                'message' => 'Gagal mengupdate data'
+            ));
+        }
+    }
+
     function deletePKL()
     {
         $id_history_wages = $this->input->post('id_history_wages');
@@ -538,11 +689,8 @@ class Pkl extends CI_Controller {
             'updated_at'     => date('Y-m-d H:i:s')
         );
 
-        $result = $this->MCrewscv->updateData(
-            array('id_history_wages' => $id_history_wages),
-            $updateData,
-            'history_pkl_wages'
-        );
+        $this->db->where('id_history_wages', $id_history_wages);
+        $result = $this->db->update('history_pkl_wages', $updateData);
 
         if ($result) {
             echo json_encode(array(
