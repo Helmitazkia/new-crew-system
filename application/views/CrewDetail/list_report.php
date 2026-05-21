@@ -36,7 +36,7 @@
         <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="statementwages">Statement Of Wages</a>
       </li>
       <li class="nav-item mb-3">
-        <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="introduction"> Introduction Letter</a>
+        <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="introduction">Instruction Letter</a>
       </li>
       <li class="nav-item mb-3">
         <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="transmital">Transmital</a>
@@ -45,13 +45,18 @@
         <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="spj">Official Travel Letter</a>
       </li>
       <li class="nav-item mb-3">
-        <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="seafarer">Seafarer Employment
-          Agreement</a>
-      </li>
-      <li class="nav-item mb-3">
         <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="pkl">PKL</a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item mb-3">
+        <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="briefingcheck">Briefing Check List Prior Joining Vessel</a>
+      </li>
+      <li class="nav-item mb-3">
+        <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="seafarer">Seafarer Employment Agreement </a>
+      </li>
+      <li class="nav-item mb-3">
+        <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="familiarizationcrew">Familiarization Crew Before Join on Board</a>
+      </li>
+      <li class="nav-item mb-3">
         <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="perfeval">Perfom Evaluation</a>
       </li>
     </ul>

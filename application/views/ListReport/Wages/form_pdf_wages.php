@@ -98,8 +98,8 @@
                 <td style="border:1px solid #000; padding:6px;">FOT</td>
                 <td style="border:1px solid #000; padding:6px;">Tanker Allow.</td>
                 <td style="border:1px solid #000; padding:6px;">Total Pay</td>
-                <td style="border:1px solid #000; padding:6px;">B/S (%)</td>
-                <td style="border:1px solid #000; padding:6px;">H/S (%)</td>
+                <td style="border:1px solid #000; padding:6px;">Board<br>Salary</td>
+                <td style="border:1px solid #000; padding:6px;">Home<br>Salary</td>
                 <td style="border:1px solid #000; padding:6px;">Leave Pay</td>
                 <td style="border:1px solid #000; padding:6px;">Total Wages</td>
             </tr>

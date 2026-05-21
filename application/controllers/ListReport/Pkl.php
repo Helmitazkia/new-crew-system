@@ -394,7 +394,7 @@ class Pkl extends CI_Controller {
         $txtduration       = $this->input->post('txtduration');
         $txtTankerAllowance= (int)str_replace('.', '', $this->input->post('txtTankerAllowance'));
 
-        $username = $this->session->userdata('userInitCrewSystem');
+        $username = $this->session->userdata('userName');
         $date = date('Y-m-d H:i:s');
 
         if (empty($idperson)) {

@@ -46,7 +46,7 @@
       
       <div class="modal-header" style="background: linear-gradient(135deg, #000999 0%, #1a237e 100%); color: #fff;">
           <h6 class="modal-title fw-bold">
-              <i class="fa fa-file-text-o me-2"></i>Introduction Letter
+              <i class="fa fa-file-text-o me-2"></i>Instruction Letter
           </h6>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1) grayscale(100%) brightness(200%);"></button>
       </div>
@@ -136,9 +136,7 @@
               <td style="padding:0; border:1px solid:#000; vertical-align:middle;">
                 <select name="release_others" id="release_others" class="form-select form-select-sm" style="border:none; height:38px; text-align:center;" required>
                     <option value="" disabled selected>-- Select --</option>
-                    <option value="K0">K0</option>
-                    <option value="K1">K1</option>
-                    <option value="K2">K2</option>
+                    <?php echo str_replace("<option value=''></option>", "", $optTax); ?>
                 </select>
               </td>
             </tr>
