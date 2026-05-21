@@ -15,7 +15,8 @@ class Introduction extends CI_Controller {
 
     public function view()
     {
-        $this->load->view('ListReport/Introduction/view_introduction');
+        $data['optTax'] = $this->datacontext->getTaxByOption();
+        $this->load->view('ListReport/Introduction/view_introduction', $data);
     }
 
     public function get_crew_info_by_idperson()
@@ -24,32 +25,32 @@ class Introduction extends CI_Controller {
 
         // Join to tblcontract to get company, rank, vessel, port based on latest contract
         $sql = "
-           select
-              CONCAT_WS(' ', A.fname, A.mname, A.lname) as crew_name,
-              C.nmrank as rank,
-              D.nmvsl as vessel,
-              E.nmcmp as company,
-              B.signonport as port
-            from
-              mstpersonal A
-            left join tblcontract B on
-              A.idperson = B.idperson
-              and B.deletests = '0'
-            left join mstrank C on
-              C.kdrank = B.signonrank
-              and C.deletests = '0'
-            left join mstvessel D on
-              D.kdvsl = B.signonvsl
-              and D.deletests = '0'
-            left join mstcmprec E on
-              E.kdcmp = B.kdcmprec
-              and E.deletests = '0'
-            where
-              A.idperson = ?
-            order by
-              B.signondt desc,
-              B.idcontract desc
-            limit 1
+        select
+            CONCAT_WS(' ', A.fname, A.mname, A.lname) as crew_name,
+            C.nmrank as rank,
+            D.nmvsl as vessel,
+            E.nmcmp as company,
+            B.signonport as port
+        from
+            mstpersonal A
+        left join tblcontract B on
+            A.idperson = B.idperson
+            and B.deletests = '0'
+        left join mstrank C on
+            C.kdrank = B.signonrank
+            and C.deletests = '0'
+        left join mstvessel D on
+            D.kdvsl = B.signonvsl
+            and D.deletests = '0'
+        left join mstcmprec E on
+            E.kdcmp = B.kdcmprec
+            and E.deletests = '0'
+        where
+            A.idperson = ?
+        order by
+            B.signondt desc,
+            B.idcontract desc
+        limit 1
         ";
 
         $data = $this->db->query($sql, array($idperson))->row();

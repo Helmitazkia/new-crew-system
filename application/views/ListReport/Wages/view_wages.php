@@ -128,8 +128,8 @@
                       <th style="border:1px solid #222; padding:8px; background:#fafafa;">FOT</th>
                       <th style="border:1px solid #222; padding:8px; background:#fafafa;">Tanker Allow.</th>
                       <th style="border:1px solid #222; padding:8px; background:#e0e0e0;">Total Pay</th>
-                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">B/S (%)</th>
-                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">H/S (%)</th>
+                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">Board <br> Salary</th>
+                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">Home <br> Salary</th>
                       <th style="border:1px solid #222; padding:8px; background:#fafafa;">Leave Pay</th>
                       <th style="border:1px solid #222; padding:8px; background:#e0e0e0;">Total Wages</th>
                     </tr>
