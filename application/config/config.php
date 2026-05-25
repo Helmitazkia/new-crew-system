@@ -14,7 +14,14 @@
 | path to your installation.
 |
 */
-$config['base_url']	= '';
+// Dynamic Base URL untuk mensupport XAMPP port 80 & BrowserSync port 3000
+$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http");
+$host = isset($_SERVER['HTTP_X_FORWARDED_HOST']) ? $_SERVER['HTTP_X_FORWARDED_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost');
+$config['base_url'] = $protocol . '://' . $host . str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+
+// Mengizinkan CORS (Cross-Origin Resource Sharing) agar port 3000 bisa mengambil data dari port 80
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 
 
 /*
