@@ -276,7 +276,7 @@ $(document).ready(function () {
           var no = meta.row + 1;
           var below = '';
           if (row.file_contract && row.file_contract.trim() !== '') {
-            below = '<div class="mt-1"><a href="<?php echo base_url("uploadCertificate"); ?>/' + row.file_contract + '" target="_blank" class="text-primary small contract-no-filelink"><i class="fa-solid fa-book contract-no-icon"></i></a></div>';
+            below = '<div class="mt-1"><a href="<?php echo base_url("uploadFileContract"); ?>/' + row.file_contract + '" target="_blank" class="text-primary small contract-no-filelink"><i class="fa-solid fa-book contract-no-icon"></i></a></div>';
           } else {
             below = '<div class="mt-1"><button type="button" class="btn btn-sm btn-outline-info btn-upload-contract p-1" data-id="' + row.idcontract + '" title="Upload File"><i class="fa fa-upload contract-no-icon"></i></button></div>';
           }

@@ -205,7 +205,7 @@ class Contract extends CI_Controller
 
     if (!empty($_FILES["file_contract"]["name"])) {
       $dataContext = new DataContext();
-      $dir = FCPATH . "uploadCertificate/";
+      $dir = FCPATH . "uploadFileContract/";
       if (!is_dir($dir)) {
         mkdir($dir, 0777, true);
       }
@@ -305,7 +305,7 @@ class Contract extends CI_Controller
 
     if (!empty($_FILES["file_contract"]["name"])) {
       $dataContext = new DataContext();
-      $dir = FCPATH . "uploadCertificate/";
+      $dir = FCPATH . "uploadFileContract/";
       if (!is_dir($dir)) {
         mkdir($dir, 0777, true);
       }
@@ -376,7 +376,7 @@ class Contract extends CI_Controller
     }
 
     $dataContext = new DataContext();
-    $dir = FCPATH . "uploadCertificate/";
+    $dir = FCPATH . "uploadFileContract/";
     if (!is_dir($dir)) {
       mkdir($dir, 0777, true);
     }
