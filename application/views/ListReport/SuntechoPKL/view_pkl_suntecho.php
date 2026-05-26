@@ -1,14 +1,14 @@
-<!-- PKL Module View — Loaded via AJAX -->
-<div class="card shadow-sm border-0" id="pklModuleWrapper">
+<!-- Suntecho PKL Module View — Loaded via AJAX -->
+<div class="card shadow-sm border-0" id="suntechoPklModuleWrapper">
     <div class="card-body">
         <div class="d-flex justify-content-end mb-3">
-            <button class="btn btn-primary btn-sm rounded shadow-sm" id="btnAddPKL"
+            <button class="btn btn-primary btn-sm rounded shadow-sm" id="btnSuntechoAddPKL"
                 style="background-color: #000999; border-color: #000999;">
-                <i class="fa fa-plus me-1"></i> Add New PKL
+                <i class="fa fa-plus me-1"></i> Add New Suntecho PKL
             </button>
         </div>
         <div class="table-responsive">
-            <table id="pklTable" class="table table-bordered align-middle mb-0 crew-table" style="width:100%">
+            <table id="suntechoPklTable" class="table table-bordered align-middle mb-0 crew-table" style="width:100%">
                 <thead class="crew-header">
                     <tr>
                         <th class="text-center" style="width:50px;">No</th>
@@ -40,16 +40,16 @@
 </div>
 
 <!-- ============================================================
-     MODAL: Add / View PKL (Seafarer Employment Agreement)
+     MODAL: Add / View Suntecho PKL (Seafarer Employment Agreement)
      ============================================================ -->
-<div class="modal fade" id="pklModal" tabindex="-1" role="dialog" aria-labelledby="pklModalLabel">
+<div class="modal fade" id="suntechoPklModal" tabindex="-1" role="dialog" aria-labelledby="suntechoPklModalLabel">
     <div class="modal-dialog modal-xl" style="max-width: 85%;" role="document">
         <div class="modal-content border-0 shadow">
 
             <div class="modal-header"
                 style="background: linear-gradient(135deg, #000999 0%, #1a237e 100%); color: #fff;">
-                <h5 class="modal-title fw-bold" id="pklModalLabel" style="font-family: 'Times New Roman', Times, serif;">
-                    <i class="fa fa-file-text-o me-2"></i>Seafarer Employment Agreement
+                <h5 class="modal-title fw-bold" id="suntechoPklModalLabel" style="font-family: 'Times New Roman', Times, serif;">
+                    <i class="fa fa-file-text-o me-2"></i>Suntecho Seafarer Employment Agreement
                 </h5>
                 <button type="button" class="btn-close btn-close-white close" data-bs-dismiss="modal" aria-label="Close"
                     style="filter: invert(1) grayscale(100%) brightness(200%); border:none; background:transparent; font-size:24px; color:#fff;">
@@ -58,9 +58,9 @@
             </div>
 
             <div class="modal-body bg-light" style="padding: 25px 35px; max-height: 75vh; overflow-y: auto;">
-                <form id="formPklData" style="width: 100%;">
-                    <input type="hidden" name="idperson" id="txtIdPerson">
-                    <input type="hidden" name="id_history_wages" id="txtIdHistoryPkl">
+                <form id="formSuntechoPklData" style="width: 100%;">
+                    <input type="hidden" name="idperson" id="txtSuntechoIdPerson">
+                    <input type="hidden" name="id_history_wages" id="txtSuntechoIdHistoryPkl">
 
                     <div class="row">
                         <!-- Left Column: Personal Information -->
@@ -73,33 +73,33 @@
                                 <div class="card-body">
                                     <div class="form-group mb-3">
                                         <label class="form-label fw-semibold">Full Name / Nama Lengkap</label>
-                                        <input type="text" id="txtFullnameInput" class="form-control bg-light" readonly>
+                                        <input type="text" id="txtSuntechoFullnameInput" class="form-control bg-light" readonly>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-6 form-group mb-3">
                                             <label class="form-label fw-semibold">Date of Birth / Tgl Lahir <span
                                                     class="text-danger">*</span></label>
-                                            <input type="date" id="txtDoBInput" name="dob"
+                                            <input type="date" id="txtSuntechoDoBInput" name="dob"
                                                 class="form-control mandatory">
                                         </div>
                                         <div class="col-md-6 form-group mb-3">
                                             <label class="form-label fw-semibold">Place of Birth / Tepat Lahir</label>
-                                            <input type="text" id="txtPoB" class="form-control">
+                                            <input type="text" id="txtSuntechoPoB" class="form-control">
                                         </div>
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label class="form-label fw-semibold">Seafarer Code / Kode Pelaut <span
                                                 class="text-danger">*</span></label>
-                                        <input type="text" id="txtSeafarerCodeInput" name="kodepelaut"
+                                        <input type="text" id="txtSuntechoSeafarerCodeInput" name="kodepelaut"
                                             class="form-control mandatory">
                                     </div>
 
                                     <div class="form-group mb-3">
                                         <label class="form-label fw-semibold">Home Address / Alamat Rumah <span
                                                 class="text-danger">*</span></label>
-                                        <textarea id="txtAddressInput" name="paddress" class="form-control mandatory"
+                                        <textarea id="txtSuntechoAddressInput" name="paddress" class="form-control mandatory"
                                             rows="2"></textarea>
                                     </div>
 
@@ -107,13 +107,13 @@
                                         <div class="col-md-6 form-group mb-3">
                                             <label class="form-label fw-semibold">Passport No / No. Paspor <span
                                                     class="text-danger">*</span></label>
-                                            <input type="text" id="txtPassportNoInput" name="passportno"
+                                            <input type="text" id="txtSuntechoPassportNoInput" name="passportno"
                                                 class="form-control mandatory">
                                         </div>
                                         <div class="col-md-6 form-group mb-3">
                                             <label class="form-label fw-semibold">Seaman Book No / No. Buku Pelaut <span
                                                     class="text-danger">*</span></label>
-                                            <input type="text" id="txtSeamanBookNoInput" name="seamanbookno"
+                                            <input type="text" id="txtSuntechoSeamanBookNoInput" name="seamanbookno"
                                                 class="form-control mandatory">
                                         </div>
                                     </div>
@@ -132,21 +132,21 @@
                                     <div class="form-group mb-3">
                                         <label class="form-label fw-semibold">Select Vessel / Pilih Kapal <span
                                                 class="text-danger">*</span></label>
-                                        <select id="txtVesselFor" name="txtVesselFor"
-                                            class="form-control form-select mandatory">
-                                            <option value="">-- Select Vessel --</option>
+                                        <select id="txtSuntechoVesselFor" name="txtVesselFor"
+                                            class="form-control selectpicker" data-live-search="true"
+                                            title="-- Select Vessel --" data-size="5" data-dropup-auto="false">
                                         </select>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-6 form-group mb-3">
-                                            <label class="form-label fw-semibold">Vessel Name / Nama Kapal</label>
-                                            <input type="text" id="txtVesselName" class="form-control bg-light"
-                                                readonly>
+                                            <label class="form-label fw-semibold">Vessel Name / Nama Kapal <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" id="txtSuntechoVesselName" class="form-control bg-light mandatory" readonly>
                                         </div>
                                         <div class="col-md-6 form-group mb-3">
                                             <label class="form-label fw-semibold">Company / Perusahaan</label>
-                                            <input type="text" id="txtCompanyNameInput" class="form-control bg-light"
+                                            <input type="text" id="txtSuntechoCompanyNameInput" class="form-control bg-light"
                                                 readonly>
                                         </div>
                                     </div>
@@ -154,27 +154,27 @@
                                     <div class="row">
                                         <div class="col-md-4 form-group mb-3">
                                             <label class="form-label fw-semibold">Flag / Bendera</label>
-                                            <input type="text" id="txtFlag" name="flag" class="form-control">
+                                            <input type="text" id="txtSuntechoFlag" name="flag" class="form-control">
                                         </div>
                                         <div class="col-md-4 form-group mb-3">
                                             <label class="form-label fw-semibold">IMO No</label>
-                                            <input type="text" id="txtImo" name="imo" class="form-control">
+                                            <input type="text" id="txtSuntechoImo" name="imo" class="form-control">
                                         </div>
                                         <div class="col-md-4 form-group mb-3">
                                             <label class="form-label fw-semibold">GRT / HP</label>
-                                            <input type="text" id="txtGrtHp" name="grt_hp" class="form-control">
+                                            <input type="text" id="txtSuntechoGrtHp" name="grt_hp" class="form-control">
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-6 form-group mb-3">
                                             <label class="form-label fw-semibold">Competency Cert. / SERPEL</label>
-                                            <input type="text" id="txtCompetencyCert" name="txtCompetencyCert"
+                                            <input type="text" id="txtSuntechoCompetencyCert" name="txtCompetencyCert"
                                                 class="form-control">
                                         </div>
                                         <div class="col-md-6 form-group mb-3">
                                             <label class="form-label fw-semibold">Safety Cert. / SERKES</label>
-                                            <input type="text" id="txtSafetyCert" name="txtSafetyCert"
+                                            <input type="text" id="txtSuntechoSafetyCert" name="txtSafetyCert"
                                                 class="form-control">
                                         </div>
                                     </div>
@@ -190,36 +190,36 @@
                                     <div class="form-group mb-3">
                                         <label class="form-label fw-semibold">Duration / Jangka Waktu (Months / Bulan)
                                             <span class="text-danger">*</span></label>
-                                        <input type="number" id="txtDuration" name="txtduration"
+                                        <input type="number" id="txtSuntechoDuration" name="txtduration"
                                             class="form-control mandatory" min="1" max="50" placeholder="e.g. 12">
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-6 form-group mb-3">
-                                            <label class="form-label fw-semibold">Basic Wage (Rp) <span
+                                            <label class="form-label fw-semibold">Basic Wage (US$) <span
                                                     class="text-danger">*</span></label>
-                                            <input type="text" id="txtBasicWage" name="txtBasicWage"
+                                            <input type="text" id="txtSuntechoBasicWage" name="txtBasicWage"
                                                 class="form-control mandatory text-end" value="0">
                                         </div>
                                         <div class="col-md-6 form-group mb-3">
-                                            <label class="form-label fw-semibold">Fix Overtime (Rp) <span
+                                            <label class="form-label fw-semibold">Fix Overtime (US$) <span
                                                     class="text-danger">*</span></label>
-                                            <input type="text" id="txtFixOvertime" name="txtFixOvertime"
+                                            <input type="text" id="txtSuntechoFixOvertime" name="txtFixOvertime"
                                                 class="form-control mandatory text-end" value="0">
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-6 form-group mb-3">
-                                            <label class="form-label fw-semibold">Leave Pay (Rp) <span
+                                            <label class="form-label fw-semibold">Leave Pay (US$) <span
                                                     class="text-danger">*</span></label>
-                                            <input type="text" id="txtLeavePay" name="txtLeavePay"
+                                            <input type="text" id="txtSuntechoLeavePay" name="txtLeavePay"
                                                 class="form-control mandatory text-end" value="0">
                                         </div>
                                         <div class="col-md-6 form-group mb-3">
-                                            <label class="form-label fw-semibold">Tanker Allowance (Rp) <span
+                                            <label class="form-label fw-semibold">Tanker Allowance (US$) <span
                                                     class="text-danger">*</span></label>
-                                            <input type="text" id="txtTankerAllowance" name="txtTankerAllowance"
+                                            <input type="text" id="txtSuntechoTankerAllowance" name="txtTankerAllowance"
                                                 class="form-control mandatory text-end" value="0">
                                         </div>
                                     </div>
@@ -227,7 +227,7 @@
                                     <div
                                         class="p-3 bg-light rounded d-flex justify-content-between align-items-center mt-2 border">
                                         <span class="fw-bold text-secondary mb-0">Total Wages:</span>
-                                        <h5 class="fw-bold text-success mb-0">Rp <span id="txtTotalWages">0</span></h5>
+                                        <h5 class="fw-bold text-success mb-0">US$ <span id="txtSuntechoTotalWages">0</span></h5>
                                     </div>
                                 </div>
                             </div>
@@ -238,8 +238,8 @@
 
             <div class="modal-footer bg-light py-3" style="justify-content: flex-end;">
                 <button type="button" class="btn btn-secondary btn-sm px-3" data-bs-dismiss="modal" style="font-family: 'Times New Roman', Times, serif;">Close</button>
-                <button type="button" class="btn btn-primary btn-sm px-4" id="btnSaveAndPrint" style="font-family: 'Times New Roman', Times, serif;"><i class="fa fa-save me-1"></i> Save & Print</button>
-                <button type="button" class="btn btn-success btn-sm px-4 d-none" id="btnUpdateFromModal" style="font-family: 'Times New Roman', Times, serif;"><i
+                <button type="button" class="btn btn-primary btn-sm px-4" id="btnSuntechoSaveAndPrint" style="font-family: 'Times New Roman', Times, serif;"><i class="fa fa-save me-1"></i> Save & Print</button>
+                <button type="button" class="btn btn-success btn-sm px-4 d-none" id="btnSuntechoUpdateFromModal" style="font-family: 'Times New Roman', Times, serif;"><i
                         class="fa fa-edit me-1"></i> Update</button>
             </div>
         </div>
@@ -268,94 +268,28 @@
         border-radius: 4px;
         font-size: 11px;
     }
-
-    .dataTables_wrapper {
-        padding: 15px 0;
-    }
-
-    .dataTables_length {
-        padding: 10px 0;
-        margin-bottom: 10px;
-    }
-
-    .dataTables_length label,
-    .dataTables_filter label {
-        display: flex;
-        align-items: center;
-        margin: 0;
-        padding: 10px 0;
-    }
-
-    .dataTables_length select {
-        width: auto;
-        margin: 0 8px;
-        padding: 4px 8px;
-        border-radius: 4px;
-        border: 1px solid #ced4da;
-    }
-
-    .dataTables_filter {
-        text-align: right;
-        margin-bottom: 10px;
-    }
-
-    .dataTables_filter label {
-        display: inline-flex;
-        align-items: center;
-        margin: 0;
-        padding: 8px 0;
-        font-weight: normal;
-    }
-
-    .dataTables_filter input {
-        margin-left: 10px;
-        padding: 6px 12px;
-        border-radius: 4px;
-        border: 1px solid #ced4da;
-        width: 200px;
-    }
-
-    .dataTables_paginate {
-        margin-top: 15px;
-        padding-top: 10px;
-        border-top: 1px solid #dee2e6;
-    }
-
-    .paginate_button {
-        margin: 0 2px;
-        padding: 6px 12px !important;
-        border-radius: 4px;
-        border: 1px solid #dee2e6;
-        background: #fff !important;
-        color: #0d6efd !important;
-        cursor: pointer;
-    }
-
-    .paginate_button.current {
-        background: #0d6efd !important;
-        color: #fff !important;
-        border-color: #0d6efd !important;
-    }
-
-    .paginate_button:hover {
-        background: #e9ecef !important;
-        border-color: #dee2e6;
-    }
-
-    .is-invalid {
-        border-color: #dc3545 !important;
-    }
-
-    .is-invalid:focus {
-        box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
-    }
 </style>
 
 <script>
     $(document).ready(function () {
-        var BASE_URL_PKL = '<?php echo base_url("ListReport/Pkl"); ?>';
+        // Notification Helper
+        function notifyUser(type, message) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: type === 'error' ? 'error' : (type === 'warning' ? 'warning' : 'success'),
+                    title: type.charAt(0).toUpperCase() + type.slice(1),
+                    text: message,
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            } else {
+                alert(message);
+            }
+        }
+
+        var BASE_URL_SUNTECHO = '<?php echo base_url("ListReport/SuntechoPKL"); ?>';
         var idperson = $('#contentArea').data('idperson');
-        var pklTableData = [];
+        var suntechoTableData = [];
 
         if (!idperson) {
             console.error('ID Person tidak ditemukan');
@@ -363,7 +297,7 @@
         }
 
         // Initialize DataTable
-        var pklTable = $('#pklTable').DataTable({
+        var suntechoPklTable = $('#suntechoPklTable').DataTable({
             processing: true,
             serverSide: false,
             searching: true,
@@ -374,7 +308,7 @@
             lengthMenu: [10, 25, 50, 100],
             order: [],
             ajax: {
-                url: BASE_URL_PKL + '/get_history',
+                url: BASE_URL_SUNTECHO + '/get_history',
                 type: 'POST',
                 data: function (d) {
                     d.idperson = idperson;
@@ -408,7 +342,7 @@
                     data: 'total_wage',
                     className: 'text-center',
                     render: function (data) {
-                        return 'Rp ' + formatNumber(data);
+                        return 'US$ ' + safeFormatNumber(data);
                     }
                 },
                 {
@@ -464,61 +398,80 @@
                 infoEmpty: 'Showing 0 to 0 of 0 entries',
                 infoFiltered: '(filtered from _MAX_ total entries)',
                 search: 'Search:',
-                emptyTable: 'Tidak ada data history PKL',
+                emptyTable: 'Tidak ada data history PKL Suntecho',
                 zeroRecords: 'Data tidak ditemukan'
             }
         });
 
-        $('#pklTable thead tr:last th').each(function (i) {
+        $('#suntechoPklTable thead tr:last th').each(function (i) {
             $('input', this).on('keyup change', function () {
-                if (pklTable.column(i).search() !== this.value) {
-                    pklTable.column(i).search(this.value).draw();
+                if (suntechoPklTable.column(i).search() !== this.value) {
+                    suntechoPklTable.column(i).search(this.value).draw();
                 }
             });
         });
 
         // Load Vessels list
-        loadVessels();
+        loadSuntechoVessels();
 
-        function loadVessels() {
+        function loadSuntechoVessels() {
+
+            $('#txtSuntechoVesselFor').empty();
+            $('#txtSuntechoVesselFor').selectpicker('refresh');
+
             $.ajax({
-                url: BASE_URL_PKL + '/getVesselByOption',
+                url: BASE_URL_SUNTECHO + '/getVesselByOption',
                 type: 'GET',
-                data: {
-                    searchNya: ''
-                },
                 dataType: 'json',
                 success: function (res) {
                     if (res.success && res.data) {
-                        pklTableData = res.data;
-                        let options = '<option value="">-- Select Vessel --</option>';
+                        suntechoTableData = res.data;
+                        let options = '';
                         res.data.forEach(function (vessel) {
-                            options += '<option value="' + vessel.kdvsl + '">' + vessel
-                                .nmvsl + '</option>';
+                            options += '<option value="' + vessel.kdvsl + '">' + vessel.nmvsl + '</option>';
                         });
-                        $('#txtVesselFor').html(options);
+                        $('#txtSuntechoVesselFor').html(options);
+                        $('#txtSuntechoVesselFor').selectpicker('refresh');
                     }
                 }
             });
         }
 
+        // Safe formatter just in case global one is buggy
+        function safeFormatNumber(val) {
+            if (!val) return '0';
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
         // Format input as dot-separated thousand format & calculate total wage
-        $('#txtBasicWage, #txtFixOvertime, #txtLeavePay, #txtTankerAllowance').on('input', function () {
+        $('#txtSuntechoBasicWage, #txtSuntechoFixOvertime, #txtSuntechoLeavePay, #txtSuntechoTankerAllowance').on('input', function () {
             let cursorPosition = this.selectionStart;
             let originalLength = this.value.length;
 
-            let formatted = formatValueWithDots($(this).val());
+            let rawVal = $(this).val().replace(/\./g, '').replace(/[^0-9]/g, '');
+            let formatted = safeFormatNumber(rawVal);
             $(this).val(formatted);
 
-            let newLength = formatted.length;
-            this.setSelectionRange(cursorPosition + (newLength - originalLength), cursorPosition + (
-                newLength - originalLength));
+            // Cursor adjustment logic can sometimes throw errors, so we wrap it
+            try {
+                let newLength = formatted.length;
+                this.setSelectionRange(cursorPosition + (newLength - originalLength), cursorPosition + (newLength - originalLength));
+            } catch(e) {}
 
-            calculateTotalWage();
+            calculateSuntechoTotalWage();
         });
 
+        function calculateSuntechoTotalWage() {
+            let basic = parseInt($('#txtSuntechoBasicWage').val().replace(/\./g, '')) || 0;
+            let fix = parseInt($('#txtSuntechoFixOvertime').val().replace(/\./g, '')) || 0;
+            let leave = parseInt($('#txtSuntechoLeavePay').val().replace(/\./g, '')) || 0;
+            let tanker = parseInt($('#txtSuntechoTankerAllowance').val().replace(/\./g, '')) || 0;
+            let total = basic + fix + leave + tanker;
+            $('#txtSuntechoTotalWages').text(safeFormatNumber(total));
+        }
+
         // Remove red borders validation on input/change
-        $('.mandatory').on('input change', function () {
+        $('#formSuntechoPklData .mandatory').on('input change', function () {
             let val = $(this).val();
             if (val !== null && val !== undefined && $.trim(val) !== '' && val !== '0' && val !== 0) {
                 $(this).removeClass('is-invalid');
@@ -526,53 +479,88 @@
         });
 
         // Vessel selection trigger autofill
-        $('#txtVesselFor').change(function () {
+        $('#txtSuntechoVesselFor').change(function () {
             let vesselCode = $(this).val();
             if (vesselCode) {
-                let vessel = pklTableData.find(v => v.kdvsl === vesselCode);
+                let vessel = suntechoTableData.find(v => v.kdvsl === vesselCode);
                 if (vessel) {
-                    $('#txtVesselName').val(vessel.nmvsl);
-                    $('#txtCompanyNameInput').val(vessel.nmcmp);
-                    $('#txtImo').val(vessel.imo || '');
-                    $('#txtGrtHp').val(vessel.grt || '');
-                    $('#txtCompetencyCert').val(vessel.serpel || '');
-                    $('#txtSafetyCert').val(vessel.safety_cert || '');
-                    $('#txtFlag').val(vessel.flag || 'INDONESIA');
+                    $('#txtSuntechoVesselName').val(vessel.nmvsl);
+                    $('#txtSuntechoCompanyNameInput').val(vessel.nmcmp);
+                    $('#txtSuntechoImo').val(vessel.imo || '');
+                    $('#txtSuntechoGrtHp').val(vessel.grt || '');
+                    $('#txtSuntechoCompetencyCert').val(vessel.serpel || '');
+                    $('#txtSuntechoSafetyCert').val(vessel.safety_cert || '');
+                    $('#txtSuntechoFlag').val(vessel.flag || 'INDONESIA');
                 }
             } else {
-                clearVesselFields();
+                clearSuntechoVesselFields();
             }
         });
 
-        function clearVesselFields() {
-            $('#txtVesselName').val('');
-            $('#txtCompanyNameInput').val('');
-            $('#txtImo').val('');
-            $('#txtGrtHp').val('');
-            $('#txtCompetencyCert').val('');
-            $('#txtSafetyCert').val('');
-            $('#txtFlag').val('');
+        function clearSuntechoVesselFields() {
+            $('#txtSuntechoVesselName').val('');
+            $('#txtSuntechoCompanyNameInput').val('');
+            $('#txtSuntechoImo').val('');
+            $('#txtSuntechoGrtHp').val('');
+            $('#txtSuntechoCompetencyCert').val('');
+            $('#txtSuntechoSafetyCert').val('');
+            $('#txtSuntechoFlag').val('');
+        }
+
+        function resetSuntechoModalForm() {
+            $('#formSuntechoPklData')[0].reset();
+            $('#txtSuntechoIdHistoryPkl').val('');
+            $('#txtSuntechoTotalWages').text('0');
+            $('#formSuntechoPklData .mandatory').removeClass('is-invalid');
+            clearSuntechoVesselFields();
+            $('#txtSuntechoVesselFor').selectpicker('val', '');
+        }
+
+        function populateSuntechoModalForm(d) {
+            $('#txtSuntechoFullnameInput').val(d.fullname);
+            $('#txtSuntechoDoBInput').val(d.dob);
+            $('#txtSuntechoPoB').val(d.pob);
+            $('#txtSuntechoSeafarerCodeInput').val(d.kodepelaut);
+            $('#txtSuntechoAddressInput').val(d.address);
+            $('#txtSuntechoPassportNoInput').val(d.passportno);
+            $('#txtSuntechoSeamanBookNoInput').val(d.seamanbookno);
+            if(d.vesselfor) {
+                $('#txtSuntechoVesselFor').selectpicker('val', d.vesselfor);
+                $('#txtSuntechoVesselFor').trigger('change');
+            }
+        }
+
+        function toggleSuntechoFormFieldsReadonly(isReadonly) {
+            $('#formSuntechoPklData input:not([readonly]), #formSuntechoPklData textarea, #formSuntechoPklData select').prop('disabled', isReadonly);
+            if (!isReadonly) {
+                $('#txtSuntechoFullnameInput, #txtSuntechoVesselName, #txtSuntechoCompanyNameInput').prop('disabled', false).prop('readonly', true);
+            }
+        }
+
+        function printSuntechoPKL(id) {
+            var printUrl = BASE_URL_SUNTECHO + '/PrintPKL/' + id;
+            window.open(printUrl, '_blank');
         }
 
         // Add New PKL Button
-        $('#btnAddPKL').on('click', function () {
-            resetModalForm();
-            $('#txtIdPerson').val(idperson);
+        $('#btnSuntechoAddPKL').on('click', function () {
+            resetSuntechoModalForm();
+            $('#txtSuntechoIdPerson').val(idperson);
 
             // Disable readonly states for form fields
-            toggleFormFieldsReadonly(false);
-            $('#btnSaveAndPrint').removeClass('d-none');
-            $('#btnUpdateFromModal').addClass('d-none');
+            toggleSuntechoFormFieldsReadonly(false);
+            $('#btnSuntechoSaveAndPrint').removeClass('d-none');
+            $('#btnSuntechoUpdateFromModal').addClass('d-none');
 
             // Fetch crew personal details for auto-populating
             $.ajax({
-                url: BASE_URL_PKL + '/getPKL/' + idperson,
+                url: BASE_URL_SUNTECHO + '/getPKL/' + idperson,
                 type: 'GET',
                 dataType: 'json',
                 success: function (res) {
                     if (res.success) {
-                        populateModalForm(res.crew);
-                        $('#pklModal').modal('show');
+                        populateSuntechoModalForm(res.crew);
+                        $('#suntechoPklModal').modal('show');
                     } else {
                         notifyUser('warning', res.message || 'Gagal memuat data pelaut');
                     }
@@ -584,14 +572,14 @@
         });
 
         // View Detail Action
-        $('#pklTable').on('click', '.btn-view-pkl', function () {
+        $('#suntechoPklTable').on('click', '.btn-view-pkl', function () {
             var idHistoryPkl = $(this).data('id');
-            resetModalForm();
-            $('#txtIdHistoryPkl').val(idHistoryPkl);
+            resetSuntechoModalForm();
+            $('#txtSuntechoIdHistoryPkl').val(idHistoryPkl);
 
             // Fetch saved history details
             $.ajax({
-                url: BASE_URL_PKL + '/get_history_detail/' + idHistoryPkl,
+                url: BASE_URL_SUNTECHO + '/get_history_detail/' + idHistoryPkl,
                 type: 'GET',
                 dataType: 'json',
                 success: function (res) {
@@ -599,58 +587,50 @@
                         var d = res.data;
 
                         // Populate details
-                        $('#txtIdPerson').val(d.idperson);
-                        $('#txtFullnameInput').val(d.fullname);
-                        $('#txtDoBInput').val(d.dob);
-                        $('#txtPoB').val(d.pob);
-                        $('#txtSeafarerCodeInput').val(d.seafarer_code);
-                        $('#txtAddressInput').val(d.address);
-                        $('#txtPassportNoInput').val(d.passport_no);
-                        $('#txtSeamanBookNoInput').val(d.seaman_book_no);
+                        $('#txtSuntechoIdPerson').val(d.idperson);
+                        $('#txtSuntechoFullnameInput').val(d.fullname);
+                        $('#txtSuntechoDoBInput').val(d.dob);
+                        $('#txtSuntechoPoB').val(d.pob);
+                        $('#txtSuntechoSeafarerCodeInput').val(d.seafarer_code);
+                        $('#txtSuntechoAddressInput').val(d.address);
+                        $('#txtSuntechoPassportNoInput').val(d.passport_no);
+                        $('#txtSuntechoSeamanBookNoInput').val(d.seaman_book_no);
 
-                        $('#txtVesselFor').val(d
-                            .vessel_name
-                            ); // Wait! Vessel selection can't match code if it's name. So let's handle setting dropdown
-                        // Let's set it based on company / name
-                        var matchedVessel = pklTableData.find(v => v.nmvsl === d
-                            .vessel_name);
+                        var matchedVessel = suntechoTableData.find(v => v.nmvsl === d.vessel_name);
                         if (matchedVessel) {
-                            $('#txtVesselFor').val(matchedVessel.kdvsl);
+                            $('#txtSuntechoVesselFor').selectpicker('val', matchedVessel.kdvsl);
                         } else {
                             // Append temporary option if not found
-                            $('#txtVesselFor').append(new Option(d.vessel_name, d
-                                .vessel_name));
-                            $('#txtVesselFor').val(d.vessel_name);
+                            $('#txtSuntechoVesselFor').append(new Option(d.vessel_name, d.vessel_name));
+                            $('#txtSuntechoVesselFor').selectpicker('refresh');
+                            $('#txtSuntechoVesselFor').selectpicker('val', d.vessel_name);
                         }
 
-                        $('#txtVesselName').val(d.vessel_name);
-                        $('#txtCompanyNameInput').val(d.company_name);
-                        $('#txtFlag').val(d.flag);
-                        $('#txtImo').val(d.imo);
-                        $('#txtGrtHp').val(d.grt_hp);
-                        $('#txtCompetencyCert').val(d.competency_cert);
-                        $('#txtSafetyCert').val(d.safety_cert);
+                        $('#txtSuntechoVesselName').val(d.vessel_name);
+                        $('#txtSuntechoCompanyNameInput').val(d.company_name);
+                        $('#txtSuntechoFlag').val(d.flag);
+                        $('#txtSuntechoImo').val(d.imo);
+                        $('#txtSuntechoGrtHp').val(d.grt_hp);
+                        $('#txtSuntechoCompetencyCert').val(d.competency_cert);
+                        $('#txtSuntechoSafetyCert').val(d.safety_cert);
 
-                        $('#txtDuration').val(d.duration_months);
-                        $('#txtBasicWage').val(formatValueWithDots(Math.round(d
-                            .basic_wage)));
-                        $('#txtFixOvertime').val(formatValueWithDots(Math.round(d
-                            .fix_overtime)));
-                        $('#txtLeavePay').val(formatValueWithDots(Math.round(d.leave_pay)));
-                        $('#txtTankerAllowance').val(formatValueWithDots(Math.round(d
-                            .tanker_allowance)));
+                        $('#txtSuntechoDuration').val(d.duration_months);
+                        $('#txtSuntechoBasicWage').val(safeFormatNumber(Math.round(d.basic_wage)));
+                        $('#txtSuntechoFixOvertime').val(safeFormatNumber(Math.round(d.fix_overtime)));
+                        $('#txtSuntechoLeavePay').val(safeFormatNumber(Math.round(d.leave_pay)));
+                        $('#txtSuntechoTankerAllowance').val(safeFormatNumber(Math.round(d.tanker_allowance)));
 
-                        calculateTotalWage();
+                        calculateSuntechoTotalWage();
 
                         // Make form read-only
-                        toggleFormFieldsReadonly(true);
+                        toggleSuntechoFormFieldsReadonly(true);
 
-                        $('#btnSaveAndPrint').addClass('d-none');
-                        $('#btnUpdateFromModal').removeClass('d-none');
+                        $('#btnSuntechoSaveAndPrint').addClass('d-none');
+                        $('#btnSuntechoUpdateFromModal').removeClass('d-none');
 
-                        $('#pklModal').modal('show');
+                        $('#suntechoPklModal').modal('show');
                     } else {
-                        notifyUser('error', res.message || 'Gagal memuat detail PKL');
+                        notifyUser('error', res.message || 'Gagal memuat detail PKL Suntecho');
                     }
                 },
                 error: function () {
@@ -660,136 +640,134 @@
         });
 
         // Save & Print Button Click
-        $('#btnSaveAndPrint').on('click', function () {
+        $('#btnSuntechoSaveAndPrint').on('click', function () {
             var btn = $(this);
 
-            // Remove existing error highlights
-            $('.mandatory').removeClass('is-invalid');
+            $('#formSuntechoPklData .mandatory').removeClass('is-invalid');
 
             let isValid = true;
             let firstInvalid = null;
 
-            $('.mandatory').each(function () {
+            $('#formSuntechoPklData .mandatory').not('button').each(function () {
+
                 let val = $(this).val();
-                if (val === null || val === undefined || $.trim(val) === '' || val === '0' ||
-                    val === 0) {
+                console.log('Checking mandatory field:', $(this).attr('name'), 'Value:', val);
+                if (val === null || val === undefined || $.trim(val) === '') {
                     $(this).addClass('is-invalid');
+                    if ($(this).hasClass('selectpicker')) {
+                        $(this).next('.bootstrap-select').addClass('is-invalid border border-danger');
+                    }
                     isValid = false;
                     if (!firstInvalid) {
                         firstInvalid = $(this);
+                        let fieldLabel = $(this).closest('.form-group').find('.form-label').text().replace('*', '').trim() || $(this).attr('name');
+                        notifyUser('warning', 'Harap isi kolom: ' + fieldLabel);
                     }
                 }
             });
 
             if (!isValid) {
-                notifyUser('warning', 'Harap isi semua kolom mandatory yang bertanda *');
-                if (firstInvalid) {
-                    firstInvalid.focus();
-                }
+                if (firstInvalid) firstInvalid.focus();
                 return;
             }
 
-           // Validate Duration max 50
-            let duration = parseInt($('#txtDuration').val()) || 0;
+            let duration = parseInt($('#txtSuntechoDuration').val()) || 0;
             if (duration > 50) {
-                $('#txtDuration').addClass('is-invalid');
+                $('#txtSuntechoDuration').addClass('is-invalid');
                 notifyUser('warning', 'Duration / Jangka Waktu tidak boleh lebih dari 50 bulan.');
-                $('#txtDuration').focus();
+                $('#txtSuntechoDuration').focus();
                 return;
             }
 
-            var formData = $('#formPklData').serialize();
+            var formData = $('#formSuntechoPklData').serialize();
             btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin me-1"></i> Saving...');
 
             $.ajax({
-                url: BASE_URL_PKL + '/saveVesselData',
+                url: BASE_URL_SUNTECHO + '/saveVesselData',
                 type: 'POST',
                 data: formData,
                 dataType: 'json',
                 success: function (res) {
-                    btn.prop('disabled', false).html(
-                        '<i class="fa fa-save me-1"></i> Save & Print');
+                    btn.prop('disabled', false).html('<i class="fa fa-save me-1"></i> Save & Print');
                     if (res.success) {
-                        $('#pklModal').modal('hide');
-                        pklTable.ajax.reload(null, false);
+                        $('#suntechoPklModal').modal('hide');
+                        suntechoPklTable.ajax.reload(null, false);
                         notifyUser('success', res.message);
 
-                        // Trigger PDF Print in new tab automatically
                         if (res.data_saved && res.data_saved.inserted_id) {
-                            printPKL(res.data_saved.inserted_id);
+                            printSuntechoPKL(res.data_saved.inserted_id);
                         }
                     } else {
                         notifyUser('error', res.message || 'Gagal menyimpan data');
                     }
                 },
                 error: function () {
-                    btn.prop('disabled', false).html(
-                        '<i class="fa fa-save me-1"></i> Save & Print');
+                    btn.prop('disabled', false).html('<i class="fa fa-save me-1"></i> Save & Print');
                     notifyUser('error', 'Terjadi kesalahan sistem saat menyimpan data');
                 }
             });
         });
 
         // Print Action from Table
-        $('#pklTable').on('click', '.btn-print-pkl', function () {
+        $('#suntechoPklTable').on('click', '.btn-print-pkl', function () {
             var id = $(this).data('id');
-            printPKL(id);
+            printSuntechoPKL(id);
         });
 
         // Update Action from Modal
-        $('#btnUpdateFromModal').on('click', function () {
+        $('#btnSuntechoUpdateFromModal').on('click', function () {
             var btn = $(this);
 
-            // Remove existing error highlights
-            $('.mandatory').removeClass('is-invalid');
+            $('#formSuntechoPklData .mandatory').removeClass('is-invalid');
 
             let isValid = true;
             let firstInvalid = null;
 
-            $('.mandatory').each(function () {
+            $('#formSuntechoPklData .mandatory').not('button').each(function () {
                 let val = $(this).val();
-                if (val === null || val === undefined || $.trim(val) === '' || val === '0' ||
-                    val === 0) {
+                if (val === null || val === undefined || $.trim(val) === '') {
                     $(this).addClass('is-invalid');
+                    if ($(this).hasClass('selectpicker')) {
+                        $(this).next('.bootstrap-select').addClass('is-invalid border border-danger');
+                    }
                     isValid = false;
                     if (!firstInvalid) {
                         firstInvalid = $(this);
+                        let fieldLabel = $(this).closest('.form-group').find('.form-label').text().replace('*', '').trim() || $(this).attr('name');
+                        notifyUser('warning', 'Harap isi kolom: ' + fieldLabel);
                     }
                 }
             });
 
             if (!isValid) {
-                notifyUser('warning', 'Harap isi semua kolom mandatory yang bertanda *');
-                if (firstInvalid) {
-                    firstInvalid.focus();
-                }
+                if (firstInvalid) firstInvalid.focus();
                 return;
             }
 
-            let duration = parseInt($('#txtDuration').val()) || 0;
+            let duration = parseInt($('#txtSuntechoDuration').val()) || 0;
             if (duration > 50) {
-                $('#txtDuration').addClass('is-invalid');
+                $('#txtSuntechoDuration').addClass('is-invalid');
                 notifyUser('warning', 'Duration / Jangka Waktu tidak boleh lebih dari 50 bulan.');
-                $('#txtDuration').focus();
+                $('#txtSuntechoDuration').focus();
                 return;
             }
 
-            var formData = $('#formPklData').serialize();
-            formData += '&id_history_wages=' + $('#txtIdHistoryPkl').val();
-            formData += '&idperson=' + $('#txtIdPerson').val();
+            var formData = $('#formSuntechoPklData').serialize();
+            formData += '&id_history_wages=' + $('#txtSuntechoIdHistoryPkl').val();
+            formData += '&idperson=' + $('#txtSuntechoIdPerson').val();
 
             btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin me-1"></i> Updating...');
 
             $.ajax({
-                url: BASE_URL_PKL + '/updateVesselData',
+                url: BASE_URL_SUNTECHO + '/updateVesselData',
                 type: 'POST',
                 data: formData,
                 dataType: 'json',
                 success: function (res) {
                     btn.prop('disabled', false).html('<i class="fa fa-edit me-1"></i> Update');
                     if (res.success) {
-                        $('#pklModal').modal('hide');
-                        pklTable.ajax.reload(null, false);
+                        $('#suntechoPklModal').modal('hide');
+                        suntechoPklTable.ajax.reload(null, false);
                         notifyUser('success', res.message);
                     } else {
                         notifyUser('error', res.message || 'Gagal update data');
@@ -802,141 +780,42 @@
             });
         });
 
-        function printPKL(id) {
-            window.open(BASE_URL_PKL + '/PrintPKL/' + id, '_blank');
-        }
-
         // Delete Action
-        $('#pklTable').on('click', '.btn-delete-pkl', function () {
-            var id = $(this).data('id');
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    title: 'Hapus History PKL?',
-                    text: 'Data PKL yang dihapus tidak dapat dikembalikan.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Ya, Hapus'
-                }).then(function (result) {
-                    if (result.isConfirmed) {
-                        doDeletePkl(id);
-                    }
-                });
-            } else {
-                if (confirm('Yakin ingin menghapus history PKL ini?')) {
-                    doDeletePkl(id);
-                }
-            }
-        });
+        $('#suntechoPklTable').on('click', '.btn-delete-pkl', function () {
+            var idHistoryPkl = $(this).data('id');
 
-        function doDeletePkl(id) {
-            $.ajax({
-                url: BASE_URL_PKL + '/deletePKL',
-                type: 'POST',
-                data: {
-                    id_history_wages: id
-                },
-                dataType: 'json',
-                success: function (res) {
-                    if (res.success) {
-                        pklTable.ajax.reload(null, false);
-                        notifyUser('success', res.message);
-                    } else {
-                        notifyUser('error', res.message || 'Gagal menghapus data');
-                    }
-                },
-                error: function () {
-                    notifyUser('error', 'Terjadi kesalahan sistem saat menghapus data');
-                }
-            });
-        }
-
-        // Helper functions
-        function populateModalForm(crew) {
-            $('#txtFullnameInput').val(crew.fullname);
-            $('#txtDoBInput').val(crew.dob);
-            $('#txtPoB').val(crew.pob);
-            $('#txtSeafarerCodeInput').val(crew.kodepelaut);
-            $('#txtAddressInput').val(crew.address);
-            $('#txtPassportNoInput').val(crew.passportno);
-            $('#txtSeamanBookNoInput').val(crew.seamanbookno);
-        }
-
-        function resetModalForm() {
-            $('#txtIdHistoryPkl').val('');
-            $('#txtIdPerson').val('');
-            $('#formPklData')[0].reset();
-            $('.mandatory').removeClass('is-invalid');
-
-            // Reset custom select option additions if any
-            loadVessels();
-
-            clearVesselFields();
-            $('#txtBasicWage, #txtFixOvertime, #txtLeavePay, #txtTankerAllowance').val('0');
-            calculateTotalWage();
-        }
-
-        function formatValueWithDots(val) {
-            let clean = val.toString().replace(/\D/g, '');
-            if (clean === '') return '0';
-            return parseInt(clean, 10).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        }
-
-        function calculateTotalWage() {
-            let basic = parseInt($('#txtBasicWage').val().toString().replace(/\D/g, '')) || 0;
-            let fix = parseInt($('#txtFixOvertime').val().toString().replace(/\D/g, '')) || 0;
-            let leave = parseInt($('#txtLeavePay').val().toString().replace(/\D/g, '')) || 0;
-            let tanker = parseInt($('#txtTankerAllowance').val().toString().replace(/\D/g, '')) || 0;
-            let total = basic + fix + leave + tanker;
-            $('#txtTotalWages').text(formatNumber(total));
-        }
-
-        function formatNumber(num) {
-            if (!num) return '0';
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        }
-
-        function toggleFormFieldsReadonly(isReadonly) {
-            $('#formPklData input, #formPklData textarea, #formPklData select').each(function () {
-                var id = $(this).attr('id');
-                var alwaysEnabled = ['txtVesselFor', 'txtFlag', 'txtImo', 'txtGrtHp', 'txtCompetencyCert', 'txtSafetyCert', 'txtDuration', 'txtBasicWage', 'txtFixOvertime', 'txtLeavePay', 'txtTankerAllowance'];
-                
-                // Keep Full Name, Vessel Name, and Company Name always read-only
-                if (id === 'txtFullnameInput' || id === 'txtVesselName' || id === 'txtCompanyNameInput') {
-                    $(this).prop('disabled', true);
-                    $(this).addClass('bg-light');
-                } else {
-                    if (isReadonly && alwaysEnabled.includes(id)) {
-                        $(this).prop('disabled', false);
-                        $(this).removeClass('bg-light');
-                    } else {
-                        $(this).prop('disabled', isReadonly);
-                        if (isReadonly) {
-                            $(this).addClass('bg-light');
-                        } else {
-                            $(this).removeClass('bg-light');
+            Swal.fire({
+                title: 'Konfirmasi Hapus',
+                text: "Apakah Anda yakin ingin menghapus data ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: BASE_URL_SUNTECHO + '/deletePKL',
+                        type: 'POST',
+                        data: {
+                            id_history_wages: idHistoryPkl
+                        },
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.success) {
+                                suntechoPklTable.ajax.reload(null, false);
+                                notifyUser('success', res.message);
+                            } else {
+                                notifyUser('error', res.message || 'Gagal menghapus data');
+                            }
+                        },
+                        error: function () {
+                            notifyUser('error', 'Terjadi kesalahan sistem saat menghapus data');
                         }
-                    }
+                    });
                 }
             });
-        }
-
-        function notifyUser(type, msg) {
-            if (typeof Swal !== 'undefined') {
-                Swal.fire({
-                    icon: type,
-                    title: type === 'success' ? 'Sukses' : (type === 'warning' ? 'Peringatan' :
-                        'Error'),
-                    text: msg,
-                    timer: 3000,
-                    showConfirmButton: false,
-                    toast: true,
-                    position: 'top-end'
-                });
-            } else {
-                alert(msg);
-            }
-        }
+        });
     });
 </script>
