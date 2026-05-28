@@ -142,11 +142,11 @@
                                         <div class="col-md-6 form-group mb-3">
                                             <label class="form-label fw-semibold">Vessel Name / Nama Kapal <span
                                                     class="text-danger">*</span></label>
-                                            <input type="text" id="txtSuntechoVesselName" class="form-control bg-light mandatory" readonly>
+                                            <input type="text" id="txtSuntechoVesselName" name="vessel_name" class="form-control bg-light mandatory" readonly>
                                         </div>
                                         <div class="col-md-6 form-group mb-3">
                                             <label class="form-label fw-semibold">Company / Perusahaan</label>
-                                            <input type="text" id="txtSuntechoCompanyNameInput" class="form-control bg-light"
+                                            <input type="text" id="txtSuntechoCompanyNameInput" name="company_name" class="form-control bg-light"
                                                 readonly>
                                         </div>
                                     </div>
@@ -622,8 +622,8 @@
 
                         calculateSuntechoTotalWage();
 
-                        // Make form read-only
-                        toggleSuntechoFormFieldsReadonly(true);
+                        // Make form editable for update
+                        toggleSuntechoFormFieldsReadonly(false);
 
                         $('#btnSuntechoSaveAndPrint').addClass('d-none');
                         $('#btnSuntechoUpdateFromModal').removeClass('d-none');
@@ -772,6 +772,7 @@
                     } else {
                         notifyUser('error', res.message || 'Gagal update data');
                     }
+       
                 },
                 error: function () {
                     btn.prop('disabled', false).html('<i class="fa fa-edit me-1"></i> Update');
