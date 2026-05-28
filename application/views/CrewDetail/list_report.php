@@ -48,10 +48,10 @@
         <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="pkl">PKL</a>
       </li>
       <li class="nav-item mb-3">
-        <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="briefingcheck">Briefing Check List Prior Joining Vessel</a>
+        <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="seafarer">Seafarer Employment Agreement </a>
       </li>
       <li class="nav-item mb-3">
-        <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="seafarer">Seafarer Employment Agreement </a>
+        <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="briefingcheck">Briefing Check List Prior Joining Vessel</a>
       </li>
       <li class="nav-item mb-3">
         <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="familiarizationcrew">Familiarization Crew Before Join on Board</a>
@@ -135,7 +135,8 @@ $(document).ready(function() {
     'statementwages': '<?php echo base_url("ListReport/Wages/view"); ?>',
     'introduction': '<?php echo base_url("ListReport/Introduction/view"); ?>',
     'spj': '<?php echo base_url("ListReport/Spj/view"); ?>',
-    'pkl': '<?php echo base_url("ListReport/Pkl/view"); ?>'
+    'pkl': '<?php echo base_url("ListReport/Pkl/view"); ?>',
+    'seafarer': '<?php echo base_url("ListReport/SuntechoPKL/view"); ?>'
   };
 
   // ================================
