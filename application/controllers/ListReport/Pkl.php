@@ -24,13 +24,9 @@ class Pkl extends CI_Controller {
     function getVesselByOption()
     {
         $typeVal   = isset($_GET['typeVal']) ? $_GET['typeVal'] : '';
-        $searchNya = isset($_GET['searchNya']) ? $_GET['searchNya'] : '';
 
         $whereNya = "deletests = '0' AND st_display = 'Y'";
 
-        if ($searchNya != "" && $searchNya != "017") {
-            $whereNya .= " AND kdcmp = '".$searchNya."' ";
-        }
         if ($typeVal != "") {
             $whereNya .= " AND kdvsl = '".$typeVal."' ";
         }

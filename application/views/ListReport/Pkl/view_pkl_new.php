@@ -133,8 +133,7 @@
                                         <label class="form-label fw-semibold">Select Vessel / Pilih Kapal <span
                                                 class="text-danger">*</span></label>
                                         <select id="txtVesselFor" name="txtVesselFor"
-                                            class="form-control form-select mandatory">
-                                            <option value="">-- Select Vessel --</option>
+                                            class="form-control form-select selectpicker" data-live-search="true" data-size="5" data-dropup-auto="false">
                                         </select>
                                     </div>
 
@@ -484,9 +483,6 @@
             $.ajax({
                 url: BASE_URL_PKL + '/getVesselByOption',
                 type: 'GET',
-                data: {
-                    searchNya: ''
-                },
                 dataType: 'json',
                 success: function (res) {
                     if (res.success && res.data) {
@@ -496,7 +492,16 @@
                             options += '<option value="' + vessel.kdvsl + '">' + vessel
                                 .nmvsl + '</option>';
                         });
+                        
+                        if ($.fn.selectpicker) {
+                            $('#txtVesselFor').selectpicker('destroy');
+                        }
+                        
                         $('#txtVesselFor').html(options);
+                        
+                        if ($.fn.selectpicker) {
+                            $('#txtVesselFor').selectpicker();
+                        }
                     }
                 }
             });
@@ -621,6 +626,9 @@
                             $('#txtVesselFor').append(new Option(d.vessel_name, d
                                 .vessel_name));
                             $('#txtVesselFor').val(d.vessel_name);
+                        }
+                        if ($.fn.selectpicker) {
+                            $('#txtVesselFor').selectpicker('refresh');
                         }
 
                         $('#txtVesselName').val(d.vessel_name);
@@ -870,7 +878,7 @@
             $('.mandatory').removeClass('is-invalid');
 
             // Reset custom select option additions if any
-            loadVessels();
+            // loadVessels();
 
             clearVesselFields();
             $('#txtBasicWage, #txtFixOvertime, #txtLeavePay, #txtTankerAllowance').val('0');
@@ -918,6 +926,9 @@
                             $(this).removeClass('bg-light');
                         }
                     }
+                }
+                if ($(this).hasClass('selectpicker') && $.fn.selectpicker) {
+                    $(this).selectpicker('refresh');
                 }
             });
         }

@@ -19,8 +19,8 @@
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabNextplan">Next Plan</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabtraning">Assessment &
           Tranning</button>
-        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabCompotents">Competence</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold" id="tabListReport">List Report</button>
+        <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">Competence</button>
         <button class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">List Incident</button>
       </div>
 
