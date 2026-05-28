@@ -131,7 +131,7 @@ class CrewRotation extends CI_Controller
         // Pakai kontrak terakhir agar tetap ada data setelah sign off (signoffdt sudah diisi)
         $sql = "SELECT R.idcrewrotation, R.idperson, R.BatchID, R.is_double_up, R.kdcmprec, R.signondt, R.signoffdt, R.estsignoffdt,
                 R.signonrank, R.signonvsl, R.signonport, R.signondesc, R.lastvsl, R.no_pkl, R.estremark,
-                R.signoffremark, R.remaks_cancel, R.replacement_idperson, R.replacement_rank, R.status, R.next_vessel,
+                R.signoffremark, R.remaks_cancel, R.replacement_idperson, R.replacement_rank, R.status, R.next_vessel,R.addusrdt,
                 P.fullName AS onboard_name,
                 C_ONBOARD.nmrank AS onboard_rank_name,
                 D_ONBOARD.nmvsl AS onboard_vessel_name,
@@ -174,10 +174,26 @@ class CrewRotation extends CI_Controller
                 ? $row['contract_signondt'] : null;
             $estsignoffdt = isset($row['contract_estsignoffdt']) && $row['contract_estsignoffdt'] && $row['contract_estsignoffdt'] !== '0000-00-00'
                 ? $row['contract_estsignoffdt'] : null;
+            // Extract date from addusrdt (format: username/Ymd/H:i:s)
+            $created_date_fmt = '';
+            $created_date_raw = '';
+            if (!empty($row['addusrdt'])) {
+                $parts = explode('/', $row['addusrdt']);
+                if (isset($parts[1]) && strlen($parts[1]) >= 8) {
+                    $year = substr($parts[1], 0, 4);
+                    $month = substr($parts[1], 4, 2);
+                    $day = substr($parts[1], 6, 2);
+                    $created_date_raw = "$year-$month-$day";
+                    $created_date_fmt = date('d M Y', strtotime($created_date_raw));
+                }
+            }
+
             $data[] = array(
                 'idcrewrotation'    => $row['idcrewrotation'],
                 'idperson'          => $row['idperson'],
                 'batch_id'          => isset($row['BatchID']) ? $row['BatchID'] : '',
+                'created_date_fmt'  => $created_date_fmt,
+                'created_date_raw'  => $created_date_raw,
                 'is_double_up'      => isset($row['is_double_up']) ? (int)$row['is_double_up'] : 0,
                 'onboard_name'      => isset($row['onboard_name']) ? $row['onboard_name'] : '',
                 'onboard_rank'      => isset($row['onboard_rank_name']) ? $row['onboard_rank_name'] : '',

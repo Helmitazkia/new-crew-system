@@ -321,13 +321,42 @@
 
     <div class="row">
       <div class="col-md-12">
+        <div class="card shadow mb-4">
+          <div class="card-body">
+            <h6 class="card-title mb-3">Filter Tanggal Rotasi</h6>
+            <div class="row align-items-center">
+              <div class="col-md-3">
+                <input type="date" id="filterStartDate" class="form-control form-control-sm" placeholder="Start Date">
+              </div>
+              <div class="col-md-1 text-center px-0" style="width: 30px;">
+                <span>s/d</span>
+              </div>
+              <div class="col-md-3">
+                <input type="date" id="filterEndDate" class="form-control form-control-sm" placeholder="End Date">
+              </div>
+              <div class="col-md-4">
+                <button type="button" class="btn btn-sm btn-primary" id="btnFilterDate">Terapkan</button>
+                <button type="button" class="btn btn-sm btn-secondary" id="btnResetDate">Reset</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
         <div class="card shadow">
           <div class="card-body">
             <div class="table-responsive">
               <table id="crewTable" class="table table-bordered align-middle mb-0 crew-table" style="width:100%">
                 <thead class="crew-header">
                   <tr>
-                    <th class="text-center" style="background-color: #000099 !important;">No</th>
+                    <th rowspan="2" class="text-center align-middle" style="background-color: #000099 !important; color:#fff;">No</th>
+                    <th colspan="7" class="text-center fw-bold" style="background-color:#000099 !important; color:#fff; border-bottom: 2px solid white;">ONBOARD</th>
+                    <th colspan="6" class="text-center fw-bold" style="background-color:#000099 !important; color:#fff; border-bottom: 2px solid white;">REPLACEMENT</th>
+                  </tr>
+                  <tr>
                     <th style="background-color: #000099 !important;">Batch <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">Name <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">Rank <br><span class="filter-icon">☰</span></th>
@@ -357,19 +386,12 @@
                     <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th></th>
-                </tr>
+                  </tr>
                 </thead>
                 <tbody>
                   <!-- Data akan diisi oleh DataTables -->
                 </tbody>
-                <tfoot>
-                  <tr>
-                    <!-- <td class="text-center fw-bold" style="background-color:#f8f9fa;"></td> -->
-                    <td colspan="7" class="text-center fw-bold" style="background-color:#000099; color:#fff;">ONBOARD</td>
-                    <td colspan="7" class="text-center fw-bold" style="background-color:#000099; color:#fff;">REPLACEMENT</td>
-                    <!-- <td colspan="3" class="text-center fw-bold" style="background-color:#f8f9fa;"></td> -->
-                  </tr>
-                </tfoot>
+
               </table>
             </div>
           </div>
@@ -618,11 +640,12 @@ $(document).ready(function() {
       var g = [];
       for (var i = 0; i < data.length; i++) {
         var bid = (data[i].batch_id || "").toString();
+        var dateFmt = data[i].created_date_fmt || "";
         if (g.length && g[0].batch_id !== bid) {
           groups.push(g);
           g = [];
         }
-        g.push({ batch_id: bid, rowIndex: i, node: nodes[i] });
+        g.push({ batch_id: bid, rowIndex: i, node: nodes[i], date_fmt: dateFmt });
       }
       if (g.length) groups.push(g);
       groups.forEach(function(grp) {
@@ -645,16 +668,18 @@ $(document).ready(function() {
             for (var j = 1; j < grp.length; j++) {
               grp[j].node.style.display = "none";
             }
+            var dateHtml = first.date_fmt ? '<br><small class="text-muted">📅 ' + first.date_fmt + '</small>' : '';
             batchTd.rowSpan = 1;
-            batchTd.innerHTML = (first.batch_id || "-") + ' <button type="button" class="btn btn-sm btn-link p-0 batch-toggle" data-batch="' + first.batch_id.replace(/"/g, "&quot;") + '" title="Expand">+</button>';
+            batchTd.innerHTML = (first.batch_id || "-") + ' <button type="button" class="btn btn-sm btn-link p-0 batch-toggle" data-batch="' + first.batch_id.replace(/"/g, "&quot;") + '" title="Expand">+</button>' + dateHtml;
           } else {
             // Tampilkan semua baris
             for (var j = 0; j < grp.length; j++) {
               grp[j].node.style.display = "";
             }
             // Set rowSpan sesuai jumlah baris
+            var dateHtml = first.date_fmt ? '<br><small class="text-muted">📅 ' + first.date_fmt + '</small>' : '';
             batchTd.rowSpan = grp.length;
-            batchTd.innerHTML = (first.batch_id || "-") + ' <button type="button" class="btn btn-sm btn-link p-0 batch-toggle" data-batch="' + first.batch_id.replace(/"/g, "&quot;") + '" title="Collapse">−</button>';
+            batchTd.innerHTML = (first.batch_id || "-") + ' <button type="button" class="btn btn-sm btn-link p-0 batch-toggle" data-batch="' + first.batch_id.replace(/"/g, "&quot;") + '" title="Collapse">−</button>' + dateHtml;
             for (var j = 1; j < grp.length; j++) {
               var rowCells = grp[j].node.getElementsByTagName("td");
               if (rowCells.length > BATCH_COL_INDEX) {
@@ -686,6 +711,38 @@ $(document).ready(function() {
       );
       initDropdownFilters(this.api());
     }
+  });
+
+  // Custom filter function for Date Range
+  $.fn.dataTable.ext.search.push(function(settings, data, dataIndex, rowData, counter) {
+    if (settings.nTable.id !== 'crewTable') {
+        return true;
+    }
+    
+    var min = $('#filterStartDate').val();
+    var max = $('#filterEndDate').val();
+    var createdAt = rowData.created_date_raw || ""; // Format: YYYY-MM-DD
+    
+    if (!min && !max) { return true; }
+    if (!createdAt) { return false; }
+    
+    if (min && !max) {
+        return createdAt >= min;
+    } else if (!min && max) {
+        return createdAt <= max;
+    } else {
+        return createdAt >= min && createdAt <= max;
+    }
+  });
+
+  $('#btnFilterDate').on('click', function() {
+      table.draw();
+  });
+
+  $('#btnResetDate').on('click', function() {
+      $('#filterStartDate').val('');
+      $('#filterEndDate').val('');
+      table.draw();
   });
 
   function initDropdownFilters(table) {
