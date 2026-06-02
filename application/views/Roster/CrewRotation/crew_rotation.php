@@ -747,11 +747,14 @@ $(document).ready(function() {
 
   function initDropdownFilters(table) {
 
-    // Hanya baris header pertama (baris kedua thead adalah filter search)
+    // Hanya baris header kedua (baris pertama adalah grup ONBOARD/REPLACEMENT)
     var colCount = table.columns().count();
-    $('#crewTable thead tr:first th').each(function(colIndex) {
+    $('#crewTable thead tr:nth-child(2) th').each(function(index) {
       let icon = $(this).find('.filter-icon');
       if (!icon.length) return;
+
+      // index di row kedua mulai dari Batch (kolom ke-1), karena No (kolom ke-0) menggunakan rowspan dari row 1
+      let colIndex = index + 1;
 
       // Skip No & Action; pastikan index dalam range kolom table
       if (colIndex === 0 || colIndex >= colCount - 1) return;
