@@ -133,8 +133,7 @@
                                         <label class="form-label fw-semibold">Select Vessel / Pilih Kapal <span
                                                 class="text-danger">*</span></label>
                                         <select id="txtVesselFor" name="txtVesselFor"
-                                            class="form-control form-select mandatory">
-                                            <option value="">-- Select Vessel --</option>
+                                            class="form-control form-select selectpicker" data-live-search="true" data-size="5" data-dropup-auto="false">
                                         </select>
                                     </div>
 
@@ -484,9 +483,6 @@
             $.ajax({
                 url: BASE_URL_PKL + '/getVesselByOption',
                 type: 'GET',
-                data: {
-                    searchNya: ''
-                },
                 dataType: 'json',
                 success: function (res) {
                     if (res.success && res.data) {
@@ -496,7 +492,16 @@
                             options += '<option value="' + vessel.kdvsl + '">' + vessel
                                 .nmvsl + '</option>';
                         });
+                        
+                        if ($.fn.selectpicker) {
+                            $('#txtVesselFor').selectpicker('destroy');
+                        }
+                        
                         $('#txtVesselFor').html(options);
+                        
+                        if ($.fn.selectpicker) {
+                            $('#txtVesselFor').selectpicker();
+                        }
                     }
                 }
             });
@@ -589,6 +594,7 @@
             resetModalForm();
             $('#txtIdHistoryPkl').val(idHistoryPkl);
 
+
             // Fetch saved history details
             $.ajax({
                 url: BASE_URL_PKL + '/get_history_detail/' + idHistoryPkl,
@@ -608,19 +614,24 @@
                         $('#txtPassportNoInput').val(d.passport_no);
                         $('#txtSeamanBookNoInput').val(d.seaman_book_no);
 
-                        $('#txtVesselFor').val(d
-                            .vessel_name
-                            ); // Wait! Vessel selection can't match code if it's name. So let's handle setting dropdown
                         // Let's set it based on company / name
-                        var matchedVessel = pklTableData.find(v => v.nmvsl === d
-                            .vessel_name);
+                        var matchedVessel = pklTableData.find(v => v.nmvsl === d.vessel_name);
+                        var finalVal = d.vessel_name;
+                        
                         if (matchedVessel) {
-                            $('#txtVesselFor').val(matchedVessel.kdvsl);
+                            finalVal = matchedVessel.kdvsl;
                         } else {
                             // Append temporary option if not found
-                            $('#txtVesselFor').append(new Option(d.vessel_name, d
-                                .vessel_name));
-                            $('#txtVesselFor').val(d.vessel_name);
+                            if ($('#txtVesselFor option[value="' + d.vessel_name + '"]').length === 0) {
+                                $('#txtVesselFor').append(new Option(d.vessel_name, d.vessel_name));
+                            }
+                        }
+                        
+                        if ($.fn.selectpicker) {
+                            // Cleanly set the value using bootstrap-select API
+                            $('#txtVesselFor').selectpicker('val', finalVal);
+                        } else {
+                            $('#txtVesselFor').val(finalVal);
                         }
 
                         $('#txtVesselName').val(d.vessel_name);
@@ -870,11 +881,16 @@
             $('.mandatory').removeClass('is-invalid');
 
             // Reset custom select option additions if any
-            loadVessels();
+            // loadVessels();
 
             clearVesselFields();
             $('#txtBasicWage, #txtFixOvertime, #txtLeavePay, #txtTankerAllowance').val('0');
             calculateTotalWage();
+            
+            // Explicitly reset the selectpicker to the first empty option
+            if ($.fn.selectpicker) {
+                $('#txtVesselFor').selectpicker('val', '');
+            }
         }
 
         function formatValueWithDots(val) {
@@ -918,6 +934,9 @@
                             $(this).removeClass('bg-light');
                         }
                     }
+                }
+                if ($(this).hasClass('selectpicker') && $.fn.selectpicker) {
+                    $(this).selectpicker('refresh');
                 }
             });
         }

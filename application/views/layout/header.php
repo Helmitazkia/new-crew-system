@@ -1,3 +1,21 @@
+<?php
+    header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+    header("Cache-Control: post-check=0, pre-check=0", false);
+    header("Pragma: no-cache");
+    
+	if(!$this->session->userdata('isLogin'))
+	{
+		if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+			header('HTTP/1.1 401 Unauthorized');
+			exit;
+		} else {
+			redirect(base_url('auth/login'));
+		}
+	}
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -7,6 +25,15 @@
     <link rel="icon" href="<?php echo base_url("assets/img/andhika.gif"); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $.ajaxSetup({
+        statusCode: {
+            401: function() {
+                window.location.href = "<?php echo base_url('auth/login'); ?>";
+            }
+        }
+    });
+    </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">

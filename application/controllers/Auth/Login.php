@@ -4,6 +4,11 @@ class Login extends CI_Controller {
 
     public function index()
     {
+        // Jika sudah login, paksa kembali ke halaman utama (tidak bisa kembali ke form login)
+        if ($this->session->userdata('isLogin')) {
+            redirect('CrewLifecycle');
+            exit;
+        }
         $this->load->view('auth/login');
     }
 

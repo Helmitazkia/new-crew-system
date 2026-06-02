@@ -44,7 +44,12 @@
               <div class="col-12">
                 <label class="form-label mb-0 small">Sign off Date ( Off Yang Turun )</label>
                 <input type="date" name="signoffdt_offsigner" id="signoffdt_offsigner" class="form-control form-control-sm">
-                <small class="text-muted d-block mt-1">Single UP: auto dari Sign on Date. Double UP: biarkan kosong. Simpan ke kontrak yang turun jika diisi.</small>
+                <div id="signoff_warning_single" class="alert alert-info py-1 px-2 mb-0 mt-1" style="font-size: 11px;">
+                  <i class="fa fa-info-circle me-1"></i> <strong>Single UP:</strong> Sign Off otomatis dari Sign On Date.
+                </div>
+                <div id="signoff_warning_double" class="alert alert-warning py-1 px-2 mb-0 mt-1" style="font-size: 11px; display:none;">
+                  <i class="fa fa-exclamation-triangle me-1"></i> <strong>Double UP:</strong> Biarkan kosong, atau isi untuk menyimpan ke kontrak lama.
+                </div>
               </div>
               <div class="col-12">
                 <label class="form-label mb-0 small">Sign off remarks ( Off Yang Turun )</label>
@@ -101,8 +106,10 @@
                     class="text-danger">*</span></label>
                 <select name="replacement_idperson[]" id="replacement_idperson" class="form-control selectpicker-on"
                   data-live-search="true" data-size="8" multiple></select>
-                <small class="text-muted small">Bisa pilih lebih dari satu (plan banyak replacement)</small>
-                <small id="replacement_idpersonFeedback" class="text-danger d-none">Replacement Candidate is
+                <div class="alert alert-primary py-1 px-2 mb-0 mt-1 border-0 bg-primary bg-opacity-10 text-primary" style="font-size: 11px;">
+                  <i class="fa fa-lightbulb me-1"></i> <strong>Tips:</strong> Bisa pilih lebih dari satu kandidat (plan banyak replacement).
+                </div>
+                <small id="replacement_idpersonFeedback" class="text-danger d-none mt-1">Replacement Candidate is
                   required</small>
               </div>
               <div class="col-md-6 mb-2 on-signer-field">
@@ -167,7 +174,9 @@
                 <div class="col-md-6 on-signer-field">
                   <label class="form-label mb-0 small">Sign off Date ( Off Yang Naik )</label>
                   <input type="date" name="signoffdt_onsigner" id="signoffdt_onsigner" class="form-control form-control-sm">
-                  <small class="text-muted d-block mt-1">Opsional. Simpan ke data yang naik (kontrak replacement) jika diisi.</small>
+                  <div class="alert alert-secondary py-1 px-2 mb-0 mt-1 border-0 bg-secondary bg-opacity-10 text-secondary" style="font-size: 11px;">
+                    <i class="fa fa-asterisk me-1"></i> <strong>Opsional:</strong> Simpan ke data yang naik (kontrak replacement) jika diisi.
+                  </div>
                 </div>
                 <div class="col-md-6 on-signer-field">
                   <label class="form-label mb-0 small">Sign off remarks ( Off Yang Naik )</label>
@@ -343,18 +352,34 @@
     var diffDays = Math.ceil((estDate - dateNow) / (1000 * 60 * 60 * 24));
     return diffDays < 0 ? 'Stand By' : 'On board';
   }
+  var row = <?php echo isset($row) && $row ? json_encode($row) : 'null'; ?>;
+  var batch_rows = <?php echo isset($batch_rows) ? json_encode($batch_rows) : '[]'; ?>;
+  var batch_id = <?php echo isset($batch_id) ? json_encode($batch_id) : '""'; ?>;
+
+  var currentOffSignerId = row && row.idperson ? row.idperson.toString() : null;
+
   var optionsPersonOnBoard = [{ value: '', text: '- Select crew -' }];
   var optionsPersonStandBy = [];
   (optionsPersonActiveRoster || []).forEach(function(o) {
     if (!o.value) return;
     var status = computeStatusFromRow(o);
     var opt = { value: o.value, text: o.text };
-    if (status === 'On board') optionsPersonOnBoard.push(opt);
-    else optionsPersonStandBy.push(opt);
+    
+    var isCurrentOffSigner = false;
+    if (currentOffSignerId) {
+        var valPadded = o.value.toString().padStart(6, '0');
+        var curPadded = currentOffSignerId.padStart(6, '0');
+        if (valPadded === curPadded) isCurrentOffSigner = true;
+    }
+
+    if (status === 'On board' || isCurrentOffSigner) {
+      optionsPersonOnBoard.push(opt);
+    } else {
+      optionsPersonStandBy.push(opt);
+    }
   });
   var standByIds = {};
   optionsPersonStandBy.forEach(function(o) { standByIds[o.value] = true; });
-  var batch_rows = <?php echo isset($batch_rows) ? json_encode($batch_rows) : '[]'; ?>;
   (batch_rows || []).forEach(function(r) {
     var rid = r.replacement_idperson;
     if (rid != null && rid !== '' && !standByIds[rid]) {
@@ -390,8 +415,7 @@
     if (o.value) $replSelect.append($('<option></option>').val(o.value).text(o.text));
   });
 
-  var row = <?php echo isset($row) && $row ? json_encode($row) : 'null'; ?>;
-  var batch_id = <?php echo isset($batch_id) ? json_encode($batch_id) : '""'; ?>;
+
 
   $('#batch_id').val(batch_id || '');
   $('#batch_id_display').val(batch_id || 'Auto (setelah save)');
@@ -612,8 +636,12 @@
   function syncSignoffdtOffsigner() {
     var isDoubleUp = $('input[name="is_double_up"]:checked').val() === '1';
     if (isDoubleUp) {
+      $('#signoff_warning_single').hide();
+      $('#signoff_warning_double').show();
       $('#signoffdt_offsigner').val('');
     } else {
+      $('#signoff_warning_double').hide();
+      $('#signoff_warning_single').show();
       var signondt = $('#signondt').val();
       if (signondt && signondt !== '0000-00-00') {
         $('#signoffdt_offsigner').val(signondt);
@@ -622,6 +650,7 @@
   }
   $('#signondt').on('change input', syncSignoffdtOffsigner);
   $('input[name="is_double_up"]').on('change', syncSignoffdtOffsigner);
+  syncSignoffdtOffsigner();
   var isEditMode = (row !== null && row.idcrewrotation) || (batch_id && (batch_id + '').trim() !== '');
   var batchHasJoined = (batch_rows || []).some(function(r) { return (r.status || '').toUpperCase() === 'JOINED'; });
   var batchAllCancel = (batch_rows || []).length > 0 && (batch_rows || []).every(function(r) { return (r.status || '').toUpperCase() === 'CANCEL'; });

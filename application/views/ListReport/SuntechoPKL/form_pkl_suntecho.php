@@ -45,7 +45,7 @@
 </style>
 
 <htmlpagefooter name="myFooter">
-    <div style="text-align: center; color: gray; font-size: 12px; font-style: italic; padding-bottom: 20px;">
+    <div style="text-align: center; color: black; font-size: 12px; font-style: italic; padding-bottom: 20px;">
         {PAGENO}
     </div>
 </htmlpagefooter>
