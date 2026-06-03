@@ -48,6 +48,8 @@
 $(document).ready(function() {
 
   let table = $('#crewTable').DataTable({
+    stateSave: true,
+    stateDuration: -1,
     processing: true,
     serverSide: false,
     language: {

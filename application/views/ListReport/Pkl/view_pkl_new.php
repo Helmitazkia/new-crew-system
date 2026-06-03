@@ -182,8 +182,8 @@
 
                             <div class="card border-0 shadow-sm">
                                 <div class="card-header bg-white py-3">
-                                    <h6 class="text-primary fw-bold mb-0"><i class="fa fa-money me-2"></i>Duration &
-                                        Wages</h6>
+                                    <h6 class="text-primary fw-bold mb-0"><i class="fa-solid fa-money-bill px-2"></i>Duration &
+                                        Wages (Gross)</h6>
                                 </div>
                                 <div class="card-body">
                                     <div class="form-group mb-3">
