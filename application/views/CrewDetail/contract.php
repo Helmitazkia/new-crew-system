@@ -551,10 +551,10 @@ function validateContract() {
   if (!validateContractField('signondt', 'signondtFeedback')) ok = false;
   if (!validateContractField('signonrank', 'signonrankFeedback')) ok = false;
   if (!validateContractField('signonvsl', 'signonvslFeedback')) ok = false;
-  if (!validateContractField('signonport', 'signonportFeedback')) ok = false;
-  if (!validateContractField('signondesc', 'signondescFeedback')) ok = false;
-  if (!validateContractField('estsignoffdt', 'estsignoffdtFeedback')) ok = false;
-  if (!validateContractField('no_pkl', 'no_pklFeedback')) ok = false;
+  // if (!validateContractField('signonport', 'signonportFeedback')) ok = false;
+  // if (!validateContractField('signondesc', 'signondescFeedback')) ok = false;
+  // if (!validateContractField('estsignoffdt', 'estsignoffdtFeedback')) ok = false;
+  // if (!validateContractField('no_pkl', 'no_pklFeedback')) ok = false;
   if (!validateEstSignOffVsSignOff()) ok = false;
   return ok;
 }

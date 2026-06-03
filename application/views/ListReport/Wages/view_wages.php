@@ -124,13 +124,13 @@
                 <table style="width:100%; border-collapse:collapse; text-align:center;">
                   <thead>
                     <tr>
-                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">Basic Wages</th>
-                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">FOT</th>
-                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">Tanker Allow.</th>
+                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">Basic Wages (Net)</th>
+                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">FOT (Net)</th>
+                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">Tanker Allow (Net)</th>
                       <th style="border:1px solid #222; padding:8px; background:#e0e0e0;">Total Pay</th>
-                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">Board <br> Salary</th>
-                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">Home <br> Salary</th>
-                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">Leave Pay</th>
+                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">Board <br> Salary (Net)</th>
+                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">Home <br> Salary (Net)</th>
+                      <th style="border:1px solid #222; padding:8px; background:#fafafa;">Leave Pay (Net)</th>
                       <th style="border:1px solid #222; padding:8px; background:#e0e0e0;">Total Wages</th>
                     </tr>
                   </thead>
