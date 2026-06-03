@@ -336,7 +336,7 @@
               </div>
               <div class="col-md-4">
                 <button type="button" class="btn btn-sm btn-primary" id="btnFilterDate">Terapkan</button>
-                <button type="button" class="btn btn-sm btn-secondary" id="btnResetDate">Reset</button>
+                <button type="button" class="btn btn-sm btn-danger" id="btnResetDate">Reset</button>
               </div>
             </div>
           </div>
@@ -495,6 +495,8 @@ $(document).ready(function() {
   var TOTAL_COLUMNS = 14;
 
   let table = $('#crewTable').DataTable({
+    stateSave: true,
+    stateDuration: -1,
     dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end custom-btn'>>" +
       "<'row'<'col-md-12'tr>>" +
       "<'row mt-2'<'col-md-5'i><'col-md-7'p>>",
@@ -706,7 +708,7 @@ $(document).ready(function() {
         "font-size": "14px"
       });
       $(".custom-btn").html(
-        '<button type="button" class="btn btn-primary btn-sm rounded-pill fst-italic" id="btnNewCrewRotation">' +
+        '<button type="button" class="btn btn-primary" id="btnNewCrewRotation">' +
         '<i class="fa fa-plus"></i> New</button>'
       );
       initDropdownFilters(this.api());

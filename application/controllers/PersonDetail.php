@@ -316,7 +316,7 @@ class PersonDetail extends CI_Controller {
         $maritalStatus = $this->input->post('maritalStatus');
         
 
-        if (!$idperson || !$firstName || !$lastName || !$gender) {
+        if (!$idperson || !$firstName || !$gender) {
             echo json_encode(array(
                 'status' => false,
                 'message' => 'Required fields are missing'
@@ -1004,10 +1004,10 @@ class PersonDetail extends CI_Controller {
             echo json_encode(array('status' => false, 'message' => 'Date of Issue is required'));
             return;
         }
-        if (empty($docexpdt)) {
-            echo json_encode(array('status' => false, 'message' => 'Valid Until is required'));
-            return;
-        }
+        // if (empty($docexpdt)) {
+        //     echo json_encode(array('status' => false, 'message' => 'Valid Until is required'));
+        //     return;
+        // }
         if (!empty($docissdt) && !empty($docexpdt) && $docexpdt < $docissdt) {
             echo json_encode(array('status' => false, 'message' => 'Valid Until must be on or after Date of Issue'));
             return;

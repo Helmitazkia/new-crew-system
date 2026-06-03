@@ -95,7 +95,7 @@
 
               <!-- First Name -->
               <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">First Name</label>
+                <label class="form-label mb-0 fst-italic fw-semibold">First Name <span style="color: red;">*</span></label>
                 <div class="form-view fst-italic" data-field="identity.firstName"></div>
                 <input type="text" class="form-control form-edit d-none" data-field="identity.firstName">
               </div>
@@ -116,7 +116,7 @@
 
               <!-- Gender -->
               <div class="col-md-4">
-                <label class="form-label mb-0 fst-italic fw-semibold">Gender</label>
+                <label class="form-label mb-0 fst-italic fw-semibold">Gender <span style="color: red;">*</span></label>
                 <div class="form-view fst-italic" data-field="identity.gender"></div>
                 <select class="form-select form-edit d-none" data-field="identity.gender">
                   <option value="Male">Male</option>
@@ -1241,9 +1241,9 @@
                         <input type="text" class="form-control" name="docissplc" id="personalDoc_docissplc" placeholder="Place of issue">
                       </div>
                       <div class="col-md-6">
-                        <label class="form-label fw-semibold">Valid Until <span class="text-danger">*</span></label>
+                        <label class="form-label fw-semibold">Valid Until</label>
                         <input type="date" class="form-control" name="docexpdt" id="personalDoc_docexpdt">
-                        <small id="personalDoc_docexpdtFeedback" class="text-danger d-none">Valid Until is required</small>
+                        <!-- <small id="personalDoc_docexpdtFeedback" class="text-danger d-none">Valid Until is required</small>  -->
                         <small id="personalDoc_docexpdtFeedbackDate" class="text-danger d-none">Valid Until must be on or after Date of Issue</small>
                       </div>
                       <div class="col-12 mt-2">
@@ -2381,11 +2381,11 @@
             $('#personalDoc_docissdt').addClass('is-invalid');
             ok = false;
           }
-          if (!$('#personalDoc_docexpdt').val()) {
-            $('#personalDoc_docexpdtFeedback').removeClass('d-none');
-            $('#personalDoc_docexpdt').addClass('is-invalid');
-            ok = false;
-          }
+          // if (!$('#personalDoc_docexpdt').val()) {
+          //   $('#personalDoc_docexpdtFeedback').removeClass('d-none');
+          //   $('#personalDoc_docexpdt').addClass('is-invalid');
+          //   ok = false;
+          // }
           var dateIssue = $('#personalDoc_docissdt').val();
           var validUntil = $('#personalDoc_docexpdt').val();
           if (dateIssue && validUntil && validUntil < dateIssue) {
