@@ -107,10 +107,10 @@
             </div>
             <div class="col-md-4 mb-2">
               <label>Month</label>
-              <select name="month" id="month" class="form-control">
-                <option value="">- Select -</option>
-                <?php for ($m = 1; $m <= 12; $m++) { echo '<option value="'.$m.'">'.$m.'</option>'; } ?>
-              </select>
+              <div class="d-flex gap-1 align-items-center">
+                <input type="number" name="month" id="month" class="form-control" min="1" max="24" placeholder="1-24" style="width: 80px;">
+                <button type="button" class="btn btn-primary" id="btnCalculate">Calculate</button>
+              </div>
               <small class="text-muted">Optional</small>
             </div>
             <div class="col-md-4 mb-2">
@@ -542,6 +542,19 @@ $(document).ready(function () {
     $('#btnUpdateContract').addClass('d-none');
     $('#btnSaveContract').removeClass('d-none');
     hideAllContractFeedback();
+  });
+
+  // Month → Calculate Est. Sign off
+  $('#btnCalculate').on('click', function() {
+    var signondt = $('#signondt').val();
+    var months = parseInt($('#month').val(), 10);
+    if (!signondt || !months || months < 1) {
+      alert('Please enter Sign on Date and Month (1-24).');
+      return;
+    }
+    var d = new Date(signondt);
+    d.setMonth(d.getMonth() + months);
+    $('#estsignoffdt').val(d.toISOString().slice(0, 10));
   });
 });
 
