@@ -2043,18 +2043,17 @@
     </script>
 
     <script>
-      /* Career & Placement */
-      $(document).ready(function () {
-        var id_person = "<?php echo $idperson; ?>";
-        var alert_success = $('#career-success-alert');
-        var success_message = $('#career-success-message');
-        var error_message = $('#career-error-message');
-        var alert_error = $('#career-error-alert');
-
-        $('#careerPlacementCard .btn-save').on('click', function () {
-          saveCareerPlacement(id_person);
+        var alert_success, success_message, error_message, alert_error;
+        $(document).ready(function () {
+          var id_person = "<?php echo $idperson; ?>";
+          alert_success = $('#career-success-alert');
+          success_message = $('#career-success-message');
+          error_message = $('#career-error-message');
+          alert_error = $('#career-error-alert');
+          $('#careerPlacementCard .btn-save').on('click', function () {
+            saveCareerPlacement(id_person);
+          });
         });
-      });
 
       function saveCareerPlacement(id_person) {
 
