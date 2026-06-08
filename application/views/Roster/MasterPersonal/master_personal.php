@@ -52,6 +52,8 @@ $(document).ready(function() {
     stateDuration: -1,
     processing: true,
     serverSide: false,
+    pageLength: 25,
+    lengthMenu: [10, 25, 50, 100],
     language: {
       lengthMenu: ' _MENU_ &nbsp; Entries',
       loadingRecords: '',
