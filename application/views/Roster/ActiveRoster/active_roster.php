@@ -223,7 +223,18 @@ $(document).ready(function() {
 
   //Column Search - AMBIL ROW SEARCH TERAKHIR
   $('#crewTable thead tr:last th').each(function(i) {
-    $('input', this).on('keyup change', function() {
+    let inputElemen = $('input', this);
+
+    // Kembalikan nilai teks pencarian dari stateSave jika ada
+    if (inputElemen.length > 0 && table.state.loaded()) {
+      let colState = table.state.loaded().columns[i];
+      // Jika ada text pencarian, dan itu BUKAN dari regex (berarti dari ketikan manual, bukan dari dropdown)
+      if (colState && colState.search && colState.search.search && !colState.search.regex) {
+        inputElemen.val(colState.search.search);
+      }
+    }
+
+    inputElemen.on('keyup change', function() {
       if (table.column(i).search() !== this.value) {
         table
           .column(i)
@@ -334,9 +345,9 @@ $(document).ready(function() {
             v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
           );
           let regex = escapedValues.join('|');
-          table.column(colIndex).search(regex, true, false).draw();
+          table.column(colIndex).search(regex, true, false).draw(false);
         } else {
-          table.column(colIndex).search('').draw();
+          table.column(colIndex).search('').draw(false);
         }
       }
 
