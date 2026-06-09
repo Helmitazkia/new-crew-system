@@ -20,7 +20,7 @@ class CrewRotation extends CI_Controller
         }
     }
 
-    private function _getCompanyOptionsArray()
+    protected function _getCompanyOptionsArray()
     {
         $rows = $this->MCrewscv->getData("kdcmp, nmcmp", "mstcmprec", "deletests = '0'", "nmcmp ASC");
         $out = array(array("value" => "", "text" => "- Select -"));
@@ -30,7 +30,7 @@ class CrewRotation extends CI_Controller
         return $out;
     }
 
-    private function _getRankOptionsArray()
+    protected function _getRankOptionsArray()
     {
         $rows = $this->MCrewscv->getData("kdrank, nmrank", "mstrank", "deletests = '0' AND urutan > 0", "urutan ASC, nmrank ASC");
         $out = array(array("value" => "", "text" => "- Select -"));
@@ -40,7 +40,7 @@ class CrewRotation extends CI_Controller
         return $out;
     }
 
-    private function _getVesselOptionsArray()
+    protected function _getVesselOptionsArray()
     {
         $rows = $this->MCrewscv->getData("kdvsl, nmvsl", "mstvessel", "deletests = '0' AND st_display = 'Y'", "nmvsl ASC");
         $out = array(array("value" => "", "text" => "- Select -"));
@@ -50,7 +50,7 @@ class CrewRotation extends CI_Controller
         return $out;
     }
 
-    private function _getSignOffRemarkOptionsArray()
+    protected function _getSignOffRemarkOptionsArray()
     {
         $rows = $this->MCrewscv->getData("kdremark, nmremark, descremark", "mstremark", "deletests = '0'", "nmremark ASC");
         $out = array(array("value" => "", "text" => "- Select -"));
@@ -61,7 +61,7 @@ class CrewRotation extends CI_Controller
         return $out;
     }
 
-    private function _getPersonOptionsArray()
+    protected function _getPersonOptionsArray()
     {
         $sql = "SELECT idperson, TRIM(CONCAT_WS(' ', fname, mname, lname)) AS fullName
                 FROM mstpersonal
@@ -80,7 +80,7 @@ class CrewRotation extends CI_Controller
      * Validasi On Board vs Stand By dilakukan di view crew_rotation_detail.php
      * (logika sama dengan active_roster.php: hirarki signoffdt → estsignoffdt; Expired Over = Stand By).
      */
-    private function _getPersonActiveRosterOptionsArray()
+    protected function _getPersonActiveRosterOptionsArray()
     {
         $sql = "SELECT P.idperson, TRIM(CONCAT_WS(' ', P.fname, P.mname, P.lname)) AS fullName,
                 C.signoffdt, C.estsignoffdt,
@@ -131,7 +131,7 @@ class CrewRotation extends CI_Controller
         // Pakai kontrak terakhir agar tetap ada data setelah sign off (signoffdt sudah diisi)
         $sql = "SELECT R.idcrewrotation, R.idperson, R.BatchID, R.is_double_up, R.kdcmprec, R.signondt, R.signoffdt, R.estsignoffdt,
                 R.signonrank, R.signonvsl, R.signonport, R.signondesc, R.lastvsl, R.no_pkl, R.estremark,
-                R.signoffremark, R.remaks_cancel, R.replacement_idperson, R.replacement_rank, R.status, R.next_vessel,R.addusrdt,
+                R.signoffremark, R.remaks_cancel, R.replacement_idperson, R.replacement_rank, R.status, R.status_crew_change, R.next_vessel,R.addusrdt,
                 P.fullName AS onboard_name,
                 C_ONBOARD.nmrank AS onboard_rank_name,
                 D_ONBOARD.nmvsl AS onboard_vessel_name,
@@ -189,13 +189,14 @@ class CrewRotation extends CI_Controller
             }
 
             $data[] = array(
-                'idcrewrotation'    => $row['idcrewrotation'],
-                'idperson'          => $row['idperson'],
-                'batch_id'          => isset($row['BatchID']) ? $row['BatchID'] : '',
-                'created_date_fmt'  => $created_date_fmt,
-                'created_date_raw'  => $created_date_raw,
-                'is_double_up'      => isset($row['is_double_up']) ? (int)$row['is_double_up'] : 0,
-                'onboard_name'      => isset($row['onboard_name']) ? $row['onboard_name'] : '',
+                'idcrewrotation'     => $row['idcrewrotation'],
+                'idperson'           => $row['idperson'],
+                'batch_id'           => isset($row['BatchID']) ? $row['BatchID'] : '',
+                'status_crew_change' => isset($row['status_crew_change']) && $row['status_crew_change'] ? $row['status_crew_change'] : 'Change',
+                'created_date_fmt'   => $created_date_fmt,
+                'created_date_raw'   => $created_date_raw,
+                'is_double_up'       => isset($row['is_double_up']) ? (int)$row['is_double_up'] : 0,
+                'onboard_name'       => isset($row['onboard_name']) ? $row['onboard_name'] : '',
                 'onboard_rank'      => isset($row['onboard_rank_name']) ? $row['onboard_rank_name'] : '',
                 'onboard_son'       => $signondt ? date('d M Y', strtotime($signondt)) : '-',
                 'onboard_vessel'    => isset($row['onboard_vessel_name']) ? $row['onboard_vessel_name'] : '',

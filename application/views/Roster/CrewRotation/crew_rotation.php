@@ -59,7 +59,7 @@
     /* LINK NAME */
     .crew-name {
       font-weight: 600;
-      color: #0d6efd;
+      color: #330000;
       text-decoration: none;
     }
 
@@ -353,11 +353,12 @@
                 <thead class="crew-header">
                   <tr>
                     <th rowspan="2" class="text-center align-middle" style="background-color: #000099 !important; color:#fff;">No</th>
-                    <th colspan="7" class="text-center fw-bold" style="background-color:#000099 !important; color:#fff; border-bottom: 2px solid white;">ONBOARD</th>
+                    <th colspan="8" class="text-center fw-bold" style="background-color:#000099 !important; color:#fff; border-bottom: 2px solid white;">ONBOARD</th>
                     <th colspan="6" class="text-center fw-bold" style="background-color:#000099 !important; color:#fff; border-bottom: 2px solid white;">REPLACEMENT</th>
                   </tr>
                   <tr>
                     <th style="background-color: #000099 !important;">Batch <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Type <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">Name <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">Rank <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">S/ON <br><span class="filter-icon">☰</span></th>
@@ -373,6 +374,7 @@
                   </tr>
                   <tr>
                     <th></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th><input type="text" class="column-search" placeholder="Search"></th>
@@ -459,18 +461,27 @@ function loadCrewRotationList() {
   });
 }
 
-window.showCrewDetail = function(idcrewrotation) {
+window.showCrewDetail = function(idcrewrotation, type) {
   $('#modalCrewRotationForm').modal('show');
   // Destroy selectpicker sebelum ganti content (agar dropdown orphan hilang)
   try {
-    $('#modalCrewRotationFormBody .selectpicker-on').each(function() {
+    $('#modalCrewRotationFormBody .selectpicker-on, #modalCrewRotationFormBody .selectpicker-new').each(function() {
       var $el = $(this);
       if ($el.data('selectpicker')) { $el.selectpicker('destroy'); }
     });
   } catch (e) { /* ignore */ }
   $('#modalCrewRotationFormBody').html('<div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+  
+  if (type === 'Down') {
+    var ajaxUrl = "<?php echo base_url('CrewRotation/CrewRotation_Down/detail'); ?>";
+  } else if (type === 'New') {
+    var ajaxUrl = "<?php echo base_url('CrewRotation/CrewRotation_New/detail'); ?>";
+  } else {
+    var ajaxUrl = "<?php echo base_url('CrewRotation/CrewRotation/detail'); ?>";
+  }
+  
   $.ajax({
-    url: baseUrlCrewRotation + "/detail",
+    url: ajaxUrl,
     type: "GET",
     data: {
       idcrewrotation: idcrewrotation
@@ -534,13 +545,22 @@ $(document).ready(function() {
           return data || "-";
         }
       },
+      {
+        data: "status_crew_change",
+        className: "text-center",
+        render: function(data) {
+          var type = data || "Change";
+          var badgeClass = type === 'New' ? 'bg-success' : 'bg-primary';
+          return '<span class="badge ' + badgeClass + '">' + type + '</span>';
+        }
+      },
       // Onboard (Name, Rank, S/ON, Vessel, S/Off Plan) = dari Old Contract (tblcontract)
       {
         data: "onboard_name",
         render: function(data, type, row) {
           var name = data || "-";
-          return '<a href="#" class="crew-name" onclick="showCrewDetail(' + row.idcrewrotation +
-            '); return false;" title="Edit">' + name + "</a>";
+          var textColorClass = row.status_crew_change === 'New' ? 'text-success' : 'text-black';
+          return '<a href="#" class="crew-name ' + textColorClass + '" onclick="showCrewDetail(' + row.idcrewrotation + ', \'' + (row.status_crew_change || 'Change') + '\'); return false;" title="Edit">' + name + "</a>";
         }
       },
       {
@@ -609,9 +629,10 @@ $(document).ready(function() {
             '<option value="Cancel"' + (row.status === "Cancel" ? " selected" : "") + '>Cancel</option>' +
             '<option value="Joined"' + (row.status === "Joined" ? " selected" : "") +
             '>Joined</option></select>';
+          var editBtnClass = row.status_crew_change === 'New' ? 'btn-outline-success' : 'btn-outline-primary';
           return '<div class="d-flex gap-1 justify-content-center flex-wrap">' +
-            '<button type="button" class="btn btn-sm btn-outline-primary" onclick="showCrewDetail(' + row
-            .idcrewrotation + ')" title="Detail"><i class="fa fa-edit"></i></button>' +
+            '<button type="button" class="btn btn-sm ' + editBtnClass + '" onclick="showCrewDetail(' + row
+            .idcrewrotation + ', \'' + (row.status_crew_change || 'Change') + '\')" title="Detail"><i class="fa fa-edit"></i></button>' +
             statusOpt +
             '<button type="button" class="btn btn-sm btn-outline-danger btn-delete-rotation" data-id="' +
             row.idcrewrotation + '" title="Delete"><i class="fa fa-trash"></i></button></div>';
@@ -1058,28 +1079,60 @@ $(document).ready(function() {
   });
 
   $(document).on("click", "#btnNewCrewRotation", function() {
-    $('#modalCrewRotationForm').modal('show');
-    // Destroy selectpicker sebelum ganti content (agar dropdown orphan hilang)
-    try {
-      $('#modalCrewRotationFormBody .selectpicker-on').each(function() {
-        var $el = $(this);
-        if ($el.data('selectpicker')) { $el.selectpicker('destroy'); }
-      });
-    } catch (e) { /* ignore */ }
-    $('#modalCrewRotationFormBody').html('<div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
-    $.ajax({
-      url: baseUrlCrewRotation + "/detail",
-      type: "GET",
-      success: function(html) {
-        try {
-          $('body > .bootstrap-select, body > .dropdown.bootstrap-select').remove();
-          $('#modalCrewRotationForm .bootstrap-select').not('#modalCrewRotationFormBody .bootstrap-select').remove();
-        } catch (e) { /* ignore */ }
-        $('#modalCrewRotationFormBody').html(html);
+    Swal.fire({
+      title: 'Tipe Crew Rotation',
+      text: "Pilih tipe rotasi yang ingin Anda buat:",
+      icon: 'question',
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: '<i class="fa fa-exchange-alt"></i> Change',
+      denyButtonText: '<i class="fa fa-user-plus"></i> New',
+      cancelButtonText: '<i class="fa fa-arrow-down"></i> Down',
+      customClass: {
+        confirmButton: 'btn btn-primary me-2',
+        denyButton: 'btn btn-success me-2',
+        cancelButton: 'btn btn-warning'
       },
-      error: function() {
-        $('#modalCrewRotationFormBody').html('<div class="alert alert-danger">Gagal memuat form</div>');
+      buttonsStyling: false
+    }).then((result) => {
+      var endpoint = "";
+      if (result.isConfirmed) {
+        endpoint = baseUrlCrewRotation + "/detail"; // Old Change flow
+      } else if (result.isDenied) {
+        // Assume baseUrl is defined globally or we use the direct path
+        var rootUrl = baseUrlCrewRotation.replace('/CrewRotation/CrewRotation', '');
+        endpoint = rootUrl + "/CrewRotation/CrewRotation_New/detail"; 
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire('Info', 'Fitur Down masih dalam tahap pengembangan', 'info');
+        return;
+      } else {
+        return;
       }
+      
+      $('#modalCrewRotationForm').modal('show');
+      // Destroy selectpicker sebelum ganti content (agar dropdown orphan hilang)
+      try {
+        $('#modalCrewRotationFormBody .selectpicker-on, #modalCrewRotationFormBody .selectpicker-new').each(function() {
+          var $el = $(this);
+          if ($el.data('selectpicker')) { $el.selectpicker('destroy'); }
+        });
+      } catch (e) { /* ignore */ }
+      $('#modalCrewRotationFormBody').html('<div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+      
+      $.ajax({
+        url: endpoint,
+        type: "GET",
+        success: function(html) {
+          try {
+            $('body > .bootstrap-select, body > .dropdown.bootstrap-select').remove();
+            $('#modalCrewRotationForm .bootstrap-select').not('#modalCrewRotationFormBody .bootstrap-select').remove();
+          } catch (e) { /* ignore */ }
+          $('#modalCrewRotationFormBody').html(html);
+        },
+        error: function() {
+          $('#modalCrewRotationFormBody').html('<div class="alert alert-danger">Gagal memuat form</div>');
+        }
+      });
     });
   });
   

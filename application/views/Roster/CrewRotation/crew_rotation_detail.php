@@ -166,9 +166,7 @@
               <div class="col-md-6 mb-2 on-signer-field">
                 <label class="form-label small fw-semibold">Last Vessel</label>
                 <select name="lastvsl" id="lastvsl" class="form-control selectpicker-on" data-live-search="true"
-                  data-size="5">
-                  <option value="">- Select -</option>
-                </select>
+                  data-size="5"></select>
               </div>
               <div class="row g-2 mb-2">
                 <div class="col-md-6 on-signer-field">
@@ -390,17 +388,17 @@
   });
 
   function fillSelect($el, arr) {
-    $el.empty().append($('<option value="">- Select -</option>'));
+    $el.empty().append($('<option value="" class="fw-bold text-dark">- Select -</option>'));
     (arr || []).forEach(function(o) {
       if (o.value === '') return;
-      $el.append($('<option></option>').val(o.value).text(o.text));
+      $el.append($('<option class="fw-bold text-dark"></option>').val(o.value).text(o.text));
     });
   }
 
   var $offSelect = $('#offSignerSelect');
-  $offSelect.empty().append($('<option value="">- Select crew -</option>'));
+  $offSelect.empty().append($('<option value="" class="fw-bold text-dark">- Select crew -</option>'));
   (optionsPersonOnBoard || []).forEach(function(o) {
-    if (o.value) $offSelect.append($('<option></option>').val(o.value).text(o.text));
+    if (o.value) $offSelect.append($('<option class="fw-bold text-dark"></option>').val(o.value).text(o.text));
   });
 
   fillSelect($('#kdcmprec'), optionsCompany);
@@ -412,7 +410,7 @@
   var $replSelect = $('#replacement_idperson');
   $replSelect.empty();
   (optionsPersonStandBy || []).forEach(function(o) {
-    if (o.value) $replSelect.append($('<option></option>').val(o.value).text(o.text));
+    if (o.value) $replSelect.append($('<option class="fw-bold text-dark"></option>').val(o.value).text(o.text));
   });
 
 
