@@ -87,12 +87,13 @@
           <table id="nextPlanHistoryTable" class="table table-sm table-bordered align-middle mb-0 crew-table" style="width:100%">
             <thead class="crew-header">
               <tr>
-                <td colspan="5" class="text-center fw-bold" style="background-color:#000099; color:#fff;">ONBOARD</td>
-                <td colspan="8" class="text-center fw-bold" style="background-color:#000099; color:#fff;">REPLACEMENT</td>
+                <td colspan="6" class="text-center fw-bold" style="background-color:#000099; color:#fff;">ONBOARD</td>
+                <td colspan="9" class="text-center fw-bold" style="background-color:#000099; color:#fff;">REPLACEMENT</td>
               </tr>
               <tr>
                 <th class="text-center">No</th>
                 <th class="text-center">Batch</th>
+                <th class="text-center">Type</th>
                 <th>Name</th>
                 <th class="text-center">Rank</th>
                 <th>Vessel</th>
@@ -104,6 +105,7 @@
                 <th>Name</th>
                 <th class="text-center">Status</th>
                 <th>Next Vessel</th>
+                <th class="text-center" style="background-color: #000099 !important;">Act</th>
               </tr>
             </thead>
             <thead>
@@ -121,6 +123,8 @@
                 <th><input type="text" class="column-search" placeholder="Search"></th>
                 <th><input type="text" class="column-search" placeholder="Search"></th>
                 <th><input type="text" class="column-search" placeholder="Search"></th>
+                <th><input type="text" class="column-search" placeholder="Search"></th>
+                <th></th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -182,7 +186,7 @@ window.showNextPlanDetail = function(idcrewrotation) {
     var baseUrl = "<?php echo base_url('CrewRotation/CrewRotation'); ?>";
     var collapsedBatches = {};
     var BATCH_COL_INDEX = 1;
-    var TOTAL_COLUMNS = 13;
+    var TOTAL_COLUMNS = 15;
     var table = $('#nextPlanHistoryTable').DataTable({
       serverSide: false,
       ajax: {
@@ -212,12 +216,22 @@ window.showNextPlanDetail = function(idcrewrotation) {
           }
         },
         { data: 'batch_id', className: 'text-center', defaultContent: '-', render: function (d) { return d || '-'; } },
+        { 
+          data: 'status_crew_change', 
+          className: 'text-center', 
+          defaultContent: '-',
+          render: function(d) {
+            var val = d ? d : 'Change';
+            var c = val === 'New' ? 'bg-success' : 'bg-primary';
+            return '<span class="badge ' + c + ' badge-status">' + val + '</span>';
+          }
+        },
         {
           data: 'onboard_name',
           defaultContent: '-',
           render: function (data, type, row) {
             var name = data || '-';
-            return '<a href="#" class="next-plan-name" onclick="showNextPlanDetail(' + (row.idcrewrotation || 0) + '); return false;" title="View detail">' + (name !== '-' ? name : '-') + '</a>';
+            return name !== '-' ? name : '-';
           }
         },
         { data: 'replacement_rank', className: 'text-center', defaultContent: '-' },
@@ -243,7 +257,15 @@ window.showNextPlanDetail = function(idcrewrotation) {
             return '<span class="badge ' + c + ' badge-status">' + label + '</span>';
           }
         },
-        { data: 'next_vessel', defaultContent: '-' }
+        { data: 'next_vessel', defaultContent: '-' },
+        {
+          data: null,
+          className: 'text-center',
+          orderable: false,
+          render: function (data, type, row) {
+            return '<button type="button" class="btn btn-sm btn-outline-primary" onclick="showNextPlanDetail(' + (row.idcrewrotation || 0) + ')" title="View Detail"><i class="fa fa-eye"></i></button>';
+          }
+        }
       ],
       pageLength: 10,
       lengthMenu: [5, 10, 25, 50],

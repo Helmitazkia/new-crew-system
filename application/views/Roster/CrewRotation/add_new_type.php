@@ -7,9 +7,9 @@
       <!-- ========== SINGLE PANEL: NEW CREW ROTATION ========== -->
       <div class="col-lg-12">
         <div class="card border">
-          <div class="card-header bg-primary text-white fw-semibold">
+          <!-- <div class="card-header bg-primary text-white fw-semibold">
             <i class="fa fa-user-plus me-2"></i> New Crew Rotation (Sign On Only)
-          </div>
+          </div> -->
           <div class="card-body">
             
             <div class="alert alert-info py-2" style="font-size: 12px;">
