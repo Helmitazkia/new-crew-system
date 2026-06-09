@@ -183,12 +183,12 @@ class Contract extends CI_Controller
     $signondt = $this->input->post("signondt");
     $signoffdt = $this->input->post("signoffdt") ?: "0000-00-00";
     $estsignoffdt = $this->input->post("estsignoffdt") ?: "0000-00-00";
-    if ($signoffdt !== "" && $signoffdt !== "0000-00-00" && $estsignoffdt !== "" && $estsignoffdt !== "0000-00-00" && $estsignoffdt < $signoffdt) {
-      $this->output->set_content_type("application/json")->set_output(
-        json_encode(array("status" => false, "message" => "Estimate Sign off Date cannot be earlier than Sign off Date"))
-      );
-      return;
-    }
+    // if ($signoffdt !== "" && $signoffdt !== "0000-00-00" && $estsignoffdt !== "" && $estsignoffdt !== "0000-00-00" && $estsignoffdt < $signoffdt) {
+    //   $this->output->set_content_type("application/json")->set_output(
+    //     json_encode(array("status" => false, "message" => "Estimate Sign off Date cannot be earlier than Sign off Date"))
+    //   );
+    //   return;
+    // }
     $signonrank = $this->input->post("signonrank");
     $signonvsl = $this->input->post("signonvsl");
     $signonport = $this->input->post("signonport");
@@ -265,12 +265,12 @@ class Contract extends CI_Controller
     $signondt = $this->input->post("signondt");
     $signoffdt = $this->input->post("signoffdt") ?: "0000-00-00";
     $estsignoffdt = $this->input->post("estsignoffdt") ?: "0000-00-00";
-    if ($signoffdt !== "" && $signoffdt !== "0000-00-00" && $estsignoffdt !== "" && $estsignoffdt !== "0000-00-00" && $estsignoffdt < $signoffdt) {
-      $this->output->set_content_type("application/json")->set_output(
-        json_encode(array("status" => false, "message" => "Estimate Sign off Date cannot be earlier than Sign off Date"))
-      );
-      return;
-    }
+    // if ($signoffdt !== "" && $signoffdt !== "0000-00-00" && $estsignoffdt !== "" && $estsignoffdt !== "0000-00-00" && $estsignoffdt < $signoffdt) {
+    //   $this->output->set_content_type("application/json")->set_output(
+    //     json_encode(array("status" => false, "message" => "Estimate Sign off Date cannot be earlier than Sign off Date"))
+    //   );
+    //   return;
+    // }
     $signonrank = $this->input->post("signonrank");
     $signonvsl = $this->input->post("signonvsl");
     $signonport = $this->input->post("signonport");

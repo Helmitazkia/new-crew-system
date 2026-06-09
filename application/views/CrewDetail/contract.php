@@ -583,11 +583,11 @@ function validateEstSignOffVsSignOff() {
   if (estsignoffdt === '' || estsignoffdt === '0000-00-00') return true;
   var dSignOff = new Date(signoffdt);
   var dEst = new Date(estsignoffdt);
-  if (dEst < dSignOff) {
-    $feedback.removeClass('d-none').addClass('d-block');
-    $input.addClass('is-invalid');
-    return false;
-  }
+  // if (dEst < dSignOff) {
+  //   $feedback.removeClass('d-none').addClass('d-block');
+  //   $input.addClass('is-invalid');
+  //   return false;
+  // }
   $feedback.addClass('d-none').removeClass('d-block');
   $input.removeClass('is-invalid');
   return true;
