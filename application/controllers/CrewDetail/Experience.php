@@ -144,6 +144,7 @@ class Experience extends CI_Controller {
     public function update_experience()
     {
         $id = $this->input->post('idexp');
+        $idperson = $this->input->post('idperson');
         $username = $this->session->userdata('userName') ?: 'system';
         $currentDate = date('Ymd/H:i:s');
 
@@ -165,7 +166,11 @@ class Experience extends CI_Controller {
         );
 
         $this->db->where('idexp', $id);
+        $this->db->where('idperson', $idperson);
+
         $this->db->update('tblseaexp', $data);
+
+        var_dump($this->db->last_query());exit;
 
         echo json_encode(array(
             'status' => true,
@@ -177,6 +182,7 @@ class Experience extends CI_Controller {
     public function delete_experience()
     {
         $id = $this->input->post('idexp');
+        $idperson = $this->input->post('idperson');
         $username = $this->session->userdata('userName') ?: 'system';
         $currentDate = date('Ymd/H:i:s');
 
@@ -186,6 +192,7 @@ class Experience extends CI_Controller {
         );
 
         $this->db->where('idexp', $id);
+        $this->db->where('idperson', $idperson);
         $this->db->update('tblseaexp', $data);
 
         echo json_encode(array(

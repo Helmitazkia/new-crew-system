@@ -201,8 +201,21 @@
     .table-responsive {
       margin: 0;
       overflow-x: auto;
-      overflow-y: hidden;
-      padding-bottom: 20px; /* space for horizontal scrollbar */
+      padding-bottom: 20px;
+    }
+
+    /* Memastikan tabel selalu 100% dan teks bisa wrap */
+    .crew-table {
+      width: 100% !important;
+      max-width: 100% !important;
+      background-color: transparent;
+    }
+    
+    .crew-table th,
+    .crew-table td {
+      white-space: normal !important;
+      word-wrap: break-word !important;
+      overflow-wrap: break-word !important;
     }
 
     /* Custom layout for DataTables controls */
@@ -317,6 +330,13 @@
       text-decoration: underline;
       color: #333;
     }
+
+    /* Column search inputs - dipaksa bisa mengecil */
+    .column-search {
+      width: 100% !important;
+      min-width: 30px !important;
+      padding: 4px !important;
+    }
     </style>
 
     <div class="row">
@@ -349,7 +369,7 @@
         <div class="card shadow">
           <div class="card-body">
             <div class="table-responsive">
-              <table id="crewTable" class="table table-bordered align-middle mb-0 crew-table" style="width:100%">
+              <table id="crewTable" class="table table-bordered align-middle mb-0 crew-table" style="width:100% !important;">
                 <thead class="crew-header">
                   <tr>
                     <th rowspan="2" class="text-center align-middle" style="background-color: #000099 !important; color:#fff;">No</th>
@@ -408,7 +428,7 @@
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header text-white" style="background-color:#000099;">
-        <h5 class="modal-title" id="modalCrewRotationFormLabel"> Add Crew Rotation</h5>
+        <h5 class="modal-title fw-bold" id="modalCrewRotationFormLabel"> Add Crew Rotation</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body mb-0 pb-8 pt-2" id="modalCrewRotationFormBody">
@@ -550,15 +570,15 @@ $(document).ready(function() {
         className: "text-center",
         render: function(data) {
           var type = data || "Change";
-          var badgeClass = type === 'New' ? 'bg-success' : 'bg-primary';
-          return '<span class="badge ' + badgeClass + '">' + type + '</span>';
+          var badgeClass = type === 'New' ? 'badge bg-success badge-status' : 'badge bg-primary badge-status';
+          return '<span class="' + badgeClass + '">' + type + '</span>';
         }
       },
       // Onboard (Name, Rank, S/ON, Vessel, S/Off Plan) = dari Old Contract (tblcontract)
       {
         data: "onboard_name",
         render: function(data, type, row) {
-          var name = data || "-";
+          var name = data || "";
           var textColorClass = row.status_crew_change === 'New' ? 'text-success' : 'text-black';
           return '<a href="#" class="crew-name ' + textColorClass + '" onclick="showCrewDetail(' + row.idcrewrotation + ', \'' + (row.status_crew_change || 'Change') + '\'); return false;" title="Edit">' + name + "</a>";
         }
@@ -1098,10 +1118,11 @@ $(document).ready(function() {
       var endpoint = "";
       if (result.isConfirmed) {
         endpoint = baseUrlCrewRotation + "/detail"; // Old Change flow
+        $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Change');
       } else if (result.isDenied) {
-        // Assume baseUrl is defined globally or we use the direct path
         var rootUrl = baseUrlCrewRotation.replace('/CrewRotation/CrewRotation', '');
         endpoint = rootUrl + "/CrewRotation/CrewRotation_New/detail"; 
+        $('#modalCrewRotationFormLabel').text('Add Crew Rotation - New');
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         Swal.fire('Info', 'Fitur Down masih dalam tahap pengembangan', 'info');
         return;

@@ -29,12 +29,12 @@
               </div>
 
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">Company Name</label>
+                <label class="form-label small fw-semibold">Company Name <span class="text-danger">*</span></label>
                 <select name="kdcmprec" id="new_kdcmprec" class="form-control selectpicker-new" data-live-search="true" data-size="5"></select>
               </div>
 
               <div class="col-md-3">
-                <label class="form-label small fw-semibold">Sign on Date</label>
+                <label class="form-label small fw-semibold">Sign on Date <span class="text-danger">*</span></label>
                 <input type="date" name="signondt" id="new_signondt" class="form-control form-control-sm">
               </div>
 
@@ -47,13 +47,13 @@
               </div>
 
               <div class="col-md-4">
-                <label class="form-label small fw-semibold">Estimate Sign off Date</label>
+                <label class="form-label small fw-semibold">Estimate Sign off Date <span class="text-danger">*</span></label>
                 <input type="date" name="estsignoffdt" id="new_estsignoffdt" class="form-control form-control-sm">
                 <small id="new_estsignoffdtFeedbackDate" class="text-danger d-none">Cannot be earlier than Sign on Date</small>
               </div>
 
               <div class="col-md-4">
-                <label class="form-label small fw-semibold">Sign on Rank</label>
+                <label class="form-label small fw-semibold">Sign on Rank <span class="text-danger">*</span></label>
                 <select name="signonrank_multi[]" id="new_signonrank_multi" class="form-control selectpicker-new" data-live-search="true" data-size="5" multiple>
                   <!-- Diisi via script -->
                 </select>
@@ -64,7 +64,7 @@
               </div>
 
               <div class="col-md-4">
-                <label class="form-label small fw-semibold">Sign on Vessel</label>
+                <label class="form-label small fw-semibold">Sign on Vessel <span class="text-danger">*</span></label>
                 <select name="signonvsl" id="new_signonvsl" class="form-control selectpicker-new" data-live-search="true" data-size="5"></select>
               </div>
 
