@@ -697,7 +697,7 @@ class CrewRotation extends CI_Controller
                     $this->db->where('idcrewrotation', $o['idcrewrotation']);
                     $this->db->update('tblcrewrotation', array(
                         'status'        => 'Cancel',
-                        'remaks_cancel' => $remaks_cancel ?: 'Otomatis di-cancel karena kandidat lain sudah Joined',
+                        'remaks_cancel' => $remaks_cancel ?: '',
                         'updusrdt'      => $username . '/' . $currentDate,
                     ));
                 }
@@ -726,7 +726,9 @@ class CrewRotation extends CI_Controller
         $signoffdt = trim((string) $signoffdt);
         if ($signoffdt === '' || $signoffdt === '0000-00-00') return;
         $off_contract = $this->db->query(
-            "SELECT idcontract FROM tblcontract WHERE idperson = ? AND (signoffdt = '0000-00-00' OR signoffdt IS NULL OR signoffdt = '') AND deletests = '0' ORDER BY idcontract DESC LIMIT 1",
+            "SELECT idcontract FROM tblcontract WHERE idperson = ?
+            --  AND (signoffdt = '0000-00-00' OR signoffdt IS NULL OR signoffdt = '')
+              AND deletests = '0' ORDER BY idcontract DESC LIMIT 1",
             array($idperson)
         )->row();
         if ($off_contract) {
@@ -760,7 +762,8 @@ class CrewRotation extends CI_Controller
 
         $is_double_up = isset($row->is_double_up) ? (int)$row->is_double_up : 0;
         if (!$is_double_up && !empty($row->idperson)) {
-            $signoffdt_val = ($row->signoffdt && $row->signoffdt !== '0000-00-00') ? $row->signoffdt : ($row->signondt && $row->signondt !== '0000-00-00' ? $row->signondt : null);
+           // $signoffdt_val = ($row->signoffdt && $row->signoffdt !== '0000-00-00') ? $row->signoffdt : ($row->signondt && $row->signondt !== '0000-00-00' ? $row->signondt : null);
+            $signoffdt_val = $row->signondt;
             if ($signoffdt_val) {
                 $this->_updateOffSignerContract($row->idperson, $signoffdt_val, isset($row->signoffremark) ? $row->signoffremark : '');
             }

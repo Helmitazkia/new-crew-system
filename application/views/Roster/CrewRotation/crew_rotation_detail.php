@@ -388,17 +388,17 @@
   });
 
   function fillSelect($el, arr) {
-    $el.empty().append($('<option value="" class="fw-bold text-dark">- Select -</option>'));
+    $el.empty().append($('<option value="">- Select -</option>'));
     (arr || []).forEach(function(o) {
       if (o.value === '') return;
-      $el.append($('<option class="fw-bold text-dark"></option>').val(o.value).text(o.text));
+      $el.append($('<option></option>').val(o.value).text(o.text));
     });
   }
 
   var $offSelect = $('#offSignerSelect');
-  $offSelect.empty().append($('<option value="" class="fw-bold text-dark">- Select crew -</option>'));
+  $offSelect.empty().append($('<option value="">- Select crew -</option>'));
   (optionsPersonOnBoard || []).forEach(function(o) {
-    if (o.value) $offSelect.append($('<option class="fw-bold text-dark"></option>').val(o.value).text(o.text));
+    if (o.value) $offSelect.append($('<option></option>').val(o.value).text(o.text));
   });
 
   fillSelect($('#kdcmprec'), optionsCompany);
@@ -410,7 +410,7 @@
   var $replSelect = $('#replacement_idperson');
   $replSelect.empty();
   (optionsPersonStandBy || []).forEach(function(o) {
-    if (o.value) $replSelect.append($('<option class="fw-bold text-dark"></option>').val(o.value).text(o.text));
+    if (o.value) $replSelect.append($('<option></option>').val(o.value).text(o.text));
   });
 
 

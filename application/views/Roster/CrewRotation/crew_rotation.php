@@ -408,7 +408,7 @@
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header text-white" style="background-color:#000099;">
-        <h5 class="modal-title" id="modalCrewRotationFormLabel">Crew Rotation</h5>
+        <h5 class="modal-title" id="modalCrewRotationFormLabel"> Add Crew Rotation</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body mb-0 pb-8 pt-2" id="modalCrewRotationFormBody">

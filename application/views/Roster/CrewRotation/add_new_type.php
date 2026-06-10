@@ -146,11 +146,11 @@
       });
 
       if (!$sel.prop('multiple')) {
-        $sel.append('<option value="" class="fw-bold text-dark">- Select -</option>');
+        $sel.append('<option value="">- Select -</option>');
       }
       
       $.each(cleanArray, function(i, item) {
-        $sel.append('<option value="' + item.value + '" class="fw-bold text-dark">' + item.text + '</option>');
+        $sel.append('<option value="' + item.value + '">' + item.text + '</option>');
       });
     }
 
