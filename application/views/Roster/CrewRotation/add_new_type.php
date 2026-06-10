@@ -16,7 +16,7 @@
               <i class="fa fa-info-circle me-1"></i> Mode ini digunakan jika Anda hanya ingin memasukkan Crew baru ke kapal tanpa ada Crew yang turun (Off Signer).
             </div>
 
-            <div class="row g-3 align-items-end">
+            <div class="row g-3">
               <div class="col-md-12">
                 <label class="form-label small fw-semibold">Replacement Candidate(s) <span class="text-danger">*</span></label>
                 <select name="replacement_idperson[]" id="new_replacement_idperson" class="form-control selectpicker-new" data-live-search="true" data-size="8" multiple>
@@ -91,7 +91,7 @@
 
               <div class="col-md-4">
                 <label class="form-label small fw-semibold">Remarks</label>
-                <input type="text" name="estremark" id="new_estremark" class="form-control form-control-sm">
+                <textarea name="estremark" id="new_estremark" class="form-control form-control-sm" rows="2"></textarea>
                 <small id="new_estremarkFeedback" class="text-danger d-none">Remarks is required</small>
               </div>
 
@@ -115,6 +115,54 @@
     <i class="fa fa-save"></i> Save Rotation
   </button>
 </div>
+
+<style>
+/* Replacement select: show selected as chips with × (email-like) */
+.crew-rotation-detail-content .bootstrap-select.replacement-select .filter-option-inner-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.crew-rotation-detail-content .bootstrap-select.replacement-select .repl-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  background: #e9ecef;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.crew-rotation-detail-content .bootstrap-select.replacement-select .repl-chip-remove,
+.crew-rotation-detail-content .bootstrap-select.replacement-select .repl-chip-remove-rank {
+  font-weight: 700;
+  padding: 0 2px;
+  line-height: 1;
+  border: none;
+  background: none;
+  font-size: 14px;
+}
+.crew-rotation-detail-content .bootstrap-select.replacement-select .repl-chip-remove:hover,
+.crew-rotation-detail-content .bootstrap-select.replacement-select .repl-chip-remove-rank:hover {
+  color: #dc3545;
+}
+
+/* Custom styles for selectpicker text and hover */
+.crew-rotation-detail-content .bootstrap-select .dropdown-menu li a {
+  color: #000 !important;
+}
+.crew-rotation-detail-content .bootstrap-select .dropdown-menu li a:hover,
+.crew-rotation-detail-content .bootstrap-select .dropdown-menu li a:focus,
+.crew-rotation-detail-content .bootstrap-select .dropdown-menu li.active a {
+  background-color: #e3f2fd !important; /* Light blue hover background */
+  color: #000 !important;
+}
+.crew-rotation-detail-content .bootstrap-select .filter-option-inner-inner {
+  color: #000 !important;
+}
+</style>
 
 <script>
   $(document).ready(function() {
@@ -231,10 +279,145 @@
     }
 
     // Initialise selectpicker
-    $('.selectpicker-new').selectpicker({
-      style: 'btn-outline-secondary btn-sm',
-      size: 5
+    $('.selectpicker-new').each(function() {
+      var $el = $(this);
+      var opts = {
+        style: 'btn-outline-secondary btn-sm',
+        size: 5,
+        noneSelectedText: '- Select -'
+      };
+      if ($el.attr('id') === 'new_replacement_idperson') {
+        opts.noneSelectedText = '- Select replacement(s) -';
+        opts.size = 8;
+      }
+      $el.selectpicker(opts);
+      if ($el.attr('id') === 'new_replacement_idperson' || $el.attr('id') === 'new_signonrank_multi') {
+        $el.parent('.bootstrap-select').addClass('replacement-select');
+      }
     });
+
+    // --- Replacement Candidate Chips ---
+    function renderReplacementChipsNew() {
+      var $sel = $('#new_replacement_idperson');
+      if (!$sel.length) return;
+      var $wrap = $sel.parent('.bootstrap-select');
+      if (!$wrap.length) return;
+      var $label = $wrap.find('.filter-option-inner-inner');
+      if (!$label.length) return;
+
+      var selected = $sel.find('option:selected').map(function() {
+        return { value: this.value, text: $(this).text() };
+      }).get();
+
+      if (!selected || selected.length === 0) {
+        $label.text('- Select replacement(s) -');
+        return;
+      }
+
+      $label.empty();
+      selected.forEach(function(o) {
+        if (!o.value) return;
+        var $chip = $('<span class="repl-chip"></span>').attr('data-value', o.value);
+        $chip.append($('<span class="repl-chip-text"></span>').text(o.text));
+        $chip.append(
+          $('<button type="button" class="repl-chip-remove" aria-label="Remove">×</button>').attr('data-value', o.value)
+        );
+        $label.append($chip);
+      });
+    }
+
+    $(document).off('mousedown.replChipNew click.replChipNew', '.bootstrap-select.replacement-select .repl-chip-remove');
+    $(document).on('mousedown.replChipNew', '.bootstrap-select.replacement-select .repl-chip-remove', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+    $(document).on('click.replChipNew', '.bootstrap-select.replacement-select .repl-chip-remove', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var removeVal = ($(this).attr('data-value') || '').toString();
+      var $sel = $('#new_replacement_idperson');
+      var cur = $sel.val();
+      if (!Array.isArray(cur)) cur = cur ? [cur] : [];
+      var next = cur.filter(function(v) { return v !== removeVal; });
+      $sel.selectpicker('val', next);
+      renderReplacementChipsNew();
+    });
+
+    $('#new_replacement_idperson')
+      .off('loaded.bs.select.replChipNew changed.bs.select.replChipNew')
+      .on('loaded.bs.select.replChipNew changed.bs.select.replChipNew', function() {
+        renderReplacementChipsNew();
+      });
+
+    if ($('#new_replacement_idperson').data('selectpicker')) {
+      $('#new_replacement_idperson').selectpicker('refresh');
+    }
+    renderReplacementChipsNew();
+
+    // --- Sign on Rank Chips ---
+    function renderSignonRankChipsNew() {
+      var $sel = $('#new_signonrank_multi');
+      if (!$sel.length) return;
+      var $wrap = $sel.parent('.bootstrap-select');
+      if (!$wrap.length) return;
+      var $label = $wrap.find('.filter-option-inner-inner');
+      if (!$label.length) return;
+
+      var selected = $sel.find('option:selected').map(function() {
+        return { value: this.value, text: $(this).text() };
+      }).get();
+
+      if (!selected || selected.length === 0) {
+        $label.text('- Select -');
+        return;
+      }
+
+      $label.empty();
+      selected.forEach(function(o) {
+        if (!o.value) return;
+        var $chip = $('<span class="repl-chip"></span>').attr('data-value', o.value);
+        $chip.append($('<span class="repl-chip-text"></span>').text(o.text));
+        
+        var $btn = $('<button type="button" class="repl-chip-remove-rank" aria-label="Remove">×</button>').attr('data-value', o.value);
+        
+        // DIRECT BINDING: Mencegah event bubbling ke bootstrap-select yang bisa mengacaukan native select
+        $btn.on('mousedown click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (e.type === 'click') {
+            var removeVal = $(this).attr('data-value').toString();
+            var cur = $sel.val();
+            if (!Array.isArray(cur)) cur = cur ? [cur] : [];
+            var next = cur.filter(function(v) { return v !== removeVal; });
+            $sel.selectpicker('val', next);
+            renderSignonRankChipsNew();
+          }
+        });
+        
+        $chip.append($btn);
+        $label.append($chip);
+      });
+    }
+
+    $('#new_signonrank_multi')
+      .off('loaded.bs.select.rankChipNew changed.bs.select.rankChipNew')
+      .on('loaded.bs.select.rankChipNew changed.bs.select.rankChipNew', function(e) {
+        renderSignonRankChipsNew();
+      });
+
+    // TRAP KHUSUS UNTUK MENANGKAP SIAPA YANG MENGHAPUS ARRAY!
+    $('#new_signonrank_multi').on('change', function(e) {
+      var val = $(this).val();
+      if (!val || val.length === 0) {
+        console.log("🚨 NATIVE SELECT MENJADI KOSONG! 🚨");
+        console.trace("Jejak kode yang mengosongkan select (Call Stack):");
+      }
+    });
+
+    if ($('#new_signonrank_multi').data('selectpicker')) {
+      $('#new_signonrank_multi').selectpicker('refresh');
+    }
+    renderSignonRankChipsNew();
 
     // --- 4. Logic Calculator ---
     $('#btnCalculateNew').on('click', function() {
