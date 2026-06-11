@@ -183,6 +183,7 @@
 
     /* Responsive Card */
     .card {
+      /* max-width: 100%; */
       margin-top: 20px;
       border-radius: 8px;
     }
@@ -207,6 +208,7 @@
     /* Memastikan tabel selalu 100% dan teks bisa wrap */
     .crew-table {
       width: 100% !important;
+      min-width: 100% !important;
       max-width: 100% !important;
       background-color: transparent;
     }
@@ -1103,6 +1105,7 @@ $(document).ready(function() {
       title: 'Tipe Crew Rotation',
       text: "Pilih tipe rotasi yang ingin Anda buat:",
       icon: 'question',
+      scrollbarPadding: false,
       showDenyButton: true,
       showCancelButton: true,
       confirmButtonText: '<i class="fa fa-exchange-alt"></i> Change',
