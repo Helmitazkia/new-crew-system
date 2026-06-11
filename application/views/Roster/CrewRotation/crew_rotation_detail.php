@@ -1,4 +1,4 @@
-<div class="crew-rotation-detail-content mb-0 pb-0">
+<div class="crew-rotation-detail-content mb-0 pb-0 bg-light p-2 rounded">
   <form id="crewRotationForm">
     <input type="hidden" name="idcrewrotation" id="idcrewrotation" value="">
     <input type="hidden" name="idperson" id="idperson" value="">
@@ -7,87 +7,98 @@
     <div class="row g-3 pb-3">
       <!-- ========== LEFT: OFF-SIGNER ========== -->
       <div class="col-lg-4">
-        <div class="card h-100 border">
-          <div class="card-header bg-light fw-semibold fst-italic">Off Signer (yang turun)</div>
+        <div class="card h-100 border-0 shadow-sm rounded-3">
+          <div class="card-header bg-white border-bottom-0 pt-4 pb-2">
+            <h6 class="mb-0 fw-bold text-primary"><i class="fa fa-arrow-down me-2"></i>Off Signer (Yang Turun)</h6>
+          </div>
           <div class="card-body">
-            <div class="mb-2">
-              <label class="form-label mb-0 small fw-semibold">Batch ID</label>
-              <input type="text" id="batch_id_display" class="form-control form-control-sm bg-light" disabled
+            <div class="mb-3">
+              <label class="form-label mb-1 small fw-semibold text-muted">Batch ID</label>
+              <input type="text" id="batch_id_display" class="form-control form-control-sm bg-light border-0" disabled
                 placeholder="Auto (setelah save)" value="">
             </div>
-            <div class="mb-2">
-              <label class="form-label mb-0 small fw-semibold">Single UP / Double UP</label>
-              <div class="d-flex gap-3 pt-1">
-                <label class="d-flex align-items-center gap-1 mb-0 small">
-                  <input type="radio" name="is_double_up" value="0" class="form-check-input" checked> Single UP
+            
+            <div class="mb-3">
+              <label class="form-label mb-1 small fw-semibold text-muted">Single UP / Double UP</label>
+              <div class="d-flex gap-3 pt-1 p-2 rounded bg-light border border-light">
+                <label class="d-flex align-items-center gap-2 mb-0 small fw-medium cursor-pointer">
+                  <input type="radio" name="is_double_up" value="0" class="form-check-input mt-0" checked> Single UP
                 </label>
-                <label class="d-flex align-items-center gap-1 mb-0 small">
-                  <input type="radio" name="is_double_up" value="1" class="form-check-input"> Double UP
+                <label class="d-flex align-items-center gap-2 mb-0 small fw-medium cursor-pointer">
+                  <input type="radio" name="is_double_up" value="1" class="form-check-input mt-0"> Double UP
                 </label>
               </div>
             </div>
-            <div class="d-flex align-items-center gap-2 mb-2">
-              <div class="rounded bg-primary bg-opacity-25 d-flex align-items-center justify-content-center"
-                style="width:48px;height:48px;">
-                <i class="fa fa-user text-primary"></i>
-              </div>
-              <div class="flex-grow-1">
-                <label class="form-label mb-0 small fw-semibold">Name <span class="text-danger">*</span></label>
-                <select id="offSignerSelect" class="form-control selectpicker-on"
-                  style="max-height:120px;word-break:break-all;" data-live-search="true" data-size="5">
-                  <option value="">- Select crew -</option>
-                </select>
-                <small id="offSignerSelectFeedback" class="text-danger d-none">Name is required</small>
+
+            <div class="mb-3 p-3 border rounded-3 bg-white shadow-sm">
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center"
+                  style="width:40px;height:40px;flex-shrink:0;">
+                  <i class="fa fa-user text-primary fs-5"></i>
+                </div>
+                <div class="flex-grow-1">
+                  <label class="form-label mb-1 small fw-bold">Name <span class="text-danger">*</span></label>
+                  <select id="offSignerSelect" class="form-control selectpicker-on"
+                    style="max-height:120px;word-break:break-all;" data-live-search="true" data-size="5">
+                    <option value="">- Select crew -</option>
+                  </select>
+                  <small id="offSignerSelectFeedback" class="text-danger d-none mt-1">Name is required</small>
+                </div>
               </div>
             </div>
-            <div class="row g-2 mb-2">
+
+            <div class="row g-3 mb-3">
               <div class="col-12">
-                <label class="form-label mb-0 small">Sign off Date ( Off Yang Turun )</label>
+                <label class="form-label mb-1 small fw-semibold text-muted">Sign off Date ( Off Yang Turun )</label>
                 <input type="date" name="signoffdt_offsigner" id="signoffdt_offsigner" class="form-control form-control-sm">
-                <div id="signoff_warning_single" class="alert alert-info py-1 px-2 mb-0 mt-1" style="font-size: 11px;">
+                <div id="signoff_warning_single" class="alert alert-info py-2 px-2 mb-0 mt-2 border-0 bg-info bg-opacity-10 text-info" style="font-size: 11px;">
                   <i class="fa fa-info-circle me-1"></i> <strong>Single UP:</strong> Sign Off otomatis dari Sign On Date.
                 </div>
-                <div id="signoff_warning_double" class="alert alert-warning py-1 px-2 mb-0 mt-1" style="font-size: 11px; display:none;">
+                <div id="signoff_warning_double" class="alert alert-warning py-2 px-2 mb-0 mt-2 border-0 bg-warning bg-opacity-10 text-warning" style="font-size: 11px; display:none;">
                   <i class="fa fa-exclamation-triangle me-1"></i> <strong>Double UP:</strong> Biarkan kosong, atau isi untuk menyimpan ke kontrak lama.
                 </div>
               </div>
               <div class="col-12">
-                <label class="form-label mb-0 small">Sign off remarks ( Off Yang Turun )</label>
-                <select name="signoffremark_offsigner" id="signoffremark_offsigner" class="form-control selectpicker-on p-10"
+                <label class="form-label mb-1 small fw-semibold text-muted">Sign off remarks ( Off Yang Turun )</label>
+                <select name="signoffremark_offsigner" id="signoffremark_offsigner" class="form-control selectpicker-on"
                   data-live-search="true" data-size="5"></select>
               </div>
             </div>
-            <div id="offSignerContractPanel" class="small" style="display:none;">
-              <div class="row g-2 border-top pt-2">
-                <div class="col-6 mb-2">
-                  <label class="form-label mb-0">Vessel</label>
-                  <input type="text" id="off_vessel" class="form-control form-control-sm bg-light" disabled value="">
-                </div>
-                <div class="col-6 mb-2">
-                  <label class="form-label mb-0">Rank</label>
-                  <input type="text" id="off_rank" class="form-control form-control-sm bg-light" disabled value="">
-                </div>
-                <div class="col-6 mb-2">
-                  <label class="form-label mb-0">Planned Sign-off</label>
-                  <input type="text" id="off_planned_signoff" class="form-control form-control-sm bg-light" disabled
-                    value="">
-                </div>
-                <div class="col-6 mb-2">
-                  <label class="form-label mb-0">Relieving Port</label>
-                  <input type="text" id="off_relieving_port" class="form-control form-control-sm bg-light" disabled
-                    value="">
-                </div>
-                <div class="col-6 mb-2">
-                  <label class="form-label mb-0">Status</label>
-                  <input type="text" id="off_status" class="form-control form-control-sm bg-light" disabled value="">
-                </div>
-                <div class="col-6 mb-2">
-                  <label class="form-label mb-0">EOC</label>
-                  <input type="text" id="off_eoc" class="form-control form-control-sm bg-light" disabled value="">
-                </div>
-                <div class="col-12 mb-2">
-                  <label class="form-label mb-0">Remarks</label>
-                  <input type="text" id="off_remarks" class="form-control form-control-sm bg-light" disabled value="">
+
+            <div id="offSignerContractPanel" class="small mt-3" style="display:none;">
+              <div class="p-3 bg-light rounded-3 border">
+                <h6 class="fw-bold mb-3 text-secondary" style="font-size: 13px;"><i class="fa fa-file-contract me-1"></i> Current Contract Info</h6>
+                <div class="row g-2">
+                  <div class="col-6">
+                    <label class="form-label mb-0 text-muted" style="font-size: 11px;">Vessel</label>
+                    <input type="text" id="off_vessel" class="form-control form-control-sm bg-white border-0" disabled value="">
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label mb-0 text-muted" style="font-size: 11px;">Rank</label>
+                    <input type="text" id="off_rank" class="form-control form-control-sm bg-white border-0" disabled value="">
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label mb-0 text-muted" style="font-size: 11px;">Planned Sign-off</label>
+                    <input type="text" id="off_planned_signoff" class="form-control form-control-sm bg-white border-0" disabled
+                      value="">
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label mb-0 text-muted" style="font-size: 11px;">Relieving Port</label>
+                    <input type="text" id="off_relieving_port" class="form-control form-control-sm bg-white border-0" disabled
+                      value="">
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label mb-0 text-muted" style="font-size: 11px;">Status</label>
+                    <input type="text" id="off_status" class="form-control form-control-sm bg-white border-0" disabled value="">
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label mb-0 text-muted" style="font-size: 11px;">EOC</label>
+                    <input type="text" id="off_eoc" class="form-control form-control-sm bg-white border-0" disabled value="">
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label mb-0 text-muted" style="font-size: 11px;">Remarks</label>
+                    <input type="text" id="off_remarks" class="form-control form-control-sm bg-white border-0" disabled value="">
+                  </div>
                 </div>
               </div>
             </div>
@@ -97,150 +108,156 @@
 
       <!-- ========== RIGHT: ON SIGNER (New Contract Details) ========== -->
       <div class="col-lg-8">
-        <div class="card h-100 border">
-          <div class="card-header bg-light fw-semibold fst-italic">On Signer (New Contract Details)</div>
+        <div class="card h-100 border-0 shadow-sm rounded-3">
+          <div class="card-header bg-white border-bottom-0 pt-4 pb-2">
+            <h6 class="mb-0 fw-bold text-success"><i class="fa fa-arrow-up me-2"></i>On Signer (New Contract)</h6>
+          </div>
           <div class="card-body">
-            <div class="row g-2 align-items-end">
-              <div class="col-md-12 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">Replacement Candidate <span
+            <div class="row g-3">
+              <div class="col-md-12">
+                <label class="form-label small fw-bold">Replacement Candidate <span
                     class="text-danger">*</span></label>
                 <select name="replacement_idperson[]" id="replacement_idperson" class="form-control selectpicker-on"
                   data-live-search="true" data-size="8" multiple></select>
-                <div class="alert alert-primary py-1 px-2 mb-0 mt-1 border-0 bg-primary bg-opacity-10 text-primary" style="font-size: 11px;">
+                <div class="alert alert-primary py-2 px-3 mb-0 mt-2 border-0 bg-primary bg-opacity-10 text-primary rounded-3" style="font-size: 11px;">
                   <i class="fa fa-lightbulb me-1"></i> <strong>Tips:</strong> Bisa pilih lebih dari satu kandidat (plan banyak replacement).
                 </div>
                 <small id="replacement_idpersonFeedback" class="text-danger d-none mt-1">Replacement Candidate is
                   required</small>
               </div>
-              <div class="col-md-6 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">Replacement Rank</label>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">Replacement Rank</label>
                 <input type="hidden" name="replacement_rank" id="replacement_rank" value="">
-                <input type="text" id="replacement_rank_display" class="form-control form-control-sm bg-light" disabled
+                <input type="text" id="replacement_rank_display" class="form-control form-control-sm bg-light border-0" disabled
                   placeholder="(rank yang turun – pilih Name dulu)" value="">
               </div>
-              <div class="col-md-6 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">Company Name <span class="text-danger">*</span></label>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">Company Name <span class="text-danger">*</span></label>
                 <select name="kdcmprec" id="kdcmprec" class="form-control selectpicker-on" data-live-search="true"
                   data-size="5"></select>
                 <small id="kdcmprecFeedback" class="text-danger d-none">Company Name is required</small>
               </div>
-              <div class="col-md-3 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">Sign on Date <span class="text-danger">*</span></label>
+              <div class="col-md-3">
+                <label class="form-label small fw-semibold text-muted">Sign on Date <span class="text-danger">*</span></label>
                 <input type="date" name="signondt" id="signondt" class="form-control form-control-sm">
                 <small id="signondtFeedback" class="text-danger d-none">Sign on Date is required</small>
               </div>
-              <div class="col-md-3 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">Month</label>
+              <div class="col-md-3">
+                <label class="form-label small fw-semibold text-muted">Month</label>
                 <div class="d-flex gap-1 align-items-center">
                   <input type="number" id="month" class="form-control form-control-sm" min="1" max="24"
                     placeholder="1-24" style="width:70px;">
                   <button type="button" class="btn btn-sm btn-primary" id="btnCalculate">Calculate</button>
                 </div>
               </div>
-              <div class="col-md-4 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">Estimate Sign off Date <span
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">Estimate Sign off Date <span
                     class="text-danger">*</span></label>
                 <input type="date" name="estsignoffdt" id="estsignoffdt" class="form-control form-control-sm">
                 <small id="estsignoffdtFeedback" class="text-danger d-none">Estimate Sign off Date is required</small>
                 <small id="estsignoffdtFeedbackDate" class="text-danger d-none">Cannot be earlier than Sign off
                   Date</small>
               </div>
-              <div class="col-md-4 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">Sign on Rank <span class="text-danger">*</span></label>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">Sign on Rank <span class="text-danger">*</span></label>
                 <select name="signonrank" id="signonrank" class="form-control selectpicker-on" data-live-search="true"
                   data-size="5"></select>
                 <small id="signonrankFeedback" class="text-danger d-none">Sign on Rank is required</small>
               </div>
-              <div class="col-md-4 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">Sign on Vessel <span class="text-danger">*</span></label>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">Sign on Vessel <span class="text-danger">*</span></label>
                 <select name="signonvsl" id="signonvsl" class="form-control selectpicker-on" data-live-search="true"
                   data-size="5"></select>
                 <small id="signonvslFeedback" class="text-danger d-none">Sign on Vessel is required</small>
               </div>
-              <div class="col-md-6 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">Sign on Port <span class="text-danger">*</span></label>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">Sign on Port</label>
                 <input type="text" name="signonport" id="signonport" class="form-control form-control-sm"
                   placeholder="e.g. BENOA">
                 <small id="signonportFeedback" class="text-danger d-none">Sign on Port is required</small>
               </div>
-              <div class="col-md-6 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">Last Vessel</label>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">Last Vessel</label>
                 <select name="lastvsl" id="lastvsl" class="form-control selectpicker-on" data-live-search="true"
-                  data-size="5">
-                  <option value="">- Select -</option>
-                </select>
+                  data-size="5"></select>
               </div>
-              <div class="row g-2 mb-2">
-                <div class="col-md-6 on-signer-field">
-                  <label class="form-label mb-0 small">Sign off Date ( Off Yang Naik )</label>
-                  <input type="date" name="signoffdt_onsigner" id="signoffdt_onsigner" class="form-control form-control-sm">
-                  <div class="alert alert-secondary py-1 px-2 mb-0 mt-1 border-0 bg-secondary bg-opacity-10 text-secondary" style="font-size: 11px;">
-                    <i class="fa fa-asterisk me-1"></i> <strong>Opsional:</strong> Simpan ke data yang naik (kontrak replacement) jika diisi.
+              
+              <div class="col-12 mt-4">
+                <div class="p-3 bg-light rounded-3 border">
+                  <h6 class="fw-bold mb-3 text-secondary" style="font-size: 13px;"><i class="fa fa-info-circle me-1"></i> Optional Sign Off (Yang Naik) Info</h6>
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label mb-1 small fw-semibold text-muted">Sign off Date</label>
+                      <input type="date" name="signoffdt_onsigner" id="signoffdt_onsigner" class="form-control form-control-sm">
+                      <div class="alert alert-secondary py-1 px-2 mb-0 mt-2 border-0 bg-secondary bg-opacity-10 text-secondary" style="font-size: 11px;">
+                        <i class="fa fa-asterisk me-1"></i> Simpan ke kontrak replacement jika diisi.
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label mb-1 small fw-semibold text-muted">Sign off remarks</label>
+                      <select name="signoffremark_onsigner" id="signoffremark_onsigner" class="form-control selectpicker-on"
+                        data-live-search="true" data-size="5"></select>
+                    </div>
                   </div>
                 </div>
-                <div class="col-md-6 on-signer-field">
-                  <label class="form-label mb-0 small">Sign off remarks ( Off Yang Naik )</label>
-                  <select name="signoffremark_onsigner" id="signoffremark_onsigner" class="form-control selectpicker-on p-10"
-                    data-live-search="true" data-size="5"></select>
-                </div>
               </div>
-              <div class="col-12 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">Sign on Description <span
-                    class="text-danger">*</span></label>
+
+              <div class="col-12">
+                <label class="form-label small fw-semibold text-muted">Sign on Description </label>
                 <textarea name="signondesc" id="signondesc" class="form-control form-control-sm" rows="2"
                   placeholder="e.g. Joining as AB"></textarea>
                 <small id="signondescFeedback" class="text-danger d-none">Sign on Description is required</small>
               </div>
-              <div class="col-md-4 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">No. PKL</label>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">No. PKL</label>
                 <input type="text" name="no_pkl" id="no_pkl" class="form-control form-control-sm">
                 <small id="no_pklFeedback" class="text-danger d-none">No. PKL is required</small>
               </div>
-              <div class="col-md-4 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">Remarks</label>
-                <textarea name="estremark" id="estremark" class="form-control form-control-sm" rows="2"></textarea>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold text-muted">Remarks</label>
+                <textarea name="estremark" id="estremark" class="form-control form-control-sm" rows="1"></textarea>
               </div>
-              <div class="col-md-6 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">Additional / Foreign Crew</label>
-                <div class="d-flex gap-3 flex-wrap pt-1">
-                  <label class="d-flex align-items-center gap-1 mb-0 small">
-                    <input type="radio" name="foreigncrew_option" value="none" class="form-check-input" checked> None
+              <div class="col-md-12">
+                <label class="form-label small fw-semibold text-muted">Additional / Foreign Crew</label>
+                <div class="d-flex gap-4 p-2 rounded bg-light border border-light">
+                  <label class="d-flex align-items-center gap-2 mb-0 small fw-medium cursor-pointer">
+                    <input type="radio" name="foreigncrew_option" value="none" class="form-check-input mt-0" checked> None
                   </label>
-                  <label class="d-flex align-items-center gap-1 mb-0 small">
-                    <input type="radio" name="foreigncrew_option" value="additional" class="form-check-input">
+                  <label class="d-flex align-items-center gap-2 mb-0 small fw-medium cursor-pointer">
+                    <input type="radio" name="foreigncrew_option" value="additional" class="form-check-input mt-0">
                     Additional
                   </label>
-                  <label class="d-flex align-items-center gap-1 mb-0 small">
-                    <input type="radio" name="foreigncrew_option" value="foreigncrew" class="form-check-input"> Foreign
+                  <label class="d-flex align-items-center gap-2 mb-0 small fw-medium cursor-pointer">
+                    <input type="radio" name="foreigncrew_option" value="foreigncrew" class="form-check-input mt-0"> Foreign
                     Crew
                   </label>
                 </div>
               </div>
-              <div class="col-12 mb-2 on-signer-field">
-                <label class="form-label small fw-semibold">File Contract</label>
-                <div class="d-flex gap-2 align-items-center">
-                  <input type="file" name="file_contract" id="file_contract" class="form-control form-control-sm"
-                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif" style="max-width:220px;">
-                  <span class="small text-muted" id="file_contract_label">No file selected</span>
-                  <button type="button" class="btn btn-sm btn-warning" id="btnClearFile">Clear</button>
+              <div class="col-12">
+                <label class="form-label small fw-semibold text-muted">File Contract</label>
+                <div class="d-flex gap-2 align-items-center p-2 rounded border bg-white">
+                  <input type="file" name="file_contract" id="file_contract" class="form-control form-control-sm border-0"
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif" style="max-width:250px;">
+                  <span class="small text-muted flex-grow-1" id="file_contract_label">No file selected</span>
+                  <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3" id="btnClearFile">Clear</button>
                 </div>
               </div>
-              <div class="col-12 mb-2 on-signer-field" id="statusFieldWrapper" style="display:none;">
-                <label class="form-label small fw-semibold">Status</label>
-                <select name="status" id="status" class="form-select">
+              <div class="col-12" id="statusFieldWrapper" style="display:none;">
+                <label class="form-label small fw-semibold text-muted">Status</label>
+                <select name="status" id="status" class="form-select form-select-sm">
                   <option value="Submit">Submit</option>
                   <option value="Joined">Joined</option>
                 </select>
               </div>
-              <div class="col-md-6 mb-2 on-signer-field d-none">
-                <label class="form-label small fw-semibold">Next Vessel</label>
+              <div class="col-md-6 d-none">
+                <label class="form-label small fw-semibold text-muted">Next Vessel</label>
                 <input type="text" name="next_vessel" id="next_vessel" class="form-control form-control-sm">
               </div>
-              <div class="col-12 mt-3">
-                <button type="button" class="btn btn-primary px-4 rounded-pill fw-semibold" id="btnSaveForm">
+              <div class="col-12 mt-4 pt-3 border-top d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-primary px-4 rounded-pill fw-semibold shadow-sm" id="btnSaveForm">
                   <i class="fa fa-save me-1"></i> Save
                 </button>
-                <button type="button" class="btn btn-success px-4 rounded-pill fw-semibold d-none" id="btnUpdateForm">
+                <button type="button" class="btn btn-success px-4 rounded-pill fw-semibold shadow-sm d-none" id="btnUpdateForm">
                   <i class="fa fa-edit me-1"></i> Update
                 </button>
               </div>
@@ -253,27 +270,13 @@
 </div>
 
 <style>
-.crew-rotation-detail-content .card.border {
-  border-color: #dee2e6 !important;
-}
-
-.crew-rotation-detail-content .form-label.small {
-  font-size: 0.875rem;
-}
-
+/* Modern styling for the detail form */
 .crew-rotation-detail-content {
   padding: 0;
 }
 
-/* Sejajar: label + input align bottom per row */
-.crew-rotation-detail-content .on-signer-field {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-.crew-rotation-detail-content .on-signer-field .form-label {
-  flex-shrink: 0;
+.crew-rotation-detail-content .cursor-pointer {
+  cursor: pointer;
 }
 
 /* Wrapping: value panjang akan turun ke baris baru */
@@ -292,6 +295,17 @@
   overflow-wrap: break-word;
   white-space: normal !important;
   text-align: left;
+}
+
+/* Custom styles for selectpicker text and hover */
+.crew-rotation-detail-content .bootstrap-select .dropdown-menu li a {
+  color: #000 !important;
+}
+.crew-rotation-detail-content .bootstrap-select .dropdown-menu li a:hover,
+.crew-rotation-detail-content .bootstrap-select .dropdown-menu li a:focus,
+.crew-rotation-detail-content .bootstrap-select .dropdown-menu li.active a {
+  background-color: #e3f2fd !important;
+  color: #000 !important;
 }
 
 /* Replacement select: show selected as chips with × (email-like) */

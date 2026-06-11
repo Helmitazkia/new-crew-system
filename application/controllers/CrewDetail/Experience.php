@@ -104,12 +104,16 @@ class Experience extends CI_Controller {
             $username = $this->session->userdata('userName') ?: 'system';
             $currentDate = date('Ymd/H:i:s');
 
-            // 🔹 ambil max idexp
-            $this->db->select_max('idexp');
+            $idperson = $this->input->post('idperson');
+
+            // 🔹 ambil max idexp KHUSUS untuk person ini
+            // Gunakan CAST agar perhitungan MAX akurat jika idexp bertipe string (misal '9' tidak dianggap lebih besar dari '10')
+            $this->db->select('MAX(CAST(idexp AS UNSIGNED)) as max_id', FALSE);
+            $this->db->where('idperson', $idperson);
             $query = $this->db->get('tblseaexp');
             $row = $query->row();
 
-            $newId = ($row && $row->idexp) ? ($row->idexp + 1) : 1;
+            $newId = ($row && $row->max_id) ? ((int)$row->max_id + 1) : 1;
 
             $data = array(
                 'idexp'        => $newId, // 👈 tambahkan manual
@@ -144,6 +148,7 @@ class Experience extends CI_Controller {
     public function update_experience()
     {
         $id = $this->input->post('idexp');
+        $idperson = $this->input->post('idperson');
         $username = $this->session->userdata('userName') ?: 'system';
         $currentDate = date('Ymd/H:i:s');
 
@@ -165,7 +170,11 @@ class Experience extends CI_Controller {
         );
 
         $this->db->where('idexp', $id);
+        $this->db->where('idperson', $idperson);
+
         $this->db->update('tblseaexp', $data);
+
+        var_dump($this->db->last_query());exit;
 
         echo json_encode(array(
             'status' => true,
@@ -177,6 +186,7 @@ class Experience extends CI_Controller {
     public function delete_experience()
     {
         $id = $this->input->post('idexp');
+        $idperson = $this->input->post('idperson');
         $username = $this->session->userdata('userName') ?: 'system';
         $currentDate = date('Ymd/H:i:s');
 
@@ -186,6 +196,7 @@ class Experience extends CI_Controller {
         );
 
         $this->db->where('idexp', $id);
+        $this->db->where('idperson', $idperson);
         $this->db->update('tblseaexp', $data);
 
         echo json_encode(array(

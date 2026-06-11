@@ -20,7 +20,7 @@ class CrewRotation extends CI_Controller
         }
     }
 
-    private function _getCompanyOptionsArray()
+    protected function _getCompanyOptionsArray()
     {
         $rows = $this->MCrewscv->getData("kdcmp, nmcmp", "mstcmprec", "deletests = '0'", "nmcmp ASC");
         $out = array(array("value" => "", "text" => "- Select -"));
@@ -30,7 +30,7 @@ class CrewRotation extends CI_Controller
         return $out;
     }
 
-    private function _getRankOptionsArray()
+    protected function _getRankOptionsArray()
     {
         $rows = $this->MCrewscv->getData("kdrank, nmrank", "mstrank", "deletests = '0' AND urutan > 0", "urutan ASC, nmrank ASC");
         $out = array(array("value" => "", "text" => "- Select -"));
@@ -40,7 +40,7 @@ class CrewRotation extends CI_Controller
         return $out;
     }
 
-    private function _getVesselOptionsArray()
+    protected function _getVesselOptionsArray()
     {
         $rows = $this->MCrewscv->getData("kdvsl, nmvsl", "mstvessel", "deletests = '0' AND st_display = 'Y'", "nmvsl ASC");
         $out = array(array("value" => "", "text" => "- Select -"));
@@ -50,7 +50,7 @@ class CrewRotation extends CI_Controller
         return $out;
     }
 
-    private function _getSignOffRemarkOptionsArray()
+    protected function _getSignOffRemarkOptionsArray()
     {
         $rows = $this->MCrewscv->getData("kdremark, nmremark, descremark", "mstremark", "deletests = '0'", "nmremark ASC");
         $out = array(array("value" => "", "text" => "- Select -"));
@@ -61,7 +61,7 @@ class CrewRotation extends CI_Controller
         return $out;
     }
 
-    private function _getPersonOptionsArray()
+    protected function _getPersonOptionsArray()
     {
         $sql = "SELECT idperson, TRIM(CONCAT_WS(' ', fname, mname, lname)) AS fullName
                 FROM mstpersonal
@@ -80,7 +80,7 @@ class CrewRotation extends CI_Controller
      * Validasi On Board vs Stand By dilakukan di view crew_rotation_detail.php
      * (logika sama dengan active_roster.php: hirarki signoffdt → estsignoffdt; Expired Over = Stand By).
      */
-    private function _getPersonActiveRosterOptionsArray()
+    protected function _getPersonActiveRosterOptionsArray()
     {
         $sql = "SELECT P.idperson, TRIM(CONCAT_WS(' ', P.fname, P.mname, P.lname)) AS fullName,
                 C.signoffdt, C.estsignoffdt,
@@ -131,7 +131,7 @@ class CrewRotation extends CI_Controller
         // Pakai kontrak terakhir agar tetap ada data setelah sign off (signoffdt sudah diisi)
         $sql = "SELECT R.idcrewrotation, R.idperson, R.BatchID, R.is_double_up, R.kdcmprec, R.signondt, R.signoffdt, R.estsignoffdt,
                 R.signonrank, R.signonvsl, R.signonport, R.signondesc, R.lastvsl, R.no_pkl, R.estremark,
-                R.signoffremark, R.remaks_cancel, R.replacement_idperson, R.replacement_rank, R.status, R.next_vessel,R.addusrdt,
+                R.signoffremark, R.remaks_cancel, R.replacement_idperson, R.replacement_rank, R.status, R.status_crew_change, R.next_vessel,R.addusrdt,
                 P.fullName AS onboard_name,
                 C_ONBOARD.nmrank AS onboard_rank_name,
                 D_ONBOARD.nmvsl AS onboard_vessel_name,
@@ -189,21 +189,22 @@ class CrewRotation extends CI_Controller
             }
 
             $data[] = array(
-                'idcrewrotation'    => $row['idcrewrotation'],
-                'idperson'          => $row['idperson'],
-                'batch_id'          => isset($row['BatchID']) ? $row['BatchID'] : '',
-                'created_date_fmt'  => $created_date_fmt,
-                'created_date_raw'  => $created_date_raw,
-                'is_double_up'      => isset($row['is_double_up']) ? (int)$row['is_double_up'] : 0,
-                'onboard_name'      => isset($row['onboard_name']) ? $row['onboard_name'] : '',
+                'idcrewrotation'     => $row['idcrewrotation'],
+                'idperson'           => $row['idperson'],
+                'batch_id'           => isset($row['BatchID']) ? $row['BatchID'] : '',
+                'status_crew_change' => isset($row['status_crew_change']) && $row['status_crew_change'] ? $row['status_crew_change'] : 'Change',
+                'created_date_fmt'   => $created_date_fmt,
+                'created_date_raw'   => $created_date_raw,
+                'is_double_up'       => isset($row['is_double_up']) ? (int)$row['is_double_up'] : 0,
+                'onboard_name'       => isset($row['onboard_name']) ? $row['onboard_name'] : '',
                 'onboard_rank'      => isset($row['onboard_rank_name']) ? $row['onboard_rank_name'] : '',
-                'onboard_son'       => $signondt ? date('d M Y', strtotime($signondt)) : '-',
+                'onboard_son'       => $signondt ? date('d M Y', strtotime($signondt)) : '',
                 'onboard_vessel'    => isset($row['onboard_vessel_name']) ? $row['onboard_vessel_name'] : '',
-                'onboard_soff'     => $estsignoffdt ? date('d M Y', strtotime($estsignoffdt)) : '-',
+                'onboard_soff'     => $estsignoffdt ? date('d M Y', strtotime($estsignoffdt)) : '',
                 'remark'           => isset($row['estremark']) ? $row['estremark'] : '',
                 'remarks_cancel'   => isset($row['remaks_cancel']) ? $row['remaks_cancel'] : '',
-                'replacement_rank' => isset($row['replacement_rank']) ? $row['replacement_rank'] : '-',
-                'replacement_name' => isset($row['replacement_name']) ? $row['replacement_name'] : '-',
+                'replacement_rank' => isset($row['replacement_rank']) ? $row['replacement_rank'] : '',
+                'replacement_name' => isset($row['replacement_name']) ? $row['replacement_name'] : '',
                 'status'           => $row['status'],
                 'next_vessel'      => isset($row['next_vessel_name']) && $row['next_vessel_name'] ? $row['next_vessel_name'] : (isset($row['next_vessel']) ? $row['next_vessel'] : ''),
             );
@@ -562,7 +563,7 @@ class CrewRotation extends CI_Controller
             return;
         }
         $row = $this->db->query(
-            "SELECT status, idcontract_synced, BatchID, idperson, signondt FROM tblcrewrotation WHERE idcrewrotation = ? AND deletests = '0'",
+            "SELECT status, idcontract_synced, BatchID, idperson, signondt, status_crew_change FROM tblcrewrotation WHERE idcrewrotation = ? AND deletests = '0'",
             array($idcrewrotation)
         )->row();
         if (!$row) {
@@ -629,26 +630,49 @@ class CrewRotation extends CI_Controller
         }
         // Validasi kelengkapan data jika status = Joined
         if ($status === 'Joined') {
-            $checkData = $this->db->query(
-                "SELECT kdcmprec, signondt, estsignoffdt, signonrank, signonvsl, signonport, signondesc, no_pkl 
-                 FROM tblcrewrotation 
-                 WHERE idcrewrotation = ? AND deletests = '0'",
-                array($idcrewrotation)
-            )->row();
-            if (!$checkData || 
-                empty($checkData->kdcmprec) || 
-                empty($checkData->signondt) || 
-                empty($checkData->estsignoffdt) || 
-                empty($checkData->signonrank) || 
-                empty($checkData->signonvsl) || 
-                empty($checkData->signonport) || 
-                empty($checkData->signondesc)) 
-                // empty($checkData->no_pkl)) 
-                {
-                $this->output->set_content_type('application/json')->set_output(
-                    json_encode(array('status' => false, 'message' => 'Data belum lengkap untuk Joined. Lengkapi semua field wajib (Company, Sign on Date, Estimate Sign off Date, Rank, Vessel, Port, Description, No. PKL) via Edit terlebih dahulu.'))
-                );
-                return;
+            $status_crew_change = isset($row->status_crew_change) ? $row->status_crew_change : 'Change';
+            if ($status_crew_change === 'New' && $batch_id !== '') {
+                $checkRows = $this->db->query(
+                    "SELECT kdcmprec, signondt, estsignoffdt, signonrank, signonvsl, signonport, signondesc, no_pkl 
+                     FROM tblcrewrotation 
+                     WHERE BatchID = ? AND deletests = '0'",
+                    array($batch_id)
+                )->result();
+                $incomplete = false;
+                foreach ($checkRows as $checkData) {
+                    if (empty($checkData->kdcmprec) || 
+                        empty($checkData->signondt) || 
+                        empty($checkData->estsignoffdt) || 
+                        empty($checkData->signonrank) || 
+                        empty($checkData->signonvsl)) {
+                        $incomplete = true;
+                        break;
+                    }
+                }
+                if ($incomplete) {
+                    $this->output->set_content_type('application/json')->set_output(
+                        json_encode(array('status' => false, 'message' => 'Data belum lengkap untuk rombongan New ini. Pastikan Company, Sign on Date, Est Sign off Date, Rank, dan Vessel sudah terisi semua.'))
+                    );
+                    return;
+                }
+            } else {
+                $checkData = $this->db->query(
+                    "SELECT kdcmprec, signondt, estsignoffdt, signonrank, signonvsl, signonport, signondesc, no_pkl 
+                     FROM tblcrewrotation 
+                     WHERE idcrewrotation = ? AND deletests = '0'",
+                    array($idcrewrotation)
+                )->row();
+                if (!$checkData || 
+                    empty($checkData->kdcmprec) || 
+                    empty($checkData->signondt) || 
+                    empty($checkData->estsignoffdt) || 
+                    empty($checkData->signonrank) || 
+                    empty($checkData->signonvsl)) {
+                    $this->output->set_content_type('application/json')->set_output(
+                        json_encode(array('status' => false, 'message' => 'Data belum lengkap untuk Joined. Lengkapi semua field wajib (Company, Sign on Date, Estimate Sign off Date, Rank, Sign Vessel) via Edit terlebih dahulu.'))
+                    );
+                    return;
+                }
             }
         }
 
@@ -657,13 +681,26 @@ class CrewRotation extends CI_Controller
 
         if ($status === 'Joined' && $batch_id !== '') {
             $others = $this->db->query("SELECT idcrewrotation FROM tblcrewrotation WHERE deletests = '0' AND BatchID = ? AND idcrewrotation != ?", array($batch_id, $idcrewrotation))->result_array();
+            $status_crew_change = isset($row->status_crew_change) ? $row->status_crew_change : 'Change';
+            
             foreach ($others as $o) {
-                $this->db->where('idcrewrotation', $o['idcrewrotation']);
-                $this->db->update('tblcrewrotation', array(
-                    'status'        => 'Cancel',
-                    'remaks_cancel' => $remaks_cancel,
-                    'updusrdt'      => $username . '/' . $currentDate,
-                ));
+                if ($status_crew_change === 'New') {
+                    // Tipe New: Semua ikut Joined dan dibuatkan contract
+                    $this->db->where('idcrewrotation', $o['idcrewrotation']);
+                    $this->db->update('tblcrewrotation', array(
+                        'status'   => 'Joined',
+                        'updusrdt' => $username . '/' . $currentDate,
+                    ));
+                    $this->_syncRotationToContract($o['idcrewrotation']);
+                } else {
+                    // Tipe Change (kompetisi): Jika satu joined, yang lain dicancel
+                    $this->db->where('idcrewrotation', $o['idcrewrotation']);
+                    $this->db->update('tblcrewrotation', array(
+                        'status'        => 'Cancel',
+                        'remaks_cancel' => $remaks_cancel ?: '',
+                        'updusrdt'      => $username . '/' . $currentDate,
+                    ));
+                }
             }
         }
 
@@ -689,7 +726,9 @@ class CrewRotation extends CI_Controller
         $signoffdt = trim((string) $signoffdt);
         if ($signoffdt === '' || $signoffdt === '0000-00-00') return;
         $off_contract = $this->db->query(
-            "SELECT idcontract FROM tblcontract WHERE idperson = ? AND (signoffdt = '0000-00-00' OR signoffdt IS NULL OR signoffdt = '') AND deletests = '0' ORDER BY idcontract DESC LIMIT 1",
+            "SELECT idcontract FROM tblcontract WHERE idperson = ?
+            --  AND (signoffdt = '0000-00-00' OR signoffdt IS NULL OR signoffdt = '')
+              AND deletests = '0' ORDER BY idcontract DESC LIMIT 1",
             array($idperson)
         )->row();
         if ($off_contract) {
@@ -723,7 +762,8 @@ class CrewRotation extends CI_Controller
 
         $is_double_up = isset($row->is_double_up) ? (int)$row->is_double_up : 0;
         if (!$is_double_up && !empty($row->idperson)) {
-            $signoffdt_val = ($row->signoffdt && $row->signoffdt !== '0000-00-00') ? $row->signoffdt : ($row->signondt && $row->signondt !== '0000-00-00' ? $row->signondt : null);
+           // $signoffdt_val = ($row->signoffdt && $row->signoffdt !== '0000-00-00') ? $row->signoffdt : ($row->signondt && $row->signondt !== '0000-00-00' ? $row->signondt : null);
+            $signoffdt_val = $row->signondt;
             if ($signoffdt_val) {
                 $this->_updateOffSignerContract($row->idperson, $signoffdt_val, isset($row->signoffremark) ? $row->signoffremark : '');
             }
@@ -795,7 +835,7 @@ class CrewRotation extends CI_Controller
             return;
         }
         $sql = "SELECT R.idcrewrotation, R.idperson, R.BatchID, R.signondt, R.estsignoffdt, R.estremark, R.remaks_cancel, R.status, R.next_vessel,
-                R.signonrank, R.signonvsl, R.replacement_rank, R.replacement_idperson,
+                R.signonrank, R.signonvsl, R.replacement_rank, R.replacement_idperson, R.status_crew_change,
                 P.fullName AS onboard_name, C.nmrank AS onboard_rank_name, D.nmvsl AS onboard_vessel_name,
                 REPL.fullName AS replacement_name, NXVSL.nmvsl AS next_vessel_name
                 FROM tblcrewrotation R
@@ -810,9 +850,9 @@ class CrewRotation extends CI_Controller
                     FROM mstpersonal WHERE deletests = '0'
                 ) REPL ON REPL.idperson = R.replacement_idperson
                 LEFT JOIN mstvessel NXVSL ON NXVSL.kdvsl = R.next_vessel AND NXVSL.deletests = '0'
-                WHERE R.deletests = '0' AND R.idperson = ?
+                WHERE R.deletests = '0' AND (R.idperson = ? OR R.replacement_idperson = ?)
                 ORDER BY R.signondt DESC, R.idcrewrotation DESC";
-        $rows = $this->db->query($sql, array($idperson))->result_array();
+        $rows = $this->db->query($sql, array($idperson, $idperson))->result_array();
         $data = array();
         foreach ($rows as $row) {
             $data[] = array(
@@ -828,6 +868,7 @@ class CrewRotation extends CI_Controller
                 'replacement_rank' => isset($row['replacement_rank']) ? $row['replacement_rank'] : '-',
                 'replacement_name' => isset($row['replacement_name']) ? $row['replacement_name'] : '-',
                 'status'          => $row['status'],
+                'status_crew_change' => isset($row['status_crew_change']) ? $row['status_crew_change'] : 'Change',
                 'next_vessel'     => isset($row['next_vessel_name']) && $row['next_vessel_name'] ? $row['next_vessel_name'] : (isset($row['next_vessel']) ? $row['next_vessel'] : ''),
             );
         }

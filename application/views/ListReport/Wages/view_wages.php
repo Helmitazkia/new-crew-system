@@ -127,11 +127,11 @@
                       <th style="border:1px solid #222; padding:8px; background:#fafafa;">Basic Wages (Net)</th>
                       <th style="border:1px solid #222; padding:8px; background:#fafafa;">FOT (Net)</th>
                       <th style="border:1px solid #222; padding:8px; background:#fafafa;">Tanker Allow (Net)</th>
-                      <th style="border:1px solid #222; padding:8px; background:#e0e0e0;">Total Pay</th>
+                      <th style="border:1px solid #222; padding:8px; background:#e0e0e0;">Total Pay (Net)</th>
                       <th style="border:1px solid #222; padding:8px; background:#fafafa;">Board <br> Salary (Net)</th>
                       <th style="border:1px solid #222; padding:8px; background:#fafafa;">Home <br> Salary (Net)</th>
                       <th style="border:1px solid #222; padding:8px; background:#fafafa;">Leave Pay (Net)</th>
-                      <th style="border:1px solid #222; padding:8px; background:#e0e0e0;">Total Wages</th>
+                      <th style="border:1px solid #222; padding:8px; background:#e0e0e0;">Total Wages (Net)</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -181,6 +181,10 @@
                   <td style="padding:8px; border:1px solid #222;" id="txtWgNokPhone">-</td>
                 </tr>
               </table>
+
+              <p style="font-style:italic; margin-top:13px;">This salary is received after tax  collected .<br>
+                <em>Gaji tersebut yang diterima setelah di pungut pajak.</em>
+              </p>
 
               <!-- FOOTER -->
               <p style="font-style:italic; margin-top:16px;">I hereby confirm the above contained herein is correct, without compulsion.<br>

@@ -347,14 +347,14 @@ $(document).ready(function() {
 
 
 
-  $(document).on('click', '#btnNew', function() {
+  $(document).off('click', '#btnNew').on('click', '#btnNew', function() {
     $('#experienceForm')[0].reset();
     $("#btnSave").removeClass('d-none');
     $("#btnUpdate").addClass('d-none');
     $('#experienceModal').modal('show');
   });
 
-  $(document).on('click', '#btnSave', function() {
+  $(document).off('click', '#btnSave').on('click', '#btnSave', function() {
 
     if (!validateExperience()) return;
 
@@ -446,15 +446,17 @@ $(document).ready(function() {
   }
 
 
-  $(document).on('click', '#btnUpdate', function() {
+  $(document).off('click', '#btnUpdate').on('click', '#btnUpdate', function() {
 
     if (!validateExperience()) return;
 
     let formData = new FormData($('#experienceForm')[0]);
     let reasonexp = $('#reasonexp').val();
     let foreign_crew = $('#foreign_crew').val();
+    let idperson = $('#contentArea').data('idperson');
     formData.set("reasonexp", reasonexp);
     formData.set("foreign_crew", foreign_crew);
+    formData.set("idperson", idperson);
 
     $.ajax({
       url: "<?php echo base_url('CrewDetail/Experience/update_experience'); ?>",
@@ -507,6 +509,7 @@ $(document).ready(function() {
   // Tangkap klik tombol delete
   $('#crewTable').on('click', '.btn-delete', function() {
     let idexp = $(this).data('id');
+    let idperson = $('#contentArea').data('idperson');
     let table = $('#crewTable').DataTable();
     Swal.fire({
       title: "Are you sure?",
@@ -523,7 +526,8 @@ $(document).ready(function() {
           url: "<?php echo base_url('CrewDetail/Experience/delete_experience'); ?>",
           type: "POST",
           data: {
-            idexp: idexp
+            idexp: idexp,
+            idperson: idperson
           },
           dataType: "json",
           success: function(r) {

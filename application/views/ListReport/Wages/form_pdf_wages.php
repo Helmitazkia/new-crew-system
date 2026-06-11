@@ -94,14 +94,14 @@
         ?>
         <table style="width:100%; border-collapse:collapse; margin-top:6px; font-size:11px; text-align:center;">
             <tr style="background:#f2f2f2; font-weight:bold;">
-                <td style="border:1px solid #000; padding:6px;">Basic Wages</td>
-                <td style="border:1px solid #000; padding:6px;">FOT</td>
-                <td style="border:1px solid #000; padding:6px;">Tanker Allow.</td>
-                <td style="border:1px solid #000; padding:6px;">Total Pay</td>
-                <td style="border:1px solid #000; padding:6px;">Board<br>Salary</td>
-                <td style="border:1px solid #000; padding:6px;">Home<br>Salary</td>
-                <td style="border:1px solid #000; padding:6px;">Leave Pay</td>
-                <td style="border:1px solid #000; padding:6px;">Total Wages</td>
+                <td style="border:1px solid #000; padding:6px;">Basic Wages (Net)</td>
+                <td style="border:1px solid #000; padding:6px;">FOT (Net)</td>
+                <td style="border:1px solid #000; padding:6px;">Tanker Allow (Net)</td>
+                <td style="border:1px solid #000; padding:6px;">Total Pay (Net)</td>
+                <td style="border:1px solid #000; padding:6px;">Board<br>Salary (Net)</td>
+                <td style="border:1px solid #000; padding:6px;">Home<br>Salary (Net)</td>
+                <td style="border:1px solid #000; padding:6px;">Leave Pay (Net)</td>
+                <td style="border:1px solid #000; padding:6px;">Total Wages (Net)</td>
             </tr>
             <tr>
                 <td style="border:1px solid #000; padding:6px;"><?php echo f_rupiah($crew->basic_wages); ?></td>
@@ -111,7 +111,8 @@
                 <td style="border:1px solid #000; padding:6px;"><?php echo f_rupiah($crew->bs_percent); ?></td>
                 <td style="border:1px solid #000; padding:6px;"><?php echo f_rupiah($crew->hs_percent); ?></td>
                 <td style="border:1px solid #000; padding:6px;"><?php echo f_rupiah($crew->leave_pay); ?></td>
-                <td style="border:1px solid #000; padding:6px;"><?php echo f_rupiah((floatval($crew->total_pay) + floatval($crew->leave_pay))); ?></td>
+                <td style="border:1px solid #000; padding:6px;">
+                    <?php echo f_rupiah((floatval($crew->total_pay) + floatval($crew->leave_pay))); ?></td>
             </tr>
         </table>
 
@@ -132,6 +133,11 @@
                 <td style="border:1px solid #000; padding:6px;"><?php echo $crew->next_of_kin_phone; ?></td>
             </tr>
         </table>
+
+        <p style="margin-top:18px; font-size:11px;">
+            This salary is received after tax collected .<br>
+            <i>Gaji tersebut yang diterima setelah di pungut pajak.</i>
+        </p>
 
         <p style="margin-top:10px; font-size:11px;">
             I hereby confirm the above contained herein is correct, without compulsion.<br>

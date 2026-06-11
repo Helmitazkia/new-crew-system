@@ -59,7 +59,7 @@
     /* LINK NAME */
     .crew-name {
       font-weight: 600;
-      color: #0d6efd;
+      color: #330000;
       text-decoration: none;
     }
 
@@ -183,6 +183,7 @@
 
     /* Responsive Card */
     .card {
+      /* max-width: 100%; */
       margin-top: 20px;
       border-radius: 8px;
     }
@@ -201,8 +202,22 @@
     .table-responsive {
       margin: 0;
       overflow-x: auto;
-      overflow-y: hidden;
-      padding-bottom: 20px; /* space for horizontal scrollbar */
+      padding-bottom: 20px;
+    }
+
+    /* Memastikan tabel selalu 100% dan teks bisa wrap */
+    .crew-table {
+      width: 100% !important;
+      min-width: 100% !important;
+      max-width: 100% !important;
+      background-color: transparent;
+    }
+    
+    .crew-table th,
+    .crew-table td {
+      white-space: normal !important;
+      word-wrap: break-word !important;
+      overflow-wrap: break-word !important;
     }
 
     /* Custom layout for DataTables controls */
@@ -317,6 +332,13 @@
       text-decoration: underline;
       color: #333;
     }
+
+    /* Column search inputs - dipaksa bisa mengecil */
+    .column-search {
+      width: 100% !important;
+      min-width: 30px !important;
+      padding: 4px !important;
+    }
     </style>
 
     <div class="row">
@@ -349,15 +371,16 @@
         <div class="card shadow">
           <div class="card-body">
             <div class="table-responsive">
-              <table id="crewTable" class="table table-bordered align-middle mb-0 crew-table" style="width:100%">
+              <table id="crewTable" class="table table-bordered align-middle mb-0 crew-table" style="width:100% !important;">
                 <thead class="crew-header">
                   <tr>
                     <th rowspan="2" class="text-center align-middle" style="background-color: #000099 !important; color:#fff;">No</th>
-                    <th colspan="7" class="text-center fw-bold" style="background-color:#000099 !important; color:#fff; border-bottom: 2px solid white;">ONBOARD</th>
+                    <th colspan="8" class="text-center fw-bold" style="background-color:#000099 !important; color:#fff; border-bottom: 2px solid white;">ONBOARD</th>
                     <th colspan="6" class="text-center fw-bold" style="background-color:#000099 !important; color:#fff; border-bottom: 2px solid white;">REPLACEMENT</th>
                   </tr>
                   <tr>
                     <th style="background-color: #000099 !important;">Batch <br><span class="filter-icon">☰</span></th>
+                    <th style="background-color: #000099 !important;">Type <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">Name <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">Rank <br><span class="filter-icon">☰</span></th>
                     <th style="background-color: #000099 !important;">S/ON <br><span class="filter-icon">☰</span></th>
@@ -373,6 +396,7 @@
                   </tr>
                   <tr>
                     <th></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th><input type="text" class="column-search" placeholder="Search"></th>
@@ -406,7 +430,7 @@
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header text-white" style="background-color:#000099;">
-        <h5 class="modal-title" id="modalCrewRotationFormLabel">Crew Rotation</h5>
+        <h5 class="modal-title fw-bold" id="modalCrewRotationFormLabel"> Add Crew Rotation</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body mb-0 pb-8 pt-2" id="modalCrewRotationFormBody">
@@ -459,18 +483,27 @@ function loadCrewRotationList() {
   });
 }
 
-window.showCrewDetail = function(idcrewrotation) {
+window.showCrewDetail = function(idcrewrotation, type) {
   $('#modalCrewRotationForm').modal('show');
   // Destroy selectpicker sebelum ganti content (agar dropdown orphan hilang)
   try {
-    $('#modalCrewRotationFormBody .selectpicker-on').each(function() {
+    $('#modalCrewRotationFormBody .selectpicker-on, #modalCrewRotationFormBody .selectpicker-new').each(function() {
       var $el = $(this);
       if ($el.data('selectpicker')) { $el.selectpicker('destroy'); }
     });
   } catch (e) { /* ignore */ }
   $('#modalCrewRotationFormBody').html('<div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+  
+  if (type === 'Down') {
+    var ajaxUrl = "<?php echo base_url('CrewRotation/CrewRotation_Down/detail'); ?>";
+  } else if (type === 'New') {
+    var ajaxUrl = "<?php echo base_url('CrewRotation/CrewRotation_New/detail'); ?>";
+  } else {
+    var ajaxUrl = "<?php echo base_url('CrewRotation/CrewRotation/detail'); ?>";
+  }
+  
   $.ajax({
-    url: baseUrlCrewRotation + "/detail",
+    url: ajaxUrl,
     type: "GET",
     data: {
       idcrewrotation: idcrewrotation
@@ -534,13 +567,22 @@ $(document).ready(function() {
           return data || "-";
         }
       },
+      {
+        data: "status_crew_change",
+        className: "text-center",
+        render: function(data) {
+          var type = data || "Change";
+          var badgeClass = type === 'New' ? 'badge bg-success badge-status' : 'badge bg-primary badge-status';
+          return '<span class="' + badgeClass + '">' + type + '</span>';
+        }
+      },
       // Onboard (Name, Rank, S/ON, Vessel, S/Off Plan) = dari Old Contract (tblcontract)
       {
         data: "onboard_name",
         render: function(data, type, row) {
-          var name = data || "-";
-          return '<a href="#" class="crew-name" onclick="showCrewDetail(' + row.idcrewrotation +
-            '); return false;" title="Edit">' + name + "</a>";
+          var name = data || "";
+          var textColorClass = row.status_crew_change === 'New' ? 'text-success' : 'text-black';
+          return '<a href="#" class="crew-name ' + textColorClass + '" onclick="showCrewDetail(' + row.idcrewrotation + ', \'' + (row.status_crew_change || 'Change') + '\'); return false;" title="Edit">' + name + "</a>";
         }
       },
       {
@@ -609,9 +651,10 @@ $(document).ready(function() {
             '<option value="Cancel"' + (row.status === "Cancel" ? " selected" : "") + '>Cancel</option>' +
             '<option value="Joined"' + (row.status === "Joined" ? " selected" : "") +
             '>Joined</option></select>';
+          var editBtnClass = row.status_crew_change === 'New' ? 'btn-outline-success' : 'btn-outline-primary';
           return '<div class="d-flex gap-1 justify-content-center flex-wrap">' +
-            '<button type="button" class="btn btn-sm btn-outline-primary" onclick="showCrewDetail(' + row
-            .idcrewrotation + ')" title="Detail"><i class="fa fa-edit"></i></button>' +
+            '<button type="button" class="btn btn-sm ' + editBtnClass + '" onclick="showCrewDetail(' + row
+            .idcrewrotation + ', \'' + (row.status_crew_change || 'Change') + '\')" title="Detail"><i class="fa fa-edit"></i></button>' +
             statusOpt +
             '<button type="button" class="btn btn-sm btn-outline-danger btn-delete-rotation" data-id="' +
             row.idcrewrotation + '" title="Delete"><i class="fa fa-trash"></i></button></div>';
@@ -627,7 +670,7 @@ $(document).ready(function() {
       infoEmpty: "Showing 0 to 0 of 0 entries"
     },
     order: [
-      [0, "desc"]
+      [1, "desc"]
     ],
     createdRow: function(row, data) {
       $(row).attr("data-batch-id", (data.batch_id || "").toString());
@@ -1058,28 +1101,62 @@ $(document).ready(function() {
   });
 
   $(document).on("click", "#btnNewCrewRotation", function() {
-    $('#modalCrewRotationForm').modal('show');
-    // Destroy selectpicker sebelum ganti content (agar dropdown orphan hilang)
-    try {
-      $('#modalCrewRotationFormBody .selectpicker-on').each(function() {
-        var $el = $(this);
-        if ($el.data('selectpicker')) { $el.selectpicker('destroy'); }
-      });
-    } catch (e) { /* ignore */ }
-    $('#modalCrewRotationFormBody').html('<div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
-    $.ajax({
-      url: baseUrlCrewRotation + "/detail",
-      type: "GET",
-      success: function(html) {
-        try {
-          $('body > .bootstrap-select, body > .dropdown.bootstrap-select').remove();
-          $('#modalCrewRotationForm .bootstrap-select').not('#modalCrewRotationFormBody .bootstrap-select').remove();
-        } catch (e) { /* ignore */ }
-        $('#modalCrewRotationFormBody').html(html);
+    Swal.fire({
+      title: 'Tipe Crew Rotation',
+      text: "Pilih tipe rotasi yang ingin Anda buat:",
+      icon: 'question',
+      scrollbarPadding: false,
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: '<i class="fa fa-exchange-alt"></i> Change',
+      denyButtonText: '<i class="fa fa-user-plus"></i> New',
+      cancelButtonText: '<i class="fa fa-arrow-down"></i> Down',
+      customClass: {
+        confirmButton: 'btn btn-primary me-2',
+        denyButton: 'btn btn-success me-2',
+        cancelButton: 'btn btn-warning'
       },
-      error: function() {
-        $('#modalCrewRotationFormBody').html('<div class="alert alert-danger">Gagal memuat form</div>');
+      buttonsStyling: false
+    }).then((result) => {
+      var endpoint = "";
+      if (result.isConfirmed) {
+        endpoint = baseUrlCrewRotation + "/detail"; // Old Change flow
+        $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Change');
+      } else if (result.isDenied) {
+        var rootUrl = baseUrlCrewRotation.replace('/CrewRotation/CrewRotation', '');
+        endpoint = rootUrl + "/CrewRotation/CrewRotation_New/detail"; 
+        $('#modalCrewRotationFormLabel').text('Add Crew Rotation - New');
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.fire('Info', 'Fitur Down masih dalam tahap pengembangan', 'info');
+        return;
+      } else {
+        return;
       }
+      
+      $('#modalCrewRotationForm').modal('show');
+      // Destroy selectpicker sebelum ganti content (agar dropdown orphan hilang)
+      try {
+        $('#modalCrewRotationFormBody .selectpicker-on, #modalCrewRotationFormBody .selectpicker-new').each(function() {
+          var $el = $(this);
+          if ($el.data('selectpicker')) { $el.selectpicker('destroy'); }
+        });
+      } catch (e) { /* ignore */ }
+      $('#modalCrewRotationFormBody').html('<div class="text-center p-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+      
+      $.ajax({
+        url: endpoint,
+        type: "GET",
+        success: function(html) {
+          try {
+            $('body > .bootstrap-select, body > .dropdown.bootstrap-select').remove();
+            $('#modalCrewRotationForm .bootstrap-select').not('#modalCrewRotationFormBody .bootstrap-select').remove();
+          } catch (e) { /* ignore */ }
+          $('#modalCrewRotationFormBody').html(html);
+        },
+        error: function() {
+          $('#modalCrewRotationFormBody').html('<div class="alert alert-danger">Gagal memuat form</div>');
+        }
+      });
     });
   });
   
