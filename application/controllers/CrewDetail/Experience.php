@@ -174,8 +174,7 @@ class Experience extends CI_Controller {
 
         $this->db->update('tblseaexp', $data);
 
-        var_dump($this->db->last_query());exit;
-
+       
         echo json_encode(array(
             'status' => true,
             'message' => 'Data updated successfully'
