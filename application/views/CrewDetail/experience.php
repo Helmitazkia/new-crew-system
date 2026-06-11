@@ -347,14 +347,14 @@ $(document).ready(function() {
 
 
 
-  $(document).on('click', '#btnNew', function() {
+  $(document).off('click', '#btnNew').on('click', '#btnNew', function() {
     $('#experienceForm')[0].reset();
     $("#btnSave").removeClass('d-none');
     $("#btnUpdate").addClass('d-none');
     $('#experienceModal').modal('show');
   });
 
-  $(document).on('click', '#btnSave', function() {
+  $(document).off('click', '#btnSave').on('click', '#btnSave', function() {
 
     if (!validateExperience()) return;
 
@@ -446,7 +446,7 @@ $(document).ready(function() {
   }
 
 
-  $(document).on('click', '#btnUpdate', function() {
+  $(document).off('click', '#btnUpdate').on('click', '#btnUpdate', function() {
 
     if (!validateExperience()) return;
 

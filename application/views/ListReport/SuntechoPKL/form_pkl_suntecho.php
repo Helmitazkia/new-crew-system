@@ -75,8 +75,8 @@ p {
       <td>
         <p>This Individual Working Contract, being enclosure and part of the Agreement signed between KESATUAN PELAUT
           INDONESIA (KPI) and KESATUAN PELAUT INDONESIA (KPI) dan FINE OCEAN MARINE CO.LTD, BUSAN SOUTH OF KOREA CQ
-          INTEROCEAN SHIPPING and MANNING Pte Ltd, 78A Duxton Road, Singapore 089537 on 26 January 2026.<br>
-          made by and between :<br>
+          INTEROCEAN SHIPPING and MANNING Pte Ltd, 78A Duxton Road, Singapore 089537 on 26 January 2026.<br>NO: 67/PST/PKL/CBA/II/26 <br>
+          Made by and between :<br>
           <strong>PT. ANDHINI EKA KARYA SEJAHTERA</strong>, located at MENARA KADIN INDONESIA 20TH FL, JL. H. R. RASUNA
           SAID BLOK X-5, KAV. 2-3, KUNINGAN, SOUTH JAKARTA (hereinafter referred to as the Manning Agent), on behalf of
           FINE OCEAN MARINE CO.LTD hereinafter referred to as the COMPANY and

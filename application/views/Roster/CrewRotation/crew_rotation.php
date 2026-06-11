@@ -668,7 +668,7 @@ $(document).ready(function() {
       infoEmpty: "Showing 0 to 0 of 0 entries"
     },
     order: [
-      [0, "desc"]
+      [1, "desc"]
     ],
     createdRow: function(row, data) {
       $(row).attr("data-batch-id", (data.batch_id || "").toString());
