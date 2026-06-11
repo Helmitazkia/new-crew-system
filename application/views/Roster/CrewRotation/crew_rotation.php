@@ -496,10 +496,13 @@ window.showCrewDetail = function(idcrewrotation, type) {
   
   if (type === 'Down') {
     var ajaxUrl = "<?php echo base_url('CrewRotation/CrewRotation_Down/detail'); ?>";
+    $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Down');
   } else if (type === 'New') {
     var ajaxUrl = "<?php echo base_url('CrewRotation/CrewRotation_New/detail'); ?>";
+    $('#modalCrewRotationFormLabel').text('Add Crew Rotation - New');
   } else {
     var ajaxUrl = "<?php echo base_url('CrewRotation/CrewRotation/detail'); ?>";
+    $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Change');
   }
   
   $.ajax({
