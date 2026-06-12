@@ -575,7 +575,7 @@ $(document).ready(function() {
         className: "text-center",
         render: function(data) {
           var type = data || "Change";
-          var badgeClass = type === 'New' ? 'badge bg-success badge-status' : 'badge bg-primary badge-status';
+          var badgeClass = type === 'New' ? 'badge bg-success badge-status' : type === 'Down' ? 'badge bg-danger badge-status' : 'badge bg-primary badge-status';
           return '<span class="' + badgeClass + '">' + type + '</span>';
         }
       },
@@ -584,7 +584,7 @@ $(document).ready(function() {
         data: "onboard_name",
         render: function(data, type, row) {
           var name = data || "";
-          var textColorClass = row.status_crew_change === 'New' ? 'text-success' : 'text-black';
+          var textColorClass = row.status_crew_change === 'New' ? 'text-success'  : 'text-black';
           return '<a href="#" class="crew-name ' + textColorClass + '" onclick="showCrewDetail(' + row.idcrewrotation + ', \'' + (row.status_crew_change || 'Change') + '\'); return false;" title="Edit">' + name + "</a>";
         }
       },
@@ -654,7 +654,7 @@ $(document).ready(function() {
             '<option value="Cancel"' + (row.status === "Cancel" ? " selected" : "") + '>Cancel</option>' +
             '<option value="Joined"' + (row.status === "Joined" ? " selected" : "") +
             '>Joined</option></select>';
-          var editBtnClass = row.status_crew_change === 'New' ? 'btn-outline-success' : 'btn-outline-primary';
+          var editBtnClass = row.status_crew_change === 'New' ? 'btn-outline-success' : row.status_crew_change === 'Down' ? 'btn-outline-danger' : 'btn-outline-primary';
           return '<div class="d-flex gap-1 justify-content-center flex-wrap">' +
             '<button type="button" class="btn btn-sm ' + editBtnClass + '" onclick="showCrewDetail(' + row
             .idcrewrotation + ', \'' + (row.status_crew_change || 'Change') + '\')" title="Detail"><i class="fa fa-edit"></i></button>' +
@@ -1130,8 +1130,11 @@ $(document).ready(function() {
         endpoint = rootUrl + "/CrewRotation/CrewRotation_New/detail"; 
         $('#modalCrewRotationFormLabel').text('Add Crew Rotation - New');
       } else if (result.dismiss === Swal.DismissReason.cancel) {
-        Swal.fire('Info', 'Fitur Down masih dalam tahap pengembangan', 'info');
-        return;
+        // Swal.fire('Info', 'Fitur Down masih dalam tahap pengembangan', 'info');
+        // return;
+        var rootUrl = baseUrlCrewRotation.replace('/CrewRotation/CrewRotation', '');
+        endpoint = rootUrl + "/CrewRotation/CrewRotation_Down/detail"; 
+        $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Down');
       } else {
         return;
       }
