@@ -110,7 +110,7 @@ class Mcu extends CI_Controller {
     {
         $sql = "
             SELECT id, clinic_name, address_clinic, telp, fax, email
-            FROM master_mcu WHERE sts_delete = '0'
+            FROM master_mcu WHERE deletests = '0'
         ";
 
         $data   = $this->MCrewscv->getDataQuery($sql);

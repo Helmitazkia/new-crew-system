@@ -1,3 +1,23 @@
+<?php
+$batchHasJoined = false;
+$batchAllCancel = false;
+
+if (isset($row) && is_array($row) && isset($row['status'])) {
+    $status_rotation = strtoupper($row['status']);
+    if ($status_rotation === 'JOINED') $batchHasJoined = true;
+    if ($status_rotation === 'CANCEL') $batchAllCancel = true;
+} else if (isset($batch_rows) && is_array($batch_rows) && count($batch_rows) > 0) {
+    $allCancel = true;
+    foreach($batch_rows as $br) {
+        $st = (isset($br['status'])) ? strtoupper($br['status']) : '';
+        if ($st === 'JOINED') $batchHasJoined = true;
+        if ($st !== 'CANCEL') $allCancel = false;
+    }
+    $batchAllCancel = $allCancel;
+}
+
+$is_readonly = ($batchHasJoined || $batchAllCancel);
+?>
 <div class="crew-rotation-detail-content mb-0 pb-0">
   <form id="crewRotationNewForm">
     <input type="hidden" name="idcrewrotation" id="new_idcrewrotation" value="">
@@ -111,7 +131,7 @@
   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
     <i class="fa fa-times"></i> Close
   </button>
-  <button type="button" class="btn btn-success" id="btnSaveNewCrewRotation">
+  <button type="button" class="btn btn-success <?php echo $is_readonly ? 'd-none' : ''; ?>" id="btnSaveNewCrewRotation">
     <i class="fa fa-save"></i> Save Rotation
   </button>
 </div>
