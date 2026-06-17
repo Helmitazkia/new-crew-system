@@ -135,4 +135,123 @@ class CrewRotation_Down extends CrewRotation
             );
         }
     }
+
+    public function update_down_type()
+    {
+        $idcrewrotation = $this->input->post('idcrewrotation');
+        $batch_id = $this->input->post('batch_id');
+        if (empty($idcrewrotation) && empty($batch_id)) {
+            $this->output->set_content_type('application/json')->set_output(
+                json_encode(array('status' => false, 'message' => 'idcrewrotation or batch_id required'))
+            );
+            return;
+        }
+
+        $username = $this->session->userdata('userName') ?: 'system';
+        $currentDate = date('Ymd/H:i:s');
+
+        $signoffdt = trim((string) $this->input->post('signoffdt'));
+        $signoffremark = trim((string) $this->input->post('signoffremark'));
+        $estremark = trim((string) $this->input->post('estremark'));
+
+        $shared = array(
+            'status_crew_change'      => 'Down',
+            'signoffdt'               => ($signoffdt && $signoffdt !== '') ? $signoffdt : '0000-00-00',
+            'estremark'               => ($estremark !== '') ? $estremark : null,
+            'signoffremark'           => ($signoffremark !== '') ? $signoffremark : null,
+            'updusrdt'                => $username . '/' . $currentDate,
+        );
+
+        $idpersons = $this->input->post('idperson');
+        $idpersons = is_array($idpersons) ? $idpersons : ($idpersons ? array($idpersons) : array());
+        $idpersons = array_values(array_filter(array_map('trim', array_map('strval', $idpersons))));
+
+        if (!empty($batch_id)) {
+            $batch_rows = $this->db->query("SELECT idcrewrotation, idperson, status FROM tblcrewrotation WHERE deletests = '0' AND BatchID = ?", array($batch_id))->result_array();
+            if (empty($batch_rows)) {
+                $this->output->set_content_type('application/json')->set_output(
+                    json_encode(array('status' => false, 'message' => 'Batch not found'))
+                );
+                return;
+            }
+
+            $existing_pids = array();
+            foreach ($batch_rows as $br) {
+                if ($br['idperson']) {
+                    $existing_pids[(string)$br['idperson']] = array('idcrewrotation' => $br['idcrewrotation'], 'idperson' => $br['idperson']);
+                }
+            }
+
+            $idpersons_mapped = array();
+            foreach ($idpersons as $p) {
+                $idpersons_mapped[(string)$p] = $p;
+            }
+
+            foreach ($batch_rows as $br) {
+                $pidKey = (string)$br['idperson'];
+                if (!array_key_exists($pidKey, $idpersons_mapped)) {
+                    if ($br['status'] !== 'Joined' && $br['status'] !== 'Cancel') {
+                        $this->db->where('idcrewrotation', $br['idcrewrotation']);
+                        $this->db->update('tblcrewrotation', array('deletests' => 1, 'updusrdt' => $username . '/' . $currentDate));
+                    }
+                } else {
+                    $this->db->where('idcrewrotation', $br['idcrewrotation']);
+                    $this->db->update('tblcrewrotation', $shared);
+                }
+            }
+
+            foreach ($idpersons_mapped as $pidKey => $pidVal) {
+                if (!array_key_exists($pidKey, $existing_pids)) {
+                    $ins = array(
+                        'idperson' => $pidVal,
+                        'BatchID' => $batch_id,
+                        'replacement_idperson' => null,
+                        'replacement_rank' => null,
+                        'status_crew_change' => 'Down',
+                        'status' => 'Submit',
+                        'signonrank' => null,
+                        'kdcmprec' => null,
+                        'signondt' => null,
+                        'signonvsl' => null,
+                        'estsignoffdt' => '0000-00-00',
+                        'signonport' => null,
+                        'signondesc' => null,
+                        'lastvsl' => null,
+                        'no_pkl' => null,
+                        'signoffdt_onsigner' => '0000-00-00',
+                        'signoffremark_onsigner' => null,
+                        'next_vessel' => null,
+                        'addusrdt' => $username . '/' . $currentDate,
+                        'deletests' => 0,
+                    );
+                    foreach (array('signoffdt', 'estremark', 'signoffremark') as $k) {
+                        $ins[$k] = isset($shared[$k]) ? $shared[$k] : null;
+                    }
+                    $this->db->insert('tblcrewrotation', $ins);
+                }
+            }
+        } else {
+            if (empty($idpersons)) {
+                $this->output->set_content_type('application/json')->set_output(
+                    json_encode(array('status' => false, 'message' => 'Candidate Down(s) is required'))
+                );
+                return;
+            }
+            $data = array_merge($shared, array(
+                'idperson' => $idpersons[0],
+            ));
+            
+            $this->db->where('idcrewrotation', $idcrewrotation);
+            $this->db->update('tblcrewrotation', $data);
+            
+            $row_db = $this->db->query("SELECT status FROM tblcrewrotation WHERE idcrewrotation = ?", array($idcrewrotation))->row_array();
+            if ($row_db && strtoupper($row_db['status']) === 'JOINED') {
+                $this->_syncRotationToContract($idcrewrotation);
+            }
+        }
+
+        $this->output->set_content_type('application/json')->set_output(
+            json_encode(array('status' => true, 'message' => 'Data Down updated successfully'))
+        );
+    }
 }

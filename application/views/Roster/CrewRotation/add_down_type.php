@@ -7,6 +7,7 @@ $is_edit = (!empty($batch_id_val)) ? true : false;
     <div class="col-md-12">
         <form id="formCrewRotationDown">
             <input type="hidden" name="batch_id" value="<?php echo htmlspecialchars($batch_id_val); ?>">
+            <input type="hidden" name="idcrewrotation" value="<?php echo isset($row['idcrewrotation']) ? htmlspecialchars($row['idcrewrotation']) : ''; ?>">
             
             <div class="card mb-3 shadow-sm border-0">
                 <?php
@@ -249,8 +250,12 @@ $(document).ready(function() {
 
         var formData = form.serialize();
 
+        var url = isEditMode 
+            ? "<?php echo base_url('CrewRotation/CrewRotation_Down/update_down_type'); ?>"
+            : "<?php echo base_url('CrewRotation/CrewRotation_Down/save_down_type'); ?>";
+
         $.ajax({
-            url: "<?php echo base_url('CrewRotation/CrewRotation_Down/save_down_type'); ?>",
+            url: url,
             type: "POST",
             data: formData,
             dataType: "json",
