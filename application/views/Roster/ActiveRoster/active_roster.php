@@ -82,7 +82,9 @@ $(document).ready(function() {
         data: 'fullName',
         render: function(data, type, row) {
           var name = data || '-';
-          return '<a href="#" class="crew-name crew-name-link text-dark text-decoration-none" onclick="showCrewDetail(\'' + (row.idperson || '') + '\'); return false;" title="View detail">' + (name.replace(/</g, '&lt;').replace(/>/g, '&gt;')) + '</a>';
+          return '<a href="#" class="crew-name crew-name-link text-dark text-decoration-none" onclick="showCrewDetail(\'' +
+            (row.idperson || '') + '\'); return false;" title="View detail">' + (name.replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')) + '</a>';
         }
       },
       {
@@ -126,8 +128,13 @@ $(document).ready(function() {
             dateNow.setHours(0, 0, 0, 0);
             estDate.setHours(0, 0, 0, 0);
             const diffDays = Math.ceil((estDate - dateNow) / (1000 * 60 * 60 * 24));
-            if (diffDays < 0) displayStatus = 'Stand By';  // Expired Over
-            
+			
+			if(row.signoffdt != '0000-00-00')
+			{
+				if (diffDays < 0) displayStatus = 'Stand By'; // Expired Over
+			}
+			// if (diffDays < 0) displayStatus = 'Stand By'; // Expired Over			
+
           }
           if (type === 'display') {
             let cls = displayStatus === 'Stand By' ? 'bg-warning text-dark' : 'bg-success';
@@ -142,8 +149,10 @@ $(document).ready(function() {
         render: function(data, type, row) {
           const hasSignoff = row.signoffdt && row.signoffdt !== '' && row.signoffdt !== '0000-00-00';
           const dateRaw = hasSignoff ? row.signoffdt : (data || '');
-          const displayText = hasSignoff ? (row.signoffdt_formatted || '') : (row.estsignoffdt_formatted || '');
-          if (!dateRaw || dateRaw === '0000-00-00') return '<span class="text-muted">-</span><span class="d-none contract-range-label"></span>';
+          const displayText = hasSignoff ? (row.signoffdt_formatted || '') : (row.estsignoffdt_formatted ||
+            '');
+          if (!dateRaw || dateRaw === '0000-00-00')
+            return '<span class="text-muted">-</span><span class="d-none contract-range-label"></span>';
 
           const dateNow = new Date();
           const estDate = new Date(dateRaw);
@@ -189,9 +198,13 @@ $(document).ready(function() {
           if (type === 'display') {
             let warningMsg = '';
             if (diffDays < 0) {
-             // warningMsg = `<br><span style="font-size:10px; color:${noteColor}; font-weight: bold;">Expired Over ${getDuration(diffDays)}</span>`;
+              if (row.signoffdt == '0000-00-00' || row.signoffdt == '') {
+                noteColor = '#ff0000';
+                warningMsg = `<br><span style="font-size:10px; color:${noteColor}; font-weight: bold;">Expired Over ${getDuration(diffDays)}</span>`;
+              }
             } else {
-              warningMsg = `<br><span style="font-size:10px; color:${noteColor}; font-weight: bold;">Expired In ${getDuration(diffDays)}</span>`;
+              warningMsg =
+                `<br><span style="font-size:10px; color:${noteColor}; font-weight: bold;">Expired In ${getDuration(diffDays)}</span>`;
             }
             return `<div>${displayText}${warningMsg}<span class="d-none contract-range-label">${rangeLabel}</span></div>`;
           }
@@ -273,14 +286,34 @@ $(document).ready(function() {
       let listContainer = dropdown.find('.filter-list');
 
       // ✅ FILTER KHUSUS KOLOM CONTRACT (Minggu/Bulan - mau abis)
-      const contractFilterOptions = [
-        { value: 'Expired Over', color: '#202020' },
-        { value: '1 Minggu', color: '#CC0000' },
-        { value: '1 Bulan', color: '#FF9900' },
-        { value: '3 Bulan', color: '#FFCC00' },
-        { value: '6 Bulan', color: '#00CC00' },
-        { value: '12 Bulan', color: '#00CC00' },
-        { value: '>12 Bulan', color: '#000066' }
+      const contractFilterOptions = [{
+          value: 'Expired Over',
+          color: '#202020'
+        },
+        {
+          value: '1 Minggu',
+          color: '#CC0000'
+        },
+        {
+          value: '1 Bulan',
+          color: '#FF9900'
+        },
+        {
+          value: '3 Bulan',
+          color: '#FFCC00'
+        },
+        {
+          value: '6 Bulan',
+          color: '#00CC00'
+        },
+        {
+          value: '12 Bulan',
+          color: '#00CC00'
+        },
+        {
+          value: '>12 Bulan',
+          color: '#000066'
+        }
       ];
       if (colIndex === 10) {
         dropdown.find('.filter-search').hide();
@@ -600,6 +633,7 @@ $(document).on('click', function(e) {
   border-radius: 3px;
   transition: outline 0.15s ease, box-shadow 0.15s ease;
 }
+
 .crew-name-link:hover {
   outline: 1px solid var(--crew-blue);
   box-shadow: 0 0 0 1px var(--crew-blue);

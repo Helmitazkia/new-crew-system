@@ -353,18 +353,24 @@
   // Validasi sama dengan active_roster.php: Expired Over (tanggal lewat) = Stand By; Expired In = On board
   function computeStatusFromRow(row) {
 
-    if (row.newapplicent == '1') {
+     //ini untuk Revisi On board dan Stand By 
+    if (row.newapplicent == '1' || row.signoffdt !== '0000-00-00') {
       return 'Stand By';
+    }else if(row.newapplicent == '0' && row.signoffdt == '0000-00-00') {
+      return 'On board';
     }
-    var hasSignoff = row.signoffdt && row.signoffdt !== '' && row.signoffdt !== '0000-00-00';
-    var dateRaw = hasSignoff ? row.signoffdt : (row.estsignoffdt || '');
-    if (!dateRaw || dateRaw === '0000-00-00') return 'On board';
-    var dateNow = new Date();
-    var estDate = new Date(dateRaw);
-    dateNow.setHours(0, 0, 0, 0);
-    estDate.setHours(0, 0, 0, 0);
-    var diffDays = Math.ceil((estDate - dateNow) / (1000 * 60 * 60 * 24));
-    return diffDays < 0 ? 'Stand By' : 'On board';
+    
+    
+    // var hasSignoff = row.signoffdt && row.signoffdt !== '' && row.signoffdt !== '0000-00-00';
+    // var dateRaw = hasSignoff ? row.signoffdt : (row.estsignoffdt || '');
+    // if (!dateRaw || dateRaw === '0000-00-00') return 'On board';
+    // var dateNow = new Date();
+    // var estDate = new Date(dateRaw);
+    // dateNow.setHours(0, 0, 0, 0);
+    // estDate.setHours(0, 0, 0, 0);
+    // var diffDays = Math.ceil((estDate - dateNow) / (1000 * 60 * 60 * 24));
+    // //return diffDays < 0 ? 'Stand By' : 'On board';
+
   }
   var row = <?php echo isset($row) && $row ? json_encode($row) : 'null'; ?>;
   var batch_rows = <?php echo isset($batch_rows) ? json_encode($batch_rows) : '[]'; ?>;
