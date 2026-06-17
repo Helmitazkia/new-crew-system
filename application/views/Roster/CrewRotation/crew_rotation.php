@@ -629,10 +629,21 @@ $(document).ready(function() {
             displayStatus = "Delete";
             badgeClass = "bg-dark";
           } else {
-            if (data === "Submit") badgeClass = "bg-success";
-            else if (data === "Cancel") badgeClass = "bg-danger";
-            else if (data === "Joined") badgeClass = "bg-primary";
-            displayStatus = (data === "Submit") ? "Planned" : (data || "");
+            if (data === "Submit") {
+              badgeClass = "bg-success";
+              displayStatus = "Planned";
+            } else if (data === "Cancel") {
+              badgeClass = "bg-danger";
+              displayStatus = "Cancel";
+            } else if (data === "Joined" && row.status_crew_change === 'Down') {
+              badgeClass = "bg-warning text-dark";
+              displayStatus = "Down";
+            } else if (data === "Joined") {
+              badgeClass = "bg-primary";
+              displayStatus = "Joined";
+            } else {
+              displayStatus = data || "";
+            }
           }
           return '<span class="badge ' + badgeClass + ' badge-status">' + displayStatus + "</span>";
         }
@@ -1107,20 +1118,29 @@ $(document).ready(function() {
   $(document).on("click", "#btnNewCrewRotation", function() {
     Swal.fire({
       title: 'Tipe Crew Rotation',
-      text: "Pilih tipe rotasi yang ingin Anda buat:",
+      html: `
+        <div class="d-flex flex-column text-start gap-2 mt-3">
+            <button class="btn btn-outline-primary p-3 text-start d-flex flex-column mb-2" onclick="Swal.clickConfirm()">
+                <div class="fw-bold mb-1"><i class="fa fa-exchange-alt me-2"></i>Crew Rotation (Change)</div>
+                <small class="text-muted" style="white-space: normal;">Digunakan untuk rotasi normal: menggantikan kru yang sedang Onboard dengan kandidat baru.</small>
+            </button>
+            <button class="btn btn-outline-success p-3 text-start d-flex flex-column mb-2" onclick="Swal.clickDeny()">
+                <div class="fw-bold mb-1"><i class="fa fa-user-plus me-2"></i>Embarkation Only (New)</div>
+                <small class="text-muted" style="white-space: normal;">Digunakan untuk memberangkatkan kru baru (sign-on) untuk mengisi kekosongan, tanpa ada kru yang turun.</small>
+            </button>
+            <button class="btn btn-outline-warning text-dark p-3 text-start d-flex flex-column" onclick="Swal.clickCancel()">
+                <div class="fw-bold mb-1"><i class="fa fa-arrow-down me-2"></i>Disembarkation Only (Down)</div>
+                <small class="text-muted" style="white-space: normal;">Digunakan untuk memulangkan kru (sign-off) tanpa ada kandidat penggantinya.</small>
+            </button>
+        </div>
+      `,
       icon: 'question',
       scrollbarPadding: false,
-      showDenyButton: true,
-      showCancelButton: true,
-      confirmButtonText: '<i class="fa fa-exchange-alt"></i> Change',
-      denyButtonText: '<i class="fa fa-user-plus"></i> New',
-      cancelButtonText: '<i class="fa fa-arrow-down"></i> Down',
-      customClass: {
-        confirmButton: 'btn btn-primary me-2',
-        denyButton: 'btn btn-success me-2',
-        cancelButton: 'btn btn-warning'
-      },
-      buttonsStyling: false
+      showConfirmButton: false,
+      showDenyButton: false,
+      showCancelButton: false,
+      showCloseButton: true,
+      width: '32em'
     }).then((result) => {
       var endpoint = "";
       if (result.isConfirmed) {
@@ -1129,13 +1149,11 @@ $(document).ready(function() {
       } else if (result.isDenied) {
         var rootUrl = baseUrlCrewRotation.replace('/CrewRotation/CrewRotation', '');
         endpoint = rootUrl + "/CrewRotation/CrewRotation_New/detail"; 
-        $('#modalCrewRotationFormLabel').text('Add Crew Rotation - New');
+        $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Embarkation Only (New)');
       } else if (result.dismiss === Swal.DismissReason.cancel) {
-        // Swal.fire('Info', 'Fitur Down masih dalam tahap pengembangan', 'info');
-        // return;
         var rootUrl = baseUrlCrewRotation.replace('/CrewRotation/CrewRotation', '');
         endpoint = rootUrl + "/CrewRotation/CrewRotation_Down/detail"; 
-        $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Down');
+        $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Disembarkation Only (Down)');
       } else {
         return;
       }
