@@ -9,6 +9,26 @@ $is_edit = (!empty($batch_id_val)) ? true : false;
             <input type="hidden" name="batch_id" value="<?php echo htmlspecialchars($batch_id_val); ?>">
             
             <div class="card mb-3 shadow-sm border-0">
+                <?php
+$batchHasJoined = false;
+$batchAllCancel = false;
+
+if (isset($row) && is_array($row) && isset($row['status'])) {
+    $status_rotation = strtoupper($row['status']);
+    if ($status_rotation === 'JOINED') $batchHasJoined = true;
+    if ($status_rotation === 'CANCEL') $batchAllCancel = true;
+} else if (isset($batch_rows) && is_array($batch_rows) && count($batch_rows) > 0) {
+    $allCancel = true;
+    foreach($batch_rows as $br) {
+        $st = (isset($br['status'])) ? strtoupper($br['status']) : '';
+        if ($st === 'JOINED') $batchHasJoined = true;
+        if ($st !== 'CANCEL') $allCancel = false;
+    }
+    $batchAllCancel = $allCancel;
+}
+
+$is_readonly = ($batchHasJoined || $batchAllCancel);
+?>
                 <div class="card-header bg-light border-bottom-0 py-3">
                     <h6 class="mb-0 fw-bold text-primary"><i class="fa fa-user-minus me-2"></i> Down Details</h6>
                 </div>
@@ -17,7 +37,7 @@ $is_edit = (!empty($batch_id_val)) ? true : false;
                         <!-- Candidate Down(s) -->
                         <div class="col-md-12 mb-3">
                             <label class="form-label fw-semibold">Candidate Down(s) <span class="text-danger">*</span></label>
-                            <select class="form-control selectpicker-down" name="idperson[]" id="new_idperson_multi" data-live-search="true" data-size="8" multiple required <?php echo $is_edit ? 'disabled' : ''; ?>>
+                            <select class="form-control selectpicker-down" name="idperson[]" id="new_idperson_multi" data-live-search="true" data-size="8" multiple required <?php echo $is_edit  ?>>
                                 <!-- Options will be populated via JS -->
                             </select>
                             <div class="alert alert-primary py-1 px-2 mb-0 mt-1 border-0 bg-primary bg-opacity-10 text-primary" style="font-size: 11px;">
@@ -53,7 +73,7 @@ $is_edit = (!empty($batch_id_val)) ? true : false;
             <!-- Submit Button -->
             <div class="text-end mt-4 border-top pt-3">
                 <button type="button" class="btn btn-secondary px-4 me-2" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary px-4" id="btnSaveNewCrewRotationDown">
+                <button type="button" class="btn btn-primary px-4 <?php echo $is_readonly ? 'd-none' : ''; ?>" id="btnSaveNewCrewRotationDown">
                     <i class="fa fa-save me-2"></i> <?php echo $is_edit ? 'Update Data' : 'Save Down'; ?>
                 </button>
             </div>
@@ -84,13 +104,48 @@ $(document).ready(function() {
         });
     }
 
+    var existingRow = <?php echo isset($row) && $row ? json_encode($row) : 'null'; ?>;
+    var batchRows = <?php echo isset($batch_rows) && $batch_rows ? json_encode($batch_rows) : '[]'; ?>;
+    var isEditMode = existingRow && existingRow.idcrewrotation ? true : false;
+
     var onboardPersons = rawPersonOptions.filter(function(p) {
         var isOff = p.signoffdt && p.signoffdt !== '0000-00-00';
         return !isOff; // Not off means they are currently onboard
     });
 
+    if (isEditMode) {
+        var existingIds = {};
+        onboardPersons.forEach(function(o) { existingIds[o.value] = true; });
+        batchRows.forEach(function(br) {
+            if (br.idperson && !existingIds[br.idperson]) {
+                var text = (br.onboard_name || '') ? (br.onboard_name + ' (' + br.idperson + ')') : ('(' + br.idperson + ')');
+                onboardPersons.push({ value: br.idperson.toString(), text: text });
+                existingIds[br.idperson] = true;
+            }
+        });
+    }
+
     populateDropdown('#new_idperson_multi', onboardPersons);
     populateDropdown('#new_signoffremark', rawSignoffRemarks);
+
+    if (isEditMode) {
+        var pids = [];
+        if (batchRows.length > 0) {
+            $.each(batchRows, function(i, br) {
+                if (br.idperson && br.deletests !== '1') {
+                    pids.push(br.idperson);
+                }
+            });
+        } else if (existingRow.idperson) {
+            pids.push(existingRow.idperson);
+        }
+
+        $('#new_idperson_multi').val(pids);
+        var sdt = existingRow.signoffdt;
+        if (sdt && sdt !== '0000-00-00') $('#new_signoffdt').val(sdt.substring(0,10));
+        $('#new_signoffremark').val(existingRow.signoffremark);
+        $('#new_estremark').val(existingRow.estremark);
+    }
 
     // Initialize Selectpicker
     $('.selectpicker-down').each(function() {

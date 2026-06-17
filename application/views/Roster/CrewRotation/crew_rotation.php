@@ -647,13 +647,14 @@ $(document).ready(function() {
         className: "text-center",
         render: function(data, type, row) {
           var disabled = (row.status === "Cancel" || row.status === "Joined") ? " disabled" : "";
+          var joinedLabel = (row.status_crew_change === 'Down') ? 'Down' : 'Joined';
           var statusOpt =
             '<select class="form-select form-select-sm d-inline-block w-auto status-select" data-id="' + row
             .idcrewrotation + '" data-batch-id="' + (row.batch_id || "") + '" data-current="' + (row.status || "") + '"' + disabled + '>' +
             '<option value="Submit"' + (row.status === "Submit" ? " selected" : "") + '>Planned</option>' +
             '<option value="Cancel"' + (row.status === "Cancel" ? " selected" : "") + '>Cancel</option>' +
             '<option value="Joined"' + (row.status === "Joined" ? " selected" : "") +
-            '>Joined</option></select>';
+            '>' + joinedLabel + '</option></select>';
           var editBtnClass = row.status_crew_change === 'New' ? 'btn-outline-success' : row.status_crew_change === 'Down' ? 'btn-outline-danger' : 'btn-outline-primary';
           return '<div class="d-flex gap-1 justify-content-center flex-wrap">' +
             '<button type="button" class="btn btn-sm ' + editBtnClass + '" onclick="showCrewDetail(' + row

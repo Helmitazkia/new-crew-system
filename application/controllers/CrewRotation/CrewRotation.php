@@ -631,7 +631,18 @@ class CrewRotation extends CI_Controller
         // Validasi kelengkapan data jika status = Joined
         if ($status === 'Joined') {
             $status_crew_change = isset($row->status_crew_change) ? $row->status_crew_change : 'Change';
-            if ($status_crew_change === 'New' && $batch_id !== '') {
+            if ($status_crew_change === 'Down') {
+                $checkData = $this->db->query(
+                    "SELECT idperson, signoffdt FROM tblcrewrotation WHERE idcrewrotation = ? AND deletests = '0'",
+                    array($idcrewrotation)
+                )->row();
+                if (!$checkData || empty($checkData->idperson) || empty($checkData->signoffdt) || $checkData->signoffdt === '0000-00-00') {
+                    $this->output->set_content_type('application/json')->set_output(
+                        json_encode(array('status' => false, 'message' => 'Data belum lengkap untuk Down. Pastikan Candidate dan Sign Off Date sudah terisi.'))
+                    );
+                    return;
+                }
+            } elseif ($status_crew_change === 'New' && $batch_id !== '') {
                 $checkRows = $this->db->query(
                     "SELECT kdcmprec, signondt, estsignoffdt, signonrank, signonvsl, signonport, signondesc, no_pkl 
                      FROM tblcrewrotation 
@@ -684,8 +695,8 @@ class CrewRotation extends CI_Controller
             $status_crew_change = isset($row->status_crew_change) ? $row->status_crew_change : 'Change';
             
             foreach ($others as $o) {
-                if ($status_crew_change === 'New') {
-                    // Tipe New: Semua ikut Joined dan dibuatkan contract
+                if ($status_crew_change === 'New' || $status_crew_change === 'Down') {
+                    // Tipe New/Down: Semua ikut Joined dan disinkronisasikan ke contract
                     $this->db->where('idcrewrotation', $o['idcrewrotation']);
                     $this->db->update('tblcrewrotation', array(
                         'status'   => 'Joined',
@@ -724,7 +735,7 @@ class CrewRotation extends CI_Controller
     private function _updateOffSignerContract($idperson, $signoffdt, $signoffremark = '')
     {
         $signoffdt = trim((string) $signoffdt);
-        if ($signoffdt === '' || $signoffdt === '0000-00-00') return;
+        if ($signoffdt === '' || $signoffdt === '0000-00-00') return 0;
         $off_contract = $this->db->query(
             "SELECT idcontract FROM tblcontract WHERE idperson = ?
             --  AND (signoffdt = '0000-00-00' OR signoffdt IS NULL OR signoffdt = '')
@@ -738,7 +749,9 @@ class CrewRotation extends CI_Controller
             }
             $this->db->where('idcontract', $off_contract->idcontract);
             $this->db->update('tblcontract', $upd);
+            return $off_contract->idcontract;
         }
+        return 0;
     }
 
     private function _syncRotationToContract($idcrewrotation)
@@ -752,13 +765,23 @@ class CrewRotation extends CI_Controller
         }
         $sql = "SELECT R.replacement_idperson, R.idperson, R.kdcmprec, R.signondt, R.signoffdt, R.estsignoffdt,
                 R.signonrank, R.signonvsl, R.signonport, R.signondesc, R.lastvsl, R.no_pkl, R.estremark, R.signoffremark,
-                R.signoffdt_onsigner, R.signoffremark_onsigner, R.is_double_up,
+                R.signoffdt_onsigner, R.signoffremark_onsigner, R.is_double_up, R.status_crew_change,
                 L.nmvsl AS lastvsl_nmvsl
                 FROM tblcrewrotation R
                 LEFT JOIN mstvessel L ON L.kdvsl = R.lastvsl AND L.deletests = '0'
                 WHERE R.idcrewrotation = ? AND R.deletests = '0'";
         $row = $this->db->query($sql, array($idcrewrotation))->row();
         if (!$row) return;
+
+        // Khusus untuk tipe "Down", prosesnya hanya update off-signer, tidak insert contract baru
+        if (isset($row->status_crew_change) && $row->status_crew_change === 'Down') {
+            if (!empty($row->idperson)) {
+                $idcontract_updated = $this->_updateOffSignerContract($row->idperson, $row->signoffdt, isset($row->signoffremark) ? $row->signoffremark : '');
+                $this->db->where('idcrewrotation', $idcrewrotation);
+                $this->db->update('tblcrewrotation', array('idcontract_synced' => $idcontract_updated));
+            }
+            return;
+        }
 
         $is_double_up = isset($row->is_double_up) ? (int)$row->is_double_up : 0;
         if (!$is_double_up && !empty($row->idperson)) {
