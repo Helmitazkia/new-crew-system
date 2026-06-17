@@ -124,16 +124,14 @@ $(document).ready(function() {
             'Not For Emp': 'bg-dark text-white'
           };
           let displayStatus = data;
-          const hasContract = row.signoffdt || row.estsignoffdt;
-          if ((data === 'On board' || data === 'Stand By' || hasContract) && hasContract) {
-            const dateRaw = (row.signoffdt && row.signoffdt !== '0000-00-00') ? row.signoffdt : (row.estsignoffdt || '');
-            displayStatus = 'On board';
-            if (dateRaw && dateRaw !== '0000-00-00') {
-              const today = new Date();
-              const end = new Date(dateRaw);
-              today.setHours(0, 0, 0, 0);
-              end.setHours(0, 0, 0, 0);
-              if (Math.ceil((end - today) / 86400000) < 0) displayStatus = 'Stand By';
+          const signoffValid = (row.signoffdt && row.signoffdt !== '0000-00-00');
+          const estSignoffValid = (row.estsignoffdt && row.estsignoffdt !== '0000-00-00');
+
+          if (data === 'On board' || data === 'Stand By' || data === null || data === '' || row.signoffdt || row.estsignoffdt) {
+            if (signoffValid && estSignoffValid) {
+              displayStatus = 'Stand By';
+            } else if (!row.signoffdt || row.signoffdt === '0000-00-00' || row.signoffdt === '') {
+              displayStatus = 'On board';
             }
           }
           if (type === 'display') {

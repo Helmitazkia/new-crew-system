@@ -106,10 +106,13 @@ class MasterPersonal extends CI_Controller {
             if ($statusPerson === null || $statusPerson === '') {
                 $signoff = isset($row['signoffdt']) ? $row['signoffdt'] : '';
                 $estSignoff = isset($row['estsignoffdt']) ? $row['estsignoffdt'] : '';
+                
                 $signoffValid = ($signoff !== '' && $signoff !== null && $signoff !== '0000-00-00');
-                if ($signoffValid && $signoff <= $today) {
+                $estSignoffValid = ($estSignoff !== '' && $estSignoff !== null && $estSignoff !== '0000-00-00');
+
+                if ($signoffValid && $estSignoffValid) {
                     $statusPerson = 'Stand By';
-                } elseif ($signoff !== '' || $estSignoff !== '') {
+                } elseif ($signoff == '' || $signoff == '0000-00-00') {
                     $statusPerson = 'On board';
                 }
             }
