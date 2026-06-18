@@ -10,7 +10,7 @@
                   <tr>
                     <th class="text-center">No</th>
                     <th class="text-left">Full Name Crew</th>
-                    <th>Rank Applied <br><span class="filter-icon">☰</span></th>
+                    <th>Rank <br><span class="filter-icon">☰</span></th>
                     <th>Last Experience <br> <span class="filter-icon">☰</span></th>
                     <th>Gender <br><span class="filter-icon text-right">☰</span></th>
                     <th>Religion <br><span class="filter-icon">☰</span></th>
@@ -64,6 +64,9 @@ $(document).ready(function() {
       lengthMenu: ' _MENU_ &nbsp; Entries',
       loadingRecords: '',
     },
+    order: [
+      [1, "asc"]
+    ],
     ajax: {
       url: "<?php echo base_url('ActiveRoster/ActiveRoster/getAllData_activeRoster'); ?>",
       type: "POST",
@@ -74,9 +77,9 @@ $(document).ready(function() {
     columns: [{
         data: null,
         className: 'text-center',
-        render: function(data, type, row, meta) {
-          return meta.row + 1;
-        }
+        searchable: false,
+        orderable: false,
+        defaultContent: ''
       },
       {
         data: 'fullName',
@@ -88,7 +91,14 @@ $(document).ready(function() {
         }
       },
       {
-        data: 'applyfor'
+        data: 'applyfor',
+        type: 'num',
+        render: function(data, type, row) {
+          if (type === 'sort') {
+            return row.rank_urutan;
+          }
+          return data;
+        }
       },
       {
         data: 'rankexp'
@@ -233,7 +243,12 @@ $(document).ready(function() {
     }
   });
 
-
+  table.on('draw.dt', function() {
+    let info = table.page.info();
+    table.column(0, { search: 'applied', order: 'applied', page: 'applied' }).nodes().each(function(cell, i) {
+      cell.innerHTML = i + 1 + info.start;
+    });
+  });
 
 
   //Column Search - AMBIL ROW SEARCH TERAKHIR
@@ -251,10 +266,11 @@ $(document).ready(function() {
 
     inputElemen.on('keyup change', function() {
       if (table.column(i).search() !== this.value) {
-        table
-          .column(i)
-          .search(this.value)
-          .draw();
+        table.column(i).search(this.value);
+        if (i !== 1 && this.value !== '') {
+            table.order([2, 'asc'], [1, 'asc']);
+        }
+        table.draw();
       }
     });
   });
@@ -326,6 +342,34 @@ $(document).ready(function() {
             </label>
           `);
         });
+      } else if (colIndex === 2) {
+        // ✅ KHUSUS RANK APPLIED URUTKAN BERDASARKAN urutan
+        try {
+          let rawData = table.ajax.json().data;
+          let rankMap = new Map();
+          if (rawData) {
+            rawData.forEach(r => {
+              let val = r.applyfor;
+              if (val && val !== null && val !== '') {
+                if (!rankMap.has(val)) {
+                  rankMap.set(val, parseInt(r.rank_urutan) || 999);
+                }
+              }
+            });
+            let rankArray = Array.from(rankMap.entries()).map(e => ({ rank: e[0], urutan: e[1] }));
+            rankArray.sort((a, b) => a.urutan - b.urutan);
+            rankArray.forEach(item => {
+              let displayVal = String(item.rank).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+              listContainer.append(`
+                <label>
+                  <input type="checkbox" value="${displayVal}"> ${displayVal}
+                </label>
+              `);
+            });
+          }
+        } catch (e) {
+          console.warn('Error loading filter data for Rank Applied:', e);
+        }
       } else {
         // ✅ AMBIL DATA SETELAH TABLE READY
         try {
@@ -420,10 +464,16 @@ $(document).ready(function() {
             v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
           );
           let regex = escapedValues.join('|');
-          table.column(colIndex).search(regex, true, false).draw();
+          table.column(colIndex).search(regex, true, false);
         } else {
-          table.column(colIndex).search('').draw();
+          table.column(colIndex).search('');
         }
+
+        if (selected.length > 0 && colIndex !== 1) {
+            table.order([2, 'asc'], [1, 'asc']);
+        }
+
+        table.draw();
         dropdown.show();
         $('.filter-dropdown').hide();
       });
