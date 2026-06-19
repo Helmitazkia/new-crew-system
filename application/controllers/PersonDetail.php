@@ -812,11 +812,15 @@ class PersonDetail extends CI_Controller {
         $username    = $this->session->userdata('username');
         $currentDate = date('Y-m-d H:i:s');
 
+        $percentage_home = trim($this->input->post('percentage_home'));
+        $percentage_board = 100 - (float)$percentage_home;
+
         $data = array(
             'bank_name'              => trim($this->input->post('bank_home')),
             'norek'                  => trim($this->input->post('norek_home')),
             'norek_name'             => trim($this->input->post('norek_name_home')),
-            'percentage_home_salary' => trim($this->input->post('percentage_home')),
+            'percentage_home_salary' => $percentage_home,
+            'percentage_board_salary'=> $percentage_board,
             'updusrdt' => $currentDate . ' - ' . $username
         );
 
@@ -847,11 +851,15 @@ class PersonDetail extends CI_Controller {
         $username    = $this->session->userdata('username');
         $currentDate = date('Y-m-d H:i:s');
 
+        $percentage_board = trim($this->input->post('percentage_board'));
+        $percentage_home = 100 - (float)$percentage_board;
+
         $data = array(
             'bank_name_boat'              => trim($this->input->post('bank_board')),
             'norek_boat'             => trim($this->input->post('norek_board')),
             'norek_name_boat'        => trim($this->input->post('norek_name_board')),
-            'percentage_board_salary' => trim($this->input->post('percentage_board')),
+            'percentage_board_salary' => $percentage_board,
+            'percentage_home_salary'  => $percentage_home,
             'updusrdt' => $currentDate . ' - ' . $username
         );
 

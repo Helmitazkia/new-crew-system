@@ -54,6 +54,9 @@
 $(document).ready(function() {
 
   let table = $('#crewTable').DataTable({
+    dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end custom-btn'>>" +
+         "<'row'<'col-md-12'tr>>" +
+         "<'row mt-2'<'col-md-6'i><'col-md-6 d-flex justify-content-end'p>>",
     stateSave: true,
     stateDuration: -1,
     processing: true,
@@ -240,6 +243,9 @@ $(document).ready(function() {
     ],
     initComplete: function() {
       initDropdownFilters(this.api());
+      
+      // Inject Export PDF Button into the custom DOM container
+      $('.custom-btn').html('<button type="button" id="btnExportPdf"><i class="fas fa-file-export" style="margin-right: 5px;"></i> Export PDF</button>');
     }
   });
 
@@ -248,6 +254,44 @@ $(document).ready(function() {
     table.column(0, { search: 'applied', order: 'applied', page: 'applied' }).nodes().each(function(cell, i) {
       cell.innerHTML = i + 1 + info.start;
     });
+  });
+
+  $(document).on('click', '#btnExportPdf', function() {
+    let filteredData = table.rows({ search: 'applied' }).data().toArray();
+    let idpersons = filteredData.map(row => row.idperson);
+    
+    if(idpersons.length === 0) {
+        if(typeof Swal !== 'undefined') Swal.fire({ icon: 'warning', title: 'Empty Data', text: 'No data to export!' });
+        else alert("No data to export!");
+        return;
+    }
+    
+    // Check if status is filtered by getting unique status values from the filtered set
+    let statusFilter = '';
+    let statuses = [...new Set(filteredData.map(row => row.statusPerson))];
+    if(statuses.length === 1 && statuses[0]) {
+        statusFilter = statuses[0].toUpperCase();
+    } else {
+        statusFilter = 'ON BOARD & STAND BY';
+    }
+    
+    let form = $('<form>', {
+        action: "<?php echo base_url('ActiveRoster/ActiveRoster/exportPdf_activeRoster'); ?>",
+        method: 'POST',
+        target: '_blank'
+    }).append($('<input>', {
+        type: 'hidden',
+        name: 'idpersons',
+        value: JSON.stringify(idpersons)
+    })).append($('<input>', {
+        type: 'hidden',
+        name: 'statusFilter',
+        value: statusFilter
+    }));
+    
+    $('body').append(form);
+    form.submit();
+    form.remove();
   });
 
 
@@ -865,8 +909,22 @@ $(document).on('click', function(e) {
   float: left;
 }
 
-.dt-search {
-  float: right;
+/* Custom styles for Export Button */
+#btnExportPdf {
+  background-color: #d9534f;
+  color: white;
+  font-weight: bold;
+  padding: 6px 15px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  border: 1px solid #d43f3a;
+  transition: all 0.2s ease-in-out;
+  float: right; /* we can float the button itself right */
+}
+#btnExportPdf:hover {
+  background-color: #c9302c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 .dt-info {
