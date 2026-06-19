@@ -1035,6 +1035,29 @@
             </div>
           </div>
 
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const homePerc = document.querySelector('input[data-field="salary.home.percentage"]');
+                const boardPerc = document.querySelector('input[data-field="salary.board.percentage"]');
+                
+                if(homePerc && boardPerc) {
+                    homePerc.addEventListener('input', function() {
+                        let val = parseFloat(this.value) || 0;
+                        if(val > 100) { val = 100; this.value = val; }
+                        if(val < 0) { val = 0; this.value = val; }
+                        boardPerc.value = 100 - val;
+                    });
+                    
+                    boardPerc.addEventListener('input', function() {
+                        let val = parseFloat(this.value) || 0;
+                        if(val > 100) { val = 100; this.value = val; }
+                        if(val < 0) { val = 0; this.value = val; }
+                        homePerc.value = 100 - val;
+                    });
+                }
+            });
+          </script>
+
           <!-- Attachments -->
           <!-- <div class="col-6 mb-4">
             <div class="card shadow-sm">

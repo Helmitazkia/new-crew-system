@@ -52,7 +52,8 @@ class ActiveRoster extends CI_Controller {
             SELECT
                 A.idperson,
                 TRIM(CONCAT_WS(' ', A.fname, A.mname, A.lname)) AS fullName,
-                A.applyfor,
+                IFNULL(MR.nmrank, '') AS applyfor,
+                IFNULL(MR.urutan, 9999) AS rank_urutan,
                 A.gender,
                 A.religion,
                 A.dob AS birth_date,
@@ -74,13 +75,14 @@ class ActiveRoster extends CI_Controller {
                  WHERE R.replacement_idperson = A.idperson AND R.status = 'Submit' AND R.deletests = '0') AS next_vessel
             FROM mstpersonal A
             LEFT JOIN (
-                SELECT t.idperson, t.signonvsl, t.signoffdt, t.estsignoffdt
+                SELECT t.idperson, t.signonvsl, t.signoffdt, t.estsignoffdt, t.signonrank
                 FROM tblcontract t
                 INNER JOIN (
                     SELECT idperson, MAX(idcontract) AS max_idcontract
                     FROM tblcontract WHERE deletests = 0 GROUP BY idperson
                 ) x ON x.idperson = t.idperson AND x.max_idcontract = t.idcontract
             ) C ON A.idperson = C.idperson 
+            LEFT JOIN mstrank MR ON C.signonrank = MR.kdrank AND MR.urutan > 0
             LEFT JOIN tblkota K ON A.pob = K.KdKota 
             LEFT JOIN mstvessel D ON D.kdvsl = C.signonvsl
             $where
@@ -129,7 +131,8 @@ class ActiveRoster extends CI_Controller {
             $data[] = array(
                 'idperson'     => $row['idperson'],
                 'fullName'     => $row['fullName'],
-                'applyfor'     => strtoupper($row['applyfor']),
+                'applyfor'     => strtoupper(isset($row['applyfor']) ? $row['applyfor'] : ''),
+                'rank_urutan'  => $row['rank_urutan'],
                 'gender'       => $row['gender'],
                 'religion'     => $row['religion'],
                 'nmvsl'        => $row['nmvsl'],
@@ -147,5 +150,81 @@ class ActiveRoster extends CI_Controller {
         $this->output
             ->set_content_type('application/json')
             ->set_output(json_encode(array('success' => true, 'data' => $data)));
+    }
+
+    public function exportPdf_activeRoster()
+    {
+        $idpersons_json = $this->input->post('idpersons');
+        $statusFilter = $this->input->post('statusFilter');
+        
+        if (empty($idpersons_json)) {
+            show_error('No data to export or invalid request.');
+            return;
+        }
+
+        $idpersons = json_decode($idpersons_json, true);
+        if (empty($idpersons)) {
+            show_error('No data to export.');
+            return;
+        }
+
+        // Sanitize IDs (compatible with older PHP)
+        $ids_escaped = array();
+        foreach ($idpersons as $id) {
+            $ids_escaped[] = $this->db->escape_str($id);
+        }
+        $ids = implode("','", $ids_escaped);
+
+        $sql = "
+            SELECT 
+                A.idcontract,
+                A.idperson,
+                TRIM(CONCAT_WS(' ', D.fname, D.mname, D.lname)) AS fullName,
+                D.dob,
+                A.kdcmprec,
+                A.signondt,
+                A.signoffdt,
+                A.estsignoffdt,
+                IFNULL(B.nmrank, '') AS nmrank,
+                IFNULL(B.urutan, 999) AS rank_urutan,
+                C.nmvsl,
+                A.lastvsl,
+                A.estremark
+            FROM tblcontract A
+            LEFT JOIN mstrank B ON B.kdrank = A.signonrank AND urutan > 0
+            LEFT JOIN mstvessel C ON C.kdvsl = A.signonvsl
+            LEFT JOIN mstpersonal D ON D.idperson = A.idperson
+            WHERE A.deletests = 0 
+            AND A.idperson IN ('$ids')
+            AND A.idcontract IN (
+                SELECT MAX(idcontract)
+                FROM tblcontract
+                WHERE deletests = 0
+                GROUP BY idperson
+            )
+            GROUP BY A.idperson 
+            ORDER BY rank_urutan ASC, fullName ASC
+        ";
+
+        $rows = $this->db->query($sql)->result_array();
+        
+        if (empty($statusFilter)) {
+            $statusFilter = 'ON BOARD';
+        }
+
+        $data = array(
+            'rows' => $rows,
+            'statusFilter' => $statusFilter,
+            'printDate' => date('d M Y H:i:s')
+        );
+
+        require(APPPATH . "views/frontend/pdf/mpdf60/mpdf.php");
+        $mpdf = new mPDF('utf-8', 'A4-L'); // Landscape
+        
+        $html = $this->load->view('Roster/ActiveRoster/export_crewlist', $data, TRUE);
+        $mpdf->WriteHTML($html);
+
+        $mpdf->Output("CrewList_ActiveRoster_" . date('Ymd_His') . ".pdf", 'I');
+        exit;
     }
 }
