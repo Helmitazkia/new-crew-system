@@ -9,6 +9,9 @@
         <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="covid19">Health and Pandemic</a>
       </li>
       <li class="nav-item mb-3">
+        <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="medical">Medical</a>
+      </li>
+      <li class="nav-item mb-3">
         <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="defreafing">Defreafing</a>
       </li>
       <li class="nav-item mb-3">
@@ -124,6 +127,7 @@ $(document).ready(function() {
   // ================================
   var reportRoutes = {
     'mcu': '<?php echo base_url("CrewDetail/ListReport/view_mcu"); ?>',
+    'medical': '<?php echo base_url("CrewDetail/Medical/view"); ?>',
     'defreafing': '<?php echo base_url("ListReport/Defreafing/view"); ?>',
     'mlcdeclaration': '<?php echo base_url("ListReport/Mlc/view"); ?>',
     'databank': '<?php echo base_url("ListReport/Bank/view"); ?>',

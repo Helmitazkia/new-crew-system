@@ -59,6 +59,7 @@ class ActiveRoster extends CI_Controller {
                 A.dob AS birth_date,
                 K.NmKota AS birth_city,
                 D.nmvsl,
+                C.signondt,
                 C.signoffdt,
                 C.estsignoffdt,
                 A.inBlacklist,
@@ -75,7 +76,7 @@ class ActiveRoster extends CI_Controller {
                  WHERE R.replacement_idperson = A.idperson AND R.status = 'Submit' AND R.deletests = '0') AS next_vessel
             FROM mstpersonal A
             LEFT JOIN (
-                SELECT t.idperson, t.signonvsl, t.signoffdt, t.estsignoffdt, t.signonrank
+                SELECT t.idperson, t.signonvsl, t.signondt, t.signoffdt, t.estsignoffdt, t.signonrank
                 FROM tblcontract t
                 INNER JOIN (
                     SELECT idperson, MAX(idcontract) AS max_idcontract
@@ -117,6 +118,9 @@ class ActiveRoster extends CI_Controller {
                 }
             }
 
+            $signondt = isset($row['signondt']) ? $row['signondt'] : '';
+            $signondt_formatted = ($signondt !== '0000-00-00' && $signondt !== '') ? $dataContext->convertReturnName($signondt) : '';
+            
             $signoffdt = isset($row['signoffdt']) ? $row['signoffdt'] : '';
             $estsignoffdt = isset($row['estsignoffdt']) ? $row['estsignoffdt'] : '';
             $estsignoffdt_formatted = ($estsignoffdt !== '0000-00-00' && $estsignoffdt !== '') ? $dataContext->convertReturnName($estsignoffdt) : '';
@@ -140,6 +144,8 @@ class ActiveRoster extends CI_Controller {
                 'dob'          => trim($city . ($dobFormatted ? ', ' . $dobFormatted : '')),
                 'statusPerson' => $statusPerson,
                 'rankexp'      => $row['rankexp'],
+                'signondt'     => $signondt,
+                'signondt_formatted' => $signondt_formatted,
                 'estsignoffdt' => $estsignoffdt,
                 'estsignoffdt_formatted' => $estsignoffdt_formatted,
                 'signoffdt' => $signoffdt,
@@ -191,17 +197,17 @@ class ActiveRoster extends CI_Controller {
                 A.lastvsl,
                 A.estremark
             FROM tblcontract A
+            INNER JOIN (
+                SELECT idperson, MAX(idcontract) AS max_idcontract
+                FROM tblcontract
+                WHERE deletests = 0
+                GROUP BY idperson
+            ) max_c ON A.idperson = max_c.idperson AND A.idcontract = max_c.max_idcontract
             LEFT JOIN mstrank B ON B.kdrank = A.signonrank AND urutan > 0
             LEFT JOIN mstvessel C ON C.kdvsl = A.signonvsl
             LEFT JOIN mstpersonal D ON D.idperson = A.idperson
             WHERE A.deletests = 0 
             AND A.idperson IN ('$ids')
-            AND A.idcontract IN (
-                SELECT MAX(idcontract)
-                FROM tblcontract
-                WHERE deletests = 0
-                GROUP BY idperson
-            )
             GROUP BY A.idperson 
             ORDER BY rank_urutan ASC, fullName ASC
         ";
