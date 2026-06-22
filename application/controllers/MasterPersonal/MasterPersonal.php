@@ -68,7 +68,8 @@ class MasterPersonal extends CI_Controller {
                     WHEN A.inAktif = '1' THEN 'Non Aktif'
                 END AS statusPerson,
                 C.signoffdt,
-                C.estsignoffdt
+                C.estsignoffdt,
+                NA.new_cv
 
             FROM mstpersonal A
         
@@ -87,6 +88,8 @@ class MasterPersonal extends CI_Controller {
                 AND (A.inBlacklist = '0' OR A.inBlacklist IS NULL)
             LEFT JOIN tblkota K ON A.pob = K.KdKota 
             LEFT JOIN mstvessel D ON D.kdvsl = C.signonvsl
+            LEFT JOIN crew_login CL ON CL.idperson = A.idperson
+            LEFT JOIN new_applicant NA ON NA.id = CL.id_newapplicant AND NA.deletests = '0'
             $where
             ORDER BY fullName ASC
         ";
@@ -127,7 +130,8 @@ class MasterPersonal extends CI_Controller {
                 'dob'          => $dob,
                 'statusPerson' => $statusPerson,
                 'signoffdt'    => isset($row['signoffdt']) ? $row['signoffdt'] : '',
-                'estsignoffdt' => isset($row['estsignoffdt']) ? $row['estsignoffdt'] : ''
+                'estsignoffdt' => isset($row['estsignoffdt']) ? $row['estsignoffdt'] : '',
+                'new_cv'       => isset($row['new_cv']) ? $row['new_cv'] : ''
             );
         }
 

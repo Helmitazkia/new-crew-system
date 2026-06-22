@@ -52,7 +52,7 @@ $(document).ready(function() {
     stateDuration: -1,
     processing: true,
     serverSide: false,
-    pageLength: 25,
+    pageLength: 50,
     lengthMenu: [10, 25, 50, 100],
     language: {
       lengthMenu: ' _MENU_ &nbsp; Entries',
@@ -69,7 +69,12 @@ $(document).ready(function() {
         data: null,
         className: 'text-center',
         render: function(data, type, row, meta) {
-          return meta.row + 1;
+          var no = meta.row + 1;
+          var below = '';
+          if (row.new_cv && row.new_cv.trim() !== '') {
+            below = '<div class="mt-1"><a href="<?php echo base_url("assets/uploads/CV_NewApplicant"); ?>/' + row.new_cv + '" target="_blank" class="text-primary small contract-no-filelink" title="View CV"><i class="fa fa-book contract-no-icon" aria-hidden="true"></i></a></div>';
+          }
+          return '<div>' + no + below + '</div>';
         }
       },
 
