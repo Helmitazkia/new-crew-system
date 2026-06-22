@@ -18,6 +18,7 @@
                     <th>Next Vessel <br><span class="filter-icon">☰</span></th>
                     <th>City Birth <br><span class="filter-icon">☰</span></th>
                     <th>Status Person <br><span class="filter-icon">☰</span></th>
+                    <th>Sign On <br><span class="filter-icon">☰</span></th>
                     <th>Contract <br><span class="filter-icon">☰</span></th>
                     <th class="text-center">Action</th>
                   </tr>
@@ -25,6 +26,7 @@
                 <thead>
                   <tr>
                     <th></th>
+                    <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th><input type="text" class="column-search" placeholder="Search"></th>
                     <th><input type="text" class="column-search" placeholder="Search"></th>
@@ -61,7 +63,7 @@ $(document).ready(function() {
     stateDuration: -1,
     processing: true,
     serverSide: false,
-    pageLength: 25,
+    pageLength: 50,
     lengthMenu: [10, 25, 50, 100],
     language: {
       lengthMenu: ' _MENU_ &nbsp; Entries',
@@ -104,7 +106,14 @@ $(document).ready(function() {
         }
       },
       {
-        data: 'rankexp'
+        data: 'rankexp',
+        render: function(data, type, row) {
+          if (type === 'display') {
+             var val = data || '';
+             return '<div style="max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="' + val + '">' + val + '</div>';
+          }
+          return data;
+        }
       },
       {
         data: 'gender'
@@ -152,6 +161,16 @@ $(document).ready(function() {
             return `<span class="badge ${cls}">${displayStatus}</span>`;
           }
           return displayStatus;
+        }
+      },
+      {
+        data: 'signondt',
+        className: 'text-center text-nowrap',
+        render: function(data, type, row) {
+          if (type === 'display') {
+             return row.signondt_formatted ? row.signondt_formatted : (data && data !== '0000-00-00' ? data : '-');
+          }
+          return data;
         }
       },
       {
@@ -324,7 +343,7 @@ $(document).ready(function() {
       if (!icon.length) return;
 
       // Skip No & Action
-      if (colIndex === 0 || colIndex === 11) return;
+      if (colIndex === 0 || colIndex === 12) return;
 
       let dropdown = $(`
       <div class="filter-dropdown">
@@ -373,7 +392,7 @@ $(document).ready(function() {
           color: '#000066'
         }
       ];
-      if (colIndex === 10) {
+      if (colIndex === 11) {
         dropdown.find('.filter-search').hide();
         contractFilterOptions.forEach(function(opt) {
           listContainer.append(`

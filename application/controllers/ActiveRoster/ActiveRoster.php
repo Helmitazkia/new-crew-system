@@ -59,6 +59,7 @@ class ActiveRoster extends CI_Controller {
                 A.dob AS birth_date,
                 K.NmKota AS birth_city,
                 D.nmvsl,
+                C.signondt,
                 C.signoffdt,
                 C.estsignoffdt,
                 A.inBlacklist,
@@ -75,7 +76,7 @@ class ActiveRoster extends CI_Controller {
                  WHERE R.replacement_idperson = A.idperson AND R.status = 'Submit' AND R.deletests = '0') AS next_vessel
             FROM mstpersonal A
             LEFT JOIN (
-                SELECT t.idperson, t.signonvsl, t.signoffdt, t.estsignoffdt, t.signonrank
+                SELECT t.idperson, t.signonvsl, t.signondt, t.signoffdt, t.estsignoffdt, t.signonrank
                 FROM tblcontract t
                 INNER JOIN (
                     SELECT idperson, MAX(idcontract) AS max_idcontract
@@ -117,6 +118,9 @@ class ActiveRoster extends CI_Controller {
                 }
             }
 
+            $signondt = isset($row['signondt']) ? $row['signondt'] : '';
+            $signondt_formatted = ($signondt !== '0000-00-00' && $signondt !== '') ? $dataContext->convertReturnName($signondt) : '';
+            
             $signoffdt = isset($row['signoffdt']) ? $row['signoffdt'] : '';
             $estsignoffdt = isset($row['estsignoffdt']) ? $row['estsignoffdt'] : '';
             $estsignoffdt_formatted = ($estsignoffdt !== '0000-00-00' && $estsignoffdt !== '') ? $dataContext->convertReturnName($estsignoffdt) : '';
@@ -140,6 +144,8 @@ class ActiveRoster extends CI_Controller {
                 'dob'          => trim($city . ($dobFormatted ? ', ' . $dobFormatted : '')),
                 'statusPerson' => $statusPerson,
                 'rankexp'      => $row['rankexp'],
+                'signondt'     => $signondt,
+                'signondt_formatted' => $signondt_formatted,
                 'estsignoffdt' => $estsignoffdt,
                 'estsignoffdt_formatted' => $estsignoffdt_formatted,
                 'signoffdt' => $signoffdt,
