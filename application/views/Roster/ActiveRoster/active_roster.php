@@ -142,12 +142,10 @@ $(document).ready(function() {
             estDate.setHours(0, 0, 0, 0);
             const diffDays = Math.ceil((estDate - dateNow) / (1000 * 60 * 60 * 24));
 			
-			if(row.signoffdt != '0000-00-00')
-			{
-				if (diffDays < 0) displayStatus = 'Stand By'; // Expired Over
-			}
-			// if (diffDays < 0) displayStatus = 'Stand By'; // Expired Over			
-
+            if (row.signoffdt !== '0000-00-00')
+            {
+              if (diffDays < 0) displayStatus = 'Stand By';
+            }
           }
           if (type === 'display') {
             let cls = displayStatus === 'Stand By' ? 'bg-warning text-dark' : 'bg-success';

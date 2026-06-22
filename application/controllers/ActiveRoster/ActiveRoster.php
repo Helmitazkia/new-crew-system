@@ -191,17 +191,17 @@ class ActiveRoster extends CI_Controller {
                 A.lastvsl,
                 A.estremark
             FROM tblcontract A
+            INNER JOIN (
+                SELECT idperson, MAX(idcontract) AS max_idcontract
+                FROM tblcontract
+                WHERE deletests = 0
+                GROUP BY idperson
+            ) max_c ON A.idperson = max_c.idperson AND A.idcontract = max_c.max_idcontract
             LEFT JOIN mstrank B ON B.kdrank = A.signonrank AND urutan > 0
             LEFT JOIN mstvessel C ON C.kdvsl = A.signonvsl
             LEFT JOIN mstpersonal D ON D.idperson = A.idperson
             WHERE A.deletests = 0 
             AND A.idperson IN ('$ids')
-            AND A.idcontract IN (
-                SELECT MAX(idcontract)
-                FROM tblcontract
-                WHERE deletests = 0
-                GROUP BY idperson
-            )
             GROUP BY A.idperson 
             ORDER BY rank_urutan ASC, fullName ASC
         ";
