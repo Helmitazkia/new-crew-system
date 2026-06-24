@@ -127,7 +127,7 @@ $(document).ready(function() {
   // ================================
   var reportRoutes = {
     'mcu': '<?php echo base_url("CrewDetail/ListReport/view_mcu"); ?>',
-    'medical': '<?php echo base_url("CrewDetail/Medical/view"); ?>',
+    'medical': '<?php echo base_url("ListReport/Medical/view"); ?>',
     'defreafing': '<?php echo base_url("ListReport/Defreafing/view"); ?>',
     'mlcdeclaration': '<?php echo base_url("ListReport/Mlc/view"); ?>',
     'databank': '<?php echo base_url("ListReport/Bank/view"); ?>',
