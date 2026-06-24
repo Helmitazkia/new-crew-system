@@ -131,7 +131,7 @@
 
 <script>
 $(document).ready(function() {
-    var BASE_URL = '<?php echo base_url("CrewDetail/Medical"); ?>';
+    var BASE_URL = '<?php echo base_url("ListReport/Medical"); ?>';
     var BASE_FILE_URL = '<?php echo base_url("uploadFile"); ?>';
     
     var idperson = $('#contentArea').data('idperson');
