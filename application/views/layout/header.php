@@ -173,15 +173,20 @@
                 </li>
 
                 <li class="nav-item dropdown fst-italic fw-semibold" style="position: relative;">
-                    <a class="nav-link dropdown-toggle <?php echo (in_array($active_menu, array('report', 'mcu_report'))) ? 'active' : '' ?>"
+                    <a class="nav-link dropdown-toggle <?php echo (in_array($active_menu, array('report', 'mcu_report', 'list_contract'))) ? 'active' : '' ?>"
                         href="#" id="reportDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
                         style="transition: color .2s ease;">
                         Report
                     </a>
+                    
                     <ul class="dropdown-menu shadow-lg" aria-labelledby="reportDropdown">
                         <li>
                             <a class="dropdown-item <?php echo ($active_menu == 'mcu_report') ? 'active' : '' ?>" 
                                href="<?php echo base_url('Report/McuReport/view') ?>">MCU Report</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item <?php echo ($active_menu == 'list_contract') ? 'active' : '' ?>" 
+                               href="<?php echo base_url('Report/ListContract/view') ?>">List Contract</a>
                         </li>
                     </ul>
                 </li>
