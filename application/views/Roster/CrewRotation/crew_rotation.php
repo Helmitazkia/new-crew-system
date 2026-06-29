@@ -583,30 +583,50 @@ $(document).ready(function() {
       {
         data: "onboard_name",
         render: function(data, type, row) {
-          var name = data || "";
+          var name = data || "N/A";
           var textColorClass = row.status_crew_change === 'New' ? 'text-success'  : 'text-black';
           return '<a href="#" class="crew-name ' + textColorClass + '" onclick="showCrewDetail(' + row.idcrewrotation + ', \'' + (row.status_crew_change || 'Change') + '\'); return false;" title="Edit">' + name + "</a>";
         }
       },
       {
         data: "onboard_rank",
-        className: "text-center"
+        className: "text-center",
+        render: function(data, type, row) {
+          var rank = data || "N/A";
+          return rank;
+        }
       },
       {
         data: "onboard_son",
-        className: "text-center"
+        className: "text-center",
+        render: function(data, type, row) {
+          var son = data || "N/A";
+          return son;
+        }
       },
       {
-        data: "onboard_vessel"
+        data: "onboard_vessel",
+        render: function(data, type, row) {
+          var vessel = data || "N/A";
+          return vessel;
+        }
       },
       {
         data: "onboard_soff",
-        className: "text-center"
+        className: "text-center",
+        render: function(data, type, row) {
+          var soff = data || "N/A";
+          return soff;
+        }
       },
       // Remark, Remarks Cancel, Replacement, Status, Next Vessel = dari tblcrewrotation
       {
         data: "remark",
-        className: "text-center"
+        className: "text-center",
+        render: function(data, type, row) {
+          var remark = data || "N/A";
+          return remark;
+        }
       },
       {
         data: "remarks_cancel",
@@ -658,7 +678,7 @@ $(document).ready(function() {
         className: "text-center",
         render: function(data, type, row) {
           var disabled = (row.status === "Cancel" || row.status === "Joined") ? " disabled" : "";
-          var joinedLabel = (row.status_crew_change === 'Down') ? 'Down' : 'Joined';
+          var joinedLabel = (row.status_crew_change === 'Down') ? 'Sign Off' : 'Joined';
           var statusOpt =
             '<select class="form-select form-select-sm d-inline-block w-auto status-select" data-id="' + row
             .idcrewrotation + '" data-batch-id="' + (row.batch_id || "") + '" data-current="' + (row.status || "") + '"' + disabled + '>' +
@@ -945,40 +965,8 @@ $(document).ready(function() {
       }
       return false;
     }
-    if (newStatus === "Cancel") {
-      e.preventDefault();
-      e.stopPropagation();
-      if (typeof Swal !== "undefined") {
-        Swal.fire({
-          icon: "question",
-          title: "Ubah ke Cancel?",
-          text: "Anda yakin akan mengubah status menjadi Cancel?",
-          showCancelButton: true,
-          confirmButtonText: "Yes",
-          cancelButtonText: "Cancel"
-        }).then(function(result) {
-          if (result.isConfirmed) {
-            $("#remarksCancel_idcrewrotation").val(id);
-            $("#remarksCancel_input").val("");
-            $("#remarksCancel_feedback").addClass("d-none");
-            $("#modalRemarksCancel").modal("show");
-          } else {
-            $sel.val(currentStatus);
-          }
-        });
-      } else {
-        if (confirm("Ubah ke Cancel? Jika Yes, isi Remarks Cancel.")) {
-          $("#remarksCancel_idcrewrotation").val(id);
-          $("#remarksCancel_input").val("");
-          $("#remarksCancel_feedback").addClass("d-none");
-          $("#modalRemarksCancel").modal("show");
-        } else {
-          $sel.val(currentStatus);
-        }
-      }
-      return false;
-    }
-    $.post(baseUrlCrewRotation + "/updateStatus", {
+    function doUpdateAjax() {
+      $.post(baseUrlCrewRotation + "/updateStatus", {
         idcrewrotation: id,
         status: newStatus
       })
@@ -1011,6 +999,70 @@ $(document).ready(function() {
         else alert("Request failed");
         $sel.val(currentStatus);
       });
+    }
+
+    if (newStatus === "Cancel") {
+      e.preventDefault();
+      e.stopPropagation();
+      if (typeof Swal !== "undefined") {
+        Swal.fire({
+          icon: "question",
+          title: "Ubah ke Cancel?",
+          text: "Anda yakin akan mengubah status menjadi Cancel?",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel"
+        }).then(function(result) {
+          if (result.isConfirmed) {
+            $("#remarksCancel_idcrewrotation").val(id);
+            $("#remarksCancel_input").val("");
+            $("#remarksCancel_feedback").addClass("d-none");
+            $("#modalRemarksCancel").modal("show");
+          } else {
+            $sel.val(currentStatus);
+          }
+        });
+      } else {
+        if (confirm("Ubah ke Cancel? Jika Yes, isi Remarks Cancel.")) {
+          $("#remarksCancel_idcrewrotation").val(id);
+          $("#remarksCancel_input").val("");
+          $("#remarksCancel_feedback").addClass("d-none");
+          $("#modalRemarksCancel").modal("show");
+        } else {
+          $sel.val(currentStatus);
+        }
+      }
+      return false;
+    } else if (newStatus === "Joined") {
+      e.preventDefault();
+      e.stopPropagation();
+      var label = $sel.find("option:selected").text(); // Mengambil teks Joined / Sign Off
+      if (typeof Swal !== "undefined") {
+        Swal.fire({
+          icon: "question",
+          title: "Ubah ke " + label + "?",
+          text: "Anda yakin akan mengubah status menjadi " + label + "?",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "Cancel"
+        }).then(function(result) {
+          if (result.isConfirmed) {
+            doUpdateAjax();
+          } else {
+            $sel.val(currentStatus);
+          }
+        });
+      } else {
+        if (confirm("Ubah ke " + label + "?")) {
+          doUpdateAjax();
+        } else {
+          $sel.val(currentStatus);
+        }
+      }
+      return false;
+    }
+
+    doUpdateAjax();
   });
 
   $("#btnSubmitRemarksCancel").on("click", function() {

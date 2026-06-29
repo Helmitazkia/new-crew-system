@@ -12,12 +12,6 @@ class Login extends CI_Controller {
         $this->load->view('auth/login');
     }
 
-// public function index()
-//   {
-//     $this->load->view('menu/header');
-//     $this->load->view('Roster/index_crewRoster');
-//     $this->load->view('menu/footer');
-//   }
   public function do_login()
   {
       header('Content-Type: application/json');
