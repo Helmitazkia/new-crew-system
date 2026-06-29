@@ -167,6 +167,10 @@ class ListContract extends CI_Controller {
 
 		$rows = $this->db->query($sql)->result();
 
+		foreach ($rows as $row) {
+			$row->signoffdt = ( $row->signoffdt == '0000-00-00' ) ? 'On Board' : $row->signoffdt;
+		}
+
 		$data['rows'] = $rows;
 		
 		$this->load->view('Report/ListContract/pdf_listcontract', $data);
