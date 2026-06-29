@@ -20,20 +20,20 @@ header("Expires: 0");
     <tbody>
         <?php $no = 1; foreach ($rows as $row): ?>
         <?php
-            $signOn  = $row->signondt ? date('d-M-Y', strtotime($row->signondt)) : '';
-            $signOff = $row->signoffdt ? date('d-M-Y', strtotime($row->signoffdt)) : 'On Board';
+            $signOn  = (!empty($row->signondt) && $row->signondt != '0000-00-00') ? date('d-M-Y', strtotime($row->signondt)) : '';
+            $signOff = (!empty($row->signoffdt) && $row->signoffdt != '0000-00-00' && $row->signoffdt != 'On Board') ? date('d-M-Y', strtotime($row->signoffdt)) : 'On Board';
         ?>
         <tr>
-            <td style="text-align: center;"><?= $no++; ?></td>
-            <td><?= $row->nmcmp; ?></td>
-            <td><?= $row->fullname; ?></td>
-            <td style="text-align: center;"><?= $row->applyfor; ?></td>
-            <td style="text-align: center;"><?= $row->religion; ?></td>
-            <td style="text-align: center;"><?= $row->gender; ?></td>
+            <td style="text-align: center;"><?php echo $no++; ?></td>
+            <td><?php echo $row->nmcmp; ?></td>
+            <td><?php echo $row->fullname; ?></td>
+            <td style="text-align: center;"><?php echo $row->applyfor; ?></td>
+            <td style="text-align: center;"><?php echo $row->religion; ?></td>
+            <td style="text-align: center;"><?php echo $row->gender; ?></td>
             <td style="mso-number-format:'\@'; text-align: center;">
-                <?= $signOn; ?> - <?= $signOff; ?>
+                <?php echo $signOn; ?> - <?php echo $signOff; ?>
             </td>
-            <td style="text-align: center;"><?= $row->total_contract; ?></td>
+            <td style="text-align: center;"><?php echo $row->total_contract; ?></td>
         </tr>
         <?php endforeach; ?>
     </tbody>
