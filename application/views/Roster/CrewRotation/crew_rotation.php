@@ -634,10 +634,19 @@ $(document).ready(function() {
       },
       {
         data: "replacement_rank",
+        render : function(data, type, row){
+          var replacement_rank = data || "N/A";
+          return replacement_rank;
+        },
         className: "text-center"
       },
       {
-        data: "replacement_name"
+        data: "replacement_name",
+        render : function(data, type, row){
+          var replacement_name = data || "N/A";
+          return replacement_name;
+        },
+        className: "text-center"
       },
       {
         data: "status",
