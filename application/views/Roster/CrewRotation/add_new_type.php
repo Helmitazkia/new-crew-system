@@ -209,8 +209,12 @@ $is_readonly = ($batchHasJoined || $batchAllCancel);
       var $sel = $(selId);
       $sel.empty();
       
+      var seen = {};
       var cleanArray = (dataArray || []).filter(function(item) {
-        return item.value !== '';
+        if (item.value === '') return false;
+        if (seen[item.value]) return false; // WAJIB difilter agar bootstrap-select tidak error
+        seen[item.value] = true;
+        return true;
       });
 
       if (!$sel.prop('multiple')) {
@@ -327,7 +331,7 @@ $is_readonly = ($batchHasJoined || $batchAllCancel);
       if (!$sel.length) return;
       var $wrap = $sel.parent('.bootstrap-select');
       if (!$wrap.length) return;
-      var $label = $wrap.find('.filter-option-inner-inner');
+      var $label = $wrap.find('.filter-option-inner-inner').first();
       if (!$label.length) return;
 
       var selected = $sel.find('option:selected').map(function() {
@@ -345,7 +349,7 @@ $is_readonly = ($batchHasJoined || $batchAllCancel);
         var $chip = $('<span class="repl-chip"></span>').attr('data-value', o.value);
         $chip.append($('<span class="repl-chip-text"></span>').text(o.text));
         $chip.append(
-          $('<button type="button" class="repl-chip-remove" aria-label="Remove">×</button>').attr('data-value', o.value)
+          $('<span class="repl-chip-remove" role="button" aria-label="Remove">×</span>').attr('data-value', o.value)
         );
         $label.append($chip);
       });
@@ -370,8 +374,21 @@ $is_readonly = ($batchHasJoined || $batchAllCancel);
 
     $('#new_replacement_idperson')
       .off('loaded.bs.select.replChipNew changed.bs.select.replChipNew')
-      .on('loaded.bs.select.replChipNew changed.bs.select.replChipNew', function() {
-        renderReplacementChipsNew();
+      .on('loaded.bs.select.replChipNew changed.bs.select.replChipNew', function(e, clickedIndex, isSelected, previousValue) {
+        if (clickedIndex != null && Array.isArray(previousValue)) {
+            var clickedVal = $(this).find('option').eq(clickedIndex).val();
+            var currentVal = $(this).val();
+            if (!Array.isArray(currentVal)) currentVal = currentVal ? [currentVal] : [];
+            var missingValues = previousValue.filter(function(v) { 
+                return currentVal.indexOf(v) === -1 && v !== clickedVal; 
+            });
+            if (missingValues.length > 0) {
+                $(this).selectpicker('val', currentVal.concat(missingValues));
+                setTimeout(renderReplacementChipsNew, 50);
+                return;
+            }
+        }
+        setTimeout(renderReplacementChipsNew, 50);
       });
 
     if ($('#new_replacement_idperson').data('selectpicker')) {
@@ -385,7 +402,7 @@ $is_readonly = ($batchHasJoined || $batchAllCancel);
       if (!$sel.length) return;
       var $wrap = $sel.parent('.bootstrap-select');
       if (!$wrap.length) return;
-      var $label = $wrap.find('.filter-option-inner-inner');
+      var $label = $wrap.find('.filter-option-inner-inner').first();
       if (!$label.length) return;
 
       var selected = $sel.find('option:selected').map(function() {
@@ -403,7 +420,7 @@ $is_readonly = ($batchHasJoined || $batchAllCancel);
         var $chip = $('<span class="repl-chip"></span>').attr('data-value', o.value);
         $chip.append($('<span class="repl-chip-text"></span>').text(o.text));
         
-        var $btn = $('<button type="button" class="repl-chip-remove-rank" aria-label="Remove">×</button>').attr('data-value', o.value);
+        var $btn = $('<span class="repl-chip-remove-rank" role="button" aria-label="Remove">×</span>').attr('data-value', o.value);
         
         // DIRECT BINDING: Mencegah event bubbling ke bootstrap-select yang bisa mengacaukan native select
         $btn.on('mousedown click', function(e) {
@@ -426,18 +443,22 @@ $is_readonly = ($batchHasJoined || $batchAllCancel);
 
     $('#new_signonrank_multi')
       .off('loaded.bs.select.rankChipNew changed.bs.select.rankChipNew')
-      .on('loaded.bs.select.rankChipNew changed.bs.select.rankChipNew', function(e) {
-        renderSignonRankChipsNew();
+      .on('loaded.bs.select.rankChipNew changed.bs.select.rankChipNew', function(e, clickedIndex, isSelected, previousValue) {
+        if (clickedIndex != null && Array.isArray(previousValue)) {
+            var clickedVal = $(this).find('option').eq(clickedIndex).val();
+            var currentVal = $(this).val();
+            if (!Array.isArray(currentVal)) currentVal = currentVal ? [currentVal] : [];
+            var missingValues = previousValue.filter(function(v) { 
+                return currentVal.indexOf(v) === -1 && v !== clickedVal; 
+            });
+            if (missingValues.length > 0) {
+                $(this).selectpicker('val', currentVal.concat(missingValues));
+                setTimeout(renderSignonRankChipsNew, 50);
+                return;
+            }
+        }
+        setTimeout(renderSignonRankChipsNew, 50);
       });
-
-    // TRAP KHUSUS UNTUK MENANGKAP SIAPA YANG MENGHAPUS ARRAY!
-    $('#new_signonrank_multi').on('change', function(e) {
-      var val = $(this).val();
-      if (!val || val.length === 0) {
-        console.log("🚨 NATIVE SELECT MENJADI KOSONG! 🚨");
-        console.trace("Jejak kode yang mengosongkan select (Call Stack):");
-      }
-    });
 
     if ($('#new_signonrank_multi').data('selectpicker')) {
       $('#new_signonrank_multi').selectpicker('refresh');
@@ -494,11 +515,14 @@ $is_readonly = ($batchHasJoined || $batchAllCancel);
 
       var repl = $('#new_replacement_idperson').val() || [];
       var sranks = $('#new_signonrank_multi').val() || [];
+      // VALIDASI MATCH RANK DAN CANDIDATE DICABUT SESUAI PERMINTAAN
+      /*
       if (repl.length > 0 && sranks.length > 0 && repl.length !== sranks.length) {
         $('#new_signonrank_multi').siblings('.dropdown-toggle').addClass('is-invalid');
         $('#new_signonrankMatchFeedback').removeClass('d-none');
         isValid = false;
       }
+      */
 
       return isValid;
     }
