@@ -106,6 +106,14 @@ class Familiarization extends CI_Controller {
 
 	public function save_history()
 	{
+		// Helper: convert radio value (0/1) or NULL if not sent
+		// $self menggantikan $this agar bisa diakses di dalam closure (anonymous function)
+		$self = $this;
+		$getItem = function($field) use ($self) {
+			$val = $self->input->post($field);
+			return ($val !== false && $val !== null && $val !== '') ? (int)$val : null;
+		};
+
 		$data = array(
 			'idperson'     => $this->input->post('idperson', true),
 			'nama_crew'    => $this->input->post('nama_crew', true),
@@ -113,8 +121,24 @@ class Familiarization extends CI_Controller {
 			'vessel'       => $this->input->post('vessel', true),
 			'signon_date'  => date('Y-m-d', strtotime($this->input->post('signon_date', true))),
 			'note'         => $this->input->post('note', true),
-			'date_created' => date('Y-m-d H:i:s')
-
+			'date_created' => date('Y-m-d H:i:s'),
+			// Familiarization checklist items (1 = ✓, 0 = ✗, NULL = not answered)
+			'item_1'       => $getItem('item_1'),
+			'item_2'       => $getItem('item_2'),
+			'item_3'       => $getItem('item_3'),
+			'item_4'       => $getItem('item_4'),
+			'item_5'       => $getItem('item_5'),
+			'item_6'       => $getItem('item_6'),
+			'item_7'       => $getItem('item_7'),
+			'item_8'       => $getItem('item_8'),
+			'item_9'       => $getItem('item_9'),
+			'item_10'      => $getItem('item_10'),
+			'item_11'      => $getItem('item_11'),
+			'item_12'      => $getItem('item_12'),
+			'item_13'      => $getItem('item_13'),
+			'item_14'      => $getItem('item_14'),
+			'item_15'      => $getItem('item_15'),
+			'item_16'      => $getItem('item_16'),
 		);
 
 		$insert = $this->db->insert('history_familiarization', $data);
