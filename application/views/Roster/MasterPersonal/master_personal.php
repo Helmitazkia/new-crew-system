@@ -83,7 +83,7 @@ $(document).ready(function() {
         data: 'fullName',
         render: function(data, type, row) {
           if (type === 'display') {
-            return `<span class="crew-name-link text-dark" onclick="showCrewDetail('${row.idperson}')">${data}</span>`;
+            return `<a class="crew-name-link text-dark text-decoration-none" target="_blank" href="<?php echo base_url('PersonDetail/index'); ?>/${row.idperson}">${data}</a>`;
           }
           return data; // <-- penting buat filter
         }

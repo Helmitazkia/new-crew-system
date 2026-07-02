@@ -90,8 +90,8 @@ $(document).ready(function() {
         data: 'fullName',
         render: function(data, type, row) {
           var name = data || '-';
-          return '<a href="#" class="crew-name crew-name-link text-dark text-decoration-none" onclick="showCrewDetail(\'' +
-            (row.idperson || '') + '\'); return false;" title="View detail">' + (name.replace(/</g, '&lt;')
+          var url = "<?php echo base_url('PersonDetail/index'); ?>/" + (row.idperson || '');
+          return '<a href="' + url + '" class="crew-name crew-name-link text-dark text-decoration-none" title="View detail" target="_blank">' + (name.replace(/</g, '&lt;')
               .replace(/>/g, '&gt;')) + '</a>';
         }
       },

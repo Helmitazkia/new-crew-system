@@ -141,7 +141,8 @@ $(document).ready(function() {
     'spj': '<?php echo base_url("ListReport/Spj/view"); ?>',
     'pkl': '<?php echo base_url("ListReport/Pkl/view"); ?>',
     'seafarer': '<?php echo base_url("ListReport/SuntechoPKL/view"); ?>',
-    'familiarizationcrew': '<?php echo base_url("ListReport/Familiarization/view"); ?>'
+    'familiarizationcrew': '<?php echo base_url("ListReport/Familiarization/view"); ?>',
+    'briefingcheck': '<?php echo base_url("ListReport/Briefing/view"); ?>'
   };
 
   // ================================
