@@ -486,7 +486,7 @@ $(document).ready(function() {
         paging: true,
         info: true,
         lengthChange: true,
-        pageLength: 10,
+        pageLength: 50,
         lengthMenu: [10, 25, 50, 100],
         order: [],
         ajax: {
@@ -502,7 +502,7 @@ $(document).ready(function() {
         columns: [
             {
                 data: null,
-                className: 'fw-bold text-center',
+                className: 'text-center',
                 orderable: false,
                 searchable: false,
                 render: function(data, type, row, meta) {

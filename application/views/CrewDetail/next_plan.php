@@ -222,7 +222,7 @@ window.showNextPlanDetail = function(idcrewrotation) {
           defaultContent: '-',
           render: function(d) {
             var val = d ? d : 'Change';
-            var c = val === 'New' ? 'bg-success' : 'bg-primary';
+            var c = val === 'New'  ? 'bg-success'  : val === 'Down' ? 'bg-danger' : 'bg-primary';
             return '<span class="badge ' + c + ' badge-status">' + val + '</span>';
           }
         },
@@ -250,10 +250,20 @@ window.showNextPlanDetail = function(idcrewrotation) {
               return  '<span class="badge bg-dark badge-status">Delete</span>';
             }
             var c = 'bg-secondary';
-            if (data === 'Submit') c = 'bg-success';
-            else if (data === 'Cancel') c = 'bg-danger';
-            else if (data === 'Joined') c = 'bg-primary';
-            var label = (data === 'Submit') ? 'Planned' : (data || '');
+            var label = '';
+            if (data === 'Submit') {
+              c = 'bg-success';
+              label = 'Planned';
+            } else if (data === 'Cancel') {
+              c = 'bg-danger';
+              label = 'Cancelled';
+            } else if (row.status_crew_change == "Down") {
+              c = 'bg-warning text-dark';
+              label = 'Down';
+            } else if (data === 'Joined') {
+              c = 'bg-primary';
+              label = 'Joined';
+            }
             return '<span class="badge ' + c + ' badge-status">' + label + '</span>';
           }
         },
