@@ -58,9 +58,9 @@
 
     <!-- PAGE 1 -->
     <div style="text-align:left;">
-        <img src="<?= base_url('assets/img/andhika.jpg') ?>" alt="Logo Andhika"
+        <img src="./assets/img/andhika.jpg" alt="Logo Andhika"
             style="max-width:40px; height: auto;">
-        <img src="<?= base_url('assets/img/Adnyana.bmp') ?>" alt="Logo Andhika"
+        <img src="./assets/img/Adnyana.bmp" alt="Logo Andhika"
             style="max-width: 200px; height: auto;">
     </div>
 
@@ -82,15 +82,15 @@
     <table class="table-noborder" style="margin-bottom: 20px;">
         <tr>
             <td style="width: 10%;">Name</td>
-            <td style="width: 40%;">: <?= $crew->fullname ?></td>
+            <td style="width: 40%;">: <?php echo $crew->fullname ?></td>
             <td style="width: 10%;">Rank</td>
-            <td style="width: 40%;">: <?= $crew->rankname ?></td>
+            <td style="width: 40%;">: <?php echo $crew->rankname ?></td>
         </tr>
         <tr>
             <td>Vessel Name</td>
-            <td>: <?= $crew->vesselnm ?></td>
+            <td>: <?php echo $crew->vesselnm ?></td>
             <td>Date</td>
-            <td>: <?= $crew->signon_date ?></td>
+            <td>: <?php echo $crew->signon_date ?></td>
         </tr>
     </table>
 
@@ -249,7 +249,7 @@
         <tr>
             <td>( .................................... )</td>
             <td>( .................................... )</td>
-            <td>( <?= $crew->fullname ?> )</td>
+            <td>( <?php echo $crew->fullname ?> )</td>
         </tr>
         <tr>
             <td>DPA</td>
@@ -266,9 +266,9 @@
     <pagebreak />
 
    <div style="text-align:left;">
-        <img src="<?= base_url('assets/img/andhika.jpg') ?>" alt="Logo Andhika"
+        <img src="./assets/img/andhika.jpg" alt="Logo Andhika"
             style="max-width:40px; height: auto;">
-        <img src="<?= base_url('assets/img/Adnyana.bmp') ?>" alt="Logo Andhika"
+        <img src="./assets/img/Adnyana.bmp" alt="Logo Andhika"
             style="max-width: 200px; height: auto;">
     </div>
 
@@ -302,17 +302,17 @@
         <tr>
             <td style="width: 5%; text-align:center;">1</td>
             <td style="width: 45%;">Name of Senior Officer</td>
-            <td style="width: 50%;"><?= $crew->fullname ?></td>
+            <td style="width: 50%;"><?php echo $crew->fullname ?></td>
         </tr>
         <tr>
             <td style="text-align:center;">2</td>
             <td>Rank</td>
-            <td><?= $crew->rankname ?></td>
+            <td><?php echo $crew->rankname ?></td>
         </tr>
         <tr>
             <td style="text-align:center;">3</td>
             <td>Date of Birth</td>
-            <td><?= $crew->date_of_birth ?></td>
+            <td><?php echo $crew->date_of_birth ?></td>
         </tr>
         <tr>
             <td style="text-align:center;">4</td>
@@ -322,12 +322,12 @@
         <tr>
             <td style="text-align:center;">5</td>
             <td>Vessel Schedule Joining</td>
-            <td><?= $crew->vesselnm ?></td>
+            <td><?php echo $crew->vesselnm ?></td>
         </tr>
         <tr>
             <td style="text-align:center;">6</td>
             <td>Date Schedule Joining/Place</td>
-            <td><?= $crew->signon_date ?></td>
+            <td><?php echo $crew->signon_date ?></td>
         </tr>
         <tr>
             <td style="text-align:center;">7</td>
