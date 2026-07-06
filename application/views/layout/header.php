@@ -173,7 +173,7 @@
                 </li>
 
                 <li class="nav-item dropdown fst-italic fw-semibold" style="position: relative;">
-                    <a class="nav-link dropdown-toggle <?php echo (in_array($active_menu, array('report', 'mcu_report', 'list_contract'))) ? 'active' : '' ?>"
+                    <a class="nav-link dropdown-toggle <?php echo (in_array($active_menu, array('report', 'mcu_report', 'list_contract', 'crew_matrix'))) ? 'active' : '' ?>"
                         href="#" id="reportDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
                         style="transition: color .2s ease;">
                         Report
@@ -187,6 +187,10 @@
                         <li>
                             <a class="dropdown-item <?php echo ($active_menu == 'list_contract') ? 'active' : '' ?>" 
                                href="<?php echo base_url('Report/ListContract/view') ?>">List Contract</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item <?php echo ($active_menu == 'crew_matrix') ? 'active' : '' ?>" 
+                               href="<?php echo base_url('Report/CrewMatrix/view') ?>">Crew Matrix</a>
                         </li>
                     </ul>
                 </li>
