@@ -416,13 +416,12 @@
     </tr>
   </table>
 
-  <div
-    style="padding: 15px; margin-top: 30px;">
+  <div style="padding: 15px; margin-top: 30px;">
     I (Rank, Name & Signature)
-    <span style="border-bottom: 1px solid #000; display: inline-block; width: 400px; text-align:center;">
+    <span style="border-bottom: 1px solid #000; display: inline-block; width: 600px; text-align:center;">
       <?php echo htmlspecialchars($history->rank . ' - ' . $history->nama_crew); ?>
     </span>
-    was carried out and briefed <br><br>
+    <span style="text-align:center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;was carried out and briefed </span><br><br>
     on the above by Mr/Ms
     <span style="border-bottom: 1px solid #000; display: inline-block; width: 300px; text-align:center;">
       <?php echo htmlspecialchars($history->mr_ms_by); ?>

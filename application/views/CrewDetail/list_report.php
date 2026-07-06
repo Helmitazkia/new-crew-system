@@ -12,7 +12,7 @@
         <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="medical">Medical</a>
       </li>
       <li class="nav-item mb-3">
-        <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="defreafing">Defreafing</a>
+        <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="defreafing">Debriefing</a>
       </li>
       <li class="nav-item mb-3">
         <a class="nav-link active rounded-pill text-white fw-bold fst-italic shadow-sm"

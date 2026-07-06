@@ -57,9 +57,23 @@
 <body>
 
 <div class="form-container">
-    <h3 class="header-title">BRIEFING CHECK LIST PRIOR JOINING VESSEL</h3>
+    <!-- <h3 class="header-title">BRIEFING CHECK LIST PRIOR JOINING VESSEL</h3> -->
+<table class="table-noborder" style="margin-bottom:10px;">
+    <tr>
+      <td align="left">
+        <img src="<?php echo base_url('assets/img/andhika.jpg'); ?>" style="height:80px;">
+        <!-- <img src="<?php echo base_url('assets/img/Iso.jpg'); ?>" style="height:30px;"> -->
+      </td>
+      <td align="center">
+        <div style="font-size:22px; font-weight:bold;padding-left:120px; text-decoration-line: underline;">
+          BRIEFING CHECK LIST PRIOR JOINING VESSEL                 
+        </div>
+      </td>
+    </tr>
+  </table>
+  
     
-    <div class="row mb-4">
+    <div class="row mb-6">
         <div class="col-md-6">
             <div class="info-label">Name</div>
             <div class="info-value"><?php echo htmlspecialchars($history->nama_crew); ?></div>
