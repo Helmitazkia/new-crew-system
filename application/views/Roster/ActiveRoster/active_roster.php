@@ -53,6 +53,17 @@
 </div>
 
 <script>
+function formatDisplayDate(dateStr) {
+    if (!dateStr || dateStr === '0000-00-00' || dateStr.trim() === '') return '-';
+    const d = new Date(dateStr);
+    if (isNaN(d)) return dateStr;
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    let day = d.getDate().toString().padStart(2, '0');
+    let month = months[d.getMonth()];
+    let year = d.getFullYear();
+    return `${day} ${month} ${year}`;
+}
+
 $(document).ready(function() {
 
   let table = $('#crewTable').DataTable({
@@ -167,8 +178,8 @@ $(document).ready(function() {
         data: 'signondt',
         className: 'text-center text-nowrap',
         render: function(data, type, row) {
-          if (type === 'display') {
-             return row.signondt_formatted ? row.signondt_formatted : (data && data !== '0000-00-00' ? data : '-');
+          if (type === 'display' || type === 'filter') {
+             return formatDisplayDate(data);
           }
           return data;
         }
@@ -436,15 +447,29 @@ $(document).ready(function() {
         try {
           let columnData = table.column(colIndex).data();
           if (columnData && typeof columnData.unique === 'function') {
-            columnData.unique().sort().each(function(val) {
-              if (val && val !== null && val !== '' && val !== undefined) {
-                let displayVal = String(val).replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                listContainer.append(`
+            let uniqueVals = [];
+            columnData.unique().each(function(val) {
+              if (val && val !== null && val !== '' && val !== undefined && val !== '0000-00-00' && val !== '-') {
+                let displayVal = val;
+                // Convert ISO date format to display format for date columns
+                if (String(val).match(/^\d{4}-\d{2}-\d{2}$/)) {
+                  displayVal = formatDisplayDate(val);
+                }
+                let tempDiv = document.createElement('div');
+                tempDiv.innerHTML = displayVal;
+                let textVal = tempDiv.textContent || tempDiv.innerText || '';
+                if (textVal && !uniqueVals.includes(textVal)) {
+                  uniqueVals.push(textVal);
+                }
+              }
+            });
+            uniqueVals.sort().forEach(function(val) {
+              let safeVal = String(val).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+              listContainer.append(`
                 <label>
-                  <input type="checkbox" value="${displayVal}"> ${displayVal}
+                  <input type="checkbox" value="${safeVal}"> ${safeVal}
                 </label>
               `);
-              }
             });
           }
         } catch (e) {
