@@ -115,7 +115,7 @@ $(document).ready(function() {
             data: 'dob', 
             className: 'text-center text-nowrap',
             render: function(data, type) {
-                if (type === 'display') return formatDisplayDate(data);
+                if (type === 'display' || type === 'filter') return formatDisplayDate(data);
                 return data;
             }
         },
@@ -124,7 +124,7 @@ $(document).ready(function() {
             data: 'signondt', 
             className: 'text-center text-nowrap',
             render: function(data, type) {
-                if (type === 'display') return formatDisplayDate(data);
+                if (type === 'display' || type === 'filter') return formatDisplayDate(data);
                 return data;
             }
         },
@@ -132,7 +132,7 @@ $(document).ready(function() {
             data: 'signoffdt', 
             className: 'text-center text-nowrap',
             render: function(data, type) {
-                if (type === 'display') return formatDisplayDate(data);
+                if (type === 'display' || type === 'filter') return formatDisplayDate(data);
                 return data;
             }
         },
@@ -140,7 +140,7 @@ $(document).ready(function() {
             data: 'estsignoffdt', 
             className: 'text-center text-nowrap',
             render: function(data, type) {
-                if (type === 'display') return formatDisplayDate(data);
+                if (type === 'display' || type === 'filter') return formatDisplayDate(data);
                 return data;
             }
         }
@@ -157,7 +157,7 @@ $(document).ready(function() {
                 className: 'text-center text-nowrap',
                 render: function(data, type) {
                     if (!data) return '-';
-                    if (type === 'display') return formatDisplayDate(data);
+                    if (type === 'display' || type === 'filter') return formatDisplayDate(data);
                     return data;
                 }
             });
@@ -166,7 +166,7 @@ $(document).ready(function() {
                 className: 'text-center text-nowrap',
                 render: function(data, type) {
                     if (!data) return '-';
-                    if (type === 'display') return formatDisplayDate(data);
+                    if (type === 'display' || type === 'filter') return formatDisplayDate(data);
                     return data;
                 }
             });
@@ -199,9 +199,10 @@ $(document).ready(function() {
         }
     });
 
-    table.on('order.dt search.dt', function () {
-        table.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
-            cell.innerHTML = i + 1;
+    table.on('order.dt search.dt draw.dt', function () {
+        let start = table.page.info().start;
+        table.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function (cell, i) {
+            cell.innerHTML = start + i + 1;
         });
     }).draw();
 
