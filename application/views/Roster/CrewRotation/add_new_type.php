@@ -187,6 +187,8 @@ $is_readonly = ($batchHasJoined || $batchAllCancel);
 <script>
   $(document).ready(function() {
     var isEditMode = false;
+    var selectedReplacementOrder = [];
+    var selectedRankOrder = [];
 
     // --- 1. Ambil Data JSON dari Controller ---
     var dataCompany = <?php echo isset($optionsCompanyJson) ? $optionsCompanyJson : '[]'; ?>;
@@ -289,6 +291,9 @@ $is_readonly = ($batchHasJoined || $batchAllCancel);
         if (existingRow.signonrank) sranks.push(existingRow.signonrank);
       }
 
+      selectedReplacementOrder = rids.slice();
+      selectedRankOrder = sranks.slice();
+
       $('#new_replacement_idperson').val(rids);
       $('#new_kdcmprec').val(existingRow.kdcmprec);
       
@@ -334,22 +339,32 @@ $is_readonly = ($batchHasJoined || $batchAllCancel);
       var $label = $wrap.find('.filter-option-inner-inner').first();
       if (!$label.length) return;
 
-      var selected = $sel.find('option:selected').map(function() {
-        return { value: this.value, text: $(this).text() };
-      }).get();
+      var currentValues = $sel.val() || [];
+      if (!Array.isArray(currentValues)) currentValues = [currentValues];
+      
+      selectedReplacementOrder = selectedReplacementOrder.filter(function(v) {
+        return currentValues.indexOf(v) > -1;
+      });
+      currentValues.forEach(function(v) {
+        if (selectedReplacementOrder.indexOf(v) === -1) {
+          selectedReplacementOrder.push(v);
+        }
+      });
 
-      if (!selected || selected.length === 0) {
+      if (selectedReplacementOrder.length === 0) {
         $label.text('- Select replacement(s) -');
         return;
       }
 
       $label.empty();
-      selected.forEach(function(o) {
-        if (!o.value) return;
-        var $chip = $('<span class="repl-chip"></span>').attr('data-value', o.value);
-        $chip.append($('<span class="repl-chip-text"></span>').text(o.text));
+      selectedReplacementOrder.forEach(function(val) {
+        var $opt = $sel.find('option[value="' + val + '"]');
+        if ($opt.length === 0) return;
+        var text = $opt.text();
+        var $chip = $('<span class="repl-chip"></span>').attr('data-value', val);
+        $chip.append($('<span class="repl-chip-text"></span>').text(text));
         $chip.append(
-          $('<span class="repl-chip-remove" role="button" aria-label="Remove">×</span>').attr('data-value', o.value)
+          $('<span class="repl-chip-remove" role="button" aria-label="Remove">×</span>').attr('data-value', val)
         );
         $label.append($chip);
       });
@@ -405,22 +420,32 @@ $is_readonly = ($batchHasJoined || $batchAllCancel);
       var $label = $wrap.find('.filter-option-inner-inner').first();
       if (!$label.length) return;
 
-      var selected = $sel.find('option:selected').map(function() {
-        return { value: this.value, text: $(this).text() };
-      }).get();
+      var currentValues = $sel.val() || [];
+      if (!Array.isArray(currentValues)) currentValues = [currentValues];
+      
+      selectedRankOrder = selectedRankOrder.filter(function(v) {
+        return currentValues.indexOf(v) > -1;
+      });
+      currentValues.forEach(function(v) {
+        if (selectedRankOrder.indexOf(v) === -1) {
+          selectedRankOrder.push(v);
+        }
+      });
 
-      if (!selected || selected.length === 0) {
+      if (selectedRankOrder.length === 0) {
         $label.text('- Select -');
         return;
       }
 
       $label.empty();
-      selected.forEach(function(o) {
-        if (!o.value) return;
-        var $chip = $('<span class="repl-chip"></span>').attr('data-value', o.value);
-        $chip.append($('<span class="repl-chip-text"></span>').text(o.text));
+      selectedRankOrder.forEach(function(val) {
+        var $opt = $sel.find('option[value="' + val + '"]');
+        if ($opt.length === 0) return;
+        var text = $opt.text();
+        var $chip = $('<span class="repl-chip"></span>').attr('data-value', val);
+        $chip.append($('<span class="repl-chip-text"></span>').text(text));
         
-        var $btn = $('<span class="repl-chip-remove-rank" role="button" aria-label="Remove">×</span>').attr('data-value', o.value);
+        var $btn = $('<span class="repl-chip-remove-rank" role="button" aria-label="Remove">×</span>').attr('data-value', val);
         
         // DIRECT BINDING: Mencegah event bubbling ke bootstrap-select yang bisa mengacaukan native select
         $btn.on('mousedown click', function(e) {
@@ -534,6 +559,19 @@ $is_readonly = ($batchHasJoined || $batchAllCancel);
       }
 
       var formData = $('#crewRotationNewForm').serializeArray();
+      
+      // Override data array untuk memastikan urutan sesuai dengan pilihan user
+      formData = formData.filter(function(item) {
+        return item.name !== 'replacement_idperson[]' && item.name !== 'signonrank_multi[]';
+      });
+      
+      selectedReplacementOrder.forEach(function(val) {
+        formData.push({ name: 'replacement_idperson[]', value: val });
+      });
+      selectedRankOrder.forEach(function(val) {
+        formData.push({ name: 'signonrank_multi[]', value: val });
+      });
+
       var url = isEditMode 
           ? baseUrlCrewRotation.replace('/CrewRotation/CrewRotation', '') + '/CrewRotation/CrewRotation_New/update_new_type'
           : baseUrlCrewRotation.replace('/CrewRotation/CrewRotation', '') + '/CrewRotation/CrewRotation_New/save_new_type';
