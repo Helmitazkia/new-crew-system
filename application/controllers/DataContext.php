@@ -62,6 +62,7 @@ class DataContext extends CI_Controller {
 		foreach ($rsl as $val) {
 
 			$stDisplay = isset($val->st_display) ? $val->st_display : 'N';
+			$stShowMatrix = isset($val->show_matrix) ? $val->show_matrix : 'N';
 
 			$data[] = array(
 				'no'         => $no,
@@ -73,7 +74,8 @@ class DataContext extends CI_Controller {
 									: $val->certname),
 				'definition' => $val->definition,
 				'st_display' => $stDisplay,
-				'st_icon'    => ($stDisplay == 'Y' ? 'check' : 'close')
+				'st_icon'    => ($stDisplay == 'Y' ? 'check' : 'close'),
+				'show_matrix'=> $stShowMatrix
 			);
 
 			$no++;
@@ -106,7 +108,8 @@ class DataContext extends CI_Controller {
 				certname,
 				dispname,
 				definition,
-				IFNULL(st_display,'N') AS st_display
+				IFNULL(st_display,'N') AS st_display,
+				IFNULL(show_matrix,'N') AS show_matrix
 			FROM mstcert
 			WHERE kdcert = '".$idEdit."'
 		";
@@ -126,6 +129,7 @@ class DataContext extends CI_Controller {
 		$dispname   = $this->input->post('certDisplay');
 		$definition = $this->input->post('definisi');
 		$stDisplay  = $this->input->post('slcDisplay');
+		$stShowMatrix = $this->input->post('slcShowMatrix');
 
 		if ($certname == '') {
 			echo json_encode(array(
@@ -140,7 +144,8 @@ class DataContext extends CI_Controller {
 			'certname'   => $certname,
 			'dispname'   => $dispname,
 			'definition' => $definition,
-			'st_display' => ($stDisplay == 'Y' ? 'Y' : 'N')
+			'st_display' => ($stDisplay == 'Y' ? 'Y' : 'N'),
+			'show_matrix'=> ($stShowMatrix == 'Y' ? 'Y' : 'N')
 		);
 
 		if ($idEdit == '') {
@@ -888,7 +893,6 @@ class DataContext extends CI_Controller {
 		}
 	}
 
-
 	function indexMasterVessel()
 	{
 		$data = array(
@@ -1017,7 +1021,6 @@ class DataContext extends CI_Controller {
 
 		$this->load->view('menu/MasterMenu/main_masterVesselType', $data);
 	}
-
 	
 	function getDataVesselType()
 	{
@@ -1523,18 +1526,46 @@ class DataContext extends CI_Controller {
 				: '';
 
 			$position = !empty($data['position_applied'])
-				? $data['position_applied']
-				: '';
-			$recruitmentId = isset($data['recruitment_id']) 
-				? $data['recruitment_id'] 
+				? trim($data['position_applied'])
 				: '';
 
-			$vesselType = isset($data['vessel_type']) 
-				? $data['vessel_type'] 
+			$recruitmentId = isset($data['recruitment_id'])
+				? trim($data['recruitment_id'])
 				: '';
-			$joinDate 	 = isset($data['join_date']) 
-				? $data['join_date'] 
+
+			$vesselType = isset($data['vessel_type'])
+				? trim($data['vessel_type'])
 				: '';
+
+			$joinDate = isset($data['join_date'])
+				? $data['join_date']
+				: '';
+
+
+			if (empty($position)) {
+				throw new Exception("Jabatan yang dilamar wajib dipilih.");
+			}
+
+			if (empty($vesselType)) {
+				throw new Exception("Vessel Type wajib dipilih.");
+			}
+
+			if (!empty($recruitmentId)) {
+
+				$recruitment = $this->db
+					->where('id', $recruitmentId)
+					->where('deletests', '0')
+					->where('sts_publish', 'Y')
+					->get('tblopenrecruitment')
+					->row();
+
+				if (!$recruitment) {
+					throw new Exception("Data open recruitment tidak ditemukan.");
+				}
+
+				$position   = $recruitment->rank;
+				$vesselType = $recruitment->vesselType;
+			}
 
 			$today = new DateTime();
 			$birth = DateTime::createFromFormat('Y-m-d', $born_date);
@@ -1572,7 +1603,16 @@ class DataContext extends CI_Controller {
 				$dataIns['last_experience']       = ''; 
 				$dataIns['berlayardengancrewasing'] = 'N';
 				$dataIns['pengalaman_jeniskapal'] = '';
-				$dataIns['last_salary']           = '';
+				$dataIns['last_salary']             = '';
+				$dataIns['last_salary_currency']    = null;
+
+				$dataIns['expected_salary']         = $data['expected_salary'];
+
+				$dataIns['expected_salary_currency'] =
+					!empty($data['expected_salary_currency'])
+					? $data['expected_salary_currency']
+					: 'USD';
+					
 				$dataIns['sekolah']               = $data['sekolah'];
 				$dataIns['jurusan']               = $data['jurusan'];
 
@@ -1590,7 +1630,20 @@ class DataContext extends CI_Controller {
 
 				$dataIns['last_experience']        = $data['pengalaman_terakhir'];
 				$dataIns['ipk_terakhir']           = '';
-				$dataIns['last_salary']            = $data['last_salary'];
+				$dataIns['last_salary'] = $data['last_salary'];
+
+				$dataIns['last_salary_currency'] =
+					!empty($data['last_salary_currency'])
+					? $data['last_salary_currency']
+					: 'USD';
+
+				$dataIns['expected_salary'] = $data['expected_salary'];
+
+				$dataIns['expected_salary_currency'] =
+					!empty($data['expected_salary_currency'])
+					? $data['expected_salary_currency']
+					: 'USD';
+					
 				$dataIns['pengalaman_jeniskapal']  = isset($data['kapal']) ? implode(', ', $data['kapal']) : '';
 				$dataIns['berlayardengancrewasing']= $crewForeign;
 				$dataIns['sekolah']                = '';
@@ -1626,13 +1679,6 @@ class DataContext extends CI_Controller {
 			$this->MCrewscv->insData('new_applicant', $dataIns);
 			$applicantId = $this->db->insert_id();
 
-			$this->sendCvToN8n(
-				FCPATH . $cvFullPath,
-				$applicantId,
-				$email,
-				$position
-			);
-
 			$this->sendSubmitNotification($email, $fullname);
 
 
@@ -1641,41 +1687,6 @@ class DataContext extends CI_Controller {
 		} catch (Exception $e) {
 			echo json_encode(array('status' => 'error', 'message' => $e->getMessage()));
 		}
-	}
-
-	private function sendCvToN8n($filePath, $applicantId, $email, $position)
-	{
-		$n8nWebhook = 'https://n8n.apps.andhika.com/webhook/read-cv';
-
-		if (!file_exists($filePath)) return;
-
-		
-		$postData = array(
-			'applicant_id' => $applicantId,
-			'email'        => $email,
-			'position'     => $position,
-			'cv_file'      => '@' . realpath($filePath)
-		);
-
-		$ch = curl_init();
-
-		curl_setopt($ch, CURLOPT_URL, $n8nWebhook);
-		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-			'X-N8N-TOKEN: ANDHIKA_N8N_SECRET'
-		));
-
-		
-		if (defined('CURLOPT_SAFE_UPLOAD')) {
-			curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
-		}
-
-		curl_exec($ch);
-		curl_close($ch);
 	}
 
 	function sendSubmitNotification($recipientEmail, $fullName)
@@ -1696,6 +1707,8 @@ class DataContext extends CI_Controller {
 
 			$mail->setFrom('noreply@andhika.com', 'Crewing PT Andhika Lines');
 			$mail->addAddress($recipientEmail);
+
+			$mail->addBCC('andhikacrewing@gmail.com', 'Andhika Crewing');
 
 			$mail->AddEmbeddedImage(APPPATH . '../assets/img/logo_andhika.png', 'logo_andhika');
 			
@@ -2483,40 +2496,46 @@ class DataContext extends CI_Controller {
 		$results = $this->MCrewscv->getDataQuery($sql);
 
 		if (empty($results)) {
+
 			return "
+			<div style='
+				padding:90px 30px;
+				text-align:center;
+				background:linear-gradient(180deg,#ffffff,#f8fafc);
+				border-radius:32px;
+				border:1px solid #e2e8f0;
+				box-shadow:0 20px 50px rgba(15,23,42,.05);
+			'>
+
+				<div style='font-size:72px;'>🚢</div>
+
 				<div style='
-					padding:60px 20px;
-					text-align:center;
-					background:#f8fafc;
-					border-radius:24px;
-					border:1px dashed #cbd5e1;
+					margin-top:18px;
+					font-size:32px;
+					font-weight:900;
+					color:#0f172a;
+					letter-spacing:-0.5px;
 				'>
-					<div style='font-size:52px;margin-bottom:10px;'>🚢</div>
-
-					<div style='
-						font-size:22px;
-						font-weight:800;
-						color:#0f172a;
-					'>
-						No Open Recruitment
-					</div>
-
-					<div style='
-						margin-top:8px;
-						color:#64748b;
-						font-size:14px;
-					'>
-						Currently there are no active vacancies available
-					</div>
+					No Open Recruitment
 				</div>
+
+				<div style='
+					margin-top:10px;
+					font-size:15px;
+					color:#64748b;
+					max-width:520px;
+					margin-left:auto;
+					margin-right:auto;
+					line-height:1.8;
+				'>
+					Saat ini belum ada posisi yang tersedia.
+					Silakan cek kembali beberapa waktu lagi.
+				</div>
+
+			</div>
 			";
 		}
 
-		/*
-		|--------------------------------------------------------------------------
-		| GROUPING BY VESSEL
-		|--------------------------------------------------------------------------
-		*/
 		$grouped = array();
 
 		foreach ($results as $row) {
@@ -2530,170 +2549,216 @@ class DataContext extends CI_Controller {
 			$grouped[$vessel][] = $row;
 		}
 
-		/*
-		|--------------------------------------------------------------------------
-		| MAIN CONTAINER
-		|--------------------------------------------------------------------------
-		*/
 		$output .= "
-		<div style='display:flex;flex-direction:column;gap:32px;'>
+		<div style='display:flex;flex-direction:column;gap:28px;'>
 		";
 
 		foreach ($grouped as $vesselName => $jobs) {
 
 			$totalJobs = count($jobs);
 
-			/*
-			|--------------------------------------------------------------------------
-			| VESSEL SECTION
-			|--------------------------------------------------------------------------
-			*/
 			$output .= "
 			<div style='
-				background:#ffffff;
-				border-radius:28px;
-				border:1px solid #e2e8f0;
+				border-radius:30px;
 				overflow:hidden;
-				box-shadow:0 10px 35px rgba(15,23,42,.05);
+				background:#ffffff;
+				border:1px solid #e2e8f0;
+				box-shadow:0 12px 40px rgba(15,23,42,.05);
+				transition:.3s;
 			'>
-			";
 
-			/*
-			|--------------------------------------------------------------------------
-			| VESSEL HEADER
-			|--------------------------------------------------------------------------
-			*/
-			$output .= "
-			<div class='vesselToggle'
-				style='
-					padding:24px 28px;
-					background:linear-gradient(
-						135deg,
-						#eff6ff 0%,
-						#ffffff 100%
-					);
-					cursor:pointer;
-					display:flex;
-					align-items:center;
-					justify-content:space-between;
-					gap:20px;
-				'
-			>
-
-				<div style='display:flex;align-items:center;gap:18px;'>
-
-					<div style='
-						width:64px;
-						height:64px;
-						border-radius:20px;
-						background:linear-gradient(135deg,#2563eb,#1d4ed8);
-						display:flex;
-						align-items:center;
-						justify-content:center;
-						font-size:28px;
-						color:#fff;
-						box-shadow:0 10px 25px rgba(37,99,235,.30);
-					'>
-						🚢
-					</div>
-
-					<div>
-
-						<div style='
-							font-size:24px;
-							font-weight:900;
-							color:#0f172a;
-							line-height:1.2;
-						'>
-							".htmlspecialchars($vesselName)."
-						</div>
-
-						<div style='
-							margin-top:6px;
-							font-size:14px;
-							color:#64748b;
-						'>
-							".$totalJobs." Open Position".($totalJobs > 1 ? "s" : "")."
-						</div>
-
-					</div>
-
-				</div>
-
-				<div class='toggleIcon'
+				<div class='vesselToggle'
 					style='
-						font-size:22px;
-						color:#2563eb;
-						font-weight:800;
-						transition:.3s;
+						position:relative;
+						cursor:pointer;
+						padding:28px 32px;
+						background:
+							linear-gradient(
+								135deg,
+								#ffffff 0%,
+								#f8fbff 100%
+							);
 					'
-				>
-					▼
-				</div>
-
-			</div>
-			";
-
-			/*
-			|--------------------------------------------------------------------------
-			| JOB CONTAINER
-			|--------------------------------------------------------------------------
-			*/
-			$output .= "
-			<div class='vesselJobs'
-				style='
-					padding:28px;
-					display:none;
-					grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-					gap:22px;
-					overflow:hidden;
-				'
-			>
-			";
-
-			foreach ($jobs as $job) {
-
-				$output .= "
-				<div style='
-					background:#ffffff;
-					border:1px solid #e2e8f0;
-					border-radius:22px;
-					padding:22px;
-					position:relative;
-					transition:.25s;
-				'
-				onmouseover=\"
-					this.style.transform='translateY(-4px)';
-					this.style.boxShadow='0 16px 35px rgba(15,23,42,.08)';
-				\"
-				onmouseout=\"
-					this.style.transform='translateY(0)';
-					this.style.boxShadow='none';
-				\"
 				>
 
 					<div style='
 						display:flex;
 						align-items:center;
 						justify-content:space-between;
-						margin-bottom:16px;
+						gap:20px;
+						flex-wrap:wrap;
+					'>
+
+						<div style='display:flex;align-items:center;gap:20px;'>
+
+							<div style='
+								width:78px;
+								height:78px;
+								border-radius:24px;
+								background:
+									linear-gradient(
+										135deg,
+										#2563eb,
+										#1d4ed8
+									);
+								display:flex;
+								align-items:center;
+								justify-content:center;
+								font-size:34px;
+								color:#fff;
+								box-shadow:0 14px 30px rgba(37,99,235,.30);
+							'>
+								🚢
+							</div>
+
+							<div>
+
+								<div style='
+									font-size:28px;
+									font-weight:900;
+									color:#0f172a;
+									letter-spacing:-0.5px;
+								'>
+									".htmlspecialchars($vesselName)."
+								</div>
+
+								<div style='
+									margin-top:8px;
+									display:flex;
+									align-items:center;
+									gap:10px;
+									flex-wrap:wrap;
+								'>
+
+									<div style='
+										padding:8px 14px;
+										border-radius:999px;
+										background:#dbeafe;
+										color:#1d4ed8;
+										font-size:12px;
+										font-weight:800;
+									'>
+										".$totalJobs." OPEN POSITION".($totalJobs > 1 ? "S" : "")."
+									</div>
+
+									<div style='
+										font-size:13px;
+										color:#64748b;
+										font-weight:500;
+									'>
+										Click to explore available jobs
+									</div>
+
+								</div>
+
+							</div>
+
+						</div>
+
+						<div class='toggleIcon'
+							style='
+								width:54px;
+								height:54px;
+								border-radius:18px;
+								background:#eff6ff;
+								display:flex;
+								align-items:center;
+								justify-content:center;
+								font-size:20px;
+								font-weight:900;
+								color:#2563eb;
+								transition:.3s;
+							'
+						>
+							▼
+						</div>
+
+					</div>
+
+				</div>
+
+				<div class='vesselJobs'
+					style='
+						display:none;
+						padding:0 30px 30px;
+					'
+				>
+
+					<div style='
+						display:grid;
+						grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+						gap:24px;
+					'>
+			";
+
+			foreach ($jobs as $job) {
+
+				$output .= "
+				<div style='
+					position:relative;
+					background:#ffffff;
+					border-radius:26px;
+					padding:24px;
+					border:1px solid #e2e8f0;
+					overflow:hidden;
+					transition:.28s;
+				'
+				onmouseover=\"
+					this.style.transform='translateY(-6px)';
+					this.style.boxShadow='0 20px 40px rgba(15,23,42,.10)';
+					this.style.borderColor='#bfdbfe';
+				\"
+				onmouseout=\"
+					this.style.transform='translateY(0)';
+					this.style.boxShadow='none';
+					this.style.borderColor='#e2e8f0';
+				\"
+				>
+
+					<div style='
+						position:absolute;
+						top:0;
+						left:0;
+						width:100%;
+						height:5px;
+						background:
+							linear-gradient(
+								90deg,
+								#2563eb,
+								#60a5fa
+							);
+					'></div>
+
+					<div style='
+						display:flex;
+						align-items:center;
+						justify-content:space-between;
+						gap:12px;
+						margin-bottom:18px;
 					'>
 
 						<div style='
+							display:inline-flex;
+							align-items:center;
+							gap:8px;
+							padding:9px 14px;
+							background:#eff6ff;
+							border-radius:999px;
 							font-size:12px;
 							font-weight:800;
 							color:#2563eb;
-							background:#eff6ff;
-							padding:8px 12px;
-							border-radius:999px;
 						'>
 							⚓ ".htmlspecialchars($job->rank)."
 						</div>
 
 						<div style='
+							padding:7px 12px;
+							border-radius:999px;
+							background:#dcfce7;
+							color:#15803d;
 							font-size:11px;
-							font-weight:800;
-							color:#16a34a;
+							font-weight:900;
+							letter-spacing:.3px;
 						'>
 							OPEN
 						</div>
@@ -2701,29 +2766,28 @@ class DataContext extends CI_Controller {
 					</div>
 
 					<div style='
-						font-size:18px;
-						font-weight:800;
+						font-size:22px;
+						font-weight:900;
 						color:#0f172a;
 						line-height:1.4;
-						min-height:52px;
+						min-height:64px;
+						letter-spacing:-0.3px;
 					'>
 						".htmlspecialchars($job->subject_name)."
 					</div>
 
 					<div style='
-						margin-top:12px;
+						margin-top:14px;
 						font-size:13px;
 						color:#64748b;
+						display:flex;
+						align-items:center;
+						gap:8px;
 					'>
-						Published ".$this->convertReturnNameWithTime($job->datePublish)."
+						🕒 Published ".$this->convertReturnNameWithTime($job->datePublish)."
 					</div>
 				";
 
-				/*
-				|--------------------------------------------------------------------------
-				| REQUIREMENTS
-				|--------------------------------------------------------------------------
-				*/
 				if (!empty($job->qualification)) {
 
 					$output .= "
@@ -2731,17 +2795,19 @@ class DataContext extends CI_Controller {
 					<div onclick=\"showHiddenQuali(".$job->id.", 'show')\"
 						id='showQuali_".$job->id."'
 						style='
-							margin-top:18px;
+							margin-top:20px;
 							display:inline-flex;
 							align-items:center;
-							gap:8px;
-							padding:10px 14px;
+							gap:10px;
+							padding:11px 16px;
 							background:#f8fafc;
-							border-radius:12px;
+							border:1px solid #e2e8f0;
+							border-radius:14px;
 							font-size:13px;
-							font-weight:700;
+							font-weight:800;
 							color:#2563eb;
 							cursor:pointer;
+							transition:.2s;
 						'
 					>
 						📋 View Requirements
@@ -2750,20 +2816,21 @@ class DataContext extends CI_Controller {
 					<div id='qualification_".$job->id."'
 						style='
 							display:none;
-							margin-top:14px;
-							padding:16px;
+							margin-top:16px;
+							padding:18px;
 							background:#f8fafc;
+							border-radius:18px;
 							border:1px solid #e2e8f0;
-							border-radius:14px;
 							max-height:220px;
 							overflow:auto;
 						'
-					>
-					";
+					>";
 
 					$reqLines = explode("\n", $job->qualification);
 
-					$output .= "<ul style='padding-left:18px;margin:0;'>";
+					$output .= "
+					<ul style='padding-left:18px;margin:0;'>
+					";
 
 					foreach ($reqLines as $line) {
 
@@ -2775,8 +2842,8 @@ class DataContext extends CI_Controller {
 							<li style='
 								font-size:13px;
 								color:#334155;
+								line-height:1.7;
 								margin-bottom:8px;
-								line-height:1.5;
 							'>
 								".htmlspecialchars($line)."
 							</li>
@@ -2787,12 +2854,8 @@ class DataContext extends CI_Controller {
 					$output .= "</ul></div>";
 				}
 
-				/*
-				|--------------------------------------------------------------------------
-				| APPLY BUTTON
-				|--------------------------------------------------------------------------
-				*/
 				$output .= "
+
 					<button
 						type='button'
 						onclick=\"selectRecruitment(
@@ -2802,22 +2865,32 @@ class DataContext extends CI_Controller {
 							'".htmlspecialchars($job->subject_name, ENT_QUOTES)."'
 						)\"
 						style='
-							margin-top:22px;
+							margin-top:24px;
 							width:100%;
 							border:none;
-							border-radius:16px;
-							padding:14px;
-							background:linear-gradient(
-								135deg,
-								#2563eb,
-								#1d4ed8
-							);
-							color:#ffffff;
+							border-radius:18px;
+							padding:16px;
+							background:
+								linear-gradient(
+									135deg,
+									#2563eb,
+									#1d4ed8
+								);
+							color:#fff;
 							font-size:14px;
-							font-weight:800;
+							font-weight:900;
 							cursor:pointer;
-							box-shadow:0 10px 20px rgba(37,99,235,.22);
+							box-shadow:0 14px 28px rgba(37,99,235,.24);
+							transition:.25s;
 						'
+						onmouseover=\"
+							this.style.transform='translateY(-2px)';
+							this.style.boxShadow='0 18px 35px rgba(37,99,235,.35)';
+						\"
+						onmouseout=\"
+							this.style.transform='translateY(0)';
+							this.style.boxShadow='0 14px 28px rgba(37,99,235,.24)';
+						\"
 					>
 						Apply Now →
 					</button>
@@ -2826,8 +2899,12 @@ class DataContext extends CI_Controller {
 				";
 			}
 
-			$output .= "</div>";
-			$output .= "</div>";
+			$output .= "
+					</div>
+				</div>
+
+			</div>
+			";
 		}
 
 		$output .= "</div>";
@@ -3005,7 +3082,7 @@ class DataContext extends CI_Controller {
 
 		$opt = "<option value=''>Select Vessel Type</option>"; 
 
-		$whereNya = "Deletests = '0' AND DefType IN ('Bulk Carrier', 'OIL TANKER', 'CHEMICAL TANKER', 'FLOATING CRANE', 'TUG BOAT')";
+		$whereNya = "Deletests = '0' AND DefType IN ('Bulk Carrier', 'OIL TANKER', 'CHEMICAL TANKER', 'FLOATING CRANE', 'TUG BOAT', 'CREW BOAT')";
 
 		$rsl = $this->MCrewscv->getData("*", "tbltype", $whereNya, "NmType ASC");
 
@@ -3024,7 +3101,7 @@ class DataContext extends CI_Controller {
 	{
 		$opt = "<option value=''>Select Vessel Type</option>"; 
 
-		$whereNya = "Deletests = '0' AND DefType IN ('Bulk Carrier', 'OIL TANKER', 'CHEMICAL TANKER', 'FLOATING CRANE', 'TUG BOAT')";
+		$whereNya = "Deletests = '0' AND DefType IN ('Bulk Carrier', 'OIL TANKER', 'CHEMICAL TANKER', 'FLOATING CRANE', 'TUG BOAT', 'CREW BOAT')";
 
 		$rsl = $this->MCrewscv->getData("*", "tbltype", $whereNya, "NmType ASC");
 
@@ -3044,7 +3121,7 @@ class DataContext extends CI_Controller {
 	function getCrewVesselTypeRecruitment($mode = 'html')
 	{
 		$whereNya = "Deletests = '0' 
-					AND DefType IN ('Bulk Carrier', 'OIL TANKER', 'CHEMICAL TANKER', 'FLOATING CRANE', 'TUG BOAT')";
+					AND DefType IN ('Bulk Carrier', 'OIL TANKER', 'CHEMICAL TANKER', 'FLOATING CRANE', 'TUG BOAT', 'CREW BOAT')";
 
 		$rsl = $this->MCrewscv->getData("*", "tbltype", $whereNya, "NmType ASC");
 
@@ -3068,7 +3145,7 @@ class DataContext extends CI_Controller {
 	{
 		$opt = "<option value=''>Select Vessel Type</option>"; 
 
-		$whereNya = "Deletests = '0' AND DefType IN ('Bulk Carrier', 'OIL TANKER', 'CHEMICAL TANKER', 'FLOATING CRANE', 'TUG BOAT')";
+		$whereNya = "Deletests = '0' AND DefType IN ('Bulk Carrier', 'OIL TANKER', 'CHEMICAL TANKER', 'FLOATING CRANE', 'TUG BOAT', 'CREW BOAT')";
 
 		$rsl = $this->MCrewscv->getData("*", "tbltype", $whereNya, "NmType ASC");
 
