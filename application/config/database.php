@@ -53,6 +53,14 @@ $db['default']['username'] = 'root';
 $db['default']['password'] = '';
 $db['default']['database'] = 'rekrutmen';
 $db['default']['dbdriver'] = 'mysql';
+
+// $db['default']['hostname'] = '10.0.2.6';
+// $db['default']['username'] = 'root';
+// $db['default']['password'] = '4ndh1k4';
+// // $db['default']['database'] = 'crew_system_new';
+// $db['default']['database'] = 'rekrutmen';
+// $db['default']['dbdriver'] = 'mysql';
+
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
 $db['default']['db_debug'] = TRUE;
