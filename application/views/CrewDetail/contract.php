@@ -10,6 +10,7 @@
                   <tr>
                     <th class="text-center">No</th>
                     <th>Company</th>
+                    <th>Status</th>
                     <th>Sign On</th>
                     <th>Sign Off</th>
                     <th>Sign On Rank</th>
@@ -24,7 +25,8 @@
                 </thead>
                 <thead>
                   <tr>
-                    <th></th>
+                    <th><input type="text" class="column-search form-control form-control-sm" placeholder="Search"></th>
+                    <th><input type="text" class="column-search form-control form-control-sm" placeholder="Search"></th>
                     <th><input type="text" class="column-search form-control form-control-sm" placeholder="Search"></th>
                     <th><input type="text" class="column-search form-control form-control-sm" placeholder="Search"></th>
                     <th><input type="text" class="column-search form-control form-control-sm" placeholder="Search"></th>
@@ -60,8 +62,9 @@
         <form id="contractForm">
           <input type="hidden" name="idcontract" id="idcontract">
           <input type="hidden" name="idperson" id="idperson_contract">
+          <input type="hidden" name="status" id="status" value="N">
           <div class="row">
-            <div class="col-md-6 mb-2">
+            <div class="col-md-6 mb-2 field-hidden-ep">
               <label>Company Name<span style="color: red;">*</span></label>
               <select name="kdcmprec" id="kdcmprec" class="form-control selectpicker" data-live-search="true" data-size="5" data-dropup-auto="false"></select>
               <small id="kdcmprecFeedback" class="text-danger d-none">Company Name is required</small>
@@ -76,27 +79,27 @@
               <input type="date" name="signoffdt" id="signoffdt" class="form-control">
               <small class="text-muted">Leave empty if still on board</small>
             </div>
-            <div class="col-md-4 mb-2">
+            <div class="col-md-4 mb-2 field-hidden-e">
               <label>Sign on Rank<span style="color: red;">*</span></label>
               <select name="signonrank" id="signonrank" class="form-control selectpicker" data-live-search="true" data-size="5"></select>
               <small id="signonrankFeedback" class="text-danger d-none">Sign on Rank is required</small>
             </div>
-            <div class="col-md-4 mb-2">
+            <div class="col-md-4 mb-2 field-hidden-ep">
               <label>Sign on Vessel<span style="color: red;">*</span></label>
               <select name="signonvsl" id="signonvsl" class="form-control selectpicker" data-live-search="true" data-size="5"></select>
               <small id="signonvslFeedback" class="text-danger d-none">Sign on Vessel is required</small>
             </div>
-            <div class="col-md-4 mb-2">
+            <div class="col-md-4 mb-2 field-hidden-ep">
               <label>Sign on Port<span style="color: red;">*</span></label>
               <input type="text" name="signonport" id="signonport" class="form-control" placeholder="e.g. BENOA">
               <small id="signonportFeedback" class="text-danger d-none">Sign on Port is required</small>
             </div>
-            <div class="col-md-12 mb-2">
+            <div class="col-md-12 mb-2 field-hidden-ep">
               <label>Sign on Description<span style="color: red;">*</span></label>
               <input type="text" name="signondesc" id="signondesc" class="form-control" placeholder="e.g. Joining as AB for international voyage">
               <small id="signondescFeedback" class="text-danger d-none">Sign on Description is required</small>
             </div>
-            <div class="col-md-4 mb-2">
+            <div class="col-md-4 mb-2 field-hidden-ep">
               <label>Last Vessel</label>
               <input type="text" name="lastvsl" id="lastvsl" class="form-control">
             </div>
@@ -123,15 +126,15 @@
               <label>Remarks</label>
               <textarea name="estremark" id="estremark" class="form-control"></textarea>
             </div>
-            <div class="col-md-4 mb-2">
+            <div class="col-md-4 mb-2 field-hidden-ep">
               <label>Sign off remarks</label>
               <select name="signoffremark" id="signoffremark" class="form-control selectpicker" data-live-search="true" data-size="5"></select>
             </div>
-            <div class="col-md-6 mb-2">
+            <div class="col-md-6 mb-2 field-hidden-ep">
               <label>Replacement Candidate</label>
               <input type="text" name="idcontractRepl" id="idcontractRepl" class="form-control" placeholder="Contract ID or name">
             </div>
-            <div class="col-md-6 mb-6 pb-2">
+            <div class="col-md-6 mb-6 pb-2 field-hidden-ep">
               <br>
               <div class="d-flex gap-3 flex-wrap">
                 <label class="d-flex align-items-center gap-1 mb-0">
@@ -284,6 +287,14 @@ $(document).ready(function () {
         }
       },
       { data: 'company' },
+      { 
+        data: 'status',
+        render: function(d) {
+          if(d === 'E') return '<span class="badge bg-success">Extend</span>';
+          if(d === 'P') return '<span class="badge bg-warning text-dark">Promote</span>';
+          return '<span class="badge bg-primary">New</span>';
+        }
+      },
       { data: 'sign_on', render: function (d) { return fmtDate(d); } },
       { data: 'sign_off', render: function (d) { return fmtDate(d); } },
       { data: 'sign_on_rank' },
@@ -335,17 +346,69 @@ $(document).ready(function () {
 
   // New Contract
   $(document).on('click', '#btnNewContract', function () {
+    Swal.fire({
+      title: 'Tipe Kontrak',
+      html: `
+        <div class="d-flex flex-column text-start gap-2 mt-3">
+            <button class="btn btn-outline-primary p-3 text-start d-flex flex-column mb-2" onclick="Swal.clickConfirm()">
+                <div class="fw-bold mb-1"><i class="fa fa-plus me-2"></i>New Contract</div>
+                <small class="text-muted" style="white-space: normal;">Membuat kontrak baru dengan pengisian data lengkap.</small>
+            </button>
+            <button class="btn btn-outline-success p-3 text-start d-flex flex-column mb-2" onclick="Swal.clickDeny()">
+                <div class="fw-bold mb-1"><i class="fa fa-forward me-2"></i>Extend Contract</div>
+                <small class="text-muted" style="white-space: normal;">Memperpanjang kontrak sebelumnya. Beberapa form diisi otomatis.</small>
+            </button>
+            <button class="btn btn-outline-warning text-dark p-3 text-start d-flex flex-column" onclick="Swal.clickCancel()">
+                <div class="fw-bold mb-1"><i class="fa fa-arrow-up me-2"></i>Promote Contract</div>
+                <small class="text-muted" style="white-space: normal;">Promosi rank dari kontrak sebelumnya.</small>
+            </button>
+        </div>
+      `,
+      icon: 'question',
+      scrollbarPadding: false,
+      showConfirmButton: false,
+      showDenyButton: false,
+      showCancelButton: false,
+      showCloseButton: true,
+      width: '32em'
+    }).then((result) => {
+       if (result.isConfirmed) {
+         openContractModal('N');
+       } else if (result.isDenied) {
+         openContractModal('E');
+       } else if (result.isDismissed && result.dismiss === Swal.DismissReason.cancel) {
+         openContractModal('P');
+       }
+    });
+  });
+
+  function openContractModal(status) {
     $('#contractForm')[0].reset();
     $('#idcontract').val('');
     $('#idperson_contract').val(idperson);
+    $('#status').val(status);
     $('#wrapContractFile').show();
     hideAllContractFeedback();
-    $('#contractModalTitle').text('Add Contract');
+    
+    $('.field-hidden-ep').show();
+    $('.field-hidden-e').show();
+
+    if (status === 'E' || status === 'P') {
+      $('#contractModalTitle').text(status === 'E' ? 'Extend Contract' : 'Promote Contract');
+      $('.field-hidden-ep').hide();
+      
+      if (status === 'E') {
+         $('.field-hidden-e').hide();
+      }
+    } else {
+      $('#contractModalTitle').text('Add Contract');
+    }
+    
     $('#btnSaveContract').removeClass('d-none');
     $('#btnUpdateContract').addClass('d-none');
     resetAllSelectpicker();
     $('#contractModal').modal('show');
-  });
+  }
 
   function hideAllContractFeedback() {
     $('#kdcmprecFeedback,#signondtFeedback,#signonrankFeedback,#signonvslFeedback,#signonportFeedback,#signondescFeedback,#estsignoffdtFeedback,#estsignoffdtFeedbackDate,#no_pklFeedback').addClass('d-none');
@@ -390,6 +453,11 @@ $(document).ready(function () {
     $('#btnSaveContract').addClass('d-none');
     $('#contractModalTitle').text('Edit Contract');
     $('#wrapContractFile').show();
+    
+    // Always show all fields for Edit
+    $('.field-hidden-ep').show();
+    $('.field-hidden-e').show();
+    
     table.processing(true);
     $.ajax({
       url: "<?php echo base_url("CrewDetail/Contract/get_contract_by_id"); ?>",
@@ -399,6 +467,7 @@ $(document).ready(function () {
       success: function (res) {
         $('#idcontract').val(res.idcontract);
         $('#idperson_contract').val(res.idperson);
+        $('#status').val(res.status || 'N');
         $('#kdcmprec').selectpicker('val', (res.kdcmprec || '').toString().trim());
         $('#signonrank').selectpicker('val', (res.signonrank || '').toString().trim());
         $('#signonvsl').selectpicker('val', (res.signonvsl || '').toString().trim());
@@ -595,6 +664,12 @@ function validateEstSignOffVsSignOff() {
 
 function validateContractField(inputId, feedbackId) {
   var $input = $('#' + inputId);
+  
+  // Skip validation if the field is hidden (e.g., in Extend or Promote forms)
+  if ($input.is(':hidden') || $input.closest('.field-hidden-ep').css('display') === 'none' || $input.closest('.field-hidden-e').css('display') === 'none') {
+    return true;
+  }
+
   var $feedback = $('#' + feedbackId);
   var value = ($input[0] && $input[0].tomselect) ? $input[0].tomselect.getValue() : $input.val();
   if (!value || (typeof value === 'string' && value.trim() === '')) {

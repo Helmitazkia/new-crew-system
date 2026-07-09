@@ -112,6 +112,7 @@ class Contract extends CI_Controller
         "remark" => isset($row["estremark"]) ? $row["estremark"] : "",
         "sign_off_remark" => isset($row["nmremark"]) ? $row["nmremark"] : "",
         "file_contract" => isset($row["file_contract"]) ? $row["file_contract"] : "",
+        "status" => isset($row["status"]) ? $row["status"] : "N",
       );
     }
 
@@ -164,6 +165,7 @@ class Contract extends CI_Controller
       "additional" => isset($row->additional) ? $row->additional : "",
       "foreigncrew" => isset($row->foreigncrew) ? $row->foreigncrew : "",
       "file_contract" => isset($row->file_contract) ? $row->file_contract : "",
+      "status" => isset($row->status) ? $row->status : "N",
     );
     $this->output->set_content_type("application/json")->set_output(json_encode($out));
   }
@@ -202,6 +204,32 @@ class Contract extends CI_Controller
     $additional = ($foreigncrew_option === "additional") ? 1 : 0;
     $foreigncrew = ($foreigncrew_option === "foreigncrew") ? 1 : 0;
     $file_contract = "";
+    
+    $status = $this->input->post("status") ?: "N";
+
+    if ($status === 'E' || $status === 'P') {
+      $this->db->where('idperson', $idperson);
+      $this->db->where('deletests', '0');
+      $this->db->order_by('signondt', 'DESC');
+      $this->db->order_by('idcontract', 'DESC');
+      $latest_contract = $this->db->get('tblcontract')->row();
+
+      if ($latest_contract) {
+        $kdcmprec = $latest_contract->kdcmprec;
+        $signonvsl = $latest_contract->signonvsl;
+        $signonport = $latest_contract->signonport;
+        $signondesc = $latest_contract->signondesc;
+        $lastvsl = $latest_contract->lastvsl;
+        
+        if ($status === 'E') {
+          $signonrank = $latest_contract->signonrank;
+        } else if ($status === 'P') {
+          if (empty($signonrank)) {
+             $signonrank = $latest_contract->signonrank;
+          }
+        }
+      }
+    }
 
     if (!empty($_FILES["file_contract"]["name"])) {
       $dataContext = new DataContext();
@@ -241,6 +269,7 @@ class Contract extends CI_Controller
       "additional" => $additional,
       "foreigncrew" => $foreigncrew,
       "file_contract" => $file_contract,
+      "status" => $status,
       "deletests" => "0",
       "addusrdt" => $username . "/" . $currentDate,
     );
@@ -283,6 +312,8 @@ class Contract extends CI_Controller
     $foreigncrew_option = $this->input->post("foreigncrew_option");
     $additional = ($foreigncrew_option === "additional") ? 1 : 0;
     $foreigncrew = ($foreigncrew_option === "foreigncrew") ? 1 : 0;
+    
+    $status = $this->input->post("status") ?: "N";
 
     $data = array(
       "kdcmprec" => $kdcmprec,
@@ -300,6 +331,7 @@ class Contract extends CI_Controller
       "idcontractRepl" => $idcontractRepl,
       "additional" => $additional,
       "foreigncrew" => $foreigncrew,
+      "status" => $status,
       "updusrdt" => $username . "/" . $currentDate,
     );
 
