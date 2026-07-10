@@ -1227,7 +1227,7 @@
                     <div class="row g-2">
                       <div class="col-md-6">
                         <label class="form-label fw-semibold">Kd Cert</label>
-                        <input type="text" class="form-control" name="kdcert" id="personalDoc_kdcert" placeholder="Optional">
+                        <input type="text" class="form-control" name="kdcert" id="personalDoc_kdcert" placeholder="Optional" readonly>
                       </div>
                       <div class="col-md-6">
                         <label class="form-label fw-semibold">Type of Document ID <span class="text-danger">*</span></label>

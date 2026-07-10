@@ -23,11 +23,7 @@ class CrewMatrix extends CI_Controller {
         $data['title'] = 'Crew Matrix';
         $data['active_menu'] = 'crew_matrix';
         
-        // Fetch dynamic certificates where show_matrix = 'Y'
         $sqlCert = "SELECT certname FROM mstcert WHERE deletests = 0 AND show_matrix = 'Y' ORDER BY certname ASC";
-        // Supaya tidak error saat show_matrix belum dibuat, kita handle menggunakan num_fields atau try-catch
-        // Namun karena MySQL di CI3, kita coba langsung. Jika error, CI akan memunculkan DB error.
-        // Sebaiknya kita asumsikan kolom sudah dibuat seperti PRD.
         $data['dynamic_certs'] = $this->db->query($sqlCert)->result_array();
 
         $this->load->view('layout/header', $data);
@@ -37,11 +33,9 @@ class CrewMatrix extends CI_Controller {
 
     public function getData_crewMatrix()
     {
-        // Get all active certificates
         $sqlCert = "SELECT certname FROM mstcert WHERE deletests = 0 AND show_matrix = 'Y'";
         $active_certs = $this->db->query($sqlCert)->result_array();
 
-        // Build dynamic PIVOT for certificates
         $pivot_subquery_sql = "";
         $outer_select_sql = "";
         foreach ($active_certs as $cert) {
@@ -49,11 +43,8 @@ class CrewMatrix extends CI_Controller {
             $alias_iss = "iss_" . preg_replace('/[^a-zA-Z0-9]/', '_', $cert_name);
             $alias_exp = "exp_" . preg_replace('/[^a-zA-Z0-9]/', '_', $cert_name);
             
-            // For subquery (doing the actual pivot)
             $pivot_subquery_sql .= " MAX(CASE WHEN certname = '".$this->db->escape_str($cert_name)."' THEN issdate END) AS {$alias_iss}, ";
             $pivot_subquery_sql .= " MAX(CASE WHEN certname = '".$this->db->escape_str($cert_name)."' THEN expdate END) AS {$alias_exp}, ";
-
-            // For outer query (just selecting the pivoted columns from the 'cert' alias)
             $outer_select_sql .= " cert.{$alias_iss}, ";
             $outer_select_sql .= " cert.{$alias_exp}, ";
         }
@@ -91,8 +82,18 @@ class CrewMatrix extends CI_Controller {
                     idperson,
                     {$pivot_subquery_sql}
                     'dummy' AS dummy
-                FROM tblcertdoc
-                WHERE deletests = '0'
+                FROM (
+                    SELECT idperson, certname, issdate, expdate
+                    FROM tblcertdoc
+                    WHERE deletests = '0' AND certname NOT IN ('PASSPORT', 'SEAMAN BOOK')
+                    UNION ALL
+                    SELECT idperson, 
+                           CASE WHEN kdcert = 55 THEN 'PASSPORT' WHEN kdcert = 56 THEN 'SEAMAN BOOK' END AS certname,
+                           docissdt AS issdate,
+                           docexpdt AS expdate
+                    FROM tblpersonaldoc
+                    WHERE deletests = 0 AND kdcert IN (55, 56)
+                ) combined_cert
                 GROUP BY idperson
             ) cert ON A.idperson = cert.idperson
             LEFT JOIN mstrank MR ON C.signonrank = MR.kdrank
