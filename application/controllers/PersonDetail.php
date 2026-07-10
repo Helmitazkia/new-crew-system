@@ -990,6 +990,14 @@ class PersonDetail extends CI_Controller {
         $idperson = $this->input->post('idperson');
         $kdcert = trim($this->input->post('kdcert'));
         $doctp = trim($this->input->post('doctp'));
+
+        $upperDoctp = strtoupper($doctp);
+        if (strpos($upperDoctp, 'PASS') !== false) {
+            $kdcert = 55;
+        } elseif (strpos($upperDoctp, 'SEAMAN') !== false) {
+            $kdcert = 56;
+        }
+
         $docissctryid = $this->input->post('docissctryid');
         $docno = trim($this->input->post('docno'));
         $docissdt = $this->input->post('docissdt');

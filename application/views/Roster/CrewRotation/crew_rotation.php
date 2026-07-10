@@ -496,10 +496,10 @@ window.showCrewDetail = function(idcrewrotation, type) {
   
   if (type === 'Down') {
     var ajaxUrl = "<?php echo base_url('CrewRotation/CrewRotation_Down/detail'); ?>";
-    $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Down');
+    $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Sign Off');
   } else if (type === 'New') {
     var ajaxUrl = "<?php echo base_url('CrewRotation/CrewRotation_New/detail'); ?>";
-    $('#modalCrewRotationFormLabel').text('Add Crew Rotation - New');
+    $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Sign On');
   } else {
     var ajaxUrl = "<?php echo base_url('CrewRotation/CrewRotation/detail'); ?>";
     $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Change');
@@ -575,8 +575,11 @@ $(document).ready(function() {
         className: "text-center",
         render: function(data) {
           var type = data || "Change";
-          var badgeClass = type === 'New' ? 'badge bg-success badge-status' : type === 'Down' ? 'badge bg-danger badge-status' : 'badge bg-primary badge-status';
-          return '<span class="' + badgeClass + '">' + type + '</span>';
+          var badgeClass = type === 'New' ? 'badge bg-success badge-status' : type === 'Down' ? 'badge bg-warning badge-status text-dark' : 'badge bg-primary badge-status';
+          var TypeStatus = type;
+          if (type == 'Down') TypeStatus = 'Sign Off';
+          if (type == 'New') TypeStatus = 'Sign On';
+          return '<span class="' + badgeClass + '">' + TypeStatus + '</span>';
         }
       },
       // Onboard (Name, Rank, S/ON, Vessel, S/Off Plan) = dari Old Contract (tblcontract)
@@ -666,7 +669,7 @@ $(document).ready(function() {
               displayStatus = "Cancel";
             } else if (data === "Joined" && row.status_crew_change === 'Down') {
               badgeClass = "bg-warning text-dark";
-              displayStatus = "Down";
+              displayStatus = "Sign Off";
             } else if (data === "Joined") {
               badgeClass = "bg-primary";
               displayStatus = "Joined";
@@ -866,16 +869,23 @@ $(document).ready(function() {
       let listContainer = dropdown.find('.filter-list');
 
       // ✅ AMBIL DATA SETELAH TABLE READY; hindari error bila column().data() undefined
-      var colData = table.column(colIndex).data();
-      if (!colData || typeof colData.unique !== 'function') return;
-      colData.unique().sort().each(function(val) {
-        if (val) {
-          listContainer.append(`
+      var colNodes = table.column(colIndex).nodes();
+      if (!colNodes || !colNodes.length) return;
+      
+      var uniqueValues = [];
+      colNodes.to$().each(function() {
+        var text = $(this).text().trim();
+        if (text && uniqueValues.indexOf(text) === -1) {
+          uniqueValues.push(text);
+        }
+      });
+      
+      uniqueValues.sort().forEach(function(val) {
+        listContainer.append(`
           <label>
             <input type="checkbox" value="${val}"> ${val}
           </label>
         `);
-        }
       });
 
       // Toggle dropdown
@@ -1186,11 +1196,11 @@ $(document).ready(function() {
                 <small class="text-muted" style="white-space: normal;">Digunakan untuk rotasi normal: menggantikan kru yang sedang Onboard dengan kandidat baru.</small>
             </button>
             <button class="btn btn-outline-success p-3 text-start d-flex flex-column mb-2" onclick="Swal.clickDeny()">
-                <div class="fw-bold mb-1"><i class="fa fa-user-plus me-2"></i>Embarkation Only (New)</div>
+                <div class="fw-bold mb-1"><i class="fa fa-user-plus me-2"></i>Embarkation Only (Sign On)</div>
                 <small class="text-muted" style="white-space: normal;">Digunakan untuk memberangkatkan kru baru (sign-on) untuk mengisi kekosongan, tanpa ada kru yang turun.</small>
             </button>
             <button class="btn btn-outline-warning text-dark p-3 text-start d-flex flex-column" onclick="Swal.clickCancel()">
-                <div class="fw-bold mb-1"><i class="fa fa-arrow-down me-2"></i>Disembarkation Only (Down)</div>
+                <div class="fw-bold mb-1"><i class="fa fa-arrow-down me-2"></i>Disembarkation Only (Sign Off)</div>
                 <small class="text-muted" style="white-space: normal;">Digunakan untuk memulangkan kru (sign-off) tanpa ada kandidat penggantinya.</small>
             </button>
         </div>
@@ -1210,11 +1220,11 @@ $(document).ready(function() {
       } else if (result.isDenied) {
         var rootUrl = baseUrlCrewRotation.replace('/CrewRotation/CrewRotation', '');
         endpoint = rootUrl + "/CrewRotation/CrewRotation_New/detail"; 
-        $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Embarkation Only (New)');
+        $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Embarkation Only (Sign On)');
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         var rootUrl = baseUrlCrewRotation.replace('/CrewRotation/CrewRotation', '');
         endpoint = rootUrl + "/CrewRotation/CrewRotation_Down/detail"; 
-        $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Disembarkation Only (Down)');
+        $('#modalCrewRotationFormLabel').text('Add Crew Rotation - Disembarkation Only (Sign Off)');
       } else {
         return;
       }
