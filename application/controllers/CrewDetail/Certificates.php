@@ -30,7 +30,7 @@ class Certificates extends CI_Controller {
         'optMstCert' => $dataContext->getMstCertificateByOption("","nama"),
         'optRank'    => $dataContext->getMstRankByOptionWithSelected("",""),
         'optCountry' => $dataContext->getCountryByOption("","kode"),
-        'optType'    => $dataContext->getMstVesselTypeByOptionWithSelected("","")
+        'optType'    => $dataContext->getVesselType("","")
     );
 
     $this->load->view('CrewDetail/certificates', $data);

@@ -11,8 +11,8 @@
                 <thead class="crew-header">
                     <tr>
                         <th class="text-center" style="width:50px;">No</th>
-                        <th class="text-center">Vaccine Name</th>
-                        <th class="text-center">Vaccine Date</th>
+                        <th class="text-center">Medical Item</th>
+                        <th class="text-center">Issue Date</th>
                         <th class="text-center">Remark</th>
                         <th class="text-center">File</th>
                         <th class="text-center" style="width:130px;">Action</th>
@@ -44,11 +44,11 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label fw-semibold" style="font-size: 13px;">Vaccine Name <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold" style="font-size: 13px;">Medical Item <span class="text-danger">*</span></label>
                     <input type="text" class="form-control form-control-sm" name="vaccine_name" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-semibold" style="font-size: 13px;">Vaccine Date <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold" style="font-size: 13px;">Issue Date <span class="text-danger">*</span></label>
                     <input type="date" class="form-control form-control-sm" name="vaccine_date" required>
                 </div>
                 <div class="mb-3">
@@ -86,11 +86,11 @@
                 </div>
                 <div id="editContentMedical" class="d-none">
                     <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size: 13px;">Vaccine Name <span class="text-danger">*</span></label>
+                        <label class="form-label fw-semibold" style="font-size: 13px;">Name <span class="text-danger">*</span></label>
                         <input type="text" class="form-control form-control-sm" name="vaccine_name" id="editVaccineName" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold" style="font-size: 13px;">Vaccine Date <span class="text-danger">*</span></label>
+                        <label class="form-label fw-semibold" style="font-size: 13px;">Date <span class="text-danger">*</span></label>
                         <input type="date" class="form-control form-control-sm" name="vaccine_date" id="editVaccineDate" required>
                     </div>
                     <div class="mb-3">
