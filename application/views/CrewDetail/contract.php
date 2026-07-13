@@ -345,7 +345,7 @@ $(document).ready(function () {
   }
 
   // New Contract
-  $(document).on('click', '#btnNewContract', function () {
+  $(document).off('click', '#btnNewContract').on('click', '#btnNewContract', function () {
     Swal.fire({
       title: 'Tipe Kontrak',
       html: `
@@ -416,8 +416,10 @@ $(document).ready(function () {
   }
 
   // Save Contract
-  $(document).on('click', '#btnSaveContract', function () {
+  $(document).off('click', '#btnSaveContract').on('click', '#btnSaveContract', function () {
     if (!validateContract()) return;
+    let $btn = $(this);
+    $btn.prop('disabled', true); // Disable button to prevent double submit
     let formData = new FormData($('#contractForm')[0]);
     formData.set('idperson', idperson);
     formData.delete('month'); // Month not stored in tblcontract
@@ -439,7 +441,10 @@ $(document).ready(function () {
           Swal.fire({ icon: "error", title: "Oops...", text: r.message || "Failed to save" });
         }
       },
-      error: function () { Swal.fire({ icon: "error", title: "Error", text: "Server error" }); }
+      error: function () { Swal.fire({ icon: "error", title: "Error", text: "Server error" }); },
+      complete: function () {
+        $btn.prop('disabled', false); // Re-enable button
+      }
     });
   });
 
@@ -495,8 +500,10 @@ $(document).ready(function () {
   });
 
   // Update Contract
-  $(document).on('click', '#btnUpdateContract', function () {
+  $(document).off('click', '#btnUpdateContract').on('click', '#btnUpdateContract', function () {
     if (!validateContract()) return;
+    let $btn = $(this);
+    $btn.prop('disabled', true); // Disable button to prevent double submit
     let formData = new FormData($('#contractForm')[0]);
     formData.set('idperson', idperson);
     formData.delete('month');
@@ -521,7 +528,10 @@ $(document).ready(function () {
           Swal.fire({ icon: "error", title: "Oops...", text: r.message || "Failed to update" });
         }
       },
-      error: function () { Swal.fire({ icon: "error", title: "Error", text: "Server error" }); }
+      error: function () { Swal.fire({ icon: "error", title: "Error", text: "Server error" }); },
+      complete: function () {
+        $btn.prop('disabled', false); // Re-enable button
+      }
     });
   });
 
@@ -570,7 +580,7 @@ $(document).ready(function () {
   });
 
   // Submit Upload
-  $(document).on('click', '#btnUploadContract', function () {
+  $(document).off('click', '#btnUploadContract').on('click', '#btnUploadContract', function () {
     let fileInput = $('#file_contract_upload')[0];
     if (!fileInput.files || !fileInput.files.length) {
       $('#file_contract_uploadFeedback').removeClass('d-none').addClass('d-block');
@@ -579,6 +589,8 @@ $(document).ready(function () {
     }
     $('#file_contract_uploadFeedback').addClass('d-none');
     $('#file_contract_upload').removeClass('is-invalid');
+    let $btn = $(this);
+    $btn.prop('disabled', true); // Disable button to prevent double submit
     let formData = new FormData();
     formData.append('idcontract', $('#idcontract_upload').val());
     formData.append('idperson', $('#idperson_upload').val());
@@ -599,7 +611,10 @@ $(document).ready(function () {
           Swal.fire({ icon: "error", title: "Oops...", text: r.message || "Upload failed" });
         }
       },
-      error: function () { Swal.fire({ icon: "error", title: "Error", text: "Server error" }); }
+      error: function () { Swal.fire({ icon: "error", title: "Error", text: "Server error" }); },
+      complete: function () {
+        $btn.prop('disabled', false); // Re-enable button
+      }
     });
   });
 

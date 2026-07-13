@@ -1,3 +1,9 @@
+<style>
+  .certificate-link:hover {
+    color: #007bff !important; /* Mengubah warna menjadi biru saat di-hover */
+    text-decoration: underline !important; /* Memberi garis bawah saat di-hover */
+  }
+</style>
 <div class="crew-rotation-content">
   <div class="container-fluid">
     <div class="row">
@@ -227,7 +233,7 @@ $(document).ready(function() {
           if (row.certificate_file) {
             return '<a href="<?php echo base_url("uploadCertificate"); ?>/' +
               row.certificate_file +
-              '" target="_blank" style="color: black; text-decoration: none;">' + data + '</a>';
+              '" target="_blank" class="certificate-link" title="Click to open/view certificate" style="color: black; text-decoration: none;">' + data + '</a>';
           }
           return data;
         }
