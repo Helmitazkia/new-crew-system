@@ -461,7 +461,7 @@ $(document).ready(function () {
             $(this).find('.row-num').text(index + 1);
             
             // Re-index names to assure proper array submission
-            $(this).find('input[type="hidden"]').each(function() {
+            $(this).find('input[type="hidden"], input[type="text"], input[type="date"]').each(function() {
                 var nameAttr = $(this).attr('name');
                 if(nameAttr) {
                     var newName = nameAttr.replace(/\[\d*\]/, '[' + index + ']');
