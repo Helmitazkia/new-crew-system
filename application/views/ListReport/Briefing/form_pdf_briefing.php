@@ -419,9 +419,14 @@
   <div style="padding: 15px; margin-top: 30px;">
     I (Rank, Name & Signature)
     <span style="border-bottom: 1px solid #000; display: inline-block; width: 600px; text-align:center;">
-      <?php echo htmlspecialchars($history->rank . ' - ' . $history->nama_crew); ?>
+      <?php echo htmlspecialchars($history->rank . ' - ' . $history->nama_crew); 
+      if (!empty($history->signature_qr)) {
+          echo '<br><img src="' . base_url('assets/imgQRCodeCrewCV/' . $history->signature_qr) . '" alt="Signature" style="height:40px;">';
+      }
+      ?>
     </span>
-    <span style="text-align:center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;was carried out and briefed </span><br><br>
+    <br>  
+    <span style="text-align:center;">was carried out and briefed </span><br><br>
     on the above by Mr/Ms
     <span style="border-bottom: 1px solid #000; display: inline-block; width: 300px; text-align:center;">
       <?php echo htmlspecialchars($history->mr_ms_by); ?>
