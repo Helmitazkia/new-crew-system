@@ -221,7 +221,13 @@
 
         <div class="alert alert-secondary mt-4">
             <div class="mb-2">
-                I (Rank, Name & Signature) <strong><?php echo htmlspecialchars($history->rank . ', ' . $history->nama_crew); ?></strong> was carried out and briefed on the above by Mr/Ms
+                I (Rank, Name & Signature) <strong><?php echo htmlspecialchars($history->rank . ', ' . $history->nama_crew); ?></strong>
+                <?php if (!empty($history->signature_qr)): ?>
+                    <div class="my-2">
+                        <img src="<?php echo base_url('assets/imgQRCodeCrewCV/' . $history->signature_qr); ?>" alt="Signature QR" width="80">
+                    </div>
+                <?php endif; ?>
+                was carried out and briefed on the above by Mr/Ms
             </div>
             <div class="mb-2">
                 <input type="text" class="form-control form-control-sm w-50 d-inline-block" value="<?php echo htmlspecialchars($history->mr_ms_by); ?>" disabled>

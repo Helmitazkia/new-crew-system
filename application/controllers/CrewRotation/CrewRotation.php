@@ -586,6 +586,7 @@ class CrewRotation extends CI_Controller
             );
             return;
         }
+        // Update to cancel 
         if ($status === 'Cancel') {
             $username = $this->session->userdata('userName') ?: 'system';
             $currentDate = date('Ymd/H:i:s');
@@ -595,38 +596,21 @@ class CrewRotation extends CI_Controller
                 );
                 return;
             }
-            if ($batch_id !== '') {
-                $batch_rows = $this->db->query("SELECT idcrewrotation, idcontract_synced FROM tblcrewrotation WHERE deletests = '0' AND BatchID = ?", array($batch_id))->result();
-                foreach ($batch_rows as $br) {
-                    if (!empty($br->idcontract_synced)) {
-                        $this->db->where('idcontract', $br->idcontract_synced);
-                        $this->db->update('tblcontract', array('deletests' => '1'));
-                    }
-                    $this->db->where('idcrewrotation', $br->idcrewrotation);
-                    $this->db->update('tblcrewrotation', array(
-                        'status'            => 'Cancel',
-                        'remaks_cancel'     => $remaks_cancel,
-                        'idcontract_synced' => null,
-                        'updusrdt'          => $username . '/' . $currentDate,
-                    ));
-                }
-            } else {
-                if ($current_status === 'Joined' && !empty($row->idcontract_synced)) {
-                    $this->db->where('idcontract', $row->idcontract_synced);
-                    $this->db->update('tblcontract', array('deletests' => '1'));
-                }
-                $this->db->where('idcrewrotation', $idcrewrotation);
-                $this->db->update('tblcrewrotation', array(
-                    'status'            => 'Cancel',
-                    'remaks_cancel'     => $remaks_cancel,
-                    'idcontract_synced' => null,
-                    'updusrdt'          => $username . '/' . $currentDate,
-                ));
+            if ($current_status === 'Joined' && !empty($row->idcontract_synced)) {
+                $this->db->where('idcontract', $row->idcontract_synced);
+                $this->db->update('tblcontract', array('deletests' => '1'));
             }
+            $this->db->where('idcrewrotation', $idcrewrotation);
+            $this->db->update('tblcrewrotation', array(
+                'status'            => 'Cancel',
+                'remaks_cancel'     => $remaks_cancel,
+                'idcontract_synced' => null,
+                'updusrdt'          => $username . '/' . $currentDate,
+            ));
             $this->output->set_content_type('application/json')->set_output(
                 json_encode(array('status' => true, 'message' => 'Status updated to Cancel successfully'))
             );
-            return;
+            return; 
         }
         // Validasi kelengkapan data jika status = Joined
         if ($status === 'Joined') {

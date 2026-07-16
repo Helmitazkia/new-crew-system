@@ -9,14 +9,14 @@
         <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="covid19">Health and Pandemic</a>
       </li>
       <li class="nav-item mb-3">
-        <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="medical">Medical</a>
+        <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="medical">Medical Records</a>
       </li>
       <li class="nav-item mb-3">
         <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="defreafing">Debriefing</a>
       </li>
       <li class="nav-item mb-3">
         <a class="nav-link active rounded-pill text-white fw-bold fst-italic shadow-sm"
-          style="background-color: #1c278e;" href="#" data-report="mcu">MCU</a>
+          style="background-color: #1c278e;" href="#" data-report="mcu">Medical Request</a>
       </li>
       <li class="nav-item mb-3">
         <a class="nav-link text-dark fw-bold fst-italic" href="#" data-report="mlcdeclaration">MLC Declaration Form</a>
