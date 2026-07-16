@@ -63,7 +63,7 @@
   <table class="table-noborder" style="margin-bottom:10px;">
     <tr>
       <td style="width: 30%;" border="1">
-        <img src="<?= base_url('assets/img/andhika.jpg') ?>" alt="Logo Andhika" style="max-width:60px; height: auto;">
+        <img src="./assets/img/andhika.jpg" alt="Logo Andhika" style="max-width:60px; height: auto;">
         <!-- <img src="<?= base_url('assets/img/Adnyana.bmp') ?>" alt="Logo Andhika" style="max-width: 150px; height: auto;"> -->
       </td>
       <td width="25%" align="right" valign="middle">
@@ -74,8 +74,8 @@
          SIUKAK 236.121-R Tahun  2025 
         </div>
         <div>
-          <img src="<?php echo base_url('assets/img/Bureau_Veritas_Logo.jpg') ?>" style="height:30px;">
-          <img src="<?php echo base_url('assets/img/Iso.jpg') ?>" style="height:30px;">
+          <img src="./assets/img/Bureau_Veritas_Logo.jpg" style="height:30px;">
+          <img src="./assets/img/Iso.jpg" style="height:30px;">
         </div>
       </td>
 
@@ -421,7 +421,7 @@
     <span style="border-bottom: 1px solid #000; display: inline-block; width: 600px; text-align:center;">
       <?php echo htmlspecialchars($history->rank . ' - ' . $history->nama_crew); 
       if (!empty($history->signature_qr)) {
-          echo '<br><img src="' . base_url('assets/imgQRCodeCrewCV/' . $history->signature_qr) . '" alt="Signature" style="height:40px;">';
+          echo '<br><img src="./assets/imgQRCodeCrewCV/' . $history->signature_qr . '" alt="Signature" style="height:40px;">';
       }
       ?>
     </span>
