@@ -102,6 +102,9 @@ class PublicBriefing extends CI_Controller {
 
         $qrImg = $this->_createQRCode($batchno, 'briefing');
 
+        // Kembalikan koneksi ke database default
+        $this->db = $this->load->database('default', TRUE);
+
         // Data to update
         $data_update = array(
             'checklist_data' => $checklist_data,
