@@ -7,7 +7,7 @@
     <div class="card-body">
         <div class="d-flex justify-content-end mb-3">
             <button type="button" class="btn btn-primary btn-sm" id="btnAddFamiliar" style="background-color: #000999; border-color: #000999;">
-                <i class="fa fa-plus me-1"></i> Add Familiarization (Multiple)
+                <i class="fa fa-plus me-1"></i> Add Familiarization
             </button>
         </div>
         <div class="table-responsive">
@@ -15,10 +15,10 @@
                 <thead class="crew-header">
                     <tr>
                         <th class="text-center" style="width:50px;">No</th>
-                        <th class="text-center">Date Input</th>
+                        <th class="text-center">Date Request</th>
                         <th class="text-center">Note</th>
                         <th class="text-center" style="width:110px;">Total Crew</th>
-                        <th class="text-center" style="width:150px;">Action</th>
+                        <th class="text-center" style="width:220px;">Action</th>
                     </tr>
                 </thead>
                 <thead>
@@ -218,7 +218,7 @@
                         <tr>
                             <td class="text-center">12</td>
                             <td>Procedures Related Health</td>
-                            <td class="text-center">QHSE</td>
+                            <td class="text-center">DPA / Marine Safety</td>
                             <td class="text-center">
                                 <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_12" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
                                 <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_12" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
@@ -228,7 +228,7 @@
                         <tr>
                             <td class="text-center">13</td>
                             <td>Procedures Related Environmental Protection</td>
-                            <td class="text-center">QHSE</td>
+                            <td class="text-center">DPA / Marine Safety</td>
                             <td class="text-center">
                                 <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_13" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
                                 <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_13" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
@@ -248,7 +248,7 @@
                         <tr>
                             <td class="text-center">15</td>
                             <td>Hazard Identification / JSA</td>
-                            <td class="text-center">QHSE</td>
+                            <td class="text-center">Marine Safety</td>
                             <td class="text-center">
                                 <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_15" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
                                 <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_15" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
@@ -258,7 +258,7 @@
                         <tr>
                             <td class="text-center">16</td>
                             <td>Wearing Personal Protective Equipment (PPE)</td>
-                            <td class="text-center">QHSE</td>
+                            <td class="text-center">Marine Safety</td>
                             <td class="text-center">
                                 <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_16" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
                                 <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_16" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
@@ -279,6 +279,84 @@
                 <button type="submit" class="btn btn-sm btn-primary" id="btnSubmitAddFamiliar">Simpan Data</button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- ============================================================
+     MODAL: Share Public Links
+     ============================================================ -->
+<div class="modal fade" id="modalShareLinks" tabindex="-1" aria-labelledby="modalShareLinksLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header" style="background: linear-gradient(135deg, #000099 0%, #1a237e 100%); color: #fff;">
+                <h6 class="modal-title fw-bold" id="modalShareLinksLabel">
+                    <i class="fa fa-link me-2"></i>Share Links per Department
+                </h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted small mb-3">
+                    <i class="fa fa-info-circle me-1"></i>
+                    Bagikan link berikut ke masing-masing departemen untuk mengisi checklist familiarization.
+                </p>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm align-middle" id="tblShareLinks">
+                        <thead style="background-color: #e8eaf6;">
+                            <tr>
+                                <th>Department</th>
+                                <th>Status</th>
+                                <th style="width:55%;">Link</th>
+                                <th class="text-center" style="width:60px;">Copy</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================
+     MODAL: Audit Trail
+     ============================================================ -->
+<div class="modal fade" id="modalAuditTrail" tabindex="-1" aria-labelledby="modalAuditTrailLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header" style="background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: #fff;">
+                <h6 class="modal-title fw-bold" id="modalAuditTrailLabel">
+                    <i class="fa fa-history me-2"></i>Audit Trail - Checklist
+                </h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm align-middle" id="tblAuditTrail" style="font-size:12px;">
+                        <thead style="background-color: #e8f5e9;">
+                            <tr>
+                                <th>Item</th>
+                                <th>Topic</th>
+                                <th>Department</th>
+                                <th class="text-center">Value</th>
+                                <th>Filled By</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div id="auditEmptyMsg" class="text-center text-muted py-3" style="display:none;">
+                    <i class="fa fa-inbox" style="font-size:30px;"></i>
+                    <p class="mt-2">Belum ada data audit trail.</p>
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -335,7 +413,13 @@ $(document).ready(function () {
             },
             {
                 data: 'date_created_fmt',
-                className: 'text-center'
+                className: 'text-center',
+                render: function (data, type, row) {
+                    if (type === 'filter') {
+                        return (data || '') + ' ' + (row.date_created || '');
+                    }
+                    return data;
+                }
             },
             {
                 data: 'note',
@@ -357,28 +441,45 @@ $(document).ready(function () {
                 searchable: false,
                 render: function (data) {
                     return '<div class="btn-group btn-group-sm" role="group">' +
-                        '<button type="button" class="btn btn-outline-info btn-view-fam" title="View / Detail" data-id="' + data.group_id + '">' +
-                        '<i class="fa fa-eye"></i></button>' +
-                        '<button type="button" class="btn btn-outline-primary btn-edit-fam" title="Edit / Update" data-id="' + data.group_id + '">' +
-                        '<i class="fa fa-pencil"></i></button>' +
-                        '<button type="button" class="btn btn-outline-danger btn-delete-fam" title="Delete Batch" data-id="' + data.group_id + '">' +
-                        '<i class="fa fa-trash"></i></button>' +
-                        '</div>';
+                         '<button type="button" class="btn btn-outline-info btn-view-fam" title="View / Detail" data-id="' + data.group_id + '">' +
+                         '<i class="fa fa-eye"></i></button>' +
+                         '<button type="button" class="btn btn-outline-primary btn-edit-fam" title="Edit / Update" data-id="' + data.group_id + '">' +
+                         '<i class="fa fa-pencil"></i></button>' +
+                         '<button type="button" class="btn btn-outline-success btn-links-fam" title="Share Links" data-id="' + data.group_id + '">' +
+                         '<i class="fa fa-link"></i></button>' +
+                         '<button type="button" class="btn btn-outline-secondary btn-audit-fam" title="Audit Trail" data-id="' + data.group_id + '">' +
+                         '<i class="fa fa-history"></i></button>' +
+                         '<button type="button" class="btn btn-outline-warning btn-pdf-fam" title="Generate PDF" data-id="' + data.group_id + '">' +
+                         '<i class="fa fa-file-pdf-o"></i></button>' +
+                         '<button type="button" class="btn btn-outline-danger btn-delete-fam" title="Delete Batch" data-id="' + data.group_id + '">' +
+                         '<i class="fa fa-trash"></i></button>' +
+                         '</div>';
                 }
             }
         ],
         initComplete: function () {
-            this.api().columns().every(function () {
-                var column = this;
-                var header = $(column.header());
-                if (header.find('.column-search').length) {
-                    header.find('.column-search').on('keyup change', function () {
+            var api = this.api();
+            // Cari input di baris kedua header
+            $('#familiarTable thead tr:eq(1) th').each(function (i) {
+                var input = $(this).find('.column-search');
+                if (input.length) {
+                    input.on('keyup change clear', function () {
+                        var column = api.column(i);
                         if (column.search() !== this.value) {
                             column.search(this.value).draw();
                         }
                     });
                 }
             });
+        },
+        language: {
+            lengthMenu: '_MENU_ &nbsp;Entries',
+            info: 'Showing _START_ to _END_ of _TOTAL_ entries',
+            infoEmpty: 'Showing 0 to 0 of 0 entries',
+            infoFiltered: '(filtered from _MAX_ total entries)',
+            search: 'Search:',
+            emptyTable: 'Tidak ada data',
+            zeroRecords: 'Data tidak ditemukan'
         }
     });
 
@@ -604,6 +705,10 @@ $(document).ready(function () {
                     $('#modalAddFamiliar').modal('hide');
                     famReportTable.ajax.reload(null, false);
                     famNotify('success', res.message);
+                    // Auto-show share links modal
+                    if (res.batch_id) {
+                        setTimeout(function() { openShareLinksModal(res.batch_id); }, 500);
+                    }
                 } else {
                     famNotify('error', res.message);
                 }
@@ -669,5 +774,127 @@ $(document).ready(function () {
             alert(msg);
         }
     }
+
+    // ============================================================
+    //  10. SHARE LINKS
+    // ============================================================
+    $('#familiarTable').on('click', '.btn-links-fam', function () {
+        var batchId = $(this).data('id');
+        openShareLinksModal(batchId);
+    });
+
+    function openShareLinksModal(batchId) {
+        $('#tblShareLinks tbody').empty();
+        $('#modalShareLinksLabel').html('<i class="fa fa-link me-2"></i>Share Links (Batch: ' + batchId + ')');
+
+        $.ajax({
+            url: BASE_URL_FAM_REP + '/get_public_links',
+            type: 'POST',
+            data: { batch_id: batchId },
+            dataType: 'json',
+            success: function (res) {
+                if (res.success && res.data.length > 0) {
+                    $.each(res.data, function (i, link) {
+                        var statusBadge = '';
+                        if (link.status === 'completed') {
+                            statusBadge = '<span class="badge bg-success">Completed</span>';
+                        } else if (link.status === 'partial') {
+                            statusBadge = '<span class="badge bg-warning text-dark">' + link.filled_count + '/' + link.total_items + '</span>';
+                        } else {
+                            statusBadge = '<span class="badge bg-secondary">Pending</span>';
+                        }
+
+                        var tr = '<tr>' +
+                            '<td><strong>' + link.department + '</strong></td>' +
+                            '<td class="text-center">' + statusBadge + '</td>' +
+                            '<td><input type="text" class="form-control form-control-sm link-url-input" value="' + link.url + '" readonly style="font-size:11px;"></td>' +
+                            '<td class="text-center"><button type="button" class="btn btn-sm btn-outline-primary btn-copy-link" data-url="' + link.url + '" title="Copy Link"><i class="fa fa-copy"></i></button></td>' +
+                            '</tr>';
+                        $('#tblShareLinks tbody').append(tr);
+                    });
+                } else {
+                    $('#tblShareLinks tbody').html('<tr><td colspan="4" class="text-center text-muted">Tidak ada link</td></tr>');
+                }
+                $('#modalShareLinks').modal('show');
+            }
+        });
+    }
+
+    // Copy link button
+    $(document).on('click', '.btn-copy-link', function () {
+        var url = $(this).data('url');
+        var btn = $(this);
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(function () {
+                btn.html('<i class="fa fa-check text-success"></i>');
+                setTimeout(function () { btn.html('<i class="fa fa-copy"></i>'); }, 2000);
+            });
+        } else {
+            // Fallback
+            var tempInput = $('<input>');
+            $('body').append(tempInput);
+            tempInput.val(url).select();
+            document.execCommand('copy');
+            tempInput.remove();
+            btn.html('<i class="fa fa-check text-success"></i>');
+            setTimeout(function () { btn.html('<i class="fa fa-copy"></i>'); }, 2000);
+        }
+    });
+
+    // ============================================================
+    //  11. AUDIT TRAIL
+    // ============================================================
+    $('#familiarTable').on('click', '.btn-audit-fam', function () {
+        var batchId = $(this).data('id');
+        $('#tblAuditTrail tbody').empty();
+        $('#auditEmptyMsg').hide();
+        $('#modalAuditTrailLabel').html('<i class="fa fa-history me-2"></i>Audit Trail (Batch: ' + batchId + ')');
+
+        $.ajax({
+            url: BASE_URL_FAM_REP + '/get_checklist_audit',
+            type: 'POST',
+            data: { batch_id: batchId },
+            dataType: 'json',
+            success: function (res) {
+                if (res.success && res.data.length > 0) {
+                    $.each(res.data, function (i, a) {
+                        var valueBadge = (a.item_value == 1)
+                            ? '<span class="badge bg-success">Yes</span>'
+                            : '<span class="badge bg-danger">No</span>';
+                        var tr = '<tr>' +
+                            '<td>' + a.item_name + '</td>' +
+                            '<td>' + a.topic + '</td>' +
+                            '<td>' + a.department + '</td>' +
+                            '<td class="text-center">' + valueBadge + '</td>' +
+                            '<td>' + a.filled_by_name + '</td>' +
+                            '<td>' + a.filled_at_fmt + '</td>' +
+                            '</tr>';
+                        $('#tblAuditTrail tbody').append(tr);
+                    });
+                } else {
+                    $('#auditEmptyMsg').show();
+                }
+                $('#modalAuditTrail').modal('show');
+            }
+        });
+    });
+
+    // ============================================================
+    //  12. PDF GENERATION
+    // ============================================================
+    $('#familiarTable').on('click', '.btn-pdf-fam', function () {
+        var batchId = $(this).data('id');
+        // Open PDF in new tab via POST
+        var form = $('<form>', {
+            action: BASE_URL_FAM_REP + '/familiar_report_pdf',
+            method: 'POST',
+            target: '_blank'
+        });
+        form.append($('<input>', { type: 'hidden', name: 'batch_id', value: batchId }));
+        $('body').append(form);
+        form.submit();
+        form.remove();
+    });
+
 });
 </script>
