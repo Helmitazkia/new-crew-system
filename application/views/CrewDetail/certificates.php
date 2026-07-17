@@ -376,9 +376,9 @@ $(document).ready(function() {
 
   $('#btnSave').click(function() {
     let isCertNameValid = validateChildField('certname', 'certnameFeedback');
-    let isFileValid = validateChildField('certificate_file', 'certfileFeedback')
+    // let isFileValid = validateChildField('certificate_file', 'certfileFeedback')
 
-    if (!isCertNameValid || !isFileValid) {
+    if (!isCertNameValid) {
       return false; // Berhenti jika tidak valid
     }
 

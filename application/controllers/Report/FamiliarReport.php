@@ -3,6 +3,40 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class FamiliarReport extends CI_Controller {
 
+    /**
+     * Mapping checklist item => department
+     */
+    private $itemDepartmentMap = array(
+        'item_1'  => 'Crewing',
+        'item_2'  => 'QHSE',
+        'item_3'  => 'DPA / Marine Safety',
+        'item_4'  => 'DPA / Marine Safety',
+        'item_5'  => 'Operation',
+        'item_6'  => 'DPA / Marine Safety',
+        'item_7'  => 'Technical',
+        'item_8'  => 'Purchasing',
+        'item_9'  => 'Finance',
+        'item_10' => 'Operation',
+        'item_11' => 'DPA / Marine Safety',
+        'item_12' => 'DPA / Marine Safety',
+        'item_13' => 'DPA / Marine Safety',
+        'item_14' => 'DPA / Marine Safety',
+        'item_15' => 'Marine Safety',
+        'item_16' => 'Marine Safety',
+    );
+
+    /**
+     * Daftar departemen unik (untuk generate link)
+     */
+    private $departments = array(
+        'Crewing', 'QHSE', 'DPA / Marine Safety','Operation', 'Technical', 'Purchasing', 'Finance' ,'Marine Safety'
+    );
+
+    /**
+     * Top 4 rank keywords (untuk validasi PDF 2 halaman)
+     */
+    private $top4Ranks = array('MASTER', 'C/O', 'C/E', '2/E');
+
     public function __construct()
     {
         parent::__construct();
@@ -181,6 +215,8 @@ class FamiliarReport extends CI_Controller {
             echo json_encode(array('success' => false, 'message' => 'Gagal menyimpan data'));
         } else {
             $this->db->trans_commit();
+            // Auto-generate public links jika belum ada
+            $this->_generate_links_for_batch($batch_id);
             echo json_encode(array('success' => true, 'message' => 'Data berhasil disimpan', 'batch_id' => $batch_id));
         }
     }
@@ -319,5 +355,247 @@ class FamiliarReport extends CI_Controller {
             'success' => !empty($data),
             'data'    => $data
         ));
+    }
+
+    // ============================================================
+    //  PUBLIC LINK MANAGEMENT
+    // ============================================================
+
+    /**
+     * Internal: Generate public links for all departments for a batch
+     */
+    private function _generate_links_for_batch($batch_id)
+    {
+        foreach ($this->departments as $dept) {
+            // Cek apakah sudah ada link aktif untuk batch+dept ini
+            $existing = $this->db->where('batch_id', $batch_id)
+                                ->where('department', $dept)
+                                ->where('is_active', 1)
+                                ->get('fam_public_links')->row();
+
+            if (!$existing) {
+                $token = hash('sha256', $batch_id . $dept . microtime(true) . rand(1000, 9999));
+                $this->db->insert('fam_public_links', array(
+                    'batch_id'   => $batch_id,
+                    'department' => $dept,
+                    'token'      => $token,
+                    'created_by' => $this->session->userdata('username'),
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'is_active'  => 1
+                ));
+            }
+        }
+    }
+
+    /**
+     * API: Get public links for a batch (untuk modal share)
+     */
+    public function get_public_links()
+    {
+        $batch_id = $this->input->post('batch_id', true);
+        if (empty($batch_id)) {
+            echo json_encode(array('success' => false, 'message' => 'Batch ID kosong'));
+            return;
+        }
+
+        // Generate links jika belum ada
+        $this->_generate_links_for_batch($batch_id);
+
+        $links = $this->db->where('batch_id', $batch_id)
+                          ->where('is_active', 1)
+                          ->order_by('department', 'ASC')
+                          ->get('fam_public_links')->result();
+
+        $result = array();
+        foreach ($links as $link) {
+            // Cek apakah departemen sudah mengisi (ada audit trail)
+            $filled = $this->db->where('batch_id', $batch_id)
+                               ->where('department', $link->department)
+                               ->get('fam_checklist_audit')->num_rows();
+
+            // Hitung total items untuk departemen ini
+            $totalItems = 0;
+            foreach ($this->itemDepartmentMap as $item => $dept) {
+                if ($dept === $link->department) $totalItems++;
+            }
+
+            $link->url = base_url('PublicFamiliar/form/' . $link->token);
+            $link->filled_count = $filled;
+            $link->total_items = $totalItems;
+            $link->status = ($filled >= $totalItems && $totalItems > 0) ? 'completed' : ($filled > 0 ? 'partial' : 'pending');
+            $result[] = $link;
+        }
+
+        echo json_encode(array('success' => true, 'data' => $result));
+    }
+
+    // ============================================================
+    //  AUDIT TRAIL
+    // ============================================================
+
+    /**
+     * API: Get checklist audit trail for a batch
+     */
+    public function get_checklist_audit()
+    {
+        $batch_id = $this->input->post('batch_id', true);
+        if (empty($batch_id)) {
+            echo json_encode(array('success' => false, 'message' => 'Batch ID kosong'));
+            return;
+        }
+
+        $audits = $this->db->where('batch_id', $batch_id)
+                           ->order_by('item_name', 'ASC')
+                           ->order_by('filled_at', 'DESC')
+                           ->get('fam_checklist_audit')->result();
+
+        // Enrich with topic labels
+        $itemLabels = array(
+            'item_1'  => 'Procedures Related Crewing',
+            'item_2'  => 'QHSE Policy',
+            'item_3'  => 'Safety Management System',
+            'item_4'  => 'Duties and Responsibility',
+            'item_5'  => 'Procedures Related Ship Operation',
+            'item_6'  => 'Procedures Related Emergency',
+            'item_7'  => 'Maintenance - Technical',
+            'item_8'  => 'Maintenance - Purchasing',
+            'item_9'  => 'Maintenance - Finance',
+            'item_10' => 'Cargo Handling',
+            'item_11' => 'Safety Drill',
+            'item_12' => 'Procedures Related Health',
+            'item_13' => 'Environmental Protection',
+            'item_14' => 'Audit External / Internal',
+            'item_15' => 'Hazard Identification / JSA',
+            'item_16' => 'Wearing PPE'
+        );
+
+        foreach ($audits as &$a) {
+            $a->topic = isset($itemLabels[$a->item_name]) ? $itemLabels[$a->item_name] : $a->item_name;
+            $a->filled_at_fmt = !empty($a->filled_at) ? date('d M Y H:i', strtotime($a->filled_at)) : '-';
+            $a->value_label = ($a->item_value == 1) ? 'Yes' : 'No';
+        }
+
+        echo json_encode(array('success' => true, 'data' => $audits));
+    }
+
+    // ============================================================
+    //  PDF GENERATION (Batch, with Top 4 logic)
+    // ============================================================
+
+    /**
+     * Check if a rank string matches Top 4
+     */
+    private function isTop4Rank($rankStr)
+    {
+        $rank = strtoupper(trim($rankStr));
+        foreach ($this->top4Ranks as $t4) {
+            if ($rank === $t4 || strpos($rank, $t4) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Generate Familiarization PDF for a batch
+     * Top 4 rank = 2 pages, selainnya = 1 page
+     */
+    public function familiar_report_pdf()
+    {
+        $batch_id = $this->input->post('batch_id');
+        if (!$batch_id) {
+            $batch_id = $this->uri->segment(4);
+        }
+
+        if (!$batch_id) {
+            echo 'Batch ID tidak dikirim.';
+            return;
+        }
+
+        // Get all crew in this batch
+        $this->db->where('batch_id', $batch_id);
+        $crewRows = $this->db->get('history_familiarization')->result();
+
+        if (empty($crewRows)) {
+            echo 'Data tidak ditemukan.';
+            return;
+        }
+
+        // Get master data (checklist values sama untuk semua crew)
+        $master = $crewRows[0];
+
+        // Enrich crew data from mstpersonal + tblcontract
+        $crewList = array();
+        foreach ($crewRows as $row) {
+            $sql = "
+                SELECT
+                    TRIM(CONCAT(p.fname, ' ', p.mname, ' ', p.lname)) AS fullname,
+                    DATE_FORMAT(p.dob, '%d-%m-%Y') AS date_of_birth,
+                    r.nmrank AS rankname,
+                    v.nmvsl AS vesselnm,
+                    DATE_FORMAT(c.signondt, '%d-%m-%Y') AS signon_date
+                FROM mstpersonal p
+                LEFT JOIN tblcontract c
+                    ON c.idperson = p.idperson
+                    AND c.deletests = 'N'
+                    AND c.signondt = (
+                        SELECT MAX(signondt)
+                        FROM tblcontract
+                        WHERE idperson = p.idperson
+                        AND deletests = 'N'
+                    )
+                LEFT JOIN mstvessel v ON v.kdvsl = c.signonvsl
+                LEFT JOIN mstrank r ON r.kdrank = c.signonrank
+                WHERE p.idperson = ?
+                LIMIT 1
+            ";
+
+            $crewInfo = $this->db->query($sql, array($row->idperson))->row();
+
+            if ($crewInfo) {
+                $crewInfo->is_top4 = $this->isTop4Rank($crewInfo->rankname);
+                // Fallback ke data dari history jika contract data kosong
+                if (empty($crewInfo->rankname)) $crewInfo->rankname = $row->rank;
+                if (empty($crewInfo->vesselnm)) $crewInfo->vesselnm = $row->vessel;
+                if (empty($crewInfo->fullname)) $crewInfo->fullname = $row->nama_crew;
+            } else {
+                $crewInfo = (object) array(
+                    'fullname'      => $row->nama_crew,
+                    'date_of_birth' => '',
+                    'rankname'      => $row->rank,
+                    'vesselnm'      => $row->vessel,
+                    'signon_date'   => !empty($row->signon_date) ? date('d-m-Y', strtotime($row->signon_date)) : '',
+                    'is_top4'       => $this->isTop4Rank($row->rank)
+                );
+            }
+
+            $crewList[] = $crewInfo;
+        }
+
+        $dataOut = array(
+            'master'    => $master,
+            'crewList'  => $crewList,
+            'today'     => date('d F Y')
+        );
+
+        require(APPPATH . 'views/frontend/pdf/mpdf60/mpdf.php');
+        $mpdf = new mPDF('utf-8', 'A4');
+
+        ob_start();
+        $this->load->view('Report/FamiliarReport/form_familiar_report_pdf', $dataOut);
+        $html = ob_get_contents();
+        ob_end_clean();
+
+        $mpdf->WriteHTML(utf8_encode($html));
+        $mpdf->Output('Familiarization_Report_' . $batch_id . '.pdf', 'I');
+        exit;
+    }
+
+    /**
+     * API: Get item-department mapping (untuk frontend)
+     */
+    public function get_item_department_map()
+    {
+        echo json_encode(array('success' => true, 'data' => $this->itemDepartmentMap));
     }
 }
