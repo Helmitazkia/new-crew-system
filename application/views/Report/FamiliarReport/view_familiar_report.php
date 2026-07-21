@@ -442,15 +442,13 @@ $(document).ready(function () {
                 render: function (data) {
                     return '<div class="btn-group btn-group-sm" role="group">' +
                          '<button type="button" class="btn btn-outline-info btn-view-fam" title="View / Detail" data-id="' + data.group_id + '">' +
-                         '<i class="fa fa-eye"></i></button>' +
+                         '<i class="fa fa-print"></i></button>' +
                          '<button type="button" class="btn btn-outline-primary btn-edit-fam" title="Edit / Update" data-id="' + data.group_id + '">' +
                          '<i class="fa fa-pencil"></i></button>' +
                          '<button type="button" class="btn btn-outline-success btn-links-fam" title="Share Links" data-id="' + data.group_id + '">' +
                          '<i class="fa fa-link"></i></button>' +
                          '<button type="button" class="btn btn-outline-secondary btn-audit-fam" title="Audit Trail" data-id="' + data.group_id + '">' +
                          '<i class="fa fa-history"></i></button>' +
-                         '<button type="button" class="btn btn-outline-warning btn-pdf-fam" title="Generate PDF" data-id="' + data.group_id + '">' +
-                         '<i class="fa fa-file-pdf-o"></i></button>' +
                          '<button type="button" class="btn btn-outline-danger btn-delete-fam" title="Delete Batch" data-id="' + data.group_id + '">' +
                          '<i class="fa fa-trash"></i></button>' +
                          '</div>';
@@ -645,37 +643,19 @@ $(document).ready(function () {
         });
     });
 
-    // 7. Button Action: VIEW DETAIL
+    // 7. Button Action: VIEW DETAIL (Direct to PDF)
     $('#familiarTable').on('click', '.btn-view-fam', function () {
-        var group_id = $(this).data('id');
-        resetFormModal();
-        $('#modalAddFamiliarLabel').html('<i class="fa fa-eye me-2"></i>Detail Familiarization (Batch: '+group_id+')');
-        
-        $.ajax({
-            url: BASE_URL_FAM_REP + '/get_report_familiar_detail',
-            type: 'POST',
-            data: { group_id: group_id },
-            dataType: 'json',
-            success: function(res) {
-                if(res.success) {
-                    var m = res.data.master;
-                    var cList = res.data.crew_list;
-
-                    $('#fam_batch_id').val(group_id);
-                    $('#fam_note').val(m.note);
-                    fillRadioChecklist(m);
-
-                    $.each(cList, function(i, c) {
-                        appendCrewRow(c.name_crew, c.jabatan, c.vessel_name, c.signon_date, c.id_person);
-                    });
-
-                    disableFormForView();
-                    $('#modalAddFamiliar').modal('show');
-                } else {
-                    famNotify('error', res.message);
-                }
-            }
+        var batchId = $(this).data('id');
+        // Open PDF in new tab via POST
+        var form = $('<form>', {
+            action: BASE_URL_FAM_REP + '/familiar_report_pdf',
+            method: 'POST',
+            target: '_blank'
         });
+        form.append($('<input>', { type: 'hidden', name: 'batch_id', value: batchId }));
+        $('body').append(form);
+        form.submit();
+        form.remove();
     });
 
     // 8. Submit Form (Create / Update)
