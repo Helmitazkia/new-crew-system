@@ -183,14 +183,14 @@ foreach ($crewList as $crew):
             </tr>
             <tr>
                 <td>Procedures Related Health</td>
-                <td style="text-align:center;">QHSE</td>
+                <td style="text-align:center;">DPA / Marine Safety</td>
                 <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
                     <?php echo famMarkReport($master->item_12); ?>
                 </td>
             </tr>
             <tr>
                 <td>Procedures Related Environmental Protection</td>
-                <td style="text-align:center;">QHSE</td>
+                <td style="text-align:center;">DPA / Marine Safety</td>
                 <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
                     <?php echo famMarkReport($master->item_13); ?>
                 </td>
@@ -204,14 +204,14 @@ foreach ($crewList as $crew):
             </tr>
             <tr>
                 <td>Hazard Identification / Risk Assessment / Job Safety Analysis (JSA)</td>
-                <td style="text-align:center;">QHSE</td>
+                <td style="text-align:center;">Marine Safety</td>
                 <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
                     <?php echo famMarkReport($master->item_15); ?>
                 </td>
             </tr>
             <tr>
                 <td>Wearing PPE and PPE Maintenance</td>
-                <td style="text-align:center;">QHSE</td>
+                <td style="text-align:center;">Marine Safety</td>
                 <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
                     <?php echo famMarkReport($master->item_16); ?>
                 </td>

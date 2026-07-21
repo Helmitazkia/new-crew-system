@@ -524,50 +524,27 @@ class FamiliarReport extends CI_Controller {
         // Get master data (checklist values sama untuk semua crew)
         $master = $crewRows[0];
 
-        // Enrich crew data from mstpersonal + tblcontract
+        // Enrich crew data from mstpersonal (hanya ambil Date of Birth) + history_familiarization
         $crewList = array();
         foreach ($crewRows as $row) {
+            // Ambil DOB dari mstpersonal
             $sql = "
-                SELECT
-                    TRIM(CONCAT(p.fname, ' ', p.mname, ' ', p.lname)) AS fullname,
-                    DATE_FORMAT(p.dob, '%d-%m-%Y') AS date_of_birth,
-                    r.nmrank AS rankname,
-                    v.nmvsl AS vesselnm,
-                    DATE_FORMAT(c.signondt, '%d-%m-%Y') AS signon_date
-                FROM mstpersonal p
-                LEFT JOIN tblcontract c
-                    ON c.idperson = p.idperson
-                    AND c.deletests = 'N'
-                    AND c.signondt = (
-                        SELECT MAX(signondt)
-                        FROM tblcontract
-                        WHERE idperson = p.idperson
-                        AND deletests = 'N'
-                    )
-                LEFT JOIN mstvessel v ON v.kdvsl = c.signonvsl
-                LEFT JOIN mstrank r ON r.kdrank = c.signonrank
-                WHERE p.idperson = ?
+                SELECT DATE_FORMAT(dob, '%d-%m-%Y') AS date_of_birth
+                FROM mstpersonal
+                WHERE idperson = ?
                 LIMIT 1
             ";
+            $p = $this->db->query($sql, array($row->idperson))->row();
+            $dob = $p ? $p->date_of_birth : '';
 
-            $crewInfo = $this->db->query($sql, array($row->idperson))->row();
-
-            if ($crewInfo) {
-                $crewInfo->is_top4 = $this->isTop4Rank($crewInfo->rankname);
-                // Fallback ke data dari history jika contract data kosong
-                if (empty($crewInfo->rankname)) $crewInfo->rankname = $row->rank;
-                if (empty($crewInfo->vesselnm)) $crewInfo->vesselnm = $row->vessel;
-                if (empty($crewInfo->fullname)) $crewInfo->fullname = $row->nama_crew;
-            } else {
-                $crewInfo = (object) array(
-                    'fullname'      => $row->nama_crew,
-                    'date_of_birth' => '',
-                    'rankname'      => $row->rank,
-                    'vesselnm'      => $row->vessel,
-                    'signon_date'   => !empty($row->signon_date) ? date('d-m-Y', strtotime($row->signon_date)) : '',
-                    'is_top4'       => $this->isTop4Rank($row->rank)
-                );
-            }
+            $crewInfo = (object) array(
+                'fullname'      => $row->nama_crew,
+                'date_of_birth' => $dob,
+                'rankname'      => $row->rank,
+                'vesselnm'      => $row->vessel,
+                'signon_date'   => !empty($row->signon_date) ? date('d-m-Y', strtotime($row->signon_date)) : '',
+                'is_top4'       => $this->isTop4Rank($row->rank)
+            );
 
             $crewList[] = $crewInfo;
         }
