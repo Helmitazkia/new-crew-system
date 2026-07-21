@@ -199,14 +199,31 @@ class PublicFamiliar extends CI_Controller {
         } else {
             $this->db->trans_commit();
 
-            // --- Generate QR DPA if Department is DPA ---
-            if ($link->department === 'DPA') {
-                $crewRows = $this->db->where('batch_id', $link->batch_id)->get('history_familiarization')->result();
+            // --- Generate QR for the Submitted Department ---
+            $crewRows = $this->db->where('batch_id', $link->batch_id)->get('history_familiarization')->result();
+
+            // Map the department name to the specific qr column
+            $deptColumnMap = array(
+                'DPA'                  => 'qr_dpa', // or 'DPA / Marine Safety' depending on string
+                'DPA / Marine Safety'  => 'qr_dpa',
+                'Technical'            => 'qr_dept_technical',
+                'Marine Safety'        => 'qr_dept_marinesafety',
+                'Finance'              => 'qr_dept_finance',
+                'Purchasing'           => 'qr_dept_purchasing',
+                'QHSE'                 => 'qr_dept_qhse',
+                'Operation'            => 'qr_dept_operation',
+                'Crewing'              => 'qr_dept_crewing'
+            );
+
+            $deptName = $link->department;
+            $qrCol = isset($deptColumnMap[$deptName]) ? $deptColumnMap[$deptName] : '';
+
+            if (!empty($qrCol)) {
                 foreach ($crewRows as $crew) {
-                    if (empty($crew->qr_dpa)) {
-                        $qrDpa = $this->_generateQRRecord($crew->nama_crew, $filledByName, 'fam_dpa');
-                        if ($qrDpa) {
-                            $this->db->where('id', $crew->id)->update('history_familiarization', array('qr_dpa' => $qrDpa));
+                    if (empty($crew->$qrCol)) {
+                        $qrFilename = $this->_generateQRRecord($crew->nama_crew, $filledByName, 'fam_dept_' . strtolower(str_replace(array('/', ' '), '', $deptName)));
+                        if ($qrFilename) {
+                            $this->db->where('id', $crew->id)->update('history_familiarization', array($qrCol => $qrFilename));
                         }
                     }
                 }

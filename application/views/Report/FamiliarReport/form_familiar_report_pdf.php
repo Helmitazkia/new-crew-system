@@ -375,14 +375,54 @@ foreach ($crewList as $crew):
                 </tr>
             </thead>
             <tbody>
-                <tr><td>1</td><td style="text-align:left;">DPA</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>2</td><td style="text-align:left;">Technical</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>3</td><td style="text-align:left;">Marine Safety</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>4</td><td style="text-align:left;">Finance</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>5</td><td style="text-align:left;">Purchasing</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>6</td><td style="text-align:left;">QHSE</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>7</td><td style="text-align:left;">Operation</td><td></td><td></td><td></td><td></td></tr>
-                <tr><td>8</td><td style="text-align:left;">Crewing</td><td></td><td></td><td></td><td></td></tr>
+                <tr>
+                    <td>1</td><td style="text-align:left;">DPA</td>
+                    <td><?php echo isset($reps['DPA']) ? $reps['DPA'] : (isset($reps['DPA / Marine Safety']) ? $reps['DPA / Marine Safety'] : '') ?></td>
+                    <td></td><td></td>
+                    <td><?php if(!empty($crew->qr_dpa)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dpa ?>" style="height: 40px;"><?php endif; ?></td>
+                </tr>
+                <tr>
+                    <td>2</td><td style="text-align:left;">Technical</td>
+                    <td><?php echo isset($reps['Technical']) ? $reps['Technical'] : '' ?></td>
+                    <td></td><td></td>
+                    <td><?php if(!empty($crew->qr_dept_technical)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dept_technical ?>" style="height: 40px;"><?php endif; ?></td>
+                </tr>
+                <tr>
+                    <td>3</td><td style="text-align:left;">Marine Safety</td>
+                    <td><?php echo isset($reps['Marine Safety']) ? $reps['Marine Safety'] : '' ?></td>
+                    <td></td><td></td>
+                    <td><?php if(!empty($crew->qr_dept_marinesafety)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dept_marinesafety ?>" style="height: 40px;"><?php endif; ?></td>
+                </tr>
+                <tr>
+                    <td>4</td><td style="text-align:left;">Finance</td>
+                    <td><?php echo isset($reps['Finance']) ? $reps['Finance'] : '' ?></td>
+                    <td></td><td></td>
+                    <td><?php if(!empty($crew->qr_dept_finance)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dept_finance ?>" style="height: 40px;"><?php endif; ?></td>
+                </tr>
+                <tr>
+                    <td>5</td><td style="text-align:left;">Purchasing</td>
+                    <td><?php echo isset($reps['Purchasing']) ? $reps['Purchasing'] : '' ?></td>
+                    <td></td><td></td>
+                    <td><?php if(!empty($crew->qr_dept_purchasing)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dept_purchasing ?>" style="height: 40px;"><?php endif; ?></td>
+                </tr>
+                <tr>
+                    <td>6</td><td style="text-align:left;">QHSE</td>
+                    <td><?php echo isset($reps['QHSE']) ? $reps['QHSE'] : '' ?></td>
+                    <td></td><td></td>
+                    <td><?php if(!empty($crew->qr_dept_qhse)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dept_qhse ?>" style="height: 40px;"><?php endif; ?></td>
+                </tr>
+                <tr>
+                    <td>7</td><td style="text-align:left;">Operation</td>
+                    <td><?php echo isset($reps['Operation']) ? $reps['Operation'] : '' ?></td>
+                    <td></td><td></td>
+                    <td><?php if(!empty($crew->qr_dept_operation)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dept_operation ?>" style="height: 40px;"><?php endif; ?></td>
+                </tr>
+                <tr>
+                    <td>8</td><td style="text-align:left;">Crewing</td>
+                    <td><?php echo isset($reps['Crewing']) ? $reps['Crewing'] : '' ?></td>
+                    <td></td><td></td>
+                    <td><?php if(!empty($crew->qr_dept_crewing)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dept_crewing ?>" style="height: 40px;"><?php endif; ?></td>
+                </tr>
             </tbody>
         </table>
 

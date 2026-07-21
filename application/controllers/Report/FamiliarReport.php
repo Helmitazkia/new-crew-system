@@ -233,12 +233,25 @@ class FamiliarReport extends CI_Controller {
             return;
         }
 
+        $this->db->trans_start();
+
+        // 1. Delete dari history_familiarization
         $this->db->where('batch_id', $group_id);
         $this->db->or_where('id', $group_id);
-        $delete = $this->db->delete('history_familiarization');
+        $this->db->delete('history_familiarization');
 
-        if ($delete) {
-            echo json_encode(array('success' => true, 'message' => 'Batch berhasil dihapus'));
+        // 2. Delete dari fam_public_links
+        $this->db->where('batch_id', $group_id);
+        $this->db->delete('fam_public_links');
+
+        // 3. Delete dari fam_checklist_audit
+        $this->db->where('batch_id', $group_id);
+        $this->db->delete('fam_checklist_audit');
+
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === TRUE) {
+            echo json_encode(array('success' => true, 'message' => 'Batch beserta seluruh datanya berhasil dihapus'));
         } else {
             echo json_encode(array('success' => false, 'message' => 'Gagal menghapus batch'));
         }
@@ -563,6 +576,16 @@ class FamiliarReport extends CI_Controller {
                              ->get('fam_checklist_audit')->row();
         $signature_DPA = $auditDpa ? $auditDpa->filled_by_name : '';
 
+        // Get representatives for all departments for Page 2
+        $reps = array();
+        $allAudits = $this->db->where('batch_id', $batch_id)->get('fam_checklist_audit')->result();
+        foreach ($allAudits as $au) {
+            // We just need one entry per department to get the filled_by_name
+            if (!isset($reps[$au->department])) {
+                $reps[$au->department] = $au->filled_by_name;
+            }
+        }
+
         // Enrich crew data from mstpersonal (hanya ambil Date of Birth) + history_familiarization
         $crewList = array();
         foreach ($crewRows as $row) {
@@ -586,8 +609,15 @@ class FamiliarReport extends CI_Controller {
                 'qr_crew'       => isset($row->qr_crew) ? $row->qr_crew : '',
                 'qr_checkedby'  => isset($row->qr_checkedby) ? $row->qr_checkedby : '',
                 'qr_dpa'        => isset($row->qr_dpa) ? $row->qr_dpa : '',
-                'signature_checkedBy' => $signature_checkedBy,
-                'signature_DPA' => $signature_DPA
+                'qr_dept_technical'    => isset($row->qr_dept_technical) ? $row->qr_dept_technical : '',
+                'qr_dept_marinesafety' => isset($row->qr_dept_marinesafety) ? $row->qr_dept_marinesafety : '',
+                'qr_dept_finance'      => isset($row->qr_dept_finance) ? $row->qr_dept_finance : '',
+                'qr_dept_purchasing'   => isset($row->qr_dept_purchasing) ? $row->qr_dept_purchasing : '',
+                'qr_dept_qhse'         => isset($row->qr_dept_qhse) ? $row->qr_dept_qhse : '',
+                'qr_dept_operation'    => isset($row->qr_dept_operation) ? $row->qr_dept_operation : '',
+                'qr_dept_crewing'      => isset($row->qr_dept_crewing) ? $row->qr_dept_crewing : '',
+                'signature_checkedBy'  => $signature_checkedBy,
+                'signature_DPA'        => $signature_DPA
             );
 
             $crewList[] = $crewInfo;
@@ -596,7 +626,8 @@ class FamiliarReport extends CI_Controller {
         $dataOut = array(
             'master'    => $master,
             'crewList'  => $crewList,
-            'today'     => date('d F Y')
+            'today'     => date('d F Y'),
+            'reps'      => $reps
         );
 
         require(APPPATH . 'views/frontend/pdf/mpdf60/mpdf.php');
