@@ -29,7 +29,7 @@ class FamiliarReport extends CI_Controller {
      * Daftar departemen unik (untuk generate link)
      */
     private $departments = array(
-        'Crewing', 'QHSE', 'DPA','Operation', 'Technical', 'Purchasing', 'Finance' ,'Marine Safety'
+        'Crewing', 'QHSE', 'DPA','DPA / Marine Safety','Operation', 'Technical', 'Purchasing', 'Finance' ,'Marine Safety'
     );
 
     /**
@@ -366,6 +366,8 @@ class FamiliarReport extends CI_Controller {
      */
     private function _generate_links_for_batch($batch_id)
     {
+        $checkedBy = $this->session->userdata('userFullNm');
+
         foreach ($this->departments as $dept) {
             // Cek apakah sudah ada link aktif untuk batch+dept ini
             $existing = $this->db->where('batch_id', $batch_id)
@@ -379,10 +381,36 @@ class FamiliarReport extends CI_Controller {
                     'batch_id'   => $batch_id,
                     'department' => $dept,
                     'token'      => $token,
-                    'created_by' => $this->session->userdata('userFullNm'),
+                    'created_by' => $checkedBy,
                     'created_at' => date('Y-m-d H:i:s'),
                     'is_active'  => 1
                 ));
+            }
+        }
+
+        // --- Generate QR Signatures (CheckedBy & Crew) ---
+        $this->db->where('batch_id', $batch_id);
+        $crewRows = $this->db->get('history_familiarization')->result();
+
+        foreach ($crewRows as $crew) {
+            $updateData = array();
+
+            // 1. QR Checked By
+            if (empty($crew->qr_checkedby)) {
+                $qrChecked = $this->_generateQRRecord($crew->nama_crew, $checkedBy, 'fam_check');
+                if ($qrChecked) $updateData['qr_checkedby'] = $qrChecked;
+            }
+
+            // 2. QR Crew
+            if (empty($crew->qr_crew)) {
+                // Untuk crew, createdby-nya bisa nama crew atau nama chekedBy
+                $qrCrew = $this->_generateQRRecord($crew->nama_crew, $crew->nama_crew, 'fam_crew');
+                if ($qrCrew) $updateData['qr_crew'] = $qrCrew;
+            }
+
+            if (!empty($updateData)) {
+                $this->db->where('id', $crew->id);
+                $this->db->update('history_familiarization', $updateData);
             }
         }
     }
@@ -524,6 +552,17 @@ class FamiliarReport extends CI_Controller {
         // Get master data (checklist values sama untuk semua crew)
         $master = $crewRows[0];
 
+        // Get signature_checkedBy from fam_public_links
+        $link = $this->db->where('batch_id', $batch_id)->limit(1)->get('fam_public_links')->row();
+        $signature_checkedBy = $link ? $link->created_by : '';
+
+        // Get signature_DPA from fam_checklist_audit
+        $auditDpa = $this->db->where('batch_id', $batch_id)
+                             ->where('department', 'DPA')
+                             ->limit(1)
+                             ->get('fam_checklist_audit')->row();
+        $signature_DPA = $auditDpa ? $auditDpa->filled_by_name : '';
+
         // Enrich crew data from mstpersonal (hanya ambil Date of Birth) + history_familiarization
         $crewList = array();
         foreach ($crewRows as $row) {
@@ -543,7 +582,12 @@ class FamiliarReport extends CI_Controller {
                 'rankname'      => $row->rank,
                 'vesselnm'      => $row->vessel,
                 'signon_date'   => !empty($row->signon_date) ? date('d-m-Y', strtotime($row->signon_date)) : '',
-                'is_top4'       => $this->isTop4Rank($row->rank)
+                'is_top4'       => $this->isTop4Rank($row->rank),
+                'qr_crew'       => isset($row->qr_crew) ? $row->qr_crew : '',
+                'qr_checkedby'  => isset($row->qr_checkedby) ? $row->qr_checkedby : '',
+                'qr_dpa'        => isset($row->qr_dpa) ? $row->qr_dpa : '',
+                'signature_checkedBy' => $signature_checkedBy,
+                'signature_DPA' => $signature_DPA
             );
 
             $crewList[] = $crewInfo;
@@ -574,5 +618,114 @@ class FamiliarReport extends CI_Controller {
     public function get_item_department_map()
     {
         echo json_encode(array('success' => true, 'data' => $this->itemDepartmentMap));
+    }
+
+    // ============================================================
+    //  QR CODE & DB6 LOGIC (HELPER)
+    // ============================================================
+
+    private function _generateQRRecord($address, $createdBy, $prefix)
+    {
+        $dateNow = date("Y-m-d");
+        $yearNow = date("Y");
+        $monthNow = date("m");
+        $noSurat = "1";
+        $initDivisi = "DKP";
+        $initCmp = "AES";
+        $insSql = array();
+
+        $batchno = $this->getBatchNo();
+        $formatNoSrt = $this->createNo($noSurat, $initCmp, $initDivisi, $initDivisi, $monthNow, $yearNow);
+
+        $insSql["batchno"]   = $batchno;
+        $insSql["cmpcode"]   = $initCmp;
+        $insSql["nosurat"]   = $formatNoSrt;
+        $insSql["issueddiv"] = $initDivisi;
+        $insSql["signedby"]  = $initDivisi;
+        $insSql["address"]   = $address;
+        $insSql["tglsurat"]  = $dateNow;
+        $insSql["ket"]       = "Familiarization Check List Prior Joining Vessel";
+        $insSql["copydoc"]   = "0";
+        $insSql["canceldoc"] = "0";
+        $insSql["createdby"] = $createdBy;
+
+        $this->MCrewscv->insDataDb6($insSql, "tblEmpNoSurat");
+
+        // Kembali ke default DB (karena insDataDb6 mungkin mengubah active DB)
+        $this->db = $this->load->database('default', TRUE);
+
+        return $this->_createQRCode($batchno, $prefix);
+    }
+
+    private function getBatchNo()
+    {
+        $batchNo = "1";
+        $sql = " SELECT (batchno + 1) AS batchNo FROM tblempnosurat ORDER BY batchno DESC LIMIT 0,1 ";
+        $data = $this->MCrewscv->getDataQueryDB6($sql);
+
+        if (count($data) > 0) {
+            $batchNo = $data[0]->batchNo;
+        }
+        return $batchNo;
+    }
+
+    private function createNo($noNya = "", $cdCmp = "", $cdKeluar = "", $cdTtd = "", $bln = "", $thn = "")
+    {
+        $dt = strlen($noNya);
+        $outNo = "";
+        if($dt == 1) {
+            $outNo = "000".$noNya;
+        } else if($dt == 2) {
+            $outNo = "00".$noNya;
+        } else if($dt == 3) {
+            $outNo = "0".$noNya;
+        } else {
+            $outNo = $noNya;
+        }		
+
+        if($cdKeluar == $cdTtd) {
+            $cdOutTtd = $cdKeluar;
+        } else {
+            $cdOutTtd = $cdKeluar."-".$cdTtd;
+        }
+
+        $outNo = $outNo."/".$cdCmp."/".$cdOutTtd."/".$bln.$thn;
+        return $outNo;
+    }
+
+    private function _createQRCode($id, $type = 'fam')
+    {
+        $this->load->library('ciqrcode');
+        if (!isset($this->ciqrcode)) {
+            if (!class_exists('Ciqrcode')) {
+                require_once APPPATH . 'libraries/Ciqrcode.php';
+            }
+            $this->ciqrcode = new Ciqrcode();
+        }
+
+        $config = array(
+            'cacheable' => true,
+            'cachedir'  => './assets/imgQRCodeCrewCV/',
+            'errorlog'  => './assets/imgQRCodeCrewCV/',
+            'imagedir'  => './assets/imgQRCodeCrewCV/',
+            'quality'   => true,
+            'size'      => '1024'
+        );
+
+        $this->ciqrcode->initialize($config);
+
+        $imgName = $type . '_' . base64_encode(base64_encode(base64_encode($id))) . '.png';
+
+        $params = array(
+            'data'     => "http://apps.andhika.com/myapps/myLetter/viewLetter/" . base64_encode($id),
+            'level'    => 'H',
+            'size'     => 6,
+            'savename' => FCPATH . $config['imagedir'] . $imgName,
+            'logo'     => './assets/img/andhika.png'
+        );
+
+        $this->ciqrcode->generate($params);
+
+        return $imgName;
     }
 }

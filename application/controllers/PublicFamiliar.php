@@ -198,7 +198,130 @@ class PublicFamiliar extends CI_Controller {
             echo json_encode(array('success' => false, 'message' => 'Gagal menyimpan checklist'));
         } else {
             $this->db->trans_commit();
+
+            // --- Generate QR DPA if Department is DPA ---
+            if ($link->department === 'DPA') {
+                $crewRows = $this->db->where('batch_id', $link->batch_id)->get('history_familiarization')->result();
+                foreach ($crewRows as $crew) {
+                    if (empty($crew->qr_dpa)) {
+                        $qrDpa = $this->_generateQRRecord($crew->nama_crew, $filledByName, 'fam_dpa');
+                        if ($qrDpa) {
+                            $this->db->where('id', $crew->id)->update('history_familiarization', array('qr_dpa' => $qrDpa));
+                        }
+                    }
+                }
+            }
+
             echo json_encode(array('success' => true, 'message' => 'Checklist berhasil disimpan. Terima kasih!'));
         }
+    }
+
+    // ============================================================
+    //  QR CODE & DB6 LOGIC (HELPER)
+    // ============================================================
+
+    private function _generateQRRecord($address, $createdBy, $prefix)
+    {
+        $dateNow = date("Y-m-d");
+        $yearNow = date("Y");
+        $monthNow = date("m");
+        $noSurat = "1";
+        $initDivisi = "DKP";
+        $initCmp = "AES";
+        $insSql = array();
+
+        $batchno = $this->getBatchNo();
+        $formatNoSrt = $this->createNo($noSurat, $initCmp, $initDivisi, $initDivisi, $monthNow, $yearNow);
+
+        $insSql["batchno"]   = $batchno;
+        $insSql["cmpcode"]   = $initCmp;
+        $insSql["nosurat"]   = $formatNoSrt;
+        $insSql["issueddiv"] = $initDivisi;
+        $insSql["signedby"]  = $initDivisi;
+        $insSql["address"]   = $address;
+        $insSql["tglsurat"]  = $dateNow;
+        $insSql["ket"]       = "Familiarization Check List Prior Joining Vessel";
+        $insSql["copydoc"]   = "0";
+        $insSql["canceldoc"] = "0";
+        $insSql["createdby"] = $createdBy;
+
+        $this->MCrewscv->insDataDb6($insSql, "tblEmpNoSurat");
+
+        // Kembali ke default DB
+        $this->db = $this->load->database('default', TRUE);
+
+        return $this->_createQRCode($batchno, $prefix);
+    }
+
+    private function getBatchNo()
+    {
+        $batchNo = "1";
+        $sql = " SELECT (batchno + 1) AS batchNo FROM tblempnosurat ORDER BY batchno DESC LIMIT 0,1 ";
+        $data = $this->MCrewscv->getDataQueryDB6($sql);
+
+        if (count($data) > 0) {
+            $batchNo = $data[0]->batchNo;
+        }
+        return $batchNo;
+    }
+
+    private function createNo($noNya = "", $cdCmp = "", $cdKeluar = "", $cdTtd = "", $bln = "", $thn = "")
+    {
+        $dt = strlen($noNya);
+        $outNo = "";
+        if($dt == 1) {
+            $outNo = "000".$noNya;
+        } else if($dt == 2) {
+            $outNo = "00".$noNya;
+        } else if($dt == 3) {
+            $outNo = "0".$noNya;
+        } else {
+            $outNo = $noNya;
+        }		
+
+        if($cdKeluar == $cdTtd) {
+            $cdOutTtd = $cdKeluar;
+        } else {
+            $cdOutTtd = $cdKeluar."-".$cdTtd;
+        }
+
+        $outNo = $outNo."/".$cdCmp."/".$cdOutTtd."/".$bln.$thn;
+        return $outNo;
+    }
+
+    private function _createQRCode($id, $type = 'fam')
+    {
+        $this->load->library('ciqrcode');
+        if (!isset($this->ciqrcode)) {
+            if (!class_exists('Ciqrcode')) {
+                require_once APPPATH . 'libraries/Ciqrcode.php';
+            }
+            $this->ciqrcode = new Ciqrcode();
+        }
+
+        $config = array(
+            'cacheable' => true,
+            'cachedir'  => './assets/imgQRCodeCrewCV/',
+            'errorlog'  => './assets/imgQRCodeCrewCV/',
+            'imagedir'  => './assets/imgQRCodeCrewCV/',
+            'quality'   => true,
+            'size'      => '1024'
+        );
+
+        $this->ciqrcode->initialize($config);
+
+        $imgName = $type . '_' . base64_encode(base64_encode(base64_encode($id))) . '.png';
+
+        $params = array(
+            'data'     => "http://apps.andhika.com/myapps/myLetter/viewLetter/" . base64_encode($id),
+            'level'    => 'H',
+            'size'     => 6,
+            'savename' => FCPATH . $config['imagedir'] . $imgName,
+            'logo'     => './assets/img/andhika.png'
+        );
+
+        $this->ciqrcode->generate($params);
+
+        return $imgName;
     }
 }

@@ -233,13 +233,37 @@ foreach ($crewList as $crew):
             <td style="width: 33%;">Crew Sign on</td>
         </tr>
         <tr>
-            <td style="height: 80px;"></td>
-            <td></td>
-            <td></td>
+            <td style="height: 80px;">
+                <?php if (!empty($crew->qr_dpa)): ?>
+                    <img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dpa ?>" style="height: 70px;">
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if (!empty($crew->qr_checkedby)): ?>
+                    <img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_checkedby ?>" style="height: 70px;">
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if (!empty($crew->qr_crew)): ?>
+                    <img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_crew ?>" style="height: 70px;">
+                <?php endif; ?>
+            </td>
         </tr>
         <tr>
-            <td>( .................................... )</td>
-            <td>( .................................... )</td>
+            <td>
+                <?php if (!empty($crew->signature_DPA)): ?>
+                    <?php echo $crew->signature_DPA ?>
+                <?php else: ?>
+                    ( .................................... )
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if (!empty($crew->signature_checkedBy)): ?>
+                    <?php echo $crew->signature_checkedBy ?>
+                <?php else: ?>
+                    ( .................................... )
+                <?php endif; ?>
+            </td>
             <td>( <?php echo $crew->fullname ?> )</td>
         </tr>
         <tr>
