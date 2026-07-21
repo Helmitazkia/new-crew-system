@@ -10,7 +10,7 @@ class FamiliarReport extends CI_Controller {
         'item_1'  => 'Crewing',
         'item_2'  => 'QHSE',
         'item_3'  => 'DPA / Marine Safety',
-        'item_4'  => 'DPA / Marine Safety',
+        'item_4'  => 'DPA',
         'item_5'  => 'Operation',
         'item_6'  => 'DPA / Marine Safety',
         'item_7'  => 'Technical',
@@ -29,7 +29,7 @@ class FamiliarReport extends CI_Controller {
      * Daftar departemen unik (untuk generate link)
      */
     private $departments = array(
-        'Crewing', 'QHSE', 'DPA / Marine Safety','Operation', 'Technical', 'Purchasing', 'Finance' ,'Marine Safety'
+        'Crewing', 'QHSE', 'DPA','Operation', 'Technical', 'Purchasing', 'Finance' ,'Marine Safety'
     );
 
     /**
@@ -379,7 +379,7 @@ class FamiliarReport extends CI_Controller {
                     'batch_id'   => $batch_id,
                     'department' => $dept,
                     'token'      => $token,
-                    'created_by' => $this->session->userdata('username'),
+                    'created_by' => $this->session->userdata('userFullNm'),
                     'created_at' => date('Y-m-d H:i:s'),
                     'is_active'  => 1
                 ));
