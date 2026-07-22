@@ -18,12 +18,14 @@
                         <th class="text-center">Date Request</th>
                         <th class="text-center">Note</th>
                         <th class="text-center" style="width:110px;">Total Crew</th>
+                        <th class="text-center" style="width:100px;">Status</th>
                         <th class="text-center" style="width:220px;">Action</th>
                     </tr>
                 </thead>
                 <thead>
                     <tr>
                         <th></th>
+                        <th><input type="text" class="column-search" placeholder="Search"></th>
                         <th><input type="text" class="column-search" placeholder="Search"></th>
                         <th><input type="text" class="column-search" placeholder="Search"></th>
                         <th><input type="text" class="column-search" placeholder="Search"></th>
@@ -432,6 +434,16 @@ $(document).ready(function () {
                 className: 'text-center',
                 render: function (data) {
                     return '<span class="badge bg-info text-dark">' + data + ' Orang</span>';
+                }
+            },
+            {
+                data: 'status_html',
+                className: 'text-center',
+                render: function (data, type, row) {
+                    if (type === 'filter' || type === 'sort') {
+                        return row.status_text;
+                    }
+                    return data;
                 }
             },
             {

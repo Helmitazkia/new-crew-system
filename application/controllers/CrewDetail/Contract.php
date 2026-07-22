@@ -228,6 +228,15 @@ class Contract extends CI_Controller
              $signonrank = $latest_contract->signonrank;
           }
         }
+
+        if (!empty($signondt) && $signondt !== '0000-00-00') {
+          $new_signoffdt = date('Y-m-d', strtotime($signondt . ' -1 day'));
+          $this->db->where('idcontract', $latest_contract->idcontract);
+          $this->db->update('tblcontract', array(
+            'signoffdt' => $new_signoffdt,
+            'updusrdt' => $username . "/" . $currentDate,
+          ));
+        }
       }
     }
 
