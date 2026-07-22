@@ -70,7 +70,11 @@ class FamiliarReport extends CI_Controller {
                 COALESCE(batch_id, id) as group_id,
                 MAX(date_created) as date_created,
                 MAX(note) as note,
-                COUNT(id) as total_crew
+                COUNT(id) as total_crew,
+                MAX(item_1) as item_1, MAX(item_2) as item_2, MAX(item_3) as item_3, MAX(item_4) as item_4,
+                MAX(item_5) as item_5, MAX(item_6) as item_6, MAX(item_7) as item_7, MAX(item_8) as item_8,
+                MAX(item_9) as item_9, MAX(item_10) as item_10, MAX(item_11) as item_11, MAX(item_12) as item_12,
+                MAX(item_13) as item_13, MAX(item_14) as item_14, MAX(item_15) as item_15, MAX(item_16) as item_16
             FROM history_familiarization
             GROUP BY COALESCE(batch_id, id)
             ORDER BY MAX(date_created) DESC
@@ -84,6 +88,24 @@ class FamiliarReport extends CI_Controller {
                 $row->date_created_fmt = !empty($row->date_created)
                     ? date('d M Y H:i', strtotime($row->date_created))
                     : '-';
+                
+                $isCompleted = true;
+                for ($i = 1; $i <= 16; $i++) {
+                    $itemKey = 'item_' . $i;
+                    if ($row->$itemKey === null || $row->$itemKey === '') {
+                        $isCompleted = false;
+                        break;
+                    }
+                }
+                
+                if ($isCompleted) {
+                    $row->status_html = '<span class="badge bg-success" style="font-size: 11px;">Completed</span>';
+                    $row->status_text = 'Completed';
+                } else {
+                    $row->status_html = '<span class="badge bg-warning text-dark" style="font-size: 11px;">Pending</span>';
+                    $row->status_text = 'Pending';
+                }
+
                 $result[] = $row;
             }
         }
@@ -160,8 +182,18 @@ class FamiliarReport extends CI_Controller {
         
         $this->db->trans_begin();
 
-        // Jika update (batch_id ada isinya), kita hapus dulu semua data dengan batch_id tersebut
+        // Ambil data lama jika update untuk mempertahankan QR code
+        $existingDataMap = array();
         if (!empty($batch_id)) {
+            $this->db->where('batch_id', $batch_id);
+            $this->db->or_where('id', $batch_id);
+            $oldData = $this->db->get('history_familiarization')->result();
+            foreach ($oldData as $od) {
+                // map by idperson (atau nama_crew jika idperson kosong)
+                $key = !empty($od->idperson) ? $od->idperson : $od->nama_crew;
+                $existingDataMap[$key] = $od;
+            }
+
             $this->db->where('batch_id', $batch_id);
             $this->db->or_where('id', $batch_id); // Fallback for old single data
             $this->db->delete('history_familiarization');
@@ -181,15 +213,20 @@ class FamiliarReport extends CI_Controller {
         };
 
         foreach ($crewList as $crew) {
+            $idperson = isset($crew['id_person']) ? $crew['id_person'] : '';
+            $nama_crew = isset($crew['name_crew']) ? $crew['name_crew'] : '';
+            $key = !empty($idperson) ? $idperson : $nama_crew;
+            $oldCrew = isset($existingDataMap[$key]) ? $existingDataMap[$key] : null;
+
             $dataInsert = array(
                 'batch_id'     => $batch_id,
-                'idperson'     => isset($crew['id_person']) ? $crew['id_person'] : '',
-                'nama_crew'    => isset($crew['name_crew']) ? $crew['name_crew'] : '',
+                'idperson'     => $idperson,
+                'nama_crew'    => $nama_crew,
                 'rank'         => isset($crew['jabatan']) ? $crew['jabatan'] : '',
                 'vessel'       => isset($crew['vessel_name']) ? $crew['vessel_name'] : '',
                 'signon_date'  => isset($crew['signon_date']) && !empty($crew['signon_date']) ? date('Y-m-d', strtotime($crew['signon_date'])) : NULL,
                 'note'         => $note,
-                'date_created' => $date_created,
+                'date_created' => $oldCrew ? $oldCrew->date_created : $date_created,
                 'item_1'       => $getItem('item_1'),
                 'item_2'       => $getItem('item_2'),
                 'item_3'       => $getItem('item_3'),
@@ -205,7 +242,19 @@ class FamiliarReport extends CI_Controller {
                 'item_13'      => $getItem('item_13'),
                 'item_14'      => $getItem('item_14'),
                 'item_15'      => $getItem('item_15'),
-                'item_16'      => $getItem('item_16')
+                'item_16'      => $getItem('item_16'),
+                
+                // Pertahankan QR Codes yang sudah ter-generate sebelumnya
+                'qr_checkedby' => $oldCrew && isset($oldCrew->qr_checkedby) ? $oldCrew->qr_checkedby : null,
+                'qr_crew'      => $oldCrew && isset($oldCrew->qr_crew) ? $oldCrew->qr_crew : null,
+                'qr_dpa'       => $oldCrew && isset($oldCrew->qr_dpa) ? $oldCrew->qr_dpa : null,
+                'qr_dept_technical'    => $oldCrew && isset($oldCrew->qr_dept_technical) ? $oldCrew->qr_dept_technical : null,
+                'qr_dept_marinesafety' => $oldCrew && isset($oldCrew->qr_dept_marinesafety) ? $oldCrew->qr_dept_marinesafety : null,
+                'qr_dept_finance'      => $oldCrew && isset($oldCrew->qr_dept_finance) ? $oldCrew->qr_dept_finance : null,
+                'qr_dept_purchasing'   => $oldCrew && isset($oldCrew->qr_dept_purchasing) ? $oldCrew->qr_dept_purchasing : null,
+                'qr_dept_qhse'         => $oldCrew && isset($oldCrew->qr_dept_qhse) ? $oldCrew->qr_dept_qhse : null,
+                'qr_dept_operation'    => $oldCrew && isset($oldCrew->qr_dept_operation) ? $oldCrew->qr_dept_operation : null,
+                'qr_dept_crewing'      => $oldCrew && isset($oldCrew->qr_dept_crewing) ? $oldCrew->qr_dept_crewing : null
             );
             $this->db->insert('history_familiarization', $dataInsert);
         }
