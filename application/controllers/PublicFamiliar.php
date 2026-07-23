@@ -165,6 +165,16 @@ class PublicFamiliar extends CI_Controller {
         $this->db->trans_begin();
 
         $now = date('Y-m-d H:i:s');
+        
+        $time_start = $this->input->post('time_start', true);
+        $time_end = $this->input->post('time_end', true);
+
+        // Save time_start and time_end to fam_public_links
+        $this->db->where('token', $token)
+                 ->update('fam_public_links', array(
+                     'time_start' => !empty($time_start) ? $time_start : null,
+                     'time_end'   => !empty($time_end) ? $time_end : null
+                 ));
 
         foreach ($allowedItems as $itemName) {
             $val = $this->input->post($itemName);

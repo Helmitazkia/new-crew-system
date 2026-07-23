@@ -635,6 +635,18 @@ class FamiliarReport extends CI_Controller {
             }
         }
 
+        // Get time_start and time_end from fam_public_links
+        $times = array();
+        $publicLinks = $this->db->where('batch_id', $batch_id)->get('fam_public_links')->result();
+        foreach ($publicLinks as $pl) {
+            if (!empty($pl->time_start) && !empty($pl->time_end)) {
+                $times[$pl->department] = array(
+                    'start' => date('H:i', strtotime($pl->time_start)),
+                    'end'   => date('H:i', strtotime($pl->time_end))
+                );
+            }
+        }
+
         // Enrich crew data from mstpersonal (hanya ambil Date of Birth) + history_familiarization
         $crewList = array();
         foreach ($crewRows as $row) {
@@ -676,7 +688,8 @@ class FamiliarReport extends CI_Controller {
             'master'    => $master,
             'crewList'  => $crewList,
             'today'     => date('d F Y'),
-            'reps'      => $reps
+            'reps'      => $reps,
+            'times'     => $times
         );
 
         require(APPPATH . 'views/frontend/pdf/mpdf60/mpdf.php');

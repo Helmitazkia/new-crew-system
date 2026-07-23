@@ -279,6 +279,28 @@
                 </tbody>
             </table>
 
+            <div class="row mt-4 mb-3">
+                <div class="col-md-6 offset-md-3">
+                    <div class="card shadow-sm border-0 bg-light">
+                        <div class="card-body">
+                            <h6 class="fw-bold mb-3 text-center" style="color: #000099;">
+                                <i class="fa fa-clock me-2"></i>Waktu Pelaksanaan Familiarization
+                            </h6>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label class="form-label fw-bold" style="font-size: 13px;">Time Start <span class="text-danger">*</span></label>
+                                    <input type="time" class="form-control" name="time_start" value="<?php echo !empty($link->time_start) ? date('H:i', strtotime($link->time_start)) : ''; ?>" required>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label fw-bold" style="font-size: 13px;">Time End <span class="text-danger">*</span></label>
+                                    <input type="time" class="form-control" name="time_end" value="<?php echo !empty($link->time_end) ? date('H:i', strtotime($link->time_end)) : ''; ?>" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="text-center mt-4 mb-3">
                 <button type="submit" class="btn btn-submit-public" id="btnSubmitPublic">
                     <i class="fa fa-paper-plane me-2"></i>Submit Checklist
