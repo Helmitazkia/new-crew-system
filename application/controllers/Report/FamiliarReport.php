@@ -463,12 +463,6 @@ class FamiliarReport extends CI_Controller {
                 if ($qrChecked) $updateData['qr_checkedby'] = $qrChecked;
             }
 
-            // 2. QR Crew
-            if (empty($crew->qr_crew)) {
-                // Untuk crew, createdby-nya bisa nama crew atau nama chekedBy
-                $qrCrew = $this->_generateQRRecord($crew->nama_crew, $crew->nama_crew, 'fam_crew');
-                if ($qrCrew) $updateData['qr_crew'] = $qrCrew;
-            }
 
             if (!empty($updateData)) {
                 $this->db->where('id', $crew->id);
@@ -497,6 +491,20 @@ class FamiliarReport extends CI_Controller {
                           ->get('fam_public_links')->result();
 
         $result = array();
+
+        // 1. Tambahkan link konfirmasi khusus crew (Shared Link)
+        $crewTotal = $this->db->where('batch_id', $batch_id)->get('history_familiarization')->num_rows();
+        $crewFilled = $this->db->where('batch_id', $batch_id)->where('qr_crew IS NOT NULL', null, false)->where('qr_crew !=', '')->get('history_familiarization')->num_rows();
+        
+        $crewToken = md5($batch_id . 'CREW_ALL_SECRET');
+        $crewLink = new stdClass();
+        $crewLink->department = 'Semua Crew (Link Konfirmasi Bersama)';
+        $crewLink->url = base_url('PublicFamiliar/crew_checklist?batch=' . $batch_id . '&token=' . $crewToken);
+        $crewLink->filled_count = $crewFilled;
+        $crewLink->total_items = $crewTotal;
+        $crewLink->status = ($crewFilled >= $crewTotal && $crewTotal > 0) ? 'completed' : ($crewFilled > 0 ? 'partial' : 'pending');
+        $result[] = $crewLink;
+
         foreach ($links as $link) {
             // Cek apakah departemen sudah mengisi (ada audit trail)
             $filled = $this->db->where('batch_id', $batch_id)
@@ -635,6 +643,18 @@ class FamiliarReport extends CI_Controller {
             }
         }
 
+        // Get time_start and time_end from fam_public_links
+        $times = array();
+        $publicLinks = $this->db->where('batch_id', $batch_id)->get('fam_public_links')->result();
+        foreach ($publicLinks as $pl) {
+            if (!empty($pl->time_start) && !empty($pl->time_end)) {
+                $times[$pl->department] = array(
+                    'start' => date('H:i', strtotime($pl->time_start)),
+                    'end'   => date('H:i', strtotime($pl->time_end))
+                );
+            }
+        }
+
         // Enrich crew data from mstpersonal (hanya ambil Date of Birth) + history_familiarization
         $crewList = array();
         foreach ($crewRows as $row) {
@@ -647,6 +667,80 @@ class FamiliarReport extends CI_Controller {
             ";
             $p = $this->db->query($sql, array($row->idperson))->row();
             $dob = $p ? $p->date_of_birth : '';
+
+            // calculate Years in Rank
+            $sqlContract = "
+                SELECT A.signondt, A.signoffdt, C.nmrank
+                FROM tblcontract A
+                JOIN mstrank C ON C.kdrank = A.signonrank
+                WHERE A.idperson = ? AND A.deletests = '0'
+            ";
+            $contracts = $this->db->query($sqlContract, array($row->idperson))->result();
+            $yearsInRank = 0;
+            foreach ($contracts as $c) {
+                if ($this->isTop4Rank($c->nmrank)) {
+                    if (!empty($c->signondt) && !empty($c->signoffdt) && $c->signoffdt != '0000-00-00' && $c->signondt != '0000-00-00') {
+                        $diff = strtotime($c->signoffdt) - strtotime($c->signondt);
+                        if ($diff > 0) {
+                            $yearsInRank += $diff / (365 * 24 * 60 * 60);
+                        }
+                    }
+                }
+            }
+            $yearsInRankFormatted = '';
+            if ($yearsInRank > 0) {
+                $years = floor($yearsInRank);
+                $months = round(($yearsInRank - $years) * 12);
+                if ($months == 12) {
+                    $years += 1;
+                    $months = 0;
+                }
+                $parts = array();
+                if ($years > 0) {
+                    $parts[] = $years . ' Year' . ($years > 1 ? 's' : '');
+                }
+                if ($months > 0) {
+                    $parts[] = $months . ' Month' . ($months > 1 ? 's' : '');
+                }
+                $yearsInRankFormatted = !empty($parts) ? implode(' ', $parts) : '';
+            }
+
+            // calculate License
+            $license = '';
+            $rankUpper = strtoupper(trim($row->rank));
+            $isTop4 = $this->isTop4Rank($row->rank);
+            
+            if ($isTop4) {
+                $licensePrefix = '';
+                if ($rankUpper === 'MASTER' || $rankUpper === 'C/O' || strpos($rankUpper, 'MASTER') !== false || strpos($rankUpper, 'C/O') !== false) {
+                    $licensePrefix = 'ANT';
+                } elseif ($rankUpper === 'C/E' || $rankUpper === '2/E' || strpos($rankUpper, 'C/E') !== false || strpos($rankUpper, '2/E') !== false) {
+                    $licensePrefix = 'ATT';
+                }
+                
+                if ($licensePrefix !== '') {
+                    $sqlCert = "
+                        SELECT certname, dispname 
+                        FROM tblcertdoc
+                        WHERE idperson = ? AND deletests = '0'
+                    ";
+                    $certs = $this->db->query($sqlCert, array($row->idperson))->result();
+                    foreach ($certs as $c) {
+                        $cname = strtoupper($c->certname . ' ' . $c->dispname);
+                        if (strpos($cname, $licensePrefix) !== false) {
+                            // Extract ANT/ATT string using regex
+                            preg_match('/(' . $licensePrefix . '\s*(?:[IVX]+|[1-5]+))/', $cname, $matches);
+                            if (!empty($matches[1])) {
+                                $license = $matches[1];
+                                break;
+                            } else {
+                                // fallback if regex fails but prefix exists
+                                $license = $licensePrefix;
+                            }
+                        }
+                    }
+                }
+            }
 
             $crewInfo = (object) array(
                 'fullname'      => $row->nama_crew,
@@ -666,7 +760,9 @@ class FamiliarReport extends CI_Controller {
                 'qr_dept_operation'    => isset($row->qr_dept_operation) ? $row->qr_dept_operation : '',
                 'qr_dept_crewing'      => isset($row->qr_dept_crewing) ? $row->qr_dept_crewing : '',
                 'signature_checkedBy'  => $signature_checkedBy,
-                'signature_DPA'        => $signature_DPA
+                'signature_DPA'        => $signature_DPA,
+                'license'              => $license,
+                'years_in_rank'        => $yearsInRankFormatted
             );
 
             $crewList[] = $crewInfo;
@@ -676,7 +772,8 @@ class FamiliarReport extends CI_Controller {
             'master'    => $master,
             'crewList'  => $crewList,
             'today'     => date('d F Y'),
-            'reps'      => $reps
+            'reps'      => $reps,
+            'times'     => $times
         );
 
         require(APPPATH . 'views/frontend/pdf/mpdf60/mpdf.php');

@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Familiarization Checklist<?php echo isset($link) ? ' - ' . htmlspecialchars($link->department) : ''; ?></title>
+    <title>Familiarization Crew Confirmation</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap Select CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
+    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap Select JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
@@ -30,14 +36,6 @@
             margin-bottom: 25px;
         }
         .header-banner h4 { margin: 0; font-weight: 700; }
-        .header-banner .dept-badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-            margin-top: 8px;
-            font-size: 14px;
-        }
         .info-card {
             background: #f8f9fa;
             border-radius: 8px;
@@ -61,11 +59,6 @@
             color: #666;
             font-style: italic;
             margin-top: 4px;
-        }
-        .fam-radio-public {
-            cursor: pointer;
-            width: 18px;
-            height: 18px;
         }
         .btn-submit-public {
             background: linear-gradient(135deg, #000099 0%, #1a237e 100%);
@@ -91,15 +84,7 @@
             margin: 80px auto;
             text-align: center;
         }
-        .crew-list-item {
-            display: inline-block;
-            background: #e8eaf6;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 12px;
-            margin: 3px 4px;
-        }
-
+        
         /* Identity popup */
         .identity-overlay {
             position: fixed;
@@ -123,6 +108,15 @@
             from { transform: translateY(30px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+        
+        /* Fix bootstrap-select inside overlay */
+        .bootstrap-select .dropdown-menu {
+            z-index: 10000;
+        }
+        .filter-option-inner-inner {
+            color: #333;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -135,7 +129,6 @@
                 <i class="fa fa-exclamation-triangle text-warning" style="font-size: 50px;"></i>
                 <h4 class="mt-3 fw-bold">Oops!</h4>
                 <p class="text-muted"><?php echo $error_message; ?></p>
-                <p class="text-muted small">Silakan hubungi admin untuk mendapatkan link yang valid.</p>
             </div>
         </div>
     </div>
@@ -146,19 +139,22 @@
         <div class="identity-card">
             <div style="text-align:center; margin-bottom: 20px;">
                 <i class="fa fa-user-circle" style="font-size:50px; color:#000099;"></i>
-                <h5 class="fw-bold mt-2" style="color:#000099;">Identifikasi Pengisi</h5>
-                <p class="text-muted small mb-0">Silakan masukkan nama Anda sebelum mengisi checklist</p>
+                <h5 class="fw-bold mt-2" style="color:#000099;">Identifikasi Kru</h5>
+                <p class="text-muted small mb-0">Silakan pilih nama Anda sebelum melanjutkan</p>
             </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold">Nama Lengkap <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="inputFillerName" placeholder="Masukkan nama lengkap Anda..." autofocus>
-            </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold">Department</label>
-                <input type="text" class="form-control" value="<?php echo htmlspecialchars($link->department); ?>" readonly style="background-color: #e8eaf6; font-weight: 600;">
+            <div class="mb-3 text-start">
+                <label class="form-label fw-bold">Pilih Nama Anda <span class="text-danger">*</span></label>
+                <select class="form-control selectpicker border" data-live-search="true" data-size="5" title="-- Cari dan Pilih Nama --" id="inputFillerName" data-width="100%">
+                    <?php foreach ($crewList as $c): ?>
+                        <option value="<?php echo htmlspecialchars($c['idperson']); ?>" <?php echo $c['is_signed'] ? 'disabled' : ''; ?> class="dark-text">
+                            <?php echo htmlspecialchars($c['nama_crew']) . ' (' . htmlspecialchars($c['rank']) . ')'; ?>
+                            <?php echo $c['is_signed'] ? ' - Sudah Konfirmasi' : ''; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
             <button type="button" class="btn btn-submit-public w-100 mt-2" id="btnStartFill">
-                <i class="fa fa-arrow-right me-2"></i>Mulai Mengisi
+                <i class="fa fa-arrow-right me-2"></i>Lanjutkan Membaca Materi
             </button>
         </div>
     </div>
@@ -167,49 +163,31 @@
     <div class="form-container" id="mainForm" style="display: none;">
         <!-- Header Banner -->
         <div class="header-banner">
-            <h4><i class="fa fa-clipboard-check me-2"></i>FAMILIARIZATION CHECKLIST</h4>
-            <div class="dept-badge">
-                <i class="fa fa-building me-1"></i>Department: <?php echo htmlspecialchars($link->department); ?>
-            </div>
+            <h4><i class="fa fa-book-open me-2"></i>FAMILIARIZATION MATERIAL</h4>
+            <p class="mb-0 mt-2 text-white-50">Silakan baca dan konfirmasi materi di bawah ini.</p>
         </div>
 
         <!-- Info Cards -->
         <div class="row mb-3">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="info-card">
                     <div class="label">Date Request</div>
                     <div class="value"><?php echo !empty($master->date_created) ? date('d M Y', strtotime($master->date_created)) : '-'; ?></div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="info-card">
-                    <div class="label">Total Crew</div>
-                    <div class="value"><?php echo count($crewList); ?> Orang</div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="info-card">
-                    <div class="label">Note</div>
-                    <div class="value"><?php echo !empty($master->note) ? htmlspecialchars($master->note) : '-'; ?></div>
+                    <div class="label">Vessel</div>
+                    <div class="value"><?php echo !empty($master->vessel) ? htmlspecialchars($master->vessel) : '-'; ?></div>
                 </div>
             </div>
         </div>
 
-        <!-- Crew List -->
-        <div class="mb-4">
-            <strong class="text-muted" style="font-size:13px;"><i class="fa fa-users me-1"></i>Daftar Crew:</strong><br>
-            <?php foreach ($crewList as $c): ?>
-                <span class="crew-list-item">
-                    <?php echo htmlspecialchars($c['nama_crew']); ?>
-                    <small class="text-muted">(<?php echo htmlspecialchars($c['rank']); ?>)</small>
-                </span>
-            <?php endforeach; ?>
-        </div>
-
-        <!-- Checklist Table -->
-        <form id="formPublicChecklist">
+        <!-- Checklist Table Read-Only -->
+        <form id="formCrewChecklist">
             <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
-            <input type="hidden" name="filled_by_name" id="hiddenFillerName" value="">
+            <input type="hidden" name="batch_id" value="<?php echo htmlspecialchars($batch_id); ?>">
+            <input type="hidden" name="idperson" id="hiddenIdPerson" value="">
 
             <table class="table table-bordered table-checklist">
                 <thead>
@@ -217,27 +195,21 @@
                         <th class="text-center" style="width:45px;">No</th>
                         <th>Topics</th>
                         <th class="text-center" style="width:150px;">Department</th>
-                        <th class="text-center" style="width:120px;">Yes / No</th>
+                        <th class="text-center" style="width:120px;">Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
                     $prevNo = '';
                     foreach ($checklistItems as $itemKey => $item):
-                        $isAllowed = in_array($itemKey, $allowedItems);
                         $isFilledBefore = isset($auditMap[$itemKey]);
-                        $existingValue = $isFilledBefore ? $auditMap[$itemKey]->item_value : null;
                         $existingFiller = $isFilledBefore ? $auditMap[$itemKey]->filled_by_name : '';
                         $existingDate = $isFilledBefore ? date('d M Y H:i', strtotime($auditMap[$itemKey]->filled_at)) : '';
-
-                        // Get current value from master
+                        
                         $currentValue = isset($master->{$itemKey}) ? $master->{$itemKey} : null;
+                        
+                        $rowClass = $isFilledBefore ? 'item-filled' : '';
 
-                        $rowClass = '';
-                        if (!$isAllowed) $rowClass = 'item-disabled';
-                        elseif ($isFilledBefore) $rowClass = 'item-filled';
-
-                        // Insert section header before item 2
                         if ($item['no'] === '2' && $prevNo !== '2'):
                     ?>
                         <tr style="background-color:#f8f9fa;"><td colspan="4" class="fw-bold">Company Policy :</td></tr>
@@ -247,34 +219,21 @@
                         <td class="text-center"><?php echo $item['no']; ?></td>
                         <td>
                             <?php echo htmlspecialchars($item['topic']); ?>
-                            <?php if ($isFilledBefore && $isAllowed): ?>
+                            <?php if ($isFilledBefore): ?>
                                 <div class="audit-info">
                                     <i class="fa fa-check-circle text-success"></i>
-                                    Diisi oleh: <?php echo htmlspecialchars($existingFiller); ?> pada <?php echo $existingDate; ?>
+                                    Diisi oleh dept terkait pada <?php echo $existingDate; ?>
                                 </div>
                             <?php endif; ?>
                         </td>
                         <td class="text-center"><?php echo htmlspecialchars($item['dept']); ?></td>
                         <td class="text-center">
-                            <?php if ($isAllowed): ?>
-                                <div class="form-check form-check-inline mb-0">
-                                    <input class="form-check-input fam-radio-public" type="radio" name="<?php echo $itemKey; ?>" value="1"
-                                        <?php echo ($currentValue === '1' || $currentValue === 1) ? 'checked' : ''; ?>>
-                                    <label class="form-check-label text-success fw-bold">✓</label>
-                                </div>
-                                <div class="form-check form-check-inline mb-0">
-                                    <input class="form-check-input fam-radio-public" type="radio" name="<?php echo $itemKey; ?>" value="0"
-                                        <?php echo ($currentValue === '0' || $currentValue === 0) ? 'checked' : ''; ?>>
-                                    <label class="form-check-label text-danger fw-bold">✗</label>
-                                </div>
+                            <?php if ($currentValue !== null && $currentValue !== ''): ?>
+                                <span style="font-size:16px;">
+                                    <?php echo ($currentValue == 1) ? '<span class="text-success fw-bold">✓ Ya</span>' : '<span class="text-danger fw-bold">✗ Tidak</span>'; ?>
+                                </span>
                             <?php else: ?>
-                                <?php if ($currentValue !== null && $currentValue !== ''): ?>
-                                    <span style="font-size:16px;">
-                                        <?php echo ($currentValue == 1) ? '<span class="text-success">✓</span>' : '<span class="text-danger">✗</span>'; ?>
-                                    </span>
-                                <?php else: ?>
-                                    <span class="text-muted">—</span>
-                                <?php endif; ?>
+                                <span class="text-muted">—</span>
                             <?php endif; ?>
                         </td>
                     </tr>
@@ -285,81 +244,60 @@
                 </tbody>
             </table>
 
-            <div class="row mt-4 mb-3">
-                <div class="col-md-6 offset-md-3">
-                    <div class="card shadow-sm border-0 bg-light">
-                        <div class="card-body">
-                            <h6 class="fw-bold mb-3 text-center" style="color: #000099;">
-                                <i class="fa fa-clock me-2"></i>Waktu Pelaksanaan Familiarization
-                            </h6>
-                            <div class="row">
-                                <div class="col-6">
-                                    <label class="form-label fw-bold" style="font-size: 13px;">Time Start <span class="text-danger">*</span></label>
-                                    <input type="time" class="form-control" name="time_start" value="<?php echo !empty($link->time_start) ? date('H:i', strtotime($link->time_start)) : ''; ?>" required>
-                                </div>
-                                <div class="col-6">
-                                    <label class="form-label fw-bold" style="font-size: 13px;">Time End <span class="text-danger">*</span></label>
-                                    <input type="time" class="form-control" name="time_end" value="<?php echo !empty($link->time_end) ? date('H:i', strtotime($link->time_end)) : ''; ?>" required>
-                                </div>
-                            </div>
-                        </div>
+            <div class="text-center mt-5 mb-3">
+                <div class="alert alert-info text-start d-inline-block shadow-sm">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="checkConfirm" style="width:20px; height:20px; margin-top:2px; cursor:pointer;">
+                        <label class="form-check-label ms-2" for="checkConfirm" style="font-size:15px; cursor:pointer;">
+                            <strong>Saya mengonfirmasi bahwa saya telah menerima dan memahami seluruh materi Familiarization di atas.</strong><br>
+                            <span class="text-muted small">Dengan menekan tombol submit, tanda tangan elektronik Anda akan diterbitkan.</span>
+                        </label>
                     </div>
                 </div>
-            </div>
-
-            <div class="text-center mt-4 mb-3">
-                <button type="submit" class="btn btn-submit-public" id="btnSubmitPublic">
-                    <i class="fa fa-paper-plane me-2"></i>Submit Checklist
+                <br>
+                <button type="submit" class="btn btn-submit-public mt-3" id="btnSubmitConfirm" disabled>
+                    <i class="fa fa-signature me-2"></i>Submit & Tanda Tangan
                 </button>
             </div>
         </form>
 
-        <div class="text-center mt-2">
-            <small class="text-muted">
-                <i class="fa fa-lock me-1"></i>
-                Anda hanya dapat mengisi item milik departemen <strong><?php echo htmlspecialchars($link->department); ?></strong>.
-                Item departemen lain bersifat read-only.
-            </small>
-        </div>
     </div>
 
     <script>
     $(document).ready(function() {
+        // Init selectpicker
+        $('.selectpicker').selectpicker();
+
         // Identity popup
         $('#btnStartFill').on('click', function() {
-            var name = $.trim($('#inputFillerName').val());
-            if (!name) {
-                Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Silakan masukkan nama Anda terlebih dahulu!', confirmButtonColor: '#000099' });
+            var idperson = $('#inputFillerName').val();
+            if (!idperson) {
+                Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Silakan pilih nama Anda terlebih dahulu!', confirmButtonColor: '#000099' });
                 return;
             }
-            $('#hiddenFillerName').val(name);
+            $('#hiddenIdPerson').val(idperson);
             $('#identityOverlay').fadeOut(300, function() {
                 $('#mainForm').fadeIn(300);
             });
         });
 
-        // Allow Enter key on name input
-        $('#inputFillerName').on('keypress', function(e) {
-            if (e.which === 13) {
-                e.preventDefault();
-                $('#btnStartFill').click();
-            }
+        $('#checkConfirm').on('change', function() {
+            $('#btnSubmitConfirm').prop('disabled', !$(this).is(':checked'));
         });
 
         // Submit form
-        $('#formPublicChecklist').on('submit', function(e) {
+        $('#formCrewChecklist').on('submit', function(e) {
             e.preventDefault();
 
-            var btn = $('#btnSubmitPublic');
-            btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin me-2"></i>Menyimpan...');
+            var btn = $('#btnSubmitConfirm');
+            btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin me-2"></i>Memproses...');
 
             $.ajax({
-                url: '<?php echo base_url("PublicFamiliar/submit_checklist"); ?>',
+                url: '<?php echo base_url("PublicFamiliar/submit_crew_confirm"); ?>',
                 type: 'POST',
                 data: $(this).serialize(),
                 dataType: 'json',
                 success: function(res) {
-                    btn.prop('disabled', false).html('<i class="fa fa-paper-plane me-2"></i>Submit Checklist');
                     if (res.success) {
                         Swal.fire({
                             icon: 'success',
@@ -370,11 +308,12 @@
                             location.reload();
                         });
                     } else {
+                        btn.prop('disabled', false).html('<i class="fa fa-signature me-2"></i>Submit & Tanda Tangan');
                         Swal.fire({ icon: 'error', title: 'Gagal', text: res.message, confirmButtonColor: '#000099' });
                     }
                 },
                 error: function() {
-                    btn.prop('disabled', false).html('<i class="fa fa-paper-plane me-2"></i>Submit Checklist');
+                    btn.prop('disabled', false).html('<i class="fa fa-signature me-2"></i>Submit & Tanda Tangan');
                     Swal.fire({ icon: 'error', title: 'Error', text: 'Terjadi kesalahan sistem.', confirmButtonColor: '#000099' });
                 }
             });

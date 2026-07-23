@@ -165,6 +165,16 @@ class PublicFamiliar extends CI_Controller {
         $this->db->trans_begin();
 
         $now = date('Y-m-d H:i:s');
+        
+        $time_start = $this->input->post('time_start', true);
+        $time_end = $this->input->post('time_end', true);
+
+        // Save time_start and time_end to fam_public_links
+        $this->db->where('token', $token)
+                 ->update('fam_public_links', array(
+                     'time_start' => !empty($time_start) ? $time_start : null,
+                     'time_end'   => !empty($time_end) ? $time_end : null
+                 ));
 
         foreach ($allowedItems as $itemName) {
             $val = $this->input->post($itemName);
@@ -233,8 +243,127 @@ class PublicFamiliar extends CI_Controller {
         }
     }
 
+    /**
+     * Public API: Form for Crew Confirmation (Shared Link)
+     */
+    public function crew_checklist()
+    {
+        $batch_id = $this->input->get('batch', true);
+        $token = $this->input->get('token', true);
+
+        // Validasi Token
+        if (md5($batch_id . 'CREW_ALL_SECRET') !== $token) {
+            $data['error_message'] = 'Link tidak valid atau token kadaluarsa.';
+            $this->load->view('Public/public_crew_checklist', $data);
+            return;
+        }
+
+        // Get Batch Data
+        $crewRows = $this->db->where('batch_id', $batch_id)->get('history_familiarization')->result();
+        if (empty($crewRows)) {
+            $data['error_message'] = 'Data batch tidak ditemukan.';
+            $this->load->view('Public/public_crew_checklist', $data);
+            return;
+        }
+
+        $master = $crewRows[0]; // For generic data
+        $crewList = array();
+        foreach ($crewRows as $row) {
+            $crewList[] = array(
+                'idperson'  => $row->idperson,
+                'nama_crew' => $row->nama_crew,
+                'rank'      => $row->rank,
+                'is_signed' => !empty($row->qr_crew)
+            );
+        }
+
+        // Get filled audit trails for this batch to show status
+        $audits = $this->db->where('batch_id', $batch_id)->get('fam_checklist_audit')->result();
+        $auditMap = array();
+        foreach ($audits as $au) {
+            $auditMap[$au->item_name] = $au;
+        }
+
+        $checklistItems = array(
+            'item_1'  => array('no' => '1',    'topic' => 'Familiarization / Handling Over', 'dept' => 'DPA'),
+            'item_2'  => array('no' => '2',    'topic' => 'Company Policy', 'dept' => 'DPA'),
+            'item_3'  => array('no' => '3',    'topic' => 'Safety Management System Manual and Document', 'dept' => 'DPA / Marine Safety'),
+            'item_4'  => array('no' => '4',    'topic' => 'Duties and Responsibility', 'dept' => 'DPA'),
+            'item_5'  => array('no' => '5',    'topic' => 'Procedures Related Ship Operation', 'dept' => 'Operation'),
+            'item_6'  => array('no' => '6',    'topic' => 'Procedures Related Emergency', 'dept' => 'DPA / Marine Safety'),
+            'item_7'  => array('no' => '7',    'topic' => 'Procedures Related Maintenance of Ship - Technical', 'dept' => 'Technical'),
+            'item_8'  => array('no' => '8',    'topic' => 'Procedures Related Maintenance of Ship - Purchasing', 'dept' => 'Purchasing'),
+            'item_9'  => array('no' => '9',    'topic' => 'Procedures Related Maintenance of Ship - Finance', 'dept' => 'Finance'),
+            'item_10' => array('no' => '10',   'topic' => 'Procedures Related Cargo Handling', 'dept' => 'Operation'),
+            'item_11' => array('no' => '11',   'topic' => 'Safety Drill', 'dept' => 'DPA / Marine Safety'),
+            'item_12' => array('no' => '12',   'topic' => 'Procedures Related Health', 'dept' => 'DPA / Marine Safety'),
+            'item_13' => array('no' => '13',   'topic' => 'Procedures Related Environmental Protection', 'dept' => 'DPA / Marine Safety'),
+            'item_14' => array('no' => '14',   'topic' => 'Audit External / Internal', 'dept' => 'DPA / Marine Safety'),
+            'item_15' => array('no' => '15',   'topic' => 'Hazard Identification / JSA', 'dept' => 'Marine Safety'),
+            'item_16' => array('no' => '16',   'topic' => 'Wearing Personal Protective Equipment (PPE)', 'dept' => 'Marine Safety'),
+        );
+
+        $data = array(
+            'batch_id'       => $batch_id,
+            'token'          => $token,
+            'master'         => $master,
+            'crewList'       => $crewList,
+            'auditMap'       => $auditMap,
+            'checklistItems' => $checklistItems
+        );
+
+        $this->load->view('Public/public_crew_checklist', $data);
+    }
+
+    /**
+     * Public API: Submit crew signature
+     */
+    public function submit_crew_confirm()
+    {
+        $batch_id = $this->input->post('batch_id', true);
+        $token = $this->input->post('token', true);
+        $idperson = $this->input->post('idperson', true);
+
+        // Validasi Token
+        if (md5($batch_id . 'CREW_ALL_SECRET') !== $token) {
+            echo json_encode(array('success' => false, 'message' => 'Token tidak valid!'));
+            return;
+        }
+
+        if (empty($idperson)) {
+            echo json_encode(array('success' => false, 'message' => 'Harap pilih identitas Anda!'));
+            return;
+        }
+
+        // Get crew details
+        $crew = $this->db->where('batch_id', $batch_id)
+                         ->where('idperson', $idperson)
+                         ->get('history_familiarization')->row();
+
+        if (!$crew) {
+            echo json_encode(array('success' => false, 'message' => 'Kru tidak ditemukan di dalam batch ini.'));
+            return;
+        }
+
+        if (!empty($crew->qr_crew)) {
+            echo json_encode(array('success' => false, 'message' => 'Anda sudah melakukan konfirmasi materi ini sebelumnya.'));
+            return;
+        }
+
+        // Generate QR Crew
+        $qrCrew = $this->_generateQRRecord($crew->nama_crew, $crew->nama_crew, 'fam_crew');
+        
+        if ($qrCrew) {
+            $this->db->where('id', $crew->id)
+                     ->update('history_familiarization', array('qr_crew' => $qrCrew));
+            echo json_encode(array('success' => true, 'message' => 'Konfirmasi berhasil disimpan. Tanda tangan Anda telah diterbitkan.'));
+        } else {
+            echo json_encode(array('success' => false, 'message' => 'Gagal membuat tanda tangan QR.'));
+        }
+    }
+
     // ============================================================
-    //  QR CODE & DB6 LOGIC (HELPER)
+    //  PRIVATE UTILITIES
     // ============================================================
 
     private function _generateQRRecord($address, $createdBy, $prefix)
