@@ -334,17 +334,17 @@ foreach ($crewList as $crew):
             <tr>
                 <td style="text-align:center;">4</td>
                 <td>License of Senior Officer</td>
-                <td></td>
+                <td><?php echo isset($crew->license) ? $crew->license : '' ?></td>
             </tr>
             <tr>
                 <td style="text-align:center;">5</td>
                 <td>Vessel Schedule Joining</td>
-                <td><?php echo $crew->vesselnm ?></td>
+                <td></td>
             </tr>
             <tr>
                 <td style="text-align:center;">6</td>
                 <td>Date Schedule Joining/Place</td>
-                <td><?php echo $crew->signon_date ?></td>
+                <td></td>
             </tr>
             <tr>
                 <td style="text-align:center;">7</td>
@@ -354,12 +354,12 @@ foreach ($crewList as $crew):
             <tr>
                 <td style="text-align:center;">8</td>
                 <td>Reason Sign Off</td>
-                <td></td>
+                <td>EOC</td>
             </tr>
             <tr>
                 <td style="text-align:center;">9</td>
                 <td>Years in Rank</td>
-                <td></td>
+                <td><?php echo isset($crew->years_in_rank) ? $crew->years_in_rank : '' ?></td>
             </tr>
         </table>
 

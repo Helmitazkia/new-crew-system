@@ -660,6 +660,80 @@ class FamiliarReport extends CI_Controller {
             $p = $this->db->query($sql, array($row->idperson))->row();
             $dob = $p ? $p->date_of_birth : '';
 
+            // calculate Years in Rank
+            $sqlContract = "
+                SELECT A.signondt, A.signoffdt, C.nmrank
+                FROM tblcontract A
+                JOIN mstrank C ON C.kdrank = A.signonrank
+                WHERE A.idperson = ? AND A.deletests = '0'
+            ";
+            $contracts = $this->db->query($sqlContract, array($row->idperson))->result();
+            $yearsInRank = 0;
+            foreach ($contracts as $c) {
+                if ($this->isTop4Rank($c->nmrank)) {
+                    if (!empty($c->signondt) && !empty($c->signoffdt) && $c->signoffdt != '0000-00-00' && $c->signondt != '0000-00-00') {
+                        $diff = strtotime($c->signoffdt) - strtotime($c->signondt);
+                        if ($diff > 0) {
+                            $yearsInRank += $diff / (365 * 24 * 60 * 60);
+                        }
+                    }
+                }
+            }
+            $yearsInRankFormatted = '';
+            if ($yearsInRank > 0) {
+                $years = floor($yearsInRank);
+                $months = round(($yearsInRank - $years) * 12);
+                if ($months == 12) {
+                    $years += 1;
+                    $months = 0;
+                }
+                $parts = array();
+                if ($years > 0) {
+                    $parts[] = $years . ' Year' . ($years > 1 ? 's' : '');
+                }
+                if ($months > 0) {
+                    $parts[] = $months . ' Month' . ($months > 1 ? 's' : '');
+                }
+                $yearsInRankFormatted = !empty($parts) ? implode(' ', $parts) : '';
+            }
+
+            // calculate License
+            $license = '';
+            $rankUpper = strtoupper(trim($row->rank));
+            $isTop4 = $this->isTop4Rank($row->rank);
+            
+            if ($isTop4) {
+                $licensePrefix = '';
+                if ($rankUpper === 'MASTER' || $rankUpper === 'C/O' || strpos($rankUpper, 'MASTER') !== false || strpos($rankUpper, 'C/O') !== false) {
+                    $licensePrefix = 'ANT';
+                } elseif ($rankUpper === 'C/E' || $rankUpper === '2/E' || strpos($rankUpper, 'C/E') !== false || strpos($rankUpper, '2/E') !== false) {
+                    $licensePrefix = 'ATT';
+                }
+                
+                if ($licensePrefix !== '') {
+                    $sqlCert = "
+                        SELECT certname, dispname 
+                        FROM tblcertdoc
+                        WHERE idperson = ? AND deletests = '0'
+                    ";
+                    $certs = $this->db->query($sqlCert, array($row->idperson))->result();
+                    foreach ($certs as $c) {
+                        $cname = strtoupper($c->certname . ' ' . $c->dispname);
+                        if (strpos($cname, $licensePrefix) !== false) {
+                            // Extract ANT/ATT string using regex
+                            preg_match('/(' . $licensePrefix . '\s*(?:[IVX]+|[1-5]+))/', $cname, $matches);
+                            if (!empty($matches[1])) {
+                                $license = $matches[1];
+                                break;
+                            } else {
+                                // fallback if regex fails but prefix exists
+                                $license = $licensePrefix;
+                            }
+                        }
+                    }
+                }
+            }
+
             $crewInfo = (object) array(
                 'fullname'      => $row->nama_crew,
                 'date_of_birth' => $dob,
@@ -678,7 +752,9 @@ class FamiliarReport extends CI_Controller {
                 'qr_dept_operation'    => isset($row->qr_dept_operation) ? $row->qr_dept_operation : '',
                 'qr_dept_crewing'      => isset($row->qr_dept_crewing) ? $row->qr_dept_crewing : '',
                 'signature_checkedBy'  => $signature_checkedBy,
-                'signature_DPA'        => $signature_DPA
+                'signature_DPA'        => $signature_DPA,
+                'license'              => $license,
+                'years_in_rank'        => $yearsInRankFormatted
             );
 
             $crewList[] = $crewInfo;
