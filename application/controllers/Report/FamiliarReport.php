@@ -463,12 +463,6 @@ class FamiliarReport extends CI_Controller {
                 if ($qrChecked) $updateData['qr_checkedby'] = $qrChecked;
             }
 
-            // 2. QR Crew
-            if (empty($crew->qr_crew)) {
-                // Untuk crew, createdby-nya bisa nama crew atau nama chekedBy
-                $qrCrew = $this->_generateQRRecord($crew->nama_crew, $crew->nama_crew, 'fam_crew');
-                if ($qrCrew) $updateData['qr_crew'] = $qrCrew;
-            }
 
             if (!empty($updateData)) {
                 $this->db->where('id', $crew->id);
@@ -497,6 +491,20 @@ class FamiliarReport extends CI_Controller {
                           ->get('fam_public_links')->result();
 
         $result = array();
+
+        // 1. Tambahkan link konfirmasi khusus crew (Shared Link)
+        $crewTotal = $this->db->where('batch_id', $batch_id)->get('history_familiarization')->num_rows();
+        $crewFilled = $this->db->where('batch_id', $batch_id)->where('qr_crew IS NOT NULL', null, false)->where('qr_crew !=', '')->get('history_familiarization')->num_rows();
+        
+        $crewToken = md5($batch_id . 'CREW_ALL_SECRET');
+        $crewLink = new stdClass();
+        $crewLink->department = 'Semua Crew (Link Konfirmasi Bersama)';
+        $crewLink->url = base_url('PublicFamiliar/crew_checklist?batch=' . $batch_id . '&token=' . $crewToken);
+        $crewLink->filled_count = $crewFilled;
+        $crewLink->total_items = $crewTotal;
+        $crewLink->status = ($crewFilled >= $crewTotal && $crewTotal > 0) ? 'completed' : ($crewFilled > 0 ? 'partial' : 'pending');
+        $result[] = $crewLink;
+
         foreach ($links as $link) {
             // Cek apakah departemen sudah mengisi (ada audit trail)
             $filled = $this->db->where('batch_id', $batch_id)
