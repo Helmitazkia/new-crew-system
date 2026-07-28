@@ -421,30 +421,70 @@
     }
     </style>
 
-
-    <!-- HERO BANNER -->
+    <!-- HERO BANNER SLIDESHOW -->
     <section class="hero-banner position-relative mb-4">
-        <img src="<?php echo base_url("assets/img/banner/andhika-lines.png") ;?>" class="hero-img">
-        <span class="copyright">© 2026 Andhika Group</span>
+        <div class="hero-slideshow">
+            <img src="<?php echo base_url('assets/img/banner/andhika-1.jpg'); ?>" class="hero-slide">
+            <img src="<?php echo base_url('assets/img/banner/andhika-2.jpg'); ?>" class="hero-slide">
+            <img src="<?php echo base_url('assets/img/banner/andhika-3.jpeg'); ?>" class="hero-slide">
+        </div>
+        <div class="hero-overlay"></div>
+        <span class="copyright" style="font-weight: bold;font-size: 15px;">&copy; 2026 Andhika Group</span>
     </section>
 
     <style>
     .hero-banner {
-        height: 310px;
+        height: 35vh;
+        min-height: 260px;
+        max-height: 420px;
         overflow: hidden;
+        position: relative;
     }
 
-    .hero-img {
+    .hero-slideshow {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .hero-slide {
+        position: absolute;
+        inset: 0;
         width: 100%;
         height: 100%;
         object-fit: cover;
         object-position: center;
+        opacity: 0;
+        animation: heroFade 10s infinite;
     }
 
-    .hero-banner {
-        height: 35vh;
-        min-height: 260px;
-        max-height: 420px;
+    .hero-slide:nth-child(1) { animation-delay: 0s; }
+    .hero-slide:nth-child(2) { animation-delay: 5s; }
+
+    @keyframes heroFade {
+        0%   { opacity: 0; }
+        5%   { opacity: 1; }
+        45%  { opacity: 1; }
+        50%  { opacity: 0; }
+        100% { opacity: 0; }
+    }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.35) 100%);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .copyright {
+        position: absolute;
+        bottom: 10px;
+        right: 16px;
+        color: rgba(255,255,255,0.75);
+        font-size: 11px;
+        z-index: 2;
     }
     </style>
 

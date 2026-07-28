@@ -174,7 +174,7 @@ $(document).ready(function() {
     <?php endif; ?>
 
     let table = $('#crewMatrixTable').DataTable({
-        dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end custom-btn'B>>" +
+        dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end custom-btn'>" +
              "<'row'<'col-md-12'tr>>" +
              "<'row mt-2'<'col-md-6'i><'col-md-6 d-flex justify-content-end'p>>",
         stateSave: true,
@@ -195,6 +195,8 @@ $(document).ready(function() {
         },
         columns: columnsDef,
         initComplete: function() {
+            // Inject Export Excel Button
+            $('.custom-btn').html('<button type="button" id="btnExportCrewMatrix" class="btn btn-success btn-sm mb-2" style="padding: 6px 14px;"><i class="fa fa-file-excel" style="margin-right: 5px;"></i> Export Excel</button>');
             initDropdownFilters(this.api());
         }
     });
@@ -204,7 +206,35 @@ $(document).ready(function() {
         table.column(0, { search: 'applied', order: 'applied', page: 'current' }).nodes().each(function (cell, i) {
             cell.innerHTML = start + i + 1;
         });
-    }).draw();
+    });
+
+    table.draw();
+
+    // Export Excel — POST idpersons of filtered rows to server
+    $(document).on('click', '#btnExportCrewMatrix', function() {
+        let filteredData = table.rows({ search: 'applied' }).data().toArray();
+        let idpersons = filteredData.map(function(row) { return row.idperson; });
+
+        if (idpersons.length === 0) {
+            if (typeof Swal !== 'undefined') Swal.fire({ icon: 'warning', title: 'Empty Data', text: 'Tidak ada data untuk diekspor!' });
+            else alert('Tidak ada data untuk diekspor!');
+            return;
+        }
+
+        let form = $('<form>', {
+            action: '<?php echo base_url("Report/CrewMatrix/exportCrewMatrixExcel"); ?>',
+            method: 'POST',
+            target: '_blank'
+        }).append($('<input>', {
+            type: 'hidden',
+            name: 'idpersons',
+            value: JSON.stringify(idpersons)
+        }));
+
+        $('body').append(form);
+        form.submit();
+        form.remove();
+    });
 
     $('.column-search').on('keyup change clear', function() {
         var colIdx = $(this).closest('th').index();
