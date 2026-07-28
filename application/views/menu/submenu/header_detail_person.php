@@ -2,9 +2,9 @@
   <div class="row mb-2 ms-2">
     <div class="col-12 d-flex align-items-center gap-2">
       <div class="d-flex flex-wrap justify-content-center gap-2 main-tabs flex-grow-1">
-        <button id="btnBack" class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">
+        <!-- <button id="btnBack" class="btn btn-light rounded-pill px-3 fst-italic fw-semibold">
           <i class="fa fa-arrow-left"></i> Back
-        </button>
+        </button> -->
         <button id="tabProfile" class="btn btn-primary rounded-pill px-3 fst-italic fw-semibold active">
           Profile
         </button>
@@ -101,13 +101,13 @@ $(document).ready(function() {
 
   // Back: gunakan history.back(). Halaman list (Active Roster, dll) pakai stateSave
   // DataTables + sessionStorage agar saat kembali state tabel (halaman, search, urutan) ter-restore tanpa terasa reload.
-  document.getElementById('btnBack').addEventListener('click', function() {
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      window.location.href = "<?php echo base_url(); ?>";
-    }
-  });
+  // document.getElementById('btnBack').addEventListener('click', function() {
+  //   if (window.history.length > 1) {
+  //     window.history.back();
+  //   } else {
+  //     window.location.href = "<?php echo base_url(); ?>";
+  //   }
+  // });
 
   // ================= TAB CLICK =================
   $('#tabProfile').on('click', function() {
