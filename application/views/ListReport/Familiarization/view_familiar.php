@@ -2,10 +2,10 @@
 <div class="card shadow-sm border-0" id="familiarModuleWrapper">
     <div class="card-body">
         <div class="d-flex justify-content-end mb-3">
-            <button class="btn btn-primary btn-sm rounded shadow-sm" id="btnAddFamiliar"
+            <!-- <button class="btn btn-primary btn-sm rounded shadow-sm" id="btnAddFamiliar"
                 style="background-color: #000999; border-color: #000999;">
                 <i class="fa fa-plus me-1"></i> Add Familiarization
-            </button>
+            </button> -->
         </div>
         <div class="table-responsive">
             <table id="familiarTable" class="table table-bordered align-middle mb-0 crew-table" style="width:100%">

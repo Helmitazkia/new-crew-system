@@ -186,7 +186,7 @@
                         </li>
                         <li>
                             <a class="dropdown-item <?php echo ($active_menu == 'familiar_report') ? 'active' : '' ?>" 
-                               href="<?php echo base_url('Report/FamiliarReport/view') ?>">Familiarization Report</a>
+                               href="<?php echo base_url('Report/FamiliarReport/view') ?>">Familiarization</a>
                         </li>
                         <li>
                             <a class="dropdown-item <?php echo ($active_menu == 'list_contract') ? 'active' : '' ?>" 

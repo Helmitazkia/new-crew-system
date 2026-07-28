@@ -242,13 +242,37 @@
             <td style="width: 33%;">Crew Sign on</td>
         </tr>
         <tr>
-            <td style="height: 80px;"></td>
-            <td></td>
-            <td></td>
+            <td style="height: 80px;">
+                <?php if (!empty($crew->qr_dpa)): ?>
+                    <img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dpa ?>" style="height: 70px;">
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if (!empty($crew->qr_checkedby)): ?>
+                    <img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_checkedby ?>" style="height: 70px;">
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if (!empty($crew->qr_crew)): ?>
+                    <img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_crew ?>" style="height: 70px;">
+                <?php endif; ?>
+            </td>
         </tr>
         <tr>
-            <td>( .................................... )</td>
-            <td>( .................................... )</td>
+            <td>
+                <?php if (!empty($crew->signature_DPA)): ?>
+                    <?php echo $crew->signature_DPA ?>
+                <?php else: ?>
+                    ( .................................... )
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if (!empty($crew->signature_checkedBy)): ?>
+                    <?php echo $crew->signature_checkedBy ?>
+                <?php else: ?>
+                    ( .................................... )
+                <?php endif; ?>
+            </td>
             <td>( <?php echo $crew->fullname ?> )</td>
         </tr>
         <tr>
@@ -262,6 +286,12 @@
         <span>Form MSB 6.1/ Rev.00 / 09-06-2016</span>
     </div>
 
+    <?php
+    // ============================================================
+    // PAGE 2: Senior Officer Familiarization (ONLY for Top 4)
+    // ============================================================
+    if ($crew->is_top4):
+    ?>
     <!-- PAGE 2 -->
     <pagebreak />
 
@@ -317,17 +347,17 @@
         <tr>
             <td style="text-align:center;">4</td>
             <td>License of Senior Officer</td>
-            <td></td>
+            <td><?php echo isset($crew->license) ? $crew->license : '' ?></td>
         </tr>
         <tr>
             <td style="text-align:center;">5</td>
             <td>Vessel Schedule Joining</td>
-            <td><?php echo $crew->vesselnm ?></td>
+            <td></td>
         </tr>
         <tr>
             <td style="text-align:center;">6</td>
             <td>Date Schedule Joining/Place</td>
-            <td><?php echo $crew->signon_date ?></td>
+            <td></td>
         </tr>
         <tr>
             <td style="text-align:center;">7</td>
@@ -337,12 +367,12 @@
         <tr>
             <td style="text-align:center;">8</td>
             <td>Reason Sign Off</td>
-            <td></td>
+            <td>EOC</td>
         </tr>
         <tr>
             <td style="text-align:center;">9</td>
             <td>Years in Rank</td>
-            <td></td>
+            <td><?php echo isset($crew->years_in_rank) ? $crew->years_in_rank : '' ?></td>
         </tr>
     </table>
 
@@ -359,68 +389,60 @@
         </thead>
         <tbody>
             <tr>
-                <td>1</td>
-                <td style="text-align:left;">DPA</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>1</td><td style="text-align:left;">DPA</td>
+                <td><?php echo isset($reps['DPA']) ? $reps['DPA'] : (isset($reps['DPA / Marine Safety']) ? $reps['DPA / Marine Safety'] : '') ?></td>
+                <td><?php echo isset($times['DPA']['start']) ? $times['DPA']['start'] : (isset($times['DPA / Marine Safety']['start']) ? $times['DPA / Marine Safety']['start'] : '') ?></td>
+                <td><?php echo isset($times['DPA']['end']) ? $times['DPA']['end'] : (isset($times['DPA / Marine Safety']['end']) ? $times['DPA / Marine Safety']['end'] : '') ?></td>
+                <td><?php if(!empty($crew->qr_dpa)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dpa ?>" style="height: 40px;"><?php endif; ?></td>
             </tr>
             <tr>
-                <td>2</td>
-                <td style="text-align:left;">Technical</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>2</td><td style="text-align:left;">Technical</td>
+                <td><?php echo isset($reps['Technical']) ? $reps['Technical'] : '' ?></td>
+                <td><?php echo isset($times['Technical']['start']) ? $times['Technical']['start'] : '' ?></td>
+                <td><?php echo isset($times['Technical']['end']) ? $times['Technical']['end'] : '' ?></td>
+                <td><?php if(!empty($crew->qr_dept_technical)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dept_technical ?>" style="height: 40px;"><?php endif; ?></td>
             </tr>
             <tr>
-                <td>3</td>
-                <td style="text-align:left;">Marine Safety</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>3</td><td style="text-align:left;">Marine Safety</td>
+                <td><?php echo isset($reps['Marine Safety']) ? $reps['Marine Safety'] : '' ?></td>
+                <td><?php echo isset($times['Marine Safety']['start']) ? $times['Marine Safety']['start'] : '' ?></td>
+                <td><?php echo isset($times['Marine Safety']['end']) ? $times['Marine Safety']['end'] : '' ?></td>
+                <td><?php if(!empty($crew->qr_dept_marinesafety)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dept_marinesafety ?>" style="height: 40px;"><?php endif; ?></td>
             </tr>
             <tr>
-                <td>4</td>
-                <td style="text-align:left;">Finance</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>4</td><td style="text-align:left;">Finance</td>
+                <td><?php echo isset($reps['Finance']) ? $reps['Finance'] : '' ?></td>
+                <td><?php echo isset($times['Finance']['start']) ? $times['Finance']['start'] : '' ?></td>
+                <td><?php echo isset($times['Finance']['end']) ? $times['Finance']['end'] : '' ?></td>
+                <td><?php if(!empty($crew->qr_dept_finance)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dept_finance ?>" style="height: 40px;"><?php endif; ?></td>
             </tr>
             <tr>
-                <td>5</td>
-                <td style="text-align:left;">Purchasing</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>5</td><td style="text-align:left;">Purchasing</td>
+                <td><?php echo isset($reps['Purchasing']) ? $reps['Purchasing'] : '' ?></td>
+                <td><?php echo isset($times['Purchasing']['start']) ? $times['Purchasing']['start'] : '' ?></td>
+                <td><?php echo isset($times['Purchasing']['end']) ? $times['Purchasing']['end'] : '' ?></td>
+                <td><?php if(!empty($crew->qr_dept_purchasing)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dept_purchasing ?>" style="height: 40px;"><?php endif; ?></td>
             </tr>
             <tr>
-                <td>6</td>
-                <td style="text-align:left;">QHSE</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>6</td><td style="text-align:left;">QHSE</td>
+                <td><?php echo isset($reps['QHSE']) ? $reps['QHSE'] : '' ?></td>
+                <td><?php echo isset($times['QHSE']['start']) ? $times['QHSE']['start'] : '' ?></td>
+                <td><?php echo isset($times['QHSE']['end']) ? $times['QHSE']['end'] : '' ?></td>
+                <td><?php if(!empty($crew->qr_dept_qhse)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dept_qhse ?>" style="height: 40px;"><?php endif; ?></td>
             </tr>
             <tr>
-                <td>7</td>
-                <td style="text-align:left;">Operation</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>7</td><td style="text-align:left;">Operation</td>
+                <td><?php echo isset($reps['Operation']) ? $reps['Operation'] : '' ?></td>
+                <td><?php echo isset($times['Operation']['start']) ? $times['Operation']['start'] : '' ?></td>
+                <td><?php echo isset($times['Operation']['end']) ? $times['Operation']['end'] : '' ?></td>
+                <td><?php if(!empty($crew->qr_dept_operation)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dept_operation ?>" style="height: 40px;"><?php endif; ?></td>
             </tr>
             <tr>
-                <td>8</td>
-                <td style="text-align:left;">Crewing</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>8</td><td style="text-align:left;">Crewing</td>
+                <td><?php echo isset($reps['Crewing']) ? $reps['Crewing'] : '' ?></td>
+                <td><?php echo isset($times['Crewing']['start']) ? $times['Crewing']['start'] : '' ?></td>
+                <td><?php echo isset($times['Crewing']['end']) ? $times['Crewing']['end'] : '' ?></td>
+                <td><?php if(!empty($crew->qr_dept_crewing)): ?><img src="./assets/imgQRCodeCrewCV/<?php echo $crew->qr_dept_crewing ?>" style="height: 40px;"><?php endif; ?></td>
             </tr>
         </tbody>
     </table>
@@ -428,6 +450,8 @@
     <div style="position: fixed; bottom: 20px; margin-left: 80px; color: gray; font-size: 12px; font-style: italic;">
         <span>Form MSB 6.1/ Rev.00 / 09-06-2016</span>
     </div>
+
+    <?php endif; ?>
 
 </body>
 

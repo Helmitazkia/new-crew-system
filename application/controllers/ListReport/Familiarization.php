@@ -3,6 +3,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Familiarization extends CI_Controller {
 
+    private $top4Ranks = array('MASTER', 'C/O', 'C/E', '2/E');
+
     public function __construct()
     {
         parent::__construct();
@@ -169,6 +171,17 @@ class Familiarization extends CI_Controller {
 		}
 	}
 
+    private function isTop4Rank($rankStr)
+    {
+        $rank = strtoupper(trim($rankStr));
+        foreach ($this->top4Ranks as $t4) {
+            if ($rank === $t4 || strpos($rank, $t4) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     function familiarization_pdf()
 	{
 		$id = $this->input->post('id_history');
@@ -191,43 +204,151 @@ class Familiarization extends CI_Controller {
         
         $idPerson = $history->idperson;
 
-		$sql = "
-			SELECT 
-				p.idperson,
-				TRIM(CONCAT(p.fname, ' ', p.mname, ' ', p.lname)) AS fullname,
-				DATE_FORMAT(p.dob, '%d-%m-%Y') AS date_of_birth,
-				r.nmrank AS rankname,
-				v.nmvsl AS vesselnm,
-                c.signondt AS signondt,
-                DATE_FORMAT(c.signondt, '%d-%m-%Y') AS signon_date
-			FROM mstpersonal p
-			LEFT JOIN tblcontract c 
-				ON c.idperson = p.idperson
-				AND c.deletests = 'N'
-				AND c.signondt = (
-					SELECT MAX(signondt)
-					FROM tblcontract
-					WHERE idperson = p.idperson
-					AND deletests = 'N'
-				)
-			LEFT JOIN mstvessel v ON v.kdvsl = c.signonvsl
-			LEFT JOIN mstrank r ON r.kdrank = c.signonrank
-			WHERE p.idperson = '$idPerson'
-			LIMIT 1
-		";
+        // Define batch_id fallback for signature and audit fetching
+        $batch_id = !empty($history->batch_id) ? $history->batch_id : $id;
 
-		$dataCrew = $this->MCrewscv->getDataQuery($sql);
+        // Get signature_checkedBy from fam_public_links
+        $link = $this->db->where('batch_id', $batch_id)->limit(1)->get('fam_public_links')->row();
+        $signature_checkedBy = $link ? $link->created_by : '';
 
-		if (empty($dataCrew)) {
-			echo "Data Person tidak ditemukan.";
-			return;
-		}
+        // Get signature_DPA from fam_checklist_audit
+        $auditDpa = $this->db->where('batch_id', $batch_id)
+                             ->where('department', 'DPA')
+                             ->limit(1)
+                             ->get('fam_checklist_audit')->row();
+        $signature_DPA = $auditDpa ? $auditDpa->filled_by_name : '';
 
-		$crew = $dataCrew[0];
+        // Get representatives for all departments for Page 2
+        $reps = array();
+        $allAudits = $this->db->where('batch_id', $batch_id)->get('fam_checklist_audit')->result();
+        foreach ($allAudits as $au) {
+            if (!isset($reps[$au->department])) {
+                $reps[$au->department] = $au->filled_by_name;
+            }
+        }
+
+        // Get time_start and time_end from fam_public_links
+        $times = array();
+        $publicLinks = $this->db->where('batch_id', $batch_id)->get('fam_public_links')->result();
+        foreach ($publicLinks as $pl) {
+            if (!empty($pl->time_start) && !empty($pl->time_end)) {
+                $times[$pl->department] = array(
+                    'start' => date('H:i', strtotime($pl->time_start)),
+                    'end'   => date('H:i', strtotime($pl->time_end))
+                );
+            }
+        }
+
+        // --- calculation of dob, years in rank, and license ---
+        $sql = "
+            SELECT DATE_FORMAT(dob, '%d-%m-%Y') AS date_of_birth
+            FROM mstpersonal
+            WHERE idperson = ?
+            LIMIT 1
+        ";
+        $p = $this->db->query($sql, array($idPerson))->row();
+        $dob = $p ? $p->date_of_birth : '';
+
+        // calculate Years in Rank
+        $sqlContract = "
+            SELECT A.signondt, A.signoffdt, C.nmrank
+            FROM tblcontract A
+            JOIN mstrank C ON C.kdrank = A.signonrank
+            WHERE A.idperson = ? AND A.deletests = '0'
+        ";
+        $contracts = $this->db->query($sqlContract, array($idPerson))->result();
+        $yearsInRank = 0;
+        foreach ($contracts as $c) {
+            if ($this->isTop4Rank($c->nmrank)) {
+                if (!empty($c->signondt) && !empty($c->signoffdt) && $c->signoffdt != '0000-00-00' && $c->signondt != '0000-00-00') {
+                    $diff = strtotime($c->signoffdt) - strtotime($c->signondt);
+                    if ($diff > 0) {
+                        $yearsInRank += $diff / (365 * 24 * 60 * 60);
+                    }
+                }
+            }
+        }
+        $yearsInRankFormatted = '';
+        if ($yearsInRank > 0) {
+            $years = floor($yearsInRank);
+            $months = round(($yearsInRank - $years) * 12);
+            if ($months == 12) {
+                $years += 1;
+                $months = 0;
+            }
+            $parts = array();
+            if ($years > 0) {
+                $parts[] = $years . ' Year' . ($years > 1 ? 's' : '');
+            }
+            if ($months > 0) {
+                $parts[] = $months . ' Month' . ($months > 1 ? 's' : '');
+            }
+            $yearsInRankFormatted = !empty($parts) ? implode(' ', $parts) : '';
+        }
+
+        // calculate License
+        $license = '';
+        $rankUpper = strtoupper(trim($history->rank));
+        $isTop4 = $this->isTop4Rank($history->rank);
+        
+        if ($isTop4) {
+            $licensePrefix = '';
+            if ($rankUpper === 'MASTER' || $rankUpper === 'C/O' || strpos($rankUpper, 'MASTER') !== false || strpos($rankUpper, 'C/O') !== false) {
+                $licensePrefix = 'ANT';
+            } elseif ($rankUpper === 'C/E' || $rankUpper === '2/E' || strpos($rankUpper, 'C/E') !== false || strpos($rankUpper, '2/E') !== false) {
+                $licensePrefix = 'ATT';
+            }
+            
+            if ($licensePrefix !== '') {
+                $sqlCert = "
+                    SELECT certname, dispname 
+                    FROM tblcertdoc
+                    WHERE idperson = ? AND deletests = '0'
+                ";
+                $certs = $this->db->query($sqlCert, array($idPerson))->result();
+                foreach ($certs as $c) {
+                    $cname = strtoupper($c->certname . ' ' . $c->dispname);
+                    if (strpos($cname, $licensePrefix) !== false) {
+                        preg_match('/(' . $licensePrefix . '\s*(?:[IVX]+|[1-5]+))/', $cname, $matches);
+                        if (!empty($matches[1])) {
+                            $license = $matches[1];
+                            break;
+                        } else {
+                            $license = $licensePrefix;
+                        }
+                    }
+                }
+            }
+        }
+
+        $crew = (object) array(
+            'fullname'      => $history->nama_crew,
+            'date_of_birth' => $dob,
+            'rankname'      => $history->rank,
+            'vesselnm'      => $history->vessel,
+            'signon_date'   => !empty($history->signon_date) ? date('d-m-Y', strtotime($history->signon_date)) : '',
+            'is_top4'       => $isTop4,
+            'qr_crew'       => isset($history->qr_crew) ? $history->qr_crew : '',
+            'qr_checkedby'  => isset($history->qr_checkedby) ? $history->qr_checkedby : '',
+            'qr_dpa'        => isset($history->qr_dpa) ? $history->qr_dpa : '',
+            'qr_dept_technical'    => isset($history->qr_dept_technical) ? $history->qr_dept_technical : '',
+            'qr_dept_marinesafety' => isset($history->qr_dept_marinesafety) ? $history->qr_dept_marinesafety : '',
+            'qr_dept_finance'      => isset($history->qr_dept_finance) ? $history->qr_dept_finance : '',
+            'qr_dept_purchasing'   => isset($history->qr_dept_purchasing) ? $history->qr_dept_purchasing : '',
+            'qr_dept_qhse'         => isset($history->qr_dept_qhse) ? $history->qr_dept_qhse : '',
+            'qr_dept_operation'    => isset($history->qr_dept_operation) ? $history->qr_dept_operation : '',
+            'qr_dept_crewing'      => isset($history->qr_dept_crewing) ? $history->qr_dept_crewing : '',
+            'signature_checkedBy'  => $signature_checkedBy,
+            'signature_DPA'        => $signature_DPA,
+            'license'              => $license,
+            'years_in_rank'        => $yearsInRankFormatted
+        );
 
 		$dataOut['crew']    = $crew;
 		$dataOut['history'] = $history;
 		$dataOut['today']   = date('d F Y');
+        $dataOut['reps']    = $reps;
+        $dataOut['times']   = $times;
 
 		require(APPPATH . "views/frontend/pdf/mpdf60/mpdf.php");
 		$mpdf = new mPDF('utf-8', 'A4');

@@ -37,8 +37,18 @@ class PersonDetail extends CI_Controller {
         $vesselname = $dataContext->getVesselByOption("","name","");
         $optRank = $dataContext->getMstRankByOptionWithSelected("","");
 
+        // Ambil nama crew dari database berdasarkan idperson
+        $crewRow = $this->db->query(
+            "SELECT TRIM(CONCAT_WS(' ', fname, mname, lname)) AS fullName
+             FROM mstpersonal
+             WHERE idperson = ? AND deletests = '0'
+             LIMIT 1",
+            array($idperson)
+        )->row();
+        $crewName = $crewRow ? $crewRow->fullName : 'Person Detail';
+
         $data = array(
-            'title'        => 'Active Roster',
+            'title'        => $crewName,
             'active_menu'  => 'crew_roster',
             'content'      => 'CrewDetail/profile',
             'idperson'     => $idperson,
