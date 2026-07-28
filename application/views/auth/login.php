@@ -52,7 +52,7 @@
               Login
             </button>
 
-
+<!-- 
             <div class="divider">
               <span>Continue with</span>
             </div>
@@ -70,15 +70,21 @@
             <p class="text-center mt-4">
               Don’t have an account?
               <a href="#" class="text-decoration-none fw-semibold">Register</a>
-            </p>
+            </p> -->
           </form>
 
         </div>
       </div>
 
       <!-- RIGHT -->
-      <div class="col-lg-6 d-none d-lg-block login-image p-0">
-        <img src="<?php echo base_url('assets/img/banner/andhika-lines.png'); ?>" alt="Andhika Lines">
+      <div class="col-lg-6 d-none d-lg-block login-image p-0 position-relative">
+        <div class="hero-slideshow">
+            <img src="<?php echo base_url('assets/img/banner/andhika-1.jpg'); ?>" class="hero-slide">
+            <img src="<?php echo base_url('assets/img/banner/andhika-2.jpeg'); ?>" class="hero-slide">
+            <img src="<?php echo base_url('assets/img/banner/andhika-3.jpeg'); ?>" class="hero-slide">
+        </div>
+        <div class="hero-overlay"></div>
+        <span class="copyright" style="font-weight: bold;font-size: 15px;">&copy; 2026 Andhika Group</span>
       </div>
 
     </div>
@@ -104,6 +110,53 @@
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 9999;
+  }
+  
+  /* Slideshow Styles for Login Right Column */
+  .login-image {
+      overflow: hidden;
+  }
+  .hero-slideshow {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+  }
+  .hero-slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0;
+      animation: heroFade 15s infinite;
+  }
+  .hero-slide:nth-child(1) { animation-delay: 0s; }
+  .hero-slide:nth-child(2) { animation-delay: 5s; }
+  .hero-slide:nth-child(3) { animation-delay: 10s; }
+
+  @keyframes heroFade {
+      0%   { opacity: 0; }
+      5%   { opacity: 1; }
+      30%  { opacity: 1; }
+      35%  { opacity: 0; }
+      100% { opacity: 0; }
+  }
+
+  .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.35) 100%);
+      pointer-events: none;
+      z-index: 1;
+  }
+  .copyright {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      color: rgba(255,255,255,0.9);
+      z-index: 2;
   }
 </style>
 
