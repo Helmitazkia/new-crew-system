@@ -80,7 +80,7 @@
       <div class="col-lg-6 d-none d-lg-block login-image p-0 position-relative">
         <div class="hero-slideshow">
             <img src="<?php echo base_url('assets/img/banner/andhika-1.jpg'); ?>" class="hero-slide">
-            <img src="<?php echo base_url('assets/img/banner/andhika-2.jpeg'); ?>" class="hero-slide">
+            <img src="<?php echo base_url('assets/img/banner/andhika-2.jpg'); ?>" class="hero-slide">
             <img src="<?php echo base_url('assets/img/banner/andhika-3.jpeg'); ?>" class="hero-slide">
         </div>
         <div class="hero-overlay"></div>

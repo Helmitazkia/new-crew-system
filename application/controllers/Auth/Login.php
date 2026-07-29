@@ -35,7 +35,8 @@ class Login extends CI_Controller {
               userName,
               userFullNm,
               userType,
-              userJenis
+              userJenis,
+              image_profile
           FROM login
           WHERE status = '0'
           AND userName = ?
@@ -56,12 +57,13 @@ class Login extends CI_Controller {
 
           // SET SESSION
           $this->session->set_userdata(array(
-              'userId'     => $row->userId,
-              'userName'   => $row->userName,
-              'userFullNm' => $row->userFullNm,
-              'userType'   => $row->userType,
-              'userJenis'  => $row->userJenis,
-              'isLogin'    => true
+              'userId'        => $row->userId,
+              'userName'      => $row->userName,
+              'userFullNm'    => $row->userFullNm,
+              'userType'      => $row->userType,
+              'userJenis'     => $row->userJenis,
+              'image_profile' => $row->image_profile,
+              'isLogin'       => true
           ));
 
           // // UPDATE LAST LOGIN
