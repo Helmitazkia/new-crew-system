@@ -85,7 +85,7 @@ class CrewMatrix extends CI_Controller {
                 FROM (
                     SELECT idperson, certname, issdate, expdate
                     FROM tblcertdoc
-                    WHERE deletests = '0' AND certname NOT IN ('PASSPORT', 'SEAMAN BOOK')
+                    WHERE deletests = '0' AND certname NOT IN ('PASSPORT', 'SEAMAN BOOK') AND display = 'Y'
                     UNION ALL
                     SELECT idperson, 
                            CASE WHEN kdcert = 55 THEN 'PASSPORT' WHEN kdcert = 56 THEN 'SEAMAN BOOK' END AS certname,

@@ -208,13 +208,18 @@
                 <div class="user-profile d-flex align-items-center cursor-pointer" id="profileDropdown"
                     style="cursor: pointer;" data-bs-toggle="dropdown" aria-expanded="false">
 
-                    <div class="avatar-circle bg-primary text-white d-flex align-items-center justify-content-center"
-                        style="width: 40px; height: 40px; border-radius: 50%; font-weight: bold;">
-                        <?php 
+                    <?php 
                     $fullname = $this->session->userdata('userFullNm');
-                    echo substr($fullname, 0, 1); 
-                ?>
-                    </div>
+                    $image_profile = $this->session->userdata('image_profile');
+                    if (!empty($image_profile) && file_exists(FCPATH . 'assets/img/profile/' . $image_profile)): 
+                    ?>
+                        <img src="<?php echo base_url('assets/img/profile/' . $image_profile); ?>" alt="Profile" class="rounded-circle shadow-sm" style="width: 40px; height: 40px; object-fit: cover;">
+                    <?php else: ?>
+                        <div class="avatar-circle bg-primary text-white d-flex align-items-center justify-content-center shadow-sm"
+                            style="width: 40px; height: 40px; border-radius: 50%; font-weight: bold;">
+                            <?php echo substr($fullname, 0, 1); ?>
+                        </div>
+                    <?php endif; ?>
                     <span class="ms-2 d-none d-md-inline">
                         <?php echo $this->session->userdata('userFullNm'); ?>
                     </span>
@@ -225,10 +230,14 @@
                     style="width: 250px; border-radius: 10px; margin-top: 10px;">
 
                     <div class="p-3 text-center border-bottom">
-                        <div class="avatar-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-2"
-                            style="width: 60px; height: 60px; border-radius: 50%; font-size: 1.5rem; font-weight: bold;">
-                            <?php echo substr($fullname, 0, 1); ?>
-                        </div>
+                        <?php if (!empty($image_profile) && file_exists(FCPATH . 'assets/img/profile/' . $image_profile)): ?>
+                            <img src="<?php echo base_url('assets/img/profile/' . $image_profile); ?>" alt="Profile" class="rounded-circle mb-2 shadow-sm" style="width: 60px; height: 60px; object-fit: cover;">
+                        <?php else: ?>
+                            <div class="avatar-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-2 shadow-sm"
+                                style="width: 60px; height: 60px; border-radius: 50%; font-size: 1.5rem; font-weight: bold;">
+                                <?php echo substr($fullname, 0, 1); ?>
+                            </div>
+                        <?php endif; ?>
                         <h6 class="mb-1"><?php echo $this->session->userdata('userFullNm'); ?></h6>
                         <small class="text-muted"><?php echo $this->session->userdata('userType'); ?></small>
                     </div>
