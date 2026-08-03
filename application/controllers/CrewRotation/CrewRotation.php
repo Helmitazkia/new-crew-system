@@ -84,25 +84,38 @@ class CrewRotation extends CI_Controller
     {
         $sql = "SELECT P.idperson, TRIM(CONCAT_WS(' ', P.fname, P.mname, P.lname)) AS fullName,
                 C.signoffdt, C.estsignoffdt,
-                P.newapplicent
+                P.newapplicent,
+                C.signonrank AS contract_kdrank,
+                R1.nmrank AS contract_nmrank,
+                P.applyfor AS applyfor_kdrank,
+                R2.nmrank AS applyfor_nmrank
                 FROM mstpersonal P
                 LEFT JOIN (
-                    SELECT t.idperson, t.signoffdt, t.estsignoffdt
+                    SELECT t.idperson, t.signoffdt, t.estsignoffdt, t.signonrank
                     FROM tblcontract t
                     INNER JOIN (
                         SELECT idperson, MAX(idcontract) AS max_idcontract
                         FROM tblcontract WHERE deletests = 0 GROUP BY idperson
                     ) x ON x.idperson = t.idperson AND x.max_idcontract = t.idcontract
                 ) C ON P.idperson = C.idperson
+                LEFT JOIN mstrank R1 ON R1.kdrank = C.signonrank AND R1.deletests = '0'
+                LEFT JOIN mstrank R2 ON R2.kdrank = P.applyfor AND R2.deletests = '0'
                 WHERE P.deletests = '0' AND P.inaktif = '0'
                 AND (P.fname != '' OR P.mname != '' OR P.lname != '')
                 ORDER BY fullName ASC";
         $rows = $this->db->query($sql)->result();
         $out = array();
         foreach ($rows as $r) {
+            $rankDisplay = $r->idperson;
+            if (!empty($r->contract_nmrank)) {
+                $rankDisplay = $r->contract_nmrank;
+            } elseif (!empty($r->applyfor_kdrank)) {
+                $rankDisplay = $r->applyfor_kdrank;
+            }
+
             $out[] = array(
                 'value'      => $r->idperson,
-                'text'       => $r->fullName . ' (' . $r->idperson . ')',
+                'text'       => $r->fullName . ' (' . $rankDisplay . ')',
                 'signoffdt'  => isset($r->signoffdt) ? $r->signoffdt : '',
                 'estsignoffdt' => isset($r->estsignoffdt) ? $r->estsignoffdt : '',
                 'newapplicent' => isset($r->newapplicent) ? $r->newapplicent : ''
