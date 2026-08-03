@@ -187,39 +187,35 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="form-group mb-3">
-                                        <label class="form-label fw-semibold">Duration / Jangka Waktu (Months / Bulan)
-                                            <span class="text-danger">*</span></label>
+                                          <!-- class="form-control mandatory" -->
+                                        <label class="form-label fw-semibold">Duration / Jangka Waktu (Months / Bulan)</label>
                                         <input type="number" id="txtDuration" name="txtduration"
-                                            class="form-control mandatory" min="1" max="50" placeholder="e.g. 12">
+                                            class="form-control" min="1" max="50" placeholder="e.g. 12">
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-6 form-group mb-3">
-                                            <label class="form-label fw-semibold">Basic Wage (Rp) <span
-                                                    class="text-danger">*</span></label>
+                                            <label class="form-label fw-semibold">Basic Wage (Rp)</label>
                                             <input type="text" id="txtBasicWage" name="txtBasicWage"
-                                                class="form-control mandatory text-end" value="0">
+                                                class="form-control text-end" value="0">
                                         </div>
                                         <div class="col-md-6 form-group mb-3">
-                                            <label class="form-label fw-semibold">Fix Overtime (Rp) <span
-                                                    class="text-danger">*</span></label>
+                                            <label class="form-label fw-semibold">Fix Overtime (Rp)</label>
                                             <input type="text" id="txtFixOvertime" name="txtFixOvertime"
-                                                class="form-control mandatory text-end" value="0">
+                                                class="form-control text-end" value="0">
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-6 form-group mb-3">
-                                            <label class="form-label fw-semibold">Leave Pay (Rp) <span
-                                                    class="text-danger">*</span></label>
+                                            <label class="form-label fw-semibold">Leave Pay (Rp)</label>
                                             <input type="text" id="txtLeavePay" name="txtLeavePay"
-                                                class="form-control mandatory text-end" value="0">
+                                                class="form-control text-end" value="0">
                                         </div>
                                         <div class="col-md-6 form-group mb-3">
-                                            <label class="form-label fw-semibold">Tanker Allowance (Rp) <span
-                                                    class="text-danger">*</span></label>
+                                            <label class="form-label fw-semibold">Tanker Allowance (Rp)</label>
                                             <input type="text" id="txtTankerAllowance" name="txtTankerAllowance"
-                                                class="form-control mandatory text-end" value="0">
+                                                class="form-control text-end" value="0">
                                         </div>
                                     </div>
 
