@@ -96,14 +96,55 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navMenu">
+            <?php
+            // Akses CI instance dari view - wajib pakai get_instance() di CI2
+            $CI =& get_instance();
+            $CI->load->model('HakAksesModel');
+            $_rc = $CI->session->userdata('userJenis');
+            ?>
+<!-- â”€â”€ ROLE ACCESS FILTER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            // Load model hak akses untuk validasi menu per role
+            $this$CI =& get_instance(); $CI->load->model('HakAksesModel');
+            $_rc = $this$CI->session->userdata('userJenis'); // role code dari session
+            // Shorthand helper: closure-style menggunakan variable
+            // canMenu('menu_code')   â†’ cek akses menu utama
+            // canSub('sub_code')     â†’ cek akses sub-menu
+            // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+            ?> -->
             <ul class="navbar-nav mx-auto gap-3">
 
+                <?php if ($CI->HakAksesModel->canAccessMenuByCode($_rc, 'dashboard')): ?>
                 <li class="nav-item fst-italic fw-semibold">
                     <a class="nav-link <?php echo ($active_menu == 'dashboard') ? 'active' : '' ?>" href="#">
                         Dashboard
                     </a>
                 </li>
+                <?php endif; ?>
 
+                <?php
+                // Cek sub-menu mana yang boleh diakses di Master Data
+                $_canMasterCert    = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'master_certificate');
+                $_canMasterCity    = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'master_city');
+                $_canMasterCountry = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'master_country');
+                $_canMasterClinic  = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'master_clinic');
+                $_canMasterCompany = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'master_company');
+                $_canMasterRank    = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'master_rank');
+                $_canMasterVessel  = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'master_vessel');
+                $_canMasterVType   = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'master_vessel_type');
+                $_canMasterSchool  = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'master_school');
+                $_canOpenRecruit   = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'open_recruitment');
+                $_canUserCrew      = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'crew_user_login');
+                $_canUserSystem    = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'user_system');
+                $_canCertMatrix    = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'matrix_certificate');
+                $_canRoleAccess    = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'role_access');
+                // Tampilkan menu Master Data hanya jika minimal 1 sub-menu boleh diakses
+                $_showMasterData   = $CI->HakAksesModel->canAccessMenuByCode($_rc, 'master_data')
+                    && ($_canMasterCert || $_canMasterCity || $_canMasterCountry || $_canMasterClinic
+                        || $_canMasterCompany || $_canMasterRank || $_canMasterVessel || $_canMasterVType
+                        || $_canMasterSchool || $_canOpenRecruit || $_canUserCrew || $_canUserSystem
+                        || $_canCertMatrix || $_canRoleAccess);
+                ?>
+                <?php if ($_showMasterData): ?>
                 <li class="nav-item dropdown fst-italic fw-semibold" style="position: relative;">
                     <a class="nav-link dropdown-toggle <?php echo ($active_menu == 'master_data') ? 'active' : '' ?>"
                         href="#" id="masterDataDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
@@ -114,50 +155,84 @@
                     <ul class="dropdown-menu shadow-lg megamenu-dropdown" aria-labelledby="masterDataDropdown">
                         <div class="megamenu-grid">
                             <div>
+                                <?php if ($_canMasterCert): ?>
                                 <a class="dropdown-item <?php echo ($active_menu == 'master_certificate') ? 'active' : '' ?>"
-                                    href="
-                                    <?php echo base_url('certificate') ?>">Certificate</a>
+                                    href="<?php echo base_url('certificate') ?>">Certificate</a>
+                                <?php endif; ?>
+                                <?php if ($_canMasterCity): ?>
                                 <a class="dropdown-item <?php echo ($active_menu == 'master_city') ? 'active' : '' ?>"
                                     href="<?php echo base_url('city') ?>">City</a>
+                                <?php endif; ?>
+                                <?php if ($_canMasterCountry): ?>
                                 <a class="dropdown-item <?php echo ($active_menu == 'master_country') ? 'active' : '' ?>"
                                     href="<?php echo base_url('country') ?>">Country</a>
+                                <?php endif; ?>
+                                <?php if ($_canMasterClinic): ?>
                                 <a class="dropdown-item <?php echo ($active_menu == 'master_clinic') ? 'active' : '' ?>"
                                     href="<?php echo base_url('clinic') ?>">Clinic</a>
+                                <?php endif; ?>
                             </div>
                             <div>
+                                <?php if ($_canMasterCompany): ?>
                                 <a class="dropdown-item <?php echo ($active_menu == 'master_company') ? 'active' : '' ?>"
                                     href="<?php echo base_url('company') ?>">Company</a>
+                                <?php endif; ?>
+                                <?php if ($_canMasterRank): ?>
                                 <a class="dropdown-item <?php echo ($active_menu == 'master_rank') ? 'active' : '' ?>"
                                     href="<?php echo base_url('rank') ?>">Rank</a>
+                                <?php endif; ?>
+                                <?php if ($_canMasterVessel): ?>
                                 <a class="dropdown-item <?php echo ($active_menu == 'master_vessel') ? 'active' : '' ?>"
                                     href="<?php echo base_url('vessel') ?>">Vessel</a>
+                                <?php endif; ?>
+                                <?php if ($_canMasterVType): ?>
                                 <a class="dropdown-item <?php echo ($active_menu == 'master_vessel_type') ? 'active' : '' ?>"
                                     href="<?php echo base_url('vesselType') ?>">Vessel Type</a>
+                                <?php endif; ?>
+                                <?php if ($_canMasterSchool): ?>
                                 <a class="dropdown-item <?php echo ($active_menu == 'master_school') ? 'active' : '' ?>"
                                     href="<?php echo base_url('school') ?>">School Name</a>
+                                <?php endif; ?>
                             </div>
                             <div>
+                                <?php if ($_canOpenRecruit): ?>
                                 <a class="dropdown-item <?php echo ($active_menu == 'open_recruitment') ? 'active' : '' ?>"
                                     href="<?php echo base_url('openRecruitment') ?>">Open Recruitment</a>
+                                <?php endif; ?>
+                                <?php if ($_canUserCrew): ?>
                                 <a class="dropdown-item <?php echo ($active_menu == 'crew_user_login') ? 'active' : '' ?>"
                                     href="<?php echo base_url('userCrew') ?>">User Crew</a>
+                                <?php endif; ?>
+                                <?php if ($_canUserSystem): ?>
                                 <a class="dropdown-item <?php echo ($active_menu == 'user_system') ? 'active' : '' ?>"
                                     href="<?php echo base_url('userSystem') ?>">User System</a>
+                                <?php endif; ?>
+                                <?php if ($_canCertMatrix): ?>
                                 <a class="dropdown-item fw-semibold <?php echo ($active_menu == 'matrix_certificate') ? 'active' : '' ?>"
-                                    href="<?php echo base_url("certMatrix") ?>" style="color:#067780;">Certificate
-                                    Matrix</a>
+                                    href="<?php echo base_url("certMatrix") ?>" style="color:#067780;">Certificate Matrix</a>
+                                <?php endif; ?>
+                                <?php if ($_canRoleAccess): ?>
+                                <a class="dropdown-item fw-semibold <?php echo ($active_menu == 'role_access') ? 'active' : '' ?>"
+                                    href="<?php echo base_url('roleAccess') ?>" style="color:#000099;">
+                                    <i class="fas fa-shield-alt me-1"></i>Role Access
+                                </a>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </ul>
                 </li>
+                <?php endif; // end master_data ?>
 
+                <?php if ($CI->HakAksesModel->canAccessMenuByCode($_rc, 'crew_lifecycle')): ?>
                 <li class="nav-item fst-italic fw-semibold">
                     <a class="nav-link <?php echo ($active_menu == 'crew_roster') ? 'active' : '' ?>"
                         href="<?php echo base_url('CrewLifecycle') ?>">
                         Crew Lifecycle
                     </a>
                 </li>
+                <?php endif; ?>
 
+                <?php if ($CI->HakAksesModel->canAccessMenuByCode($_rc, 'recruitment')): ?>
                 <li class="nav-item fst-italic fw-semibold" style="position: relative;">
                     <a class="nav-link <?php echo ($active_menu == 'general_recruitment') ? 'active' : '' ?>"
                         href="<?php echo base_url('general') ?>" id="recruitmentDropdown" role="button"
@@ -165,39 +240,59 @@
                         Recruitment
                     </a>
                 </li>
+                <?php endif; ?>
 
+                <?php if ($CI->HakAksesModel->canAccessMenuByCode($_rc, 'training')): ?>
                 <li class="nav-item fst-italic fw-semibold">
                     <a class="nav-link <?php echo ($active_menu == 'training') ? 'active' : '' ?>" href="#">
                         Training & Evaluation
                     </a>
                 </li>
+                <?php endif; ?>
 
+                <?php
+                $_canMcuReport    = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'mcu_report');
+                $_canFamiliar     = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'familiar_report');
+                $_canListContract = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'list_contract');
+                $_canCrewMatrix   = $CI->HakAksesModel->canAccessSubMenuByCode($_rc, 'crew_matrix');
+                $_showReport      = $CI->HakAksesModel->canAccessMenuByCode($_rc, 'report')
+                    && ($_canMcuReport || $_canFamiliar || $_canListContract || $_canCrewMatrix);
+                ?>
+                <?php if ($_showReport): ?>
                 <li class="nav-item dropdown fst-italic fw-semibold" style="position: relative;">
                     <a class="nav-link dropdown-toggle <?php echo (in_array($active_menu, array('report', 'mcu_report', 'familiar_report', 'list_contract', 'crew_matrix'))) ? 'active' : '' ?>"
                         href="#" id="reportDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
                         style="transition: color .2s ease;">
                         Report
                     </a>
-                    
                     <ul class="dropdown-menu shadow-lg" aria-labelledby="reportDropdown">
+                        <?php if ($_canMcuReport): ?>
                         <li>
                             <a class="dropdown-item <?php echo ($active_menu == 'mcu_report') ? 'active' : '' ?>" 
                                href="<?php echo base_url('Report/McuReport/view') ?>">MCU Report</a>
                         </li>
+                        <?php endif; ?>
+                        <?php if ($_canFamiliar): ?>
                         <li>
                             <a class="dropdown-item <?php echo ($active_menu == 'familiar_report') ? 'active' : '' ?>" 
                                href="<?php echo base_url('Report/FamiliarReport/view') ?>">Familiarization</a>
                         </li>
+                        <?php endif; ?>
+                        <?php if ($_canListContract): ?>
                         <li>
                             <a class="dropdown-item <?php echo ($active_menu == 'list_contract') ? 'active' : '' ?>" 
                                href="<?php echo base_url('Report/ListContract/view') ?>">List Contract</a>
                         </li>
+                        <?php endif; ?>
+                        <?php if ($_canCrewMatrix): ?>
                         <li>
                             <a class="dropdown-item <?php echo ($active_menu == 'crew_matrix') ? 'active' : '' ?>" 
                                href="<?php echo base_url('Report/CrewMatrix/view') ?>">Crew Matrix</a>
                         </li>
+                        <?php endif; ?>
                     </ul>
                 </li>
+                <?php endif; // end report ?>
             </ul>
 
 
@@ -690,3 +785,4 @@
         }
     }
     </style>
+

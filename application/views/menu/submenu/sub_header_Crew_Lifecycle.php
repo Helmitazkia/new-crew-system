@@ -1,15 +1,40 @@
+<?php
+// â”€â”€ ROLE ACCESS FILTER untuk sub-menu Crew Lifecycle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+$CI =& get_instance(); $CI->load->model('HakAksesModel');
+$_crewRc          = $CI->session->userdata('userJenis');
+$_canActiveRoster = $CI->HakAksesModel->canAccessSubMenuByCode($_crewRc, 'active_roster');
+$_canCrewRotation = $CI->HakAksesModel->canAccessSubMenuByCode($_crewRc, 'crew_rotation');
+$_canMasterPersonal = $CI->HakAksesModel->canAccessSubMenuByCode($_crewRc, 'master_personal');
+
+// Tentukan tab mana yang aktif pertama (urutan prioritas: active_roster â†’ crew_rotation â†’ master_personal)
+$_firstActive = '';
+if ($_canActiveRoster)   $_firstActive = 'activeRoster';
+elseif ($_canCrewRotation)   $_firstActive = 'menuCrewRotation';
+elseif ($_canMasterPersonal) $_firstActive = 'menuMasterPersonal';
+?>
+
 <div class="container-fluid content-wrapper">
   <div class="row justify-content-center align-items-center mb-0">
     <div class="col-12 col-xl-8 d-flex justify-content-center gap-2 main-tabs flex-wrap">
-      <button class="btn btn-primary rounded-pill fst-italic fw-semibold active" id="activeRoster">
+
+      <?php if ($_canActiveRoster): ?>
+      <button class="btn <?php echo $_firstActive === 'activeRoster' ? 'btn-primary active' : 'btn-light shadow-sm'; ?> rounded-pill fst-italic fw-semibold" id="activeRoster">
         Active Roster
       </button>
-      <button class="btn btn-light rounded-pill fst-italic fw-semibold shadow-sm" id="menuCrewRotation">
+      <?php endif; ?>
+
+      <?php if ($_canCrewRotation): ?>
+      <button class="btn <?php echo $_firstActive === 'menuCrewRotation' ? 'btn-primary active' : 'btn-light shadow-sm'; ?> rounded-pill fst-italic fw-semibold" id="menuCrewRotation">
         Crew Rotation
       </button>
-      <button class="btn btn-light rounded-pill fst-italic fw-semibold shadow-sm" id="menuMasterPersonal">
+      <?php endif; ?>
+
+      <?php if ($_canMasterPersonal): ?>
+      <button class="btn <?php echo $_firstActive === 'menuMasterPersonal' ? 'btn-primary active' : 'btn-light shadow-sm'; ?> rounded-pill fst-italic fw-semibold" id="menuMasterPersonal">
         Master Personal
       </button>
+      <?php endif; ?>
+
     </div>
     <div class="col-12">
       <hr class="border-top border-1 border-secondary mt-3 mb-1 w-100">
@@ -31,6 +56,7 @@ $(document).ready(function() {
   }
 
   // ================= ACTIVE ROSTER =================
+  <?php if ($_canActiveRoster): ?>
   $('#activeRoster').on('click', function() {
     setActiveTab($(this));
     $.ajax({
@@ -46,15 +72,16 @@ $(document).ready(function() {
         $('.status-tabs button[data-status="All"]')
           .addClass('btn-info active')
           .removeClass('btn-light');
-
-        // loadCrew(1);
       },
       error: function() {
         alert('Gagal membuka Active Roster');
       }
     });
   });
+  <?php endif; ?>
 
+  // ================= CREW ROTATION =================
+  <?php if ($_canCrewRotation): ?>
   $('#menuCrewRotation').on('click', function() {
     setActiveTab($(this));
     $.ajax({
@@ -68,7 +95,10 @@ $(document).ready(function() {
       }
     });
   });
+  <?php endif; ?>
 
+  // ================= MASTER PERSONAL =================
+  <?php if ($_canMasterPersonal): ?>
   $('#menuMasterPersonal').on('click', function() {
     setActiveTab($(this));
     $.ajax({
@@ -82,6 +112,27 @@ $(document).ready(function() {
       },
     });
   });
+  <?php endif; ?>
+
+  // ================= AUTO-LOAD TAB PERTAMA =================
+  <?php if ($_firstActive === 'activeRoster'): ?>
+  // Auto-trigger tab Active Roster jika punya akses
+  $('#activeRoster').trigger('click');
+  <?php elseif ($_firstActive === 'menuCrewRotation'): ?>
+  // User tidak punya akses Active Roster, load Crew Rotation
+  $('#menuCrewRotation').trigger('click');
+  <?php elseif ($_firstActive === 'menuMasterPersonal'): ?>
+  // User hanya punya akses Master Personal
+  $('#menuMasterPersonal').trigger('click');
+  <?php else: ?>
+  // Tidak ada akses sama sekali â†’ tampilkan pesan
+  $('#contentArea').html(
+    '<div class="alert alert-warning m-4">'
+    + '<i class="fas fa-lock me-2"></i>'
+    + '<strong>Akses Ditolak.</strong> Role Anda tidak memiliki akses ke menu Crew Lifecycle.'
+    + '</div>'
+  );
+  <?php endif; ?>
 
 });
 </script>
