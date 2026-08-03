@@ -96,108 +96,91 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navMenu">
+            <?php
+            // Akses CI instance dari view - wajib pakai get_instance() di CI2
+            $CI =& get_instance();
+            $CI->load->model('HakAksesModel');
+            $_rc = $CI->session->userdata('userJenis');
+            ?>
+<!-- ── ROLE ACCESS FILTER ────────────────────────────────────────── -->
             <ul class="navbar-nav mx-auto gap-3">
+            <?php
+            // Ambil semua menu utama yang aktif
+            $activeMenus = $CI->HakAksesModel->getActiveMenus();
+            
+            foreach ($activeMenus as $menu): 
+                // Cek akses untuk menu utama
+                if (!$CI->HakAksesModel->canAccessMenuByCode($_rc, $menu->menuCode)) {
+                    continue;
+                }
 
-                <li class="nav-item fst-italic fw-semibold">
-                    <a class="nav-link <?php echo ($active_menu == 'dashboard') ? 'active' : '' ?>" href="#">
-                        Dashboard
-                    </a>
-                </li>
+                if ($menu->hasSubMenu): 
+                    // Ambil sub-menu yang aktif
+                    $subMenus = $CI->HakAksesModel->getActiveSubMenus($menu->menuId);
+                    
+                    // Filter sub-menu berdasarkan akses user
+                    $allowedSubMenus = array();
+                    foreach ($subMenus as $sm) {
+                        if ($CI->HakAksesModel->canAccessSubMenuByCode($_rc, $sm->subMenuCode)) {
+                            $allowedSubMenus[] = $sm;
+                        }
+                    }
 
+                    // Jika tidak ada sub-menu yang boleh diakses, skip menu utama ini
+                    if (empty($allowedSubMenus)) continue;
+
+                    // Cek apakah menu ini sedang aktif
+                    $isActiveMenu = false;
+                    foreach ($allowedSubMenus as $sm) {
+                        if ($active_menu == $sm->subMenuCode) {
+                            $isActiveMenu = true;
+                            break;
+                        }
+                    }
+                    $menuUrl = ($menu->menuUrl && $menu->menuUrl !== '#') ? base_url($menu->menuUrl) : '#';
+            ?>
                 <li class="nav-item dropdown fst-italic fw-semibold" style="position: relative;">
-                    <a class="nav-link dropdown-toggle <?php echo ($active_menu == 'master_data') ? 'active' : '' ?>"
-                        href="#" id="masterDataDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                    <a class="nav-link dropdown-toggle <?php echo $isActiveMenu ? 'active' : '' ?>"
+                        href="<?php echo $menuUrl ?>" id="<?php echo $menu->menuCode ?>Dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
                         style="transition: color .2s ease;">
-                        Master Data
-                    </a>
-
-                    <ul class="dropdown-menu shadow-lg megamenu-dropdown" aria-labelledby="masterDataDropdown">
-                        <div class="megamenu-grid">
-                            <div>
-                                <a class="dropdown-item <?php echo ($active_menu == 'master_certificate') ? 'active' : '' ?>"
-                                    href="
-                                    <?php echo base_url('certificate') ?>">Certificate</a>
-                                <a class="dropdown-item <?php echo ($active_menu == 'master_city') ? 'active' : '' ?>"
-                                    href="<?php echo base_url('city') ?>">City</a>
-                                <a class="dropdown-item <?php echo ($active_menu == 'master_country') ? 'active' : '' ?>"
-                                    href="<?php echo base_url('country') ?>">Country</a>
-                                <a class="dropdown-item <?php echo ($active_menu == 'master_clinic') ? 'active' : '' ?>"
-                                    href="<?php echo base_url('clinic') ?>">Clinic</a>
-                            </div>
-                            <div>
-                                <a class="dropdown-item <?php echo ($active_menu == 'master_company') ? 'active' : '' ?>"
-                                    href="<?php echo base_url('company') ?>">Company</a>
-                                <a class="dropdown-item <?php echo ($active_menu == 'master_rank') ? 'active' : '' ?>"
-                                    href="<?php echo base_url('rank') ?>">Rank</a>
-                                <a class="dropdown-item <?php echo ($active_menu == 'master_vessel') ? 'active' : '' ?>"
-                                    href="<?php echo base_url('vessel') ?>">Vessel</a>
-                                <a class="dropdown-item <?php echo ($active_menu == 'master_vessel_type') ? 'active' : '' ?>"
-                                    href="<?php echo base_url('vesselType') ?>">Vessel Type</a>
-                                <a class="dropdown-item <?php echo ($active_menu == 'master_school') ? 'active' : '' ?>"
-                                    href="<?php echo base_url('school') ?>">School Name</a>
-                            </div>
-                            <div>
-                                <a class="dropdown-item <?php echo ($active_menu == 'open_recruitment') ? 'active' : '' ?>"
-                                    href="<?php echo base_url('openRecruitment') ?>">Open Recruitment</a>
-                                <a class="dropdown-item <?php echo ($active_menu == 'crew_user_login') ? 'active' : '' ?>"
-                                    href="<?php echo base_url('userCrew') ?>">User Crew</a>
-                                <a class="dropdown-item <?php echo ($active_menu == 'user_system') ? 'active' : '' ?>"
-                                    href="<?php echo base_url('userSystem') ?>">User System</a>
-                                <a class="dropdown-item fw-semibold <?php echo ($active_menu == 'matrix_certificate') ? 'active' : '' ?>"
-                                    href="<?php echo base_url("certMatrix") ?>" style="color:#067780;">Certificate
-                                    Matrix</a>
-                            </div>
-                        </div>
-                    </ul>
-                </li>
-
-                <li class="nav-item fst-italic fw-semibold">
-                    <a class="nav-link <?php echo ($active_menu == 'crew_roster') ? 'active' : '' ?>"
-                        href="<?php echo base_url('CrewLifecycle') ?>">
-                        Crew Lifecycle
-                    </a>
-                </li>
-
-                <li class="nav-item fst-italic fw-semibold" style="position: relative;">
-                    <a class="nav-link <?php echo ($active_menu == 'general_recruitment') ? 'active' : '' ?>"
-                        href="<?php echo base_url('general') ?>" id="recruitmentDropdown" role="button"
-                        aria-expanded="false">
-                        Recruitment
-                    </a>
-                </li>
-
-                <li class="nav-item fst-italic fw-semibold">
-                    <a class="nav-link <?php echo ($active_menu == 'training') ? 'active' : '' ?>" href="#">
-                        Training & Evaluation
-                    </a>
-                </li>
-
-                <li class="nav-item dropdown fst-italic fw-semibold" style="position: relative;">
-                    <a class="nav-link dropdown-toggle <?php echo (in_array($active_menu, array('report', 'mcu_report', 'familiar_report', 'list_contract', 'crew_matrix'))) ? 'active' : '' ?>"
-                        href="#" id="reportDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
-                        style="transition: color .2s ease;">
-                        Report
+                        <?php echo $menu->menuName ?>
                     </a>
                     
-                    <ul class="dropdown-menu shadow-lg" aria-labelledby="reportDropdown">
-                        <li>
-                            <a class="dropdown-item <?php echo ($active_menu == 'mcu_report') ? 'active' : '' ?>" 
-                               href="<?php echo base_url('Report/McuReport/view') ?>">MCU Report</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item <?php echo ($active_menu == 'familiar_report') ? 'active' : '' ?>" 
-                               href="<?php echo base_url('Report/FamiliarReport/view') ?>">Familiarization</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item <?php echo ($active_menu == 'list_contract') ? 'active' : '' ?>" 
-                               href="<?php echo base_url('Report/ListContract/view') ?>">List Contract</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item <?php echo ($active_menu == 'crew_matrix') ? 'active' : '' ?>" 
-                               href="<?php echo base_url('Report/CrewMatrix/view') ?>">Crew Matrix</a>
-                        </li>
+                    <ul class="dropdown-menu shadow-lg <?php echo (count($allowedSubMenus) > 7) ? 'megamenu-dropdown' : '' ?>" aria-labelledby="<?php echo $menu->menuCode ?>Dropdown">
+                        <?php if (count($allowedSubMenus) > 7): ?>
+                        <div class="megamenu-grid">
+                            <?php foreach ($allowedSubMenus as $sm): 
+                                $smUrl = ($sm->subMenuUrl && $sm->subMenuUrl !== '#') ? base_url($sm->subMenuUrl) : '#';
+                            ?>
+                                <a class="dropdown-item <?php echo ($active_menu == $sm->subMenuCode) ? 'active' : '' ?>" href="<?php echo $smUrl ?>">
+                                    <?php echo $sm->subMenuName ?>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php else: ?>
+                            <?php foreach ($allowedSubMenus as $sm): 
+                                $smUrl = ($sm->subMenuUrl && $sm->subMenuUrl !== '#') ? base_url($sm->subMenuUrl) : '#';
+                            ?>
+                                <li>
+                                    <a class="dropdown-item <?php echo ($active_menu == $sm->subMenuCode) ? 'active' : '' ?>" href="<?php echo $smUrl ?>">
+                                        <?php echo $sm->subMenuName ?>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </ul>
                 </li>
+            <?php else: 
+                // Menu utama tanpa sub-menu
+                $menuUrl = ($menu->menuUrl && $menu->menuUrl !== '#') ? base_url($menu->menuUrl) : '#';
+            ?>
+                <li class="nav-item fst-italic fw-semibold">
+                    <a class="nav-link <?php echo ($active_menu == $menu->menuCode) ? 'active' : '' ?>"
+                        href="<?php echo $menuUrl ?>">
+                        <?php echo $menu->menuName ?>
+                    </a>
+                </li>
+            <?php endif; endforeach; ?>
             </ul>
 
 
@@ -690,3 +673,4 @@
         }
     }
     </style>
+

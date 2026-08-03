@@ -197,5 +197,19 @@ $route['crewCertificate'] = 'CrewPortal/CrewPortal/getCrewCertificatesOption';
 $route['certificateDetail'] = 'CrewPortal/CrewPortal/getCertificateDetailByCertId';
 
 
-/* End of file routes.php */
-/* Location: ./application/config/routes.php */
+//Role Access Management   
+$route['roleAccess']                    = 'MenuRole/HakAkses/index';
+$route['hakAkses/getRoles']             = 'MenuRole/HakAkses/getRoles';
+$route['hakAkses/getRoleCodes']         = 'MenuRole/HakAkses/getRoleCodes';
+$route['hakAkses/getRole']              = 'MenuRole/HakAkses/getRole';
+$route['hakAkses/saveRole']             = 'MenuRole/HakAkses/saveRole';
+$route['hakAkses/toggleRole']           = 'MenuRole/HakAkses/toggleRole';
+$route['hakAkses/deleteRole']           = 'MenuRole/HakAkses/deleteRole';
+$route['hakAkses/getPermissions']       = 'MenuRole/HakAkses/getPermissions';
+$route['hakAkses/updatePermission']     = 'MenuRole/HakAkses/updatePermission';
+
+
+// Crew Lifecycle Routes
+$route['ActiveRoster'] = 'ActiveRoster/ActiveRoster';
+$route['CrewRotation'] = 'CrewRotation/CrewRotation';
+$route['MasterPersonal'] = 'MasterPersonal/MasterPersonal';
