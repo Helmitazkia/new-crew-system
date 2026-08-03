@@ -23,7 +23,7 @@ class HakAkses extends CI_Controller {
         $data['title']       = 'Role Access Management';
         $data['active_menu'] = 'role_access';
         $this->load->view('layout/header', $data);
-        $this->load->view('MasterData/RoleAccess/RoleAccessView');
+        $this->load->view('MenuRole/RoleAccess/RoleAccessView');
         $this->load->view('layout/footer');
     }
 

@@ -25,10 +25,12 @@ class ActiveRoster extends CI_Controller {
     {
         $data = array(
             'title'   => 'Active Roster',
-            'content' => 'Roster/ActiveRoster/active_roster'
+            'active_menu' => 'active_roster'
         );
 
-        $this->load->view('menu/main_CrewLifecycle', $data);
+        $this->load->view('layout/header', $data);
+        $this->load->view('Roster/ActiveRoster/active_roster');
+        $this->load->view('layout/footer');
     }
 
     public function getActiveRoster()

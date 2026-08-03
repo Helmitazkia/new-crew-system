@@ -128,9 +128,11 @@ class CrewRotation extends CI_Controller
     {
         $data = array(
             'title'   => 'Crew Rotation',
-            'content' => 'Roster/CrewRotation/crew_rotation'
+            'active_menu' => 'crew_rotation'
         );
-        $this->load->view('menu/main_CrewLifecycle', $data);
+        $this->load->view('layout/header', $data);
+        $this->load->view('Roster/CrewRotation/crew_rotation');
+        $this->load->view('layout/footer');
     }
 
     public function ajaxCrewRotation()

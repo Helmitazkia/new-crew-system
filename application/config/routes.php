@@ -197,16 +197,19 @@ $route['crewCertificate'] = 'CrewPortal/CrewPortal/getCrewCertificatesOption';
 $route['certificateDetail'] = 'CrewPortal/CrewPortal/getCertificateDetailByCertId';
 
 
-// ─── Role Access Management ───────────────────────────────────────────────────
-$route['roleAccess']                    = 'HakAkses/index';
-$route['hakAkses/getRoles']             = 'HakAkses/getRoles';
-$route['hakAkses/getRoleCodes']         = 'HakAkses/getRoleCodes';
-$route['hakAkses/getRole']              = 'HakAkses/getRole';
-$route['hakAkses/saveRole']             = 'HakAkses/saveRole';
-$route['hakAkses/toggleRole']           = 'HakAkses/toggleRole';
-$route['hakAkses/deleteRole']           = 'HakAkses/deleteRole';
-$route['hakAkses/getPermissions']       = 'HakAkses/getPermissions';
-$route['hakAkses/updatePermission']     = 'HakAkses/updatePermission';
+//Role Access Management   
+$route['roleAccess']                    = 'MenuRole/HakAkses/index';
+$route['hakAkses/getRoles']             = 'MenuRole/HakAkses/getRoles';
+$route['hakAkses/getRoleCodes']         = 'MenuRole/HakAkses/getRoleCodes';
+$route['hakAkses/getRole']              = 'MenuRole/HakAkses/getRole';
+$route['hakAkses/saveRole']             = 'MenuRole/HakAkses/saveRole';
+$route['hakAkses/toggleRole']           = 'MenuRole/HakAkses/toggleRole';
+$route['hakAkses/deleteRole']           = 'MenuRole/HakAkses/deleteRole';
+$route['hakAkses/getPermissions']       = 'MenuRole/HakAkses/getPermissions';
+$route['hakAkses/updatePermission']     = 'MenuRole/HakAkses/updatePermission';
 
-/* End of file routes.php */
-/* Location: ./application/config/routes.php */
+
+// Crew Lifecycle Routes
+$route['ActiveRoster'] = 'ActiveRoster/ActiveRoster';
+$route['CrewRotation'] = 'CrewRotation/CrewRotation';
+$route['MasterPersonal'] = 'MasterPersonal/MasterPersonal';

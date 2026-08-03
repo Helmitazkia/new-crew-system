@@ -22,11 +22,13 @@ class MasterPersonal extends CI_Controller {
     public function index()
     {
         $data = array(
-            'title'   => 'Crew Roster',
-            'content' => 'Roster/MasterPersonal/master_personal'
+            'title'   => 'Master Personal',
+            'active_menu' => 'master_personal'
         );
 
-        $this->load->view('menu/main_CrewLifecycle', $data);
+        $this->load->view('layout/header', $data);
+        $this->load->view('Roster/MasterPersonal/master_personal');
+        $this->load->view('layout/footer');
     }
 
     // KHUSUS AJAX

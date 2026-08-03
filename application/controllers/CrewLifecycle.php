@@ -23,13 +23,8 @@ class CrewLifecycle extends CI_Controller {
 
     public function index()
     {
-        $data = array(
-            'title' => 'Active Roster',
-            'active_menu' => 'crew_roster',
-            'content' => 'Roster/ActiveRoster/active_roster'
-        );
-
-        $this->load->view('menu/main_CrewLifecycle', $data);
+        // Redirect to the new independent Active Roster page
+        redirect('ActiveRoster/ActiveRoster');
     }
 
 }

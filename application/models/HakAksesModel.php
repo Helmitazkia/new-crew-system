@@ -92,6 +92,24 @@ class HakAksesModel extends CI_Model {
     }
 
     /**
+     * Ambil menu utama yang aktif (untuk dynamic header)
+     */
+    public function getActiveMenus() {
+        return $this->db->query("
+            SELECT * FROM m_menu WHERE isActive = 1 ORDER BY menuOrder ASC, menuName ASC
+        ")->result();
+    }
+
+    /**
+     * Ambil sub-menu yang aktif berdasarkan menuId (untuk dynamic header)
+     */
+    public function getActiveSubMenus($menuId) {
+        return $this->db->query("
+            SELECT * FROM m_sub_menu WHERE menuId = ? AND isActive = 1 ORDER BY subMenuOrder ASC, subMenuName ASC
+        ", array($menuId))->result();
+    }
+
+    /**
      * Ambil permission matrix untuk satu role:
      * return array gabungan menu + sub-menu lengkap dengan status canAccess
      */
