@@ -618,9 +618,15 @@ $(document).ready(function () {
     var iconHtml = menu.menuIcon
       ? '<i class="'+ menu.menuIcon +' me-1 text-primary"></i>'
       : '<i class="fas fa-bars me-1 text-muted"></i>';
-    return '<tr class="table-light">'
+      
+    // Dropdown Icon & class for Accordion
+    var dropdownIcon = (menu.hasSubMenu == 1) ? '<i class="fas fa-chevron-down ms-2 text-muted dropdown-icon" style="transition: transform 0.2s;"></i>' : '';
+    var rowClass = (menu.hasSubMenu == 1) ? 'has-submenu-row' : '';
+    var rowCursor = (menu.hasSubMenu == 1) ? 'cursor: pointer;' : '';
+
+    return '<tr class="table-light '+ rowClass +'" data-target=".submenu-row-'+ menu.menuId +'" style="'+ rowCursor +'">'
       + '<td class="text-center fw-bold" style="font-size:11px;">'+ no +'</td>'
-      + '<td colspan="2"><span class="fw-bold">'+ iconHtml + menu.menuName +'</span>'
+      + '<td colspan="2"><span class="fw-bold">'+ iconHtml + menu.menuName + dropdownIcon + '</span>'
       +   '<span class="badge bg-primary ms-2" style="font-size:9px;">Menu Utama</span></td>'
       + '<td class="text-center">'
       +   '<div class="d-flex align-items-center justify-content-center gap-2">'
@@ -642,7 +648,7 @@ $(document).ready(function () {
     var badge = sm.canAccess == 1
       ? '<span class="badge bg-success toggle-label" style="font-size:10px;">Boleh</span>'
       : '<span class="badge bg-secondary toggle-label" style="font-size:10px;">Tidak</span>';
-    return '<tr>'
+    return '<tr class="submenu-row-'+ sm.menuId +'" style="display: none; background-color: #fcfcfc;">'
       + '<td class="text-center" style="font-size:11px;">'+ no +'</td>'
       + '<td class="text-muted ps-4" style="font-size:12px;">↳ '+ parentName +'</td>'
       + '<td style="font-size:12px;"><i class="fas fa-angle-right me-1 text-muted"></i>'+ sm.subMenuName +'</td>'
@@ -703,6 +709,26 @@ $(document).ready(function () {
       error: function () {
         tog.prop('disabled', false).prop('checked', !tog.is(':checked'));
         Swal.fire({ icon:'error', title:'Error', text:'Koneksi bermasalah.', timer: 2000, showConfirmButton: false });
+      }
+    });
+  });
+
+  // ─────────────────────────────────────────────────────────
+  // ACCORDION TOGGLE
+  // ─────────────────────────────────────────────────────────
+  $(document).on('click', '.has-submenu-row', function (e) {
+    // Jangan jalankan toggle jika yang diklik adalah tombol switch atau div di dalamnya
+    if ($(e.target).closest('td.text-center').length) return;
+
+    var targetClass = $(this).data('target');
+    var icon = $(this).find('.dropdown-icon');
+
+    $(targetClass).fadeToggle(200, function() {
+      // Ubah rotasi icon
+      if ($(targetClass).is(':visible')) {
+        icon.css('transform', 'rotate(180deg)');
+      } else {
+        icon.css('transform', 'rotate(0deg)');
       }
     });
   });
