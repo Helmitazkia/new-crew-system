@@ -546,13 +546,13 @@
     }
     </style>
     <style>
-    /* Dropdown megamenu responsif */
+    /* Dropdown megamenu responsif (Untuk item lebih dari 7) */
     .megamenu-dropdown {
-        width: 700px;
+        width: auto;
+        min-width: 500px;
         max-width: 90vw;
-        /* agar tidak overflow di layar kecil */
-        padding: 16px;
-        border-radius: 12px;
+        padding: 8px 0; /* Menyamakan padding atas-bawah dengan dropdown standar */
+        border-radius: 8px;
         border: none;
         animation: dropdownFade .2s ease-in-out;
     }
@@ -560,16 +560,14 @@
     .megamenu-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        /* 3 kolom di desktop */
-        gap: 20px;
+        gap: 0; /* Dihilangkan agar tidak renggang */
     }
 
     .megamenu-grid .dropdown-item {
-        border-radius: 8px;
-        padding: 8px 12px;
+        border-radius: 4px;
+        padding: 8px 16px;
         font-size: 14px;
         white-space: normal;
-        /* teks bisa wrap ke bawah */
     }
 
     /* Tablet: 2 kolom */
@@ -583,90 +581,18 @@
     @media (max-width: 576px) {
         .megamenu-grid {
             grid-template-columns: 1fr;
-            gap: 8px;
         }
-
         .megamenu-dropdown {
+            min-width: 100%;
             max-width: 95vw;
-            padding: 12px;
         }
     }
 
-    /* Animasi (pastikan didefinisikan) */
     @keyframes dropdownFade {
         from {
             opacity: 0;
             transform: translateY(-5px);
         }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    </style>
-    <style>
-    /* ===== STYLE UMUM UNTUK MEGAMENU ===== */
-    .megamenu-dropdown {
-        width: 700px;
-        max-width: 90vw;
-        /* agar tidak meluber di layar kecil */
-        padding: 16px;
-        border-radius: 12px;
-        border: none;
-        animation: dropdownFade .2s ease-in-out;
-    }
-
-    .megamenu-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        /* 3 kolom di desktop */
-        gap: 20px;
-    }
-
-    .megamenu-grid .dropdown-item {
-        border-radius: 8px;
-        padding: 8px 12px;
-        font-size: 14px;
-        white-space: normal;
-        /* agar teks bisa turun ke bawah */
-    }
-
-    .megamenu-section-title {
-        font-size: 11px;
-        letter-spacing: 0.6px;
-        text-transform: uppercase;
-        color: #6c757d;
-        margin-bottom: 8px;
-    }
-
-    /* Tablet: 2 kolom */
-    @media (max-width: 992px) {
-        .megamenu-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    /* Mobile: 1 kolom */
-    @media (max-width: 576px) {
-        .megamenu-grid {
-            grid-template-columns: 1fr;
-            gap: 8px;
-        }
-
-        .megamenu-dropdown {
-            max-width: 95vw;
-            padding: 12px;
-        }
-    }
-
-    /* Animasi dropdown (definisikan ulang jika belum ada di CSS global) */
-    @keyframes dropdownFade {
-        from {
-            opacity: 0;
-            transform: translateY(-5px);
-        }
-
         to {
             opacity: 1;
             transform: translateY(0);

@@ -212,6 +212,7 @@ class HakAksesModel extends CI_Model {
             WHERE r.roleCode = ?
               AND rma.canAccess = 1
               AND m.isActive = 1
+              AND r.isActive = 1
             ORDER BY m.menuOrder ASC
         ", array($roleCode))->result();
     }
@@ -229,6 +230,7 @@ class HakAksesModel extends CI_Model {
               AND sm.menuId = ?
               AND rma.canAccess = 1
               AND sm.isActive = 1
+              AND r.isActive = 1
             ORDER BY sm.subMenuOrder ASC
         ", array($roleCode, $menuId))->result();
     }
@@ -239,6 +241,12 @@ class HakAksesModel extends CI_Model {
      */
     public function canAccessMenuByCode($roleCode, $menuCode) {
         if (empty($roleCode)) return true;
+
+        // Cek dulu apakah role ini ada dan statusnya aktif
+        $role = $this->db->query("SELECT isActive FROM m_user_role WHERE roleCode = ?", array($roleCode))->row();
+        if ($role && $role->isActive == 0) {
+            return false; // Role tidak aktif -> HAK AKSES DIBLOKIR
+        }
 
         try {
             $row = $this->db->query("
@@ -267,6 +275,12 @@ class HakAksesModel extends CI_Model {
      */
     public function canAccessSubMenuByCode($roleCode, $subMenuCode) {
         if (empty($roleCode)) return true;
+
+        // Cek dulu apakah role ini ada dan statusnya aktif
+        $role = $this->db->query("SELECT isActive FROM m_user_role WHERE roleCode = ?", array($roleCode))->row();
+        if ($role && $role->isActive == 0) {
+            return false; // Role tidak aktif -> HAK AKSES DIBLOKIR
+        }
 
         try {
             $row = $this->db->query("
