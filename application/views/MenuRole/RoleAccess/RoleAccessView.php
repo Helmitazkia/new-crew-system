@@ -137,6 +137,12 @@
           <p class="mt-2 text-muted small">Memuat data permission...</p>
         </div>
 
+        <!-- Warning Inactive Role -->
+        <div id="permInactiveWarning" class="alert alert-warning d-none mx-3 mt-3 mb-0" style="font-size:13px; border-radius:8px; border-left:4px solid #ffc107;">
+          <i class="fas fa-exclamation-triangle me-2 text-warning"></i>
+          <strong>Role ini sedang tidak aktif.</strong> Hak akses yang diatur di sini tidak akan berlaku/muncul di sisi pengguna hingga Role diaktifkan kembali.
+        </div>
+
         <!-- Content area -->
         <div id="permContent" class="d-none">
           <div class="p-3 border-bottom bg-light d-flex align-items-center justify-content-between">
@@ -246,7 +252,7 @@ $(document).ready(function () {
               +   '<i class="fa fa-pencil"></i>'
               + '</button>'
               + '<button class="btn btn-sm btn-outline-warning btn-set-perm" '
-              +   'title="Atur Hak Akses" data-role-id="'+ row.roleId +'" data-role-name="'+ row.roleName +'">'
+              +   'title="Atur Hak Akses" data-role-id="'+ row.roleId +'" data-role-name="'+ row.roleName +'" data-is-active="'+ row.isActive +'">'
               +   '<i class="fas fa-key"></i>'
               + '</button>'
               + '<button class="btn btn-sm btn-outline-danger btn-del-role" '
@@ -547,8 +553,16 @@ $(document).ready(function () {
   $(document).on('click', '.btn-set-perm', function () {
     var roleId   = $(this).data('role-id');
     var roleName = $(this).data('role-name');
+    var isActive = $(this).data('is-active');
 
     $('#permModalSubtitle').text('Role: ' + roleName);
+    
+    if (isActive == 0) {
+      $('#permInactiveWarning').removeClass('d-none');
+    } else {
+      $('#permInactiveWarning').addClass('d-none');
+    }
+
     $('#permLoading').removeClass('d-none');
     $('#permContent').addClass('d-none');
 
