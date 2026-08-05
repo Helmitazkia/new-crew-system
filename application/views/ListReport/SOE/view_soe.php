@@ -81,7 +81,7 @@
 
               <div style="margin-top:10px; margin-left:15px; width:92%;">
                 <p style="margin-bottom:5px;">
-                  I <span style="font-weight:700;" id="txtNameCrew">&lt;&lt;Nama Crew&gt;&gt;</span>
+                  I <span style="font-weight:700; border-bottom:1px dashed #ccc; padding:0 5px;" id="txtNameCrew" contenteditable="true">&lt;&lt;Nama Crew&gt;&gt;</span>
                   hereby declare that I have never give Money or / and other forms of gifts to any of our Andhika Eka
                   Karya Sejahtera office staff in return for favors.
                 </p>
@@ -99,20 +99,20 @@
                   <tr>
                     <td style="width:110px;">Date<br><span style="font-style:italic;">tanggal</span></td>
                     <td style="width:10px;">:</td>
-                    <td><span style="font-weight:700;" id="txtStatementDate">&lt;&lt;Tanggal&gt;&gt;</span>
+                    <td><span style="font-weight:700; border-bottom:1px dashed #ccc; padding:0 5px; min-width: 150px; display:inline-block;" id="txtStatementDate" contenteditable="true">&lt;&lt;Tanggal&gt;&gt;</span>
                     </td>
                   </tr>
 
                   <tr>
                     <td style="padding-top:8px;">Vessel<br><span style="font-style:italic;">Kapal</span></td>
                     <td>:</td>
-                    <td><span style="font-weight:700;" id="txtKapal">&lt;&lt;Kapal&gt;&gt;</span></td>
+                    <td><span style="font-weight:700; border-bottom:1px dashed #ccc; padding:0 5px; min-width: 150px; display:inline-block;" id="txtKapal" contenteditable="true">&lt;&lt;Kapal&gt;&gt;</span></td>
                   </tr>
 
                   <tr>
                     <td style="padding-top:8px;">Rank<br><span style="font-style:italic;">Jabatan</span></td>
                     <td>:</td>
-                    <td><span style="font-weight:700;" id="txtRankStatement">&lt;&lt;Rank&gt;&gt;</span></td>
+                    <td><span style="font-weight:700; border-bottom:1px dashed #ccc; padding:0 5px; min-width: 150px; display:inline-block;" id="txtRankStatement" contenteditable="true">&lt;&lt;Rank&gt;&gt;</span></td>
                   </tr>
                 </table>
               </div>
@@ -476,17 +476,30 @@ $(document).ready(function() {
     function soeNotify(type, msg) {
         if (typeof Swal !== 'undefined') {
             Swal.fire({
-                icon: type,
-                title: type === 'success' ? 'Sukses' : (type === 'warning' ? 'Info' : 'Error'),
-                text: msg,
-                timer: 3000,
-                showConfirmButton: false,
-                toast: true,
-                position: 'top-end'
+                icon: type, title: type === 'success' ? 'Sukses' : 'Error', text: msg,
+                timer: 3000, showConfirmButton: false, toast: true, position: 'top-end'
             });
         } else {
             alert(msg);
         }
     }
+
+    // Sync contenteditable with hidden inputs
+    $('#txtNameCrew').on('input', function() {
+        var val = $(this).text();
+        $('#soe_fullname').val(val);
+        $('#txtNameCrewStatement').text(val);
+        $('#txtCrewNameStatement').text(val);
+    });
+    $('#txtStatementDate').on('input', function() {
+        $('#soe_date').val($(this).text());
+    });
+    $('#txtKapal').on('input', function() {
+        $('#soe_nmvsl').val($(this).text());
+    });
+    $('#txtRankStatement').on('input', function() {
+        $('#soe_nmrank').val($(this).text());
+    });
+
 });
 </script>

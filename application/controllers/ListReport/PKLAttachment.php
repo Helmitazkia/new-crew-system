@@ -196,8 +196,21 @@ class PKLAttachment extends CI_Controller {
 
 		$crew = $dataCrew[0];
 
+		$pdf_pkl_name = $this->input->post('pdf_pkl_name');
+		$pdf_pkl_dob = $this->input->post('pdf_pkl_dob');
+		$pdf_pkl_rank_vessel = $this->input->post('pdf_pkl_rank_vessel');
+		$pdf_pkl_passport = $this->input->post('pdf_pkl_passport');
+		$pdf_pkl_duration = $this->input->post('pdf_pkl_duration');
+		$pdf_pkl_date = $this->input->post('pdf_pkl_date');
+
+		if (!empty($pdf_pkl_name)) { $crew->fullname = $pdf_pkl_name; }
+		if (!empty($pdf_pkl_passport)) { $crew->passport_no = $pdf_pkl_passport; }
+		if (!empty($pdf_pkl_duration)) { $crew->duration = $pdf_pkl_duration; }
+		if (!empty($pdf_pkl_dob)) { $dataOut['custom_dob'] = $pdf_pkl_dob; }
+		if (!empty($pdf_pkl_rank_vessel)) { $dataOut['custom_rank_vessel'] = $pdf_pkl_rank_vessel; }
+
 		$dataOut['crew']   = $crew;
-		$dataOut['today']  = date('d F Y');
+		$dataOut['today']  = !empty($pdf_pkl_date) ? $pdf_pkl_date : date('d F Y');
 
 		require(APPPATH . "views/frontend/pdf/mpdf60/mpdf.php");
 		$mpdf = new mPDF('utf-8', 'A4');

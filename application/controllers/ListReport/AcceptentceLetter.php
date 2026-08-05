@@ -122,8 +122,19 @@ class AcceptentceLetter extends CI_Controller {
 
 		$crew = $dataCrew[0];
 
+		$pdf_nama_crew = $this->input->post('pdf_nama_crew');
+		$pdf_tanggal_lahir = $this->input->post('pdf_tanggal_lahir');
+		$pdf_nama_rank = $this->input->post('pdf_nama_rank');
+		$pdf_serpel = $this->input->post('pdf_serpel');
+		$pdf_tanggal = $this->input->post('pdf_tanggal');
+
+		if (!empty($pdf_nama_crew)) { $crew->nama_crew = $pdf_nama_crew; }
+		if (!empty($pdf_tanggal_lahir)) { $crew->tanggal_lahir = $pdf_tanggal_lahir; }
+		if (!empty($pdf_nama_rank)) { $crew->nama_rank = $pdf_nama_rank; }
+		if (!empty($pdf_serpel)) { $crew->serpel = $pdf_serpel; }
+
 		$dataOut['crew']   = $crew;
-		$dataOut['today']  = date('d F Y');
+		$dataOut['today']  = !empty($pdf_tanggal) ? $pdf_tanggal : date('d F Y');
 
 		require(APPPATH . "views/frontend/pdf/mpdf60/mpdf.php");
 		$mpdf = new mPDF('utf-8', 'A4');

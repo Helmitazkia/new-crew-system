@@ -213,6 +213,29 @@ class Wages extends CI_Controller {
         
         $crew = $crewData[0];
 
+		$pdf_wg_name = $this->input->post('pdf_wg_name');
+		$pdf_wg_position = $this->input->post('pdf_wg_position');
+		$pdf_wg_vessel = $this->input->post('pdf_wg_vessel');
+		$pdf_wg_signon = $this->input->post('pdf_wg_signon');
+		$pdf_wg_port = $this->input->post('pdf_wg_port');
+		$pdf_wg_sea = $this->input->post('pdf_wg_sea');
+		$pdf_wg_nok_name = $this->input->post('pdf_wg_nok_name');
+		$pdf_wg_nok_rel = $this->input->post('pdf_wg_nok_rel');
+		$pdf_wg_nok_phone = $this->input->post('pdf_wg_nok_phone');
+
+		if (!empty($pdf_wg_name)) { $crew->fullname = $pdf_wg_name; }
+		if (!empty($pdf_wg_position)) { $crew->position = $pdf_wg_position; }
+		if (!empty($pdf_wg_vessel)) { 
+			$crew->vessel_name = $pdf_wg_vessel; 
+			$crew->vessel = $pdf_wg_vessel; 
+		}
+		if (!empty($pdf_wg_signon)) { $crew->sign_on_date = $pdf_wg_signon; }
+		if (!empty($pdf_wg_port)) { $crew->embarkation_port = $pdf_wg_port; }
+		if (!empty($pdf_wg_sea)) { $crew->sea_service = $pdf_wg_sea; }
+		if (!empty($pdf_wg_nok_name)) { $crew->next_of_kin_name = $pdf_wg_nok_name; }
+		if (!empty($pdf_wg_nok_rel)) { $crew->next_of_kin_relation = $pdf_wg_nok_rel; }
+		if (!empty($pdf_wg_nok_phone)) { $crew->next_of_kin_phone = $pdf_wg_nok_phone; }
+
         $data['crew'] = $crew;
 
         require(APPPATH . "views/frontend/pdf/mpdf60/mpdf.php");
