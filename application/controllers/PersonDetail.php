@@ -175,7 +175,8 @@ class PersonDetail extends CI_Controller {
                 'fatherName' => $row->fathernm,
                 'motherName' => $row->mothernm,
                 'wifeName'   => $row->wname,
-                'nextOfKin'  => $row->next_of_kin
+                'nextOfKin'  => $row->next_of_kin,
+                'address'    => $row->paddress
             ),
 
             /* ================= LEGAL & TAX ================= */
@@ -483,12 +484,12 @@ class PersonDetail extends CI_Controller {
         
 
         $data = array(
-            'fathernm' => $fatherName,
-            'mothernm' => $motherName,
-            'wname' => $wifeName,
-            'next_of_kin' => $nextOfKin,
-            'famaddrs' => $address,
-            'updusrdt' => $currentDate . ' - ' . $username 
+            'fathernm'   => $fatherName,
+            'mothernm'   => $motherName,
+            'wname'      => $wifeName,
+            'next_of_kin'=> $nextOfKin,
+            'paddress'   => $address,
+            'updusrdt'   => $currentDate . ' - ' . $username 
         );
         
 
