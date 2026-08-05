@@ -64,25 +64,25 @@
               <table style="width:100%; margin-bottom:15px; font-size:14px;">
                 <tr>
                   <td style="width:200px;">Nama</td>
-                  <td id="txtPklName">: -</td>
+                  <td>: <span id="txtPklName" contenteditable="true" style="border-bottom:1px dashed #ccc; padding:0 5px; min-width: 200px; display:inline-block;">-</span></td>
                 </tr>
                 <tr>
                   <td>Tempat & tgl. Lahir</td>
-                  <td id="txtPklDob">: -</td>
+                  <td>: <span id="txtPklDob" contenteditable="true" style="border-bottom:1px dashed #ccc; padding:0 5px; min-width: 200px; display:inline-block;">-</span></td>
                 </tr>
                 <tr>
                   <td>Jabatan / Nama Kapal</td>
-                  <td id="txtPklRankVessel">: -</td>
+                  <td>: <span id="txtPklRankVessel" contenteditable="true" style="border-bottom:1px dashed #ccc; padding:0 5px; min-width: 200px; display:inline-block;">-</span></td>
                 </tr>
                 <tr>
                   <td>No. Passport</td>
-                  <td id="txtPklPassport">: -</td>
+                  <td>: <span id="txtPklPassport" contenteditable="true" style="border-bottom:1px dashed #ccc; padding:0 5px; min-width: 200px; display:inline-block;">-</span></td>
                 </tr>
               </table>
 
               <p>Dengan ini menyatakan sebagai berikut:</p>
 
-              <p>Masa kerja di atas kapal dengan jabatan tersebut di atas berdasarkan Perjanjian Kerja Laut (PKL) yang dibuat antara saya dan PT. Andhini Eka Karya Sejahtera (selanjutnya disebut “Perusahaan”) tanggal ……………………………….. adalah selama <span id="txtPklDuration" style="font-weight:bold;"></span> Bulan. Namun saya memberi hak penuh kepada Perusahaan untuk menentukan pelabuhan tempat diturunkan (sign off) dari atas kapal dalam waktu 1 bulan sebelum atau sesudah berakhirnya masa PKL.</p>
+              <p>Masa kerja di atas kapal dengan jabatan tersebut di atas berdasarkan Perjanjian Kerja Laut (PKL) yang dibuat antara saya dan PT. Andhini Eka Karya Sejahtera (selanjutnya disebut “Perusahaan”) tanggal ……………………………….. adalah selama <span id="txtPklDuration" style="font-weight:bold; border-bottom:1px dashed #ccc; padding:0 5px; min-width: 50px; display:inline-block;" contenteditable="true"></span> Bulan. Namun saya memberi hak penuh kepada Perusahaan untuk menentukan pelabuhan tempat diturunkan (sign off) dari atas kapal dalam waktu 1 bulan sebelum atau sesudah berakhirnya masa PKL.</p>
 
               <p>Selama masa PKL, saya bersedia untuk tunduk dan patuh pada setiap ketentuan yang dikeluarkan oleh Perusahaan termasuk tetapi tidak terbatas: ketentuan jam kerja di atas kapal berdasarkan perundang-undangan yang berlaku disesuaikan dengan kegiatan operasional kapal yang ditetapkan oleh Nahkoda kapal dan/atau oleh Perusahaan.</p>
 
@@ -114,7 +114,7 @@
                     (...............................)
                   </td>
                   <td style="width:50%; text-align:center;">
-                    Jakarta, <span id="txtPklDate"></span><br>
+                    Jakarta, <span id="txtPklDate" style="font-weight:700; border-bottom:1px dashed #ccc; padding:0 5px; min-width: 150px; display:inline-block;" contenteditable="true"></span><br>
                     Yang membuat pernyataan<br><br><br><br>
                     (<span id="txtPklSignName">&lt;&lt;Nama Crew&gt;&gt;</span>)
                   </td>
@@ -303,6 +303,12 @@
 <!-- Hidden form for PDF generation -->
 <form id="formPdfPklAttachment" method="POST" target="_blank" action="<?php echo base_url('ListReport/PKLAttachment/pkl_attachment_pdf'); ?>" style="display:none;">
     <input type="hidden" name="idperson" id="pdf_pkl_idperson">
+    <input type="hidden" name="pdf_pkl_name" id="pdf_pkl_name">
+    <input type="hidden" name="pdf_pkl_dob" id="pdf_pkl_dob">
+    <input type="hidden" name="pdf_pkl_rank_vessel" id="pdf_pkl_rank_vessel">
+    <input type="hidden" name="pdf_pkl_passport" id="pdf_pkl_passport">
+    <input type="hidden" name="pdf_pkl_duration" id="pdf_pkl_duration">
+    <input type="hidden" name="pdf_pkl_date" id="pdf_pkl_date">
 </form>
 
 <!-- ============================================================
@@ -428,10 +434,10 @@ $(document).ready(function() {
                     $('#pkl_vessel').val(d.vesselnm);
 
                     // Preview UI
-                    $('#txtPklName').text(': ' + d.fullname);
-                    $('#txtPklDob').text(': ' + d.place_of_birth + ', ' + d.date_of_birth);
-                    $('#txtPklRankVessel').text(': ' + d.rankname + ' / ' + d.vesselnm);
-                    $('#txtPklPassport').text(': ' + d.passport_no);
+                    $('#txtPklName').text(d.fullname);
+                    $('#txtPklDob').text(d.place_of_birth + ', ' + d.date_of_birth);
+                    $('#txtPklRankVessel').text(d.rankname + ' / ' + d.vesselnm);
+                    $('#txtPklPassport').text(d.passport_no);
                     $('#txtPklDuration').text(d.duration);
                     $('#txtPklDate').text(res.today);
                     $('#txtPklSignName').text(d.fullname);
@@ -464,10 +470,10 @@ $(document).ready(function() {
                     var d = res.data;
                     
                     // Preview UI
-                    $('#txtPklName').text(': ' + d.fullname);
-                    $('#txtPklDob').text(': ' + d.place_of_birth + ', ' + d.date_of_birth);
-                    $('#txtPklRankVessel').text(': ' + d.rankname + ' / ' + d.vesselnm);
-                    $('#txtPklPassport').text(': ' + d.passport_no);
+                    $('#txtPklName').text(d.fullname);
+                    $('#txtPklDob').text(d.place_of_birth + ', ' + d.date_of_birth);
+                    $('#txtPklRankVessel').text(d.rankname + ' / ' + d.vesselnm);
+                    $('#txtPklPassport').text(d.passport_no);
                     $('#txtPklDuration').text(d.duration);
                     $('#txtPklDate').text(createdDate); 
                     $('#txtPklSignName').text(d.fullname);
@@ -505,6 +511,7 @@ $(document).ready(function() {
                     
                     // Auto print PDF
                     $('#pdf_pkl_idperson').val(idperson);
+                    preparePdfDataPkl();
                     $('#formPdfPklAttachment').submit();
                 } else {
                     pklNotify('error', res.message);
@@ -517,8 +524,18 @@ $(document).ready(function() {
         });
     });
 
+    function preparePdfDataPkl() {
+        $('#pdf_pkl_name').val($('#txtPklName').text());
+        $('#pdf_pkl_dob').val($('#txtPklDob').text());
+        $('#pdf_pkl_rank_vessel').val($('#txtPklRankVessel').text());
+        $('#pdf_pkl_passport').val($('#txtPklPassport').text());
+        $('#pdf_pkl_duration').val($('#txtPklDuration').text());
+        $('#pdf_pkl_date').val($('#txtPklDate').text());
+    }
+
     // PRINT FROM MODAL
     $('#btnGeneratePdfFromModalPkl').on('click', function() {
+        preparePdfDataPkl();
         $('#formPdfPklAttachment').submit();
     });
 
@@ -571,5 +588,12 @@ $(document).ready(function() {
             alert(msg);
         }
     }
+
+    // Sync contenteditable with hidden inputs
+    $('#txtPklName').on('input', function() {
+        $('#pkl_nama_crew').val($(this).text());
+        $('#txtPklSignName').text($(this).text());
+    });
+
 });
 </script>

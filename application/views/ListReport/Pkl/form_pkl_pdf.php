@@ -5,63 +5,63 @@
   <meta charset="UTF-8">
   <title>Seafarer Employment Agreement</title>
   <style>
-  @page {
-    margin: 10px;
-    footer: html_myFooter;
-  }
-
-  body {
-    counter-reset: page;
-  }
-
-  .page {
-    width: 100%;
-    font-family: "Times New Roman", Times, serif;
-    line-height: 1.5;
-    color: #000;
-    position: relative;
-  }
-
-  .center {
-    text-align: center;
-  }
-
-  .bold {
-    font-weight: bold;
-  }
-
-  .muted-italic {
-    font-style: italic;
-    font-size: 10px;
-  }
-
-  .two-col {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 30px;
-  }
-
-  .two-col td {
-    vertical-align: top;
-    padding: 4px;
-  }
-
-  .small-table {
-    width: 80%;
-    margin: 10px auto;
-    border-collapse: collapse;
-    font-size: 11px;
-  }
-
-  .small-table td {
-    padding: 6px 8px;
-  }
-
-  @media print {
-    .page {
-      padding: 10mm;
+    @page {
+      margin: 10px;
+      footer: html_myFooter;
     }
-  }
+
+    body {
+      counter-reset: page;
+    }
+
+    .page {
+      width: 100%;
+      font-family: "Times New Roman", Times, serif;
+      line-height: 1.5;
+      color: #000;
+      position: relative;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+
+    .muted-italic {
+      font-style: italic;
+      font-size: 10px;
+    }
+
+    .two-col {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+
+    .two-col td {
+      vertical-align: top;
+      padding: 4px;
+    }
+
+    .small-table {
+      width: 80%;
+      margin: 10px auto;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .small-table td {
+      padding: 6px 8px;
+    }
+
+    @media print {
+      .page {
+        padding: 10mm;
+      }
+    }
   </style>
 </head>
 
@@ -192,7 +192,7 @@
         Perusahaan.</span>
     </p>
 
-    <div style="margin-bottom:100px; font-size:12px;">
+    <div style="margin-bottom:10px; font-size:12px;">
       <table style="width:100%; border-collapse:collapse; font-size:12px;">
         <tr>
           <td style="width:200px; white-space:nowrap;">On board the / di atas Kapal</td>
@@ -222,7 +222,7 @@
     </div>
   </div>
 
-  <div class="page" id="page-2" style="margin-top:40px;">
+  <div class="page" id="page-2" style="page-break-before: always; margin-top:40px;">
     <p class="center bold underline" style=" font-size:12px; padding-top:0px;">ARTICLE II : EFFECTIVE DATE AND
       DURATION
       OF AGREEMENT <br> PASAL II : MULAI BERLAKUNYA DAN JANGKA WAKTU
@@ -366,7 +366,7 @@
     </p>
   </div>
 
-  <div class="page" id="page-3">
+  <div class="page" id="page-3" style="page-break-before: always;">
     <p style="font-size:12px; padding-top:60px;">
       <b><i>3. Catering Department / Bagian Pelayanan</i></b><br>
       The working hours of Catering Department members shall be 8 (eight) hours each day in a spread
@@ -491,7 +491,7 @@
     </p>
   </div>
 
-  <div class="page" id="page-4">
+  <div class="page" id="page-4" style="page-break-before: always;">
     <p style="font-size:12px; text-align:center; font-weight:bold; padding-top:50px;">ARTICLE X :
       INSURANCE
       <br>
@@ -654,7 +654,7 @@
     </p>
   </div>
 
-  <div class="page" id="page-5">
+  <div class="page" id="page-5" style="page-break-before: always;">
     <p class="center bold underline" style="font-size:12px; padding-top:70px;">
       ARTICLE XI : TERMINATION OF EMPLOYMENT <br>
       PASAL XI : PEMUTUSAN/PENGAKHIRAN HUBUNGAN KERJA
@@ -728,9 +728,6 @@
         berdasarkan hasil dari proses tersebut.</span>
     </p>
 
-  </div>
-
-  <div class="page" id="page-6" style="padding-top:-1px;">
     <p class="center bold underline section-title" style="font-size:12px;margin-top:0px;">ARTICLE XIII :
       PIRACY
       OR
@@ -766,7 +763,10 @@
         dengan
         hukum atau peraturan nasional yang berlaku.</span>
 
-    <p style="font-size:12px; padding-top:60px;">
+  </div>
+
+  <div class="page" id="page-6" style="page-break-before: always; padding-top:10px;">
+    <p style="font-size:12px;">
       c) Seafarers are entitled to repatriation if they are detained on or off the ship as a result of piracy
       or
       armed robbery of the ship. <br>
@@ -846,6 +846,8 @@
       <p>.........................................................</p>
     </div>
   </div>
+
+
 
 </body>
 

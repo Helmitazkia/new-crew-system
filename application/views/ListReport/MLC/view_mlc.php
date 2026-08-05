@@ -70,23 +70,23 @@
                             <div class="row g-3">
                                 <div class="col-md-4">
                                     <label class="form-label text-muted small mb-1">Nama Crew</label>
-                                    <input type="text" class="form-control form-control-sm" name="fullname" id="mlc_fullname" readonly>
+                                    <input type="text" class="form-control form-control-sm" name="fullname" id="mlc_fullname">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label text-muted small mb-1">Jabatan (Rank)</label>
-                                    <input type="text" class="form-control form-control-sm" name="nmrank" id="mlc_nmrank" readonly>
+                                    <input type="text" class="form-control form-control-sm" name="nmrank" id="mlc_nmrank">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label text-muted small mb-1">Nama Kapal</label>
-                                    <input type="text" class="form-control form-control-sm" name="nmvsl" id="mlc_nmvsl" readonly>
+                                    <input type="text" class="form-control form-control-sm" name="nmvsl" id="mlc_nmvsl">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-muted small mb-1">Tgl. Join (Sign On)</label>
-                                    <input type="text" class="form-control form-control-sm" name="signondt" id="mlc_signondt" readonly>
+                                    <input type="text" class="form-control form-control-sm" name="signondt" id="mlc_signondt">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-muted small mb-1">Est. Sign Off</label>
-                                    <input type="text" class="form-control form-control-sm" name="estsignoffdt" id="mlc_estsignoffdt" readonly>
+                                    <input type="text" class="form-control form-control-sm" name="estsignoffdt" id="mlc_estsignoffdt">
                                 </div>
                             </div>
                         </div>

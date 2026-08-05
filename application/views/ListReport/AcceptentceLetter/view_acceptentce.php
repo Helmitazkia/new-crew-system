@@ -100,22 +100,22 @@
                   <tr>
                     <td style="width:180px;">Name<br><span style="font-style:italic;">Nama</span></td>
                     <td style="width:10px;">:</td>
-                    <td><span style="font-weight:700;" id="txtAccName">&lt;&lt;Nama Crew&gt;&gt;</span></td>
+                    <td><span style="font-weight:700; border-bottom:1px dashed #ccc; padding:0 5px; min-width: 200px; display:inline-block;" id="txtAccName" contenteditable="true">&lt;&lt;Nama Crew&gt;&gt;</span></td>
                   </tr>
                   <tr>
                     <td style="padding-top:8px;">D O B<br><span style="font-style:italic;">Tanggal Lahir</span></td>
                     <td style="padding-top:8px;">:</td>
-                    <td style="padding-top:8px;"><span style="font-weight:700;" id="txtAccDob">&lt;&lt;Tanggal Lahir&gt;&gt;</span></td>
+                    <td style="padding-top:8px;"><span style="font-weight:700; border-bottom:1px dashed #ccc; padding:0 5px; min-width: 200px; display:inline-block;" id="txtAccDob" contenteditable="true">&lt;&lt;Tanggal Lahir&gt;&gt;</span></td>
                   </tr>
                   <tr>
                     <td style="padding-top:8px;">Rank<br><span style="font-style:italic;">Jabatan</span></td>
                     <td style="padding-top:8px;">:</td>
-                    <td style="padding-top:8px;"><span style="font-weight:700;" id="txtAccRank">&lt;&lt;Rank&gt;&gt;</span></td>
+                    <td style="padding-top:8px;"><span style="font-weight:700; border-bottom:1px dashed #ccc; padding:0 5px; min-width: 200px; display:inline-block;" id="txtAccRank" contenteditable="true">&lt;&lt;Rank&gt;&gt;</span></td>
                   </tr>
                   <tr>
                     <td style="padding-top:8px;">Certificate<br><span style="font-style:italic;">Ijazah</span></td>
                     <td style="padding-top:8px;">:</td>
-                    <td style="padding-top:8px;"><span style="font-weight:700;" id="txtAccCert">&lt;&lt;Certificate&gt;&gt;</span></td>
+                    <td style="padding-top:8px;"><span style="font-weight:700; border-bottom:1px dashed #ccc; padding:0 5px; min-width: 200px; display:inline-block;" id="txtAccCert" contenteditable="true">&lt;&lt;Certificate&gt;&gt;</span></td>
                   </tr>
                 </table>
               </div>
@@ -137,7 +137,7 @@
               </div>
 
               <div style="margin-top:10px;">
-                  Jakarta, <span style="font-weight:700;" id="txtAccDate">&lt;&lt;Tanggal&gt;&gt;</span>
+                  Jakarta, <span style="font-weight:700; border-bottom:1px dashed #ccc; padding:0 5px; min-width: 150px; display:inline-block;" id="txtAccDate" contenteditable="true">&lt;&lt;Tanggal&gt;&gt;</span>
               </div>
 
               <div style="margin-top:30px; display:flex; justify-content:space-between; width:100%; text-align:center;">
@@ -177,6 +177,11 @@
 <!-- Hidden form for PDF generation -->
 <form id="formPdfAcceptance" method="POST" target="_blank" action="<?php echo base_url('ListReport/AcceptentceLetter/acceptence_pdf'); ?>" style="display:none;">
     <input type="hidden" name="idperson" id="pdf_acc_idperson">
+    <input type="hidden" name="pdf_nama_crew" id="pdf_nama_crew">
+    <input type="hidden" name="pdf_tanggal_lahir" id="pdf_tanggal_lahir">
+    <input type="hidden" name="pdf_nama_rank" id="pdf_nama_rank">
+    <input type="hidden" name="pdf_serpel" id="pdf_serpel">
+    <input type="hidden" name="pdf_tanggal" id="pdf_tanggal">
 </form>
 
 <!-- ============================================================
@@ -355,6 +360,15 @@ $(document).ready(function() {
         });
     });
 
+    // Prepare manual text data before printing to PDF
+    function preparePdfDataAcc() {
+        $('#pdf_nama_crew').val($('#txtAccName').text());
+        $('#pdf_tanggal_lahir').val($('#txtAccDob').text());
+        $('#pdf_nama_rank').val($('#txtAccRank').text());
+        $('#pdf_serpel').val($('#txtAccCert').text());
+        $('#pdf_tanggal').val($('#txtAccDate').text());
+    }
+
     // SUBMIT
     $('#btnSubmitAcceptance').on('click', function() {
         var formData = new FormData($('#formAddAcceptance')[0]);
@@ -377,6 +391,7 @@ $(document).ready(function() {
                     
                     // Auto print PDF
                     $('#pdf_acc_idperson').val(idperson);
+                    preparePdfDataAcc();
                     $('#formPdfAcceptance').submit();
                 } else {
                     accNotify('error', res.message);
@@ -391,6 +406,7 @@ $(document).ready(function() {
 
     // PRINT FROM MODAL
     $('#btnGeneratePdfFromModalAcc').on('click', function() {
+        preparePdfDataAcc();
         $('#formPdfAcceptance').submit();
     });
 
@@ -445,5 +461,17 @@ $(document).ready(function() {
             alert(msg);
         }
     }
+
+    // Sync contenteditable with hidden inputs
+    $('#txtAccName').on('input', function() {
+        $('#acc_nama_crew').val($(this).text());
+        $('#txtAccSignName').text($(this).text());
+    });
+    $('#txtAccRank').on('input', function() {
+        $('#acc_rank').val($(this).text());
+    });
+    // For Certificate and DOB, there are no hidden inputs because they are likely auto-generated in the PDF 
+    // or not saved to history directly, but they are visually editable before printing.
+
 });
 </script>

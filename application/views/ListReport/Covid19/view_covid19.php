@@ -65,15 +65,15 @@
                             <div class="row g-3">
                                 <div class="col-md-12">
                                     <label class="form-label text-muted small mb-1">Nama Lengkap</label>
-                                    <input type="text" class="form-control form-control-sm" name="fullname" id="covid19_fullname" readonly>
+                                    <input type="text" class="form-control form-control-sm" name="fullname" id="covid19_fullname">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-muted small mb-1">Rank</label>
-                                    <input type="text" class="form-control form-control-sm" name="nmrank" id="covid19_nmrank" readonly>
+                                    <input type="text" class="form-control form-control-sm" name="nmrank" id="covid19_nmrank">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-muted small mb-1">Vessel</label>
-                                    <input type="text" class="form-control form-control-sm" name="nmvsl" id="covid19_nmvsl" readonly>
+                                    <input type="text" class="form-control form-control-sm" name="nmvsl" id="covid19_nmvsl">
                                 </div>
                             </div>
                             

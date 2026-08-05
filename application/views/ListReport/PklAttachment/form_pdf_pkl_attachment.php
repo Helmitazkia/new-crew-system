@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<style>
+   p{
+    font-size: 12px;
+   }
+</style>
+
 <head>
     <meta charset="UTF-8">
     <title>PKL ADDENDUM</title>
@@ -15,18 +21,18 @@
 
     <p>Yang bertanda tangan di bawah ini:</p>
 
-    <table style="width:100%; margin-bottom:15px; font-size:14px;">
+    <table style="width:100%; margin-bottom:15px; font-size:13px;">
         <tr>
             <td style="width:200px;">Nama</td>
             <td>: <?php echo $crew->fullname; ?></td>
         </tr>
         <tr>
             <td>Tempat & tgl. Lahir</td>
-            <td>: <?php echo $crew->place_of_birth . ", " . $crew->date_of_birth; ?></td>
+            <td>: <?php echo (isset($custom_dob)) ? $custom_dob : ($crew->place_of_birth . ", " . $crew->date_of_birth); ?></td>
         </tr>
         <tr>
             <td>Jabatan / Nama Kapal</td>
-            <td>: <?php echo $crew->rankname . " / " . $crew->vesselnm; ?></td>
+            <td>: <?php echo (isset($custom_rank_vessel)) ? $custom_rank_vessel : ($crew->rankname . " / " . $crew->vesselnm); ?></td>
         </tr>
         <tr>
             <td>No. Passport</td>
@@ -101,13 +107,12 @@
         </tr>
     </table>
 
-    <hr style="margin:35px 0;">
 
     <h3 style="text-align:center; margin-bottom:5px; text-decoration:underline; font-weight:bold;">
         DAFTAR PELANGGARAN & TINDAKAN DISIPLIN
     </h3>
 
-    <table style="width:100%; border-collapse:collapse; font-size:14px;">
+    <table style="width:100%; border-collapse:collapse; font-size:12px;">
         <tr>
             <td style="width:60%; padding:10px; border:1px solid #000; font-weight:bold;">Pelanggaran Hukum:</td>
             <td style="width:40%; padding:10px; border:1px solid #000; font-weight:bold; text-align:center;">Tindakan

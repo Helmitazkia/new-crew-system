@@ -90,27 +90,27 @@
               <table style="width:100%; border-collapse:collapse; margin-bottom: 20px;">
                 <tr>
                   <td style="width:28%; padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">Name/Nama</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgName">-</td>
+                  <td style="padding:8px; border:1px solid #222;" id="txtWgName" contenteditable="true">-</td>
                 </tr>
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">Position/Jabatan</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgPosition">-</td>
+                  <td style="padding:8px; border:1px solid #222;" id="txtWgPosition" contenteditable="true">-</td>
                 </tr>
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">Vessel/Kapal</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgVessel">-</td>
+                  <td style="padding:8px; border:1px solid #222;" id="txtWgVessel" contenteditable="true">-</td>
                 </tr>
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">Sign On date/Tanggal Naik Kapal</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgSignOn">-</td>
+                  <td style="padding:8px; border:1px solid #222;" id="txtWgSignOn" contenteditable="true">-</td>
                 </tr>
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">Port of Embarkation/Pelabuhan</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgPort">-</td>
+                  <td style="padding:8px; border:1px solid #222;" id="txtWgPort" contenteditable="true">-</td>
                 </tr>
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">Sea Service/Masa Layar</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgSeaService">-</td>
+                  <td style="padding:8px; border:1px solid #222;" id="txtWgSeaService" contenteditable="true">-</td>
                 </tr>
               </table>
 
@@ -170,15 +170,15 @@
               <table style="width:60%; border-collapse:collapse;">
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700; width:35%;">Name/Nama</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgNokName">-</td>
+                  <td style="padding:8px; border:1px solid #222;" id="txtWgNokName" contenteditable="true">-</td>
                 </tr>
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">Relationship/Hub</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgNokRel">-</td>
+                  <td style="padding:8px; border:1px solid #222;" id="txtWgNokRel" contenteditable="true">-</td>
                 </tr>
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">No Tlp/HP</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgNokPhone">-</td>
+                  <td style="padding:8px; border:1px solid #222;" id="txtWgNokPhone" contenteditable="true">-</td>
                 </tr>
               </table>
 
@@ -220,6 +220,15 @@
 <!-- Hidden form for PDF generation -->
 <form id="formPdfWages" method="POST" target="_blank" action="<?php echo base_url('ListReport/Wages/PrintWages'); ?>" style="display:none;">
     <input type="hidden" name="idperson" id="pdf_wg_idperson">
+    <input type="hidden" name="pdf_wg_name" id="pdf_wg_name">
+    <input type="hidden" name="pdf_wg_position" id="pdf_wg_position">
+    <input type="hidden" name="pdf_wg_vessel" id="pdf_wg_vessel">
+    <input type="hidden" name="pdf_wg_signon" id="pdf_wg_signon">
+    <input type="hidden" name="pdf_wg_port" id="pdf_wg_port">
+    <input type="hidden" name="pdf_wg_sea" id="pdf_wg_sea">
+    <input type="hidden" name="pdf_wg_nok_name" id="pdf_wg_nok_name">
+    <input type="hidden" name="pdf_wg_nok_rel" id="pdf_wg_nok_rel">
+    <input type="hidden" name="pdf_wg_nok_phone" id="pdf_wg_nok_phone">
 </form>
 
 <!-- ============================================================
@@ -429,7 +438,7 @@ $(document).ready(function() {
         
         $('#pdf_wg_idperson').val(btn.data('idperson'));
 
-        // Load Text fields
+        // Load Text fields (contenteditable)
         $('#txtWgName').text(btn.data('name'));
         $('#txtWgPosition').text(btn.data('pos'));
         $('#txtWgVessel').text(btn.data('vsl'));
@@ -441,13 +450,13 @@ $(document).ready(function() {
         $('#txtWgNokPhone').text(btn.data('nok_phone'));
         $('#txtWgSignName').text(btn.data('name'));
 
-        // Load inputs and set to readonly
-        $('#valBasic').val(formatNumber(btn.data('bw'))).prop('readonly', true);
-        $('#valFot').val(formatNumber(btn.data('fot'))).prop('readonly', true);
-        $('#valTanker').val(formatNumber(btn.data('tanker'))).prop('readonly', true);
-        $('#valLeave').val(formatNumber(btn.data('leave'))).prop('readonly', true);
-        $('#valBs').val(formatNumber(btn.data('bs'))).prop('readonly', true);
-        $('#valHs').val(formatNumber(btn.data('hs'))).prop('readonly', true);
+        // Load wage inputs — tetap bisa diketik, kalkulasi tetap jalan
+        $('#valBasic').val(formatNumber(btn.data('bw'))).prop('readonly', false);
+        $('#valFot').val(formatNumber(btn.data('fot'))).prop('readonly', false);
+        $('#valTanker').val(formatNumber(btn.data('tanker'))).prop('readonly', false);
+        $('#valLeave').val(formatNumber(btn.data('leave'))).prop('readonly', false);
+        $('#valBs').val(formatNumber(btn.data('bs'))).prop('readonly', false);
+        $('#valHs').val(formatNumber(btn.data('hs'))).prop('readonly', false);
         
         var total_pay = parseFloat(btn.data('total')) || 0;
         var leave_pay = parseFloat(btn.data('leave')) || 0;
@@ -505,8 +514,9 @@ $(document).ready(function() {
                     wgTable.ajax.reload(null, false);
                     wgNotify('success', res.message);
                     
-                    // Auto print PDF
+                    // Auto print PDF — wages table sudah tersimpan di DB, cukup kirim idperson
                     $('#pdf_wg_idperson').val(idperson);
+                    preparePdfDataWages();
                     $('#formPdfWages').submit();
                 } else {
                     wgNotify('error', res.message);
@@ -519,8 +529,21 @@ $(document).ready(function() {
         });
     });
 
-    // PRINT FROM MODAL
+    function preparePdfDataWages() {
+        $('#pdf_wg_name').val($('#txtWgName').text());
+        $('#pdf_wg_position').val($('#txtWgPosition').text());
+        $('#pdf_wg_vessel').val($('#txtWgVessel').text());
+        $('#pdf_wg_signon').val($('#txtWgSignOn').text());
+        $('#pdf_wg_port').val($('#txtWgPort').text());
+        $('#pdf_wg_sea').val($('#txtWgSeaService').text());
+        $('#pdf_wg_nok_name').val($('#txtWgNokName').text());
+        $('#pdf_wg_nok_rel').val($('#txtWgNokRel').text());
+        $('#pdf_wg_nok_phone').val($('#txtWgNokPhone').text());
+    }
+
+    // PRINT FROM MODAL (view detail) — wages dari DB, text fields dari inputan user
     $('#btnGeneratePdfFromModalWg').on('click', function() {
+        preparePdfDataWages();
         $('#formPdfWages').submit();
     });
 
@@ -573,5 +596,10 @@ $(document).ready(function() {
             alert(msg);
         }
     }
+
+    // Sync contenteditable with hidden inputs
+    $('#txtWgName').on('input', function() {
+        $('#txtWgSignName').text($(this).text());
+    });
 });
 </script>
