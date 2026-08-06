@@ -50,10 +50,13 @@
 
       <div class="modal-body bg-light" style="padding:40px 55px; font-family:'Times New Roman', serif; font-size:14px; background-color: #fff !important; max-height: 70vh; overflow-y: auto;">
           <form id="formAddPklAttachment" style="width: 100%;">
+              <input type="hidden" name="id" id="pkl_id">
               <input type="hidden" name="idperson" id="pkl_idperson">
               <input type="hidden" name="nama_crew" id="pkl_nama_crew">
               <input type="hidden" name="rank" id="pkl_rank">
-              <input type="hidden" name="vessel" id="pkl_vessel">
+              <input type="hidden" name="dob" id="pkl_dob">
+              <input type="hidden" name="no_passport" id="pkl_no_passport">
+              <input type="hidden" name="duration" id="pkl_duration">
 
               <h2 style="text-align:center; margin:0 0 20px 0; font-weight:bold; text-decoration:underline;">
                   SANKSI DAN PELANGGARAN
@@ -77,6 +80,10 @@
                 <tr>
                   <td>No. Passport</td>
                   <td>: <span id="txtPklPassport" contenteditable="true" style="border-bottom:1px dashed #ccc; padding:0 5px; min-width: 200px; display:inline-block;">-</span></td>
+                </tr>
+                <tr class="no-print">
+                  <td>Vessel Name<br><span style="font-style:italic; font-size:11px;" class="text-danger">(Not printed on PDF)</span></td>
+                  <td>: <input type="text" id="pkl_vessel" name="vessel" style="font-weight:700; border:none; border-bottom:1px dashed #ccc; padding:0 5px; min-width: 200px; outline:none; background:transparent; font-family: inherit;" placeholder="Enter Vessel Name"></td>
                 </tr>
               </table>
 
@@ -372,7 +379,7 @@ $(document).ready(function() {
                 data: null, className: 'text-center', orderable: false, searchable: false,
                 render: function(data) {
                     return '<div class="btn-group btn-group-sm" role="group">' +
-                        '<button type="button" class="btn btn-outline-primary btn-view-pkl" title="Print/View PDF" data-idperson="' + data.idperson + '" data-date="' + data.date_created_fmt + '">' +
+                        '<button type="button" class="btn btn-outline-primary btn-view-pkl" title="Print/View PDF" data-idperson="' + data.idperson + '" data-date="' + data.date_created_fmt + '" data-id="' + data.id + '">' +
                             '<i class="fa fa-eye"></i>' +
                         '</button>' +
                         '<button type="button" class="btn btn-outline-danger btn-delete-pkl" title="Delete" data-id="' + data.id + '">' +
@@ -418,6 +425,7 @@ $(document).ready(function() {
     $('#btnAddPklAttachment').on('click', function() {
         $('#formAddPklAttachment')[0].reset();
         $('#pkl_idperson').val(idperson);
+        $('#pkl_id').val('');
         
         $.ajax({
             url: BASE_URL_PKL + '/getStatementCrew',
@@ -432,6 +440,9 @@ $(document).ready(function() {
                     $('#pkl_nama_crew').val(d.fullname);
                     $('#pkl_rank').val(d.rankname);
                     $('#pkl_vessel').val(d.vesselnm);
+                    $('#pkl_dob').val(d.place_of_birth + ', ' + d.date_of_birth);
+                    $('#pkl_no_passport').val(d.passport_no);
+                    $('#pkl_duration').val(d.duration);
 
                     // Preview UI
                     $('#txtPklName').text(d.fullname);
@@ -442,7 +453,7 @@ $(document).ready(function() {
                     $('#txtPklDate').text(res.today);
                     $('#txtPklSignName').text(d.fullname);
 
-                    $('#btnSubmitPklAttachment').removeClass('d-none');
+                    $('#btnSubmitPklAttachment').removeClass('d-none').html('<i class="fa fa-save"></i> Save & Print');
                     $('#btnGeneratePdfFromModalPkl').addClass('d-none');
 
                     $('#modalPklAttachment').modal('show');
@@ -456,30 +467,42 @@ $(document).ready(function() {
     // VIEW DETAIL
     $('#pklAttachmentTable').on('click', '.btn-view-pkl', function() {
         var ip = $(this).data('idperson');
+        var id = $(this).data('id');
         var createdDate = $(this).data('date');
 
         $('#pdf_pkl_idperson').val(ip);
+        $('#pkl_idperson').val(ip);
+        $('#pkl_id').val(id); // Set the history ID for update
 
         $.ajax({
-            url: BASE_URL_PKL + '/getStatementCrew',
+            url: BASE_URL_PKL + '/get_history_detail',
             type: 'POST',
-            data: { idperson: ip },
+            data: { id: id },
             dataType: 'json',
             success: function(res) {
                 if (res.status) {
                     var d = res.data;
                     
+                    // Hidden inputs for saving
+                    $('#pkl_nama_crew').val(d.nama_crew);
+                    $('#pkl_rank').val(d.rank);
+                    $('#pkl_vessel').val(d.vessel);
+                    $('#pkl_dob').val(d.dob);
+                    $('#pkl_no_passport').val(d.no_passport);
+                    $('#pkl_duration').val(d.duration);
+
                     // Preview UI
-                    $('#txtPklName').text(d.fullname);
-                    $('#txtPklDob').text(d.place_of_birth + ', ' + d.date_of_birth);
-                    $('#txtPklRankVessel').text(d.rankname + ' / ' + d.vesselnm);
-                    $('#txtPklPassport').text(d.passport_no);
+                    $('#txtPklName').text(d.nama_crew);
+                    $('#txtPklDob').text(d.dob);
+                    // Rank & Vessel combined for display. In history they are separate fields.
+                    $('#txtPklRankVessel').text(d.rank + ' / ' + d.vessel);
+                    $('#txtPklPassport').text(d.no_passport);
                     $('#txtPklDuration').text(d.duration);
                     $('#txtPklDate').text(createdDate); 
-                    $('#txtPklSignName').text(d.fullname);
+                    $('#txtPklSignName').text(d.nama_crew);
 
-                    $('#btnSubmitPklAttachment').addClass('d-none');
-                    $('#btnGeneratePdfFromModalPkl').removeClass('d-none');
+                    $('#btnSubmitPklAttachment').removeClass('d-none').html('<i class="fa fa-save"></i> Update & Print');
+                    $('#btnGeneratePdfFromModalPkl').removeClass('d-none'); // Allow just printing without updating
 
                     $('#modalPklAttachment').modal('show');
                 } else {
@@ -593,6 +616,15 @@ $(document).ready(function() {
     $('#txtPklName').on('input', function() {
         $('#pkl_nama_crew').val($(this).text());
         $('#txtPklSignName').text($(this).text());
+    });
+    $('#txtPklDob').on('input', function() {
+        $('#pkl_dob').val($(this).text());
+    });
+    $('#txtPklPassport').on('input', function() {
+        $('#pkl_no_passport').val($(this).text());
+    });
+    $('#txtPklDuration').on('input', function() {
+        $('#pkl_duration').val($(this).text());
     });
 
 });

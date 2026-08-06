@@ -50,6 +50,7 @@
 
       <div class="modal-body bg-light" style="padding:30px 45px; font-family:'Times New Roman', serif; font-size:13px; background-color: #fff !important; max-height: 75vh; overflow-y: auto;">
           <form id="formAddWages" style="width: 100%;">
+              <input type="hidden" name="id" id="wg_id">
               <input type="hidden" name="idperson" id="wg_idperson">
               
               <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px;" border="1">
@@ -90,27 +91,39 @@
               <table style="width:100%; border-collapse:collapse; margin-bottom: 20px;">
                 <tr>
                   <td style="width:28%; padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">Name/Nama</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgName" contenteditable="true">-</td>
+                  <td style="padding:8px; border:1px solid #222;">
+                      <input type="text" name="name" id="txtWgName" style="border:none; outline:none; background:transparent; font-family: inherit; width: 100%;">
+                  </td>
                 </tr>
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">Position/Jabatan</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgPosition" contenteditable="true">-</td>
+                  <td style="padding:8px; border:1px solid #222;">
+                      <input type="text" name="position" id="txtWgPosition" style="border:none; outline:none; background:transparent; font-family: inherit; width: 100%;">
+                  </td>
                 </tr>
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">Vessel/Kapal</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgVessel" contenteditable="true">-</td>
+                  <td style="padding:8px; border:1px solid #222;">
+                      <input type="text" name="vessel" id="txtWgVessel" style="border:none; outline:none; background:transparent; font-family: inherit; width: 100%;">
+                  </td>
                 </tr>
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">Sign On date/Tanggal Naik Kapal</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgSignOn" contenteditable="true">-</td>
+                  <td style="padding:8px; border:1px solid #222;">
+                      <input type="date" name="sign_on_date" id="txtWgSignOn" style="border:none; outline:none; background:transparent; font-family: inherit; width: 100%;">
+                  </td>
                 </tr>
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">Port of Embarkation/Pelabuhan</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgPort" contenteditable="true">-</td>
+                  <td style="padding:8px; border:1px solid #222;">
+                      <input type="text" name="embarkation_port" id="txtWgPort" style="border:none; outline:none; background:transparent; font-family: inherit; width: 100%;">
+                  </td>
                 </tr>
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">Sea Service/Masa Layar</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgSeaService" contenteditable="true">-</td>
+                  <td style="padding:8px; border:1px solid #222;">
+                      <input type="date" name="sea_service" id="txtWgSeaService" style="border:none; outline:none; background:transparent; font-family: inherit; width: 100%;">
+                  </td>
                 </tr>
               </table>
 
@@ -170,15 +183,21 @@
               <table style="width:60%; border-collapse:collapse;">
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700; width:35%;">Name/Nama</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgNokName" contenteditable="true">-</td>
+                  <td style="padding:8px; border:1px solid #222;">
+                      <input type="text" name="next_of_kin_name" id="txtWgNokName" style="border:none; outline:none; background:transparent; font-family: inherit; width: 100%;">
+                  </td>
                 </tr>
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">Relationship/Hub</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgNokRel" contenteditable="true">-</td>
+                  <td style="padding:8px; border:1px solid #222;">
+                      <input type="text" name="next_of_kin_relation" id="txtWgNokRel" style="border:none; outline:none; background:transparent; font-family: inherit; width: 100%;">
+                  </td>
                 </tr>
                 <tr>
                   <td style="padding:8px; border:1px solid #222; background:#f7f7f7; font-weight:700;">No Tlp/HP</td>
-                  <td style="padding:8px; border:1px solid #222;" id="txtWgNokPhone" contenteditable="true">-</td>
+                  <td style="padding:8px; border:1px solid #222;">
+                      <input type="text" name="next_of_kin_phone" id="txtWgNokPhone" style="border:none; outline:none; background:transparent; font-family: inherit; width: 100%;">
+                  </td>
                 </tr>
               </table>
 
@@ -335,6 +354,7 @@ $(document).ready(function() {
                 render: function(data) {
                     return '<div class="btn-group btn-group-sm" role="group">' +
                         '<button type="button" class="btn btn-outline-primary btn-view-wg" title="View Detail / Print" ' +
+                            'data-id="' + data.id + '" ' +
                             'data-idperson="' + data.idperson + '" ' +
                             'data-name="' + data.name + '" ' +
                             'data-pos="' + data.position + '" ' +
@@ -396,6 +416,7 @@ $(document).ready(function() {
     // ADD
     $('#btnAddWages').on('click', function() {
         $('#formAddWages')[0].reset();
+        $('#wg_id').val('');
         $('#wg_idperson').val(idperson);
         $('.wage-calc').prop('readonly', false);
         
@@ -409,16 +430,16 @@ $(document).ready(function() {
                     var d = res.data;
                     
                     // Preview UI Strings
-                    $('#txtWgName').text(d.fullname);
-                    $('#txtWgPosition').text(d.position);
-                    $('#txtWgVessel').text(d.vessel_name);
-                    $('#txtWgSignOn').text(d.sign_on_date);
-                    $('#txtWgPort').text(d.embarkation_port);
-                    $('#txtWgSeaService').text(d.sea_service);
+                    $('#txtWgName').val(d.fullname);
+                    $('#txtWgPosition').val(d.position);
+                    $('#txtWgVessel').val(d.vessel_name);
+                    $('#txtWgSignOn').val(d.sign_on_date !== '-' ? d.sign_on_date : '');
+                    $('#txtWgPort').val(d.embarkation_port);
+                    $('#txtWgSeaService').val(d.sea_service !== '-' ? d.sea_service : '');
                     
-                    $('#txtWgNokName').text(d.next_of_kin_name);
-                    $('#txtWgNokRel').text(d.next_of_kin_relation);
-                    $('#txtWgNokPhone').text(d.next_of_kin_phone);
+                    $('#txtWgNokName').val(d.next_of_kin_name);
+                    $('#txtWgNokRel').val(d.next_of_kin_relation);
+                    $('#txtWgNokPhone').val(d.next_of_kin_phone);
                     $('#txtWgSignName').text(d.fullname);
 
                     $('#btnSubmitWages').removeClass('d-none');
@@ -437,17 +458,19 @@ $(document).ready(function() {
         var btn = $(this);
         
         $('#pdf_wg_idperson').val(btn.data('idperson'));
+        $('#wg_idperson').val(btn.data('idperson'));
+        $('#wg_id').val(btn.data('id'));
 
         // Load Text fields (contenteditable)
-        $('#txtWgName').text(btn.data('name'));
-        $('#txtWgPosition').text(btn.data('pos'));
-        $('#txtWgVessel').text(btn.data('vsl'));
-        $('#txtWgSignOn').text(btn.data('signon'));
-        $('#txtWgPort').text(btn.data('port'));
-        $('#txtWgSeaService').text(btn.data('sea'));
-        $('#txtWgNokName').text(btn.data('nok_name'));
-        $('#txtWgNokRel').text(btn.data('nok_rel'));
-        $('#txtWgNokPhone').text(btn.data('nok_phone'));
+        $('#txtWgName').val(btn.data('name'));
+        $('#txtWgPosition').val(btn.data('pos'));
+        $('#txtWgVessel').val(btn.data('vsl'));
+        $('#txtWgSignOn').val(btn.data('signon'));
+        $('#txtWgPort').val(btn.data('port'));
+        $('#txtWgSeaService').val(btn.data('sea'));
+        $('#txtWgNokName').val(btn.data('nok_name'));
+        $('#txtWgNokRel').val(btn.data('nok_rel'));
+        $('#txtWgNokPhone').val(btn.data('nok_phone'));
         $('#txtWgSignName').text(btn.data('name'));
 
         // Load wage inputs — tetap bisa diketik, kalkulasi tetap jalan
@@ -463,7 +486,7 @@ $(document).ready(function() {
         $('#valTotal').val(formatNumber(total_pay));
         $('#valTotalWages').val(formatNumber(total_pay + leave_pay));
 
-        $('#btnSubmitWages').addClass('d-none');
+        $('#btnSubmitWages').removeClass('d-none').html('<i class="fa fa-save"></i> Update & Print');
         $('#btnGeneratePdfFromModalWg').removeClass('d-none');
 
         $('#modalWages').modal('show');
@@ -530,15 +553,15 @@ $(document).ready(function() {
     });
 
     function preparePdfDataWages() {
-        $('#pdf_wg_name').val($('#txtWgName').text());
-        $('#pdf_wg_position').val($('#txtWgPosition').text());
-        $('#pdf_wg_vessel').val($('#txtWgVessel').text());
-        $('#pdf_wg_signon').val($('#txtWgSignOn').text());
-        $('#pdf_wg_port').val($('#txtWgPort').text());
-        $('#pdf_wg_sea').val($('#txtWgSeaService').text());
-        $('#pdf_wg_nok_name').val($('#txtWgNokName').text());
-        $('#pdf_wg_nok_rel').val($('#txtWgNokRel').text());
-        $('#pdf_wg_nok_phone').val($('#txtWgNokPhone').text());
+        $('#pdf_wg_name').val($('#txtWgName').val());
+        $('#pdf_wg_position').val($('#txtWgPosition').val());
+        $('#pdf_wg_vessel').val($('#txtWgVessel').val());
+        $('#pdf_wg_signon').val($('#txtWgSignOn').val());
+        $('#pdf_wg_port').val($('#txtWgPort').val());
+        $('#pdf_wg_sea').val($('#txtWgSeaService').val());
+        $('#pdf_wg_nok_name').val($('#txtWgNokName').val());
+        $('#pdf_wg_nok_rel').val($('#txtWgNokRel').val());
+        $('#pdf_wg_nok_phone').val($('#txtWgNokPhone').val());
     }
 
     // PRINT FROM MODAL (view detail) — wages dari DB, text fields dari inputan user
@@ -599,7 +622,7 @@ $(document).ready(function() {
 
     // Sync contenteditable with hidden inputs
     $('#txtWgName').on('input', function() {
-        $('#txtWgSignName').text($(this).text());
+        $('#txtWgSignName').text($(this).val());
     });
 });
 </script>

@@ -1812,9 +1812,10 @@
                 card.find('.btn-save, .btn-cancel').addClass('d-none');
 
                 // Update view dengan data baru
-                $('.form-view[data-field="family.father.name"]').text(data.fatherName || '');
-                $('.form-view[data-field="family.mother.name"]').text(data.motherName || '');
-                $('.form-view[data-field="family.wife.name"]').text(data.wifeName || '');
+                $('.form-view[data-field="family.fatherName"]').text(data.fatherName || '');
+                $('.form-view[data-field="family.motherName"]').text(data.motherName || '');
+                $('.form-view[data-field="family.wifeName"]').text(data.wifeName || '');
+                $('.form-view[data-field="family.nextOfKin"]').text(data.nextOfKin || '');
                 $('.form-view[data-field="family.address"]').text(data.address || '');
 
               } else {
