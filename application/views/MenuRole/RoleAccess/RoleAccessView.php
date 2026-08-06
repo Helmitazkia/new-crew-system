@@ -15,7 +15,7 @@
               <!-- <h6 class="fw-bold mb-0" style="color:#000099;">
                 <i class="fas fa-shield-alt me-2"></i>Role Access Management
               </h6> -->
-              <button class="btn btn-sm rounded-pill fst-italic fw-semibold shadow-sm"
+              <button class="btn btn-sm fst-italic fw-semibold shadow-sm"
                       id="btnAddRole"
                       style="background-color:#000099; color:#fff; border-color:#000099;">
                 <i class="fa fa-plus me-1"></i> Tambah Role
@@ -194,7 +194,7 @@ $(document).ready(function () {
   // DATATABLES INIT
   // ─────────────────────────────────────────────────────────
   var table = $('#roleTable').DataTable({
-    dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end'>>" +
+    dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end'f>>" +
          "<'row'<'col-md-12'tr>>" +
          "<'row mt-2'<'col-md-6'i><'col-md-6 d-flex justify-content-end'p>>",
     processing : true,
@@ -267,7 +267,16 @@ $(document).ready(function () {
     ],
     initComplete: function () {
       initDropdownFilters(this.api());
-    }
+    },
+    language: {
+          lengthMenu: '_MENU_ &nbsp;Entries',
+          info: 'Showing _START_ to _END_ of _TOTAL_ entries',
+          infoEmpty: 'Showing 0 to 0 of 0 entries',
+          infoFiltered: '(filtered from _MAX_ total entries)',
+          search: 'Search:',
+          emptyTable: 'Tidak ada data Role Access',
+          zeroRecords: 'Data tidak ditemukan'
+      }
   });
 
   // Row number
