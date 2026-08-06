@@ -105,20 +105,43 @@ class PKLAttachment extends CI_Controller {
 		));
 	}
 
+	public function get_history_detail()
+	{
+		$id = $this->input->post('id', true);
+		$this->db->where('id', $id);
+		$data = $this->db->get('history_pkl_attachment')->row();
+		if ($data) {
+			echo json_encode(array('status' => true, 'data' => $data));
+		} else {
+			echo json_encode(array('status' => false, 'message' => 'Data tidak ditemukan'));
+		}
+	}
+
 	public function save_history()
 	{
+		$id = $this->input->post('id', true);
 		$data = array(
 			'idperson'     => $this->input->post('idperson', true),
 			'nama_crew'    => $this->input->post('nama_crew', true),
 			'rank'         => $this->input->post('rank', true),
 			'vessel'       => $this->input->post('vessel', true),
-			'date_created' => date('Y-m-d H:i:s')
+			'dob'          => $this->input->post('dob', true),
+			'no_passport'  => $this->input->post('no_passport', true),
+			'duration'     => $this->input->post('duration', true)
 		);
 
-		$insert = $this->db->insert('history_pkl_attachment', $data);
+		if (empty($id)) {
+			$data['date_created'] = date('Y-m-d H:i:s');
+			$result = $this->db->insert('history_pkl_attachment', $data);
+			$msg = 'History berhasil disimpan';
+		} else {
+			$this->db->where('id', $id);
+			$result = $this->db->update('history_pkl_attachment', $data);
+			$msg = 'History berhasil diupdate';
+		}
 
-		if ($insert) {
-			echo json_encode(array('success' => true, 'message' => 'History berhasil disimpan'));
+		if ($result) {
+			echo json_encode(array('success' => true, 'message' => $msg));
 		} else {
 			echo json_encode(array('success' => false, 'message' => 'Gagal menyimpan history'));
 		}

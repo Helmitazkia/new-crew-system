@@ -69,29 +69,7 @@ class Wages extends CI_Controller {
             )
         );
 
-        $sea_service = '';
-
-        $target_sign_off = (!empty($p->sign_off_date) && $p->sign_off_date != '0000-00-00') ? $p->sign_off_date : $p->est_sign_off_date;
-
-        if (!empty($p->sign_on_date) && !empty($target_sign_off) && $target_sign_off != '0000-00-00') {
-            try {
-                $signOn = new DateTime($p->sign_on_date);
-                $signOff = new DateTime($target_sign_off);
-                $diff = $signOn->diff($signOff);
-
-                $months = $diff->m + ($diff->y * 12);
-                $days = $diff->d;
-
-                if ($months > 0 && $days > 0) $sea_service = "{$months} Bulan {$days} Hari";
-                elseif ($months > 0) $sea_service = "{$months} Bulan";
-                elseif ($days > 0) $sea_service = "{$days} Hari";
-                else $sea_service = "0 Hari";
-            } catch (Exception $e) {
-                $sea_service = '';
-            }
-        } else {
-            $sea_service = '';
-        }
+        $sea_service = (!empty($target_sign_off) && $target_sign_off != '0000-00-00') ? $target_sign_off : '';
 
         $data = array(
             'idperson' => $idperson,
@@ -253,84 +231,23 @@ class Wages extends CI_Controller {
 
     function saveWagesData()
     {
-        $idperson = $this->input->post('idperson');
+        $id = $this->input->post('id', true);
+        $idperson = $this->input->post('idperson', true);
         if (empty($idperson)) {
             echo json_encode(array('success' => false, 'message' => 'ID Person kosong'));
             return;
         }
 
-        $sql = "
-            SELECT 
-                p.idperson,
-                CONCAT(TRIM(p.fname), ' ', TRIM(p.mname), ' ', TRIM(p.lname)) AS fullname,
-                p.famfullname, 
-                p.famrelateid, 
-                p.famtelp, 
-                p.fammobile,
-                p.applyfor AS position, 
-                TRIM(p.vesselfor) AS personal_vesselfor,
-                TRIM(c.signonvsl) AS contract_vesselfor,
-                COALESCE(vc.nmvsl, vp.nmvsl) AS vessel_name,
-                c.signondt AS sign_on_date,
-                c.signoffdt AS sign_off_date,
-                c.estsignoffdt AS est_sign_off_date,
-                c.signonport AS embarkation_port
-            FROM mstpersonal p
-            LEFT JOIN tblcontract c ON p.idperson = c.idperson AND c.deletests = 0
-            LEFT JOIN mstvessel vc ON TRIM(c.signonvsl) = TRIM(vc.kdvsl)
-            LEFT JOIN mstvessel vp ON TRIM(p.vesselfor) = TRIM(vp.kdvsl)
-            WHERE p.idperson = '".$this->db->escape_str($idperson)."'
-            AND p.deletests = 0
-            ORDER BY c.signondt DESC
-            LIMIT 1
-        ";
-
-        $personal = $this->MCrewscv->getDataQuery($sql);
-        if (empty($personal)) {
-            echo json_encode(array('success' => false, 'message' => 'Data personal tidak ditemukan'));
-            return;
-        }
-
-        $p = $personal[0];
         $date = date('Y-m-d H:i:s');
 
-        $vesselName = !empty($p->vessel_name) ? $p->vessel_name : (
-            !empty($p->contract_vesselfor) ? $p->contract_vesselfor : (
-                !empty($p->personal_vesselfor) ? $p->personal_vesselfor : 'Unknown Vessel'
-            )
-        );
-
-        $sea_service = '';
-        $target_sign_off = (!empty($p->sign_off_date) && $p->sign_off_date != '0000-00-00') ? $p->sign_off_date : $p->est_sign_off_date;
-
-        if (!empty($p->sign_on_date) && !empty($target_sign_off) && $target_sign_off != '0000-00-00') {
-            try {
-                $signOn = new DateTime($p->sign_on_date);
-                $signOff = new DateTime($target_sign_off);
-                $diff = $signOn->diff($signOff);
-
-                $months = $diff->m + ($diff->y * 12);
-                $days = $diff->d;
-
-                if ($months > 0 && $days > 0) $sea_service = "{$months} Bulan {$days} Hari";
-                elseif ($months > 0) $sea_service = "{$months} Bulan";
-                elseif ($days > 0) $sea_service = "{$days} Hari";
-                else $sea_service = "0 Hari";
-            } catch (Exception $e) {
-                $sea_service = '';
-            }
-        } else {
-            $sea_service = '';
-        }
-
-        $insert = array(
+        $data = array(
             'idperson' => $idperson,
-            'name' => $p->fullname,
-            'position' => $p->position,
-            'vessel' => $vesselName,
-            'sign_on_date' => (!empty($p->sign_on_date) ? $p->sign_on_date : null),
-            'embarkation_port' => (!empty($p->embarkation_port) ? $p->embarkation_port : null),
-            'sea_service' => $sea_service,
+            'name' => $this->input->post('name'),
+            'position' => $this->input->post('position'),
+            'vessel' => $this->input->post('vessel'),
+            'sign_on_date' => $this->input->post('sign_on_date'),
+            'embarkation_port' => $this->input->post('embarkation_port'),
+            'sea_service' => $this->input->post('sea_service'),
             'basic_wages' => $this->input->post('basic_wages'),
             'fot' => $this->input->post('fot'),
             'tanker_allow' => $this->input->post('tanker_allow'),
@@ -338,14 +255,32 @@ class Wages extends CI_Controller {
             'bs_percent' => $this->input->post('bs_percent'),
             'hs_percent' => $this->input->post('hs_percent'),   
             'total_pay' => $this->input->post('total_pay'),
-            'next_of_kin_name' => $p->famfullname,
-            'next_of_kin_relation' => $p->famrelateid,
-            'next_of_kin_phone' => !empty($p->famtelp) ? $p->famtelp : $p->fammobile,
-            'created_at' => $date,
+            'next_of_kin_name' => $this->input->post('next_of_kin_name'),
+            'next_of_kin_relation' => $this->input->post('next_of_kin_relation'),
+            'next_of_kin_phone' => $this->input->post('next_of_kin_phone'),
         );
 
-        $this->MCrewscv->insData('wages', $insert);
+        if (empty($data['sign_on_date'])) {
+            $data['sign_on_date'] = null;
+        }
+        if (empty($data['sea_service'])) {
+            $data['sea_service'] = null;
+        }
 
-        echo json_encode(array('success' => true, 'message' => 'Data Wages berhasil disimpan'));
+        if (empty($id)) {
+            $data['created_at'] = $date;
+            $result = $this->db->insert('wages', $data);
+            $msg = 'Data Wages berhasil disimpan';
+        } else {
+            $this->db->where('id', $id);
+            $result = $this->db->update('wages', $data);
+            $msg = 'Data Wages berhasil diupdate';
+        }
+
+        if ($result) {
+            echo json_encode(array('success' => true, 'message' => $msg));
+        } else {
+            echo json_encode(array('success' => false, 'message' => 'Gagal menyimpan data'));
+        }
     }
 }

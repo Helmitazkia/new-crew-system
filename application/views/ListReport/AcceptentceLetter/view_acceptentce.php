@@ -50,10 +50,12 @@
 
       <div class="modal-body bg-light" style="padding:40px 55px; font-family:'Times New Roman', serif; font-size:14px; background-color: #fff !important;">
           <form id="formAddAcceptance" style="width: 100%;">
+              <input type="hidden" name="id" id="acc_id">
               <input type="hidden" name="idperson" id="acc_idperson">
               <input type="hidden" name="nama_crew" id="acc_nama_crew">
               <input type="hidden" name="rank" id="acc_rank">
-              <input type="hidden" name="vessel" id="acc_vessel">
+              <input type="hidden" name="dob" id="acc_dob">
+              <input type="hidden" name="certificate" id="acc_certificate">
 
               <div style="display:flex; align-items:flex-start; width:100%; margin-bottom:15px;">
                 <div style="width:100px;">
@@ -105,7 +107,9 @@
                   <tr>
                     <td style="padding-top:8px;">D O B<br><span style="font-style:italic;">Tanggal Lahir</span></td>
                     <td style="padding-top:8px;">:</td>
-                    <td style="padding-top:8px;"><span style="font-weight:700; border-bottom:1px dashed #ccc; padding:0 5px; min-width: 200px; display:inline-block;" id="txtAccDob" contenteditable="true">&lt;&lt;Tanggal Lahir&gt;&gt;</span></td>
+                    <td style="padding-top:8px;">
+                        <input type="date" id="txtAccDob" style="font-weight:700; border:none; border-bottom:1px dashed #ccc; padding:0 5px; min-width: 200px; outline:none; background:transparent; font-family: inherit;">
+                    </td>
                   </tr>
                   <tr>
                     <td style="padding-top:8px;">Rank<br><span style="font-style:italic;">Jabatan</span></td>
@@ -116,6 +120,13 @@
                     <td style="padding-top:8px;">Certificate<br><span style="font-style:italic;">Ijazah</span></td>
                     <td style="padding-top:8px;">:</td>
                     <td style="padding-top:8px;"><span style="font-weight:700; border-bottom:1px dashed #ccc; padding:0 5px; min-width: 200px; display:inline-block;" id="txtAccCert" contenteditable="true">&lt;&lt;Certificate&gt;&gt;</span></td>
+                  </tr>
+                  <tr class="no-print">
+                    <td style="padding-top:8px;">Vessel Name<br><span style="font-style:italic; font-size:11px;" class="text-danger">(Not printed on PDF)</span></td>
+                    <td style="padding-top:8px;">:</td>
+                    <td style="padding-top:8px;">
+                        <input type="text" id="acc_vessel" name="vessel" style="font-weight:700; border:none; border-bottom:1px dashed #ccc; padding:0 5px; min-width: 200px; outline:none; background:transparent; font-family: inherit;" placeholder="Enter Vessel Name">
+                    </td>
                   </tr>
                 </table>
               </div>
@@ -245,7 +256,7 @@ $(document).ready(function() {
                 data: null, className: 'text-center', orderable: false, searchable: false,
                 render: function(data) {
                     return '<div class="btn-group btn-group-sm" role="group">' +
-                        '<button type="button" class="btn btn-outline-primary btn-view-acc" title="Print/View PDF" data-idperson="' + data.idperson + '" data-date="' + data.date_created_fmt + '">' +
+                        '<button type="button" class="btn btn-outline-primary btn-view-acc" title="Print/View PDF" data-idperson="' + data.idperson + '" data-date="' + data.date_created_fmt + '" data-id="' + data.id + '">' +
                             '<i class="fa fa-eye"></i>' +
                         '</button>' +
                         '<button type="button" class="btn btn-outline-danger btn-delete-acc" title="Delete" data-id="' + data.id + '">' +
@@ -291,6 +302,7 @@ $(document).ready(function() {
     $('#btnAddAcceptance').on('click', function() {
         $('#formAddAcceptance')[0].reset();
         $('#acc_idperson').val(idperson);
+        $('#acc_id').val('');
         
         $.ajax({
             url: BASE_URL_ACC + '/acceptence',
@@ -305,16 +317,18 @@ $(document).ready(function() {
                     $('#acc_nama_crew').val(d.nama_crew);
                     $('#acc_rank').val(d.nama_rank);
                     $('#acc_vessel').val(d.nama_kapal);
+                    $('#acc_dob').val(d.tanggal_lahir);
+                    $('#acc_certificate').val(d.serpel);
 
                     // Preview UI
                     $('#txtAccName').text(d.nama_crew);
-                    $('#txtAccDob').text(d.tanggal_lahir);
+                    $('#txtAccDob').val(d.tanggal_lahir_raw);
                     $('#txtAccRank').text(d.nama_rank);
                     $('#txtAccCert').text(d.serpel);
                     $('#txtAccDate').text(res.today);
                     $('#txtAccSignName').text(d.nama_crew);
 
-                    $('#btnSubmitAcceptance').removeClass('d-none');
+                    $('#btnSubmitAcceptance').removeClass('d-none').html('<i class="fa fa-save"></i> Save & Print');
                     $('#btnGeneratePdfFromModalAcc').addClass('d-none');
 
                     $('#modalAcceptance').modal('show');
@@ -328,29 +342,40 @@ $(document).ready(function() {
     // VIEW DETAIL
     $('#acceptanceTable').on('click', '.btn-view-acc', function() {
         var ip = $(this).data('idperson');
+        var id = $(this).data('id');
         var createdDate = $(this).data('date');
 
         $('#pdf_acc_idperson').val(ip);
+        $('#acc_idperson').val(ip);
+        $('#acc_id').val(id); // Set the history ID for update
 
         $.ajax({
-            url: BASE_URL_ACC + '/acceptence',
+            url: BASE_URL_ACC + '/get_history_detail',
             type: 'POST',
-            data: { idperson: ip },
+            data: { id: id },
             dataType: 'json',
             success: function(res) {
                 if (res.status) {
                     var d = res.data;
                     
+                    // Hidden inputs for saving
+                    $('#acc_nama_crew').val(d.nama_crew);
+                    $('#acc_rank').val(d.rank);
+                    $('#acc_vessel').val(d.vessel);
+                    $('#acc_dob').val(d.dob);
+                    $('#acc_certificate').val(d.certificate);
+
                     // Preview UI
                     $('#txtAccName').text(d.nama_crew);
-                    $('#txtAccDob').text(d.tanggal_lahir);
-                    $('#txtAccRank').text(d.nama_rank);
-                    $('#txtAccCert').text(d.serpel);
+                    $('#txtAccDob').val(d.dob);
+                    $('#txtAccRank').text(d.rank);
+                    $('#txtAccCert').text(d.certificate);
                     $('#txtAccDate').text(createdDate); 
                     $('#txtAccSignName').text(d.nama_crew);
+                    $('#acc_vessel').val(d.vessel);
 
-                    $('#btnSubmitAcceptance').addClass('d-none');
-                    $('#btnGeneratePdfFromModalAcc').removeClass('d-none');
+                    $('#btnSubmitAcceptance').removeClass('d-none').html('<i class="fa fa-save"></i> Update & Print');
+                    $('#btnGeneratePdfFromModalAcc').removeClass('d-none'); // Allow just printing without updating
 
                     $('#modalAcceptance').modal('show');
                 } else {
@@ -363,7 +388,7 @@ $(document).ready(function() {
     // Prepare manual text data before printing to PDF
     function preparePdfDataAcc() {
         $('#pdf_nama_crew').val($('#txtAccName').text());
-        $('#pdf_tanggal_lahir').val($('#txtAccDob').text());
+        $('#pdf_tanggal_lahir').val($('#txtAccDob').val());
         $('#pdf_nama_rank').val($('#txtAccRank').text());
         $('#pdf_serpel').val($('#txtAccCert').text());
         $('#pdf_tanggal').val($('#txtAccDate').text());
@@ -470,8 +495,12 @@ $(document).ready(function() {
     $('#txtAccRank').on('input', function() {
         $('#acc_rank').val($(this).text());
     });
-    // For Certificate and DOB, there are no hidden inputs because they are likely auto-generated in the PDF 
-    // or not saved to history directly, but they are visually editable before printing.
+    $('#txtAccDob').on('input change', function() {
+        $('#acc_dob').val($(this).val());
+    });
+    $('#txtAccCert').on('input', function() {
+        $('#acc_certificate').val($(this).text());
+    });
 
 });
 </script>

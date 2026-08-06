@@ -40,6 +40,7 @@ class AcceptentceLetter extends CI_Controller {
 
 				-- TANGGAL STATEMENT DIGANTI MENJADI TANGGAL LAHIR
 				DATE_FORMAT(p.dob, '%d %M %Y') AS tanggal_lahir,
+				DATE_FORMAT(p.dob, '%Y-%m-%d') AS tanggal_lahir_raw,
 				v.kdvsl,
 				v.nmvsl AS nama_kapal,
 				r.kdrank,
@@ -129,7 +130,10 @@ class AcceptentceLetter extends CI_Controller {
 		$pdf_tanggal = $this->input->post('pdf_tanggal');
 
 		if (!empty($pdf_nama_crew)) { $crew->nama_crew = $pdf_nama_crew; }
-		if (!empty($pdf_tanggal_lahir)) { $crew->tanggal_lahir = $pdf_tanggal_lahir; }
+		if (!empty($pdf_tanggal_lahir)) { 
+			// Convert back to text format for PDF e.g., 27 August 1996
+			$crew->tanggal_lahir = date('d F Y', strtotime($pdf_tanggal_lahir)); 
+		}
 		if (!empty($pdf_nama_rank)) { $crew->nama_rank = $pdf_nama_rank; }
 		if (!empty($pdf_serpel)) { $crew->serpel = $pdf_serpel; }
 
@@ -177,20 +181,42 @@ class AcceptentceLetter extends CI_Controller {
 		));
 	}
 
+	public function get_history_detail()
+	{
+		$id = $this->input->post('id', true);
+		$this->db->where('id', $id);
+		$data = $this->db->get('report_acceptance')->row();
+		if ($data) {
+			echo json_encode(array('status' => true, 'data' => $data));
+		} else {
+			echo json_encode(array('status' => false, 'message' => 'Data tidak ditemukan'));
+		}
+	}
+
 	public function save_history()
 	{
+		$id = $this->input->post('id', true);
 		$data = array(
 			'idperson'     => $this->input->post('idperson', true),
 			'nama_crew'    => $this->input->post('nama_crew', true),
 			'rank'         => $this->input->post('rank', true),
 			'vessel'       => $this->input->post('vessel', true),
-			'date_created' => date('Y-m-d H:i:s')
+			'dob'          => $this->input->post('dob', true),
+			'certificate'  => $this->input->post('certificate', true)
 		);
 
-		$insert = $this->db->insert('report_acceptance', $data);
+		if (empty($id)) {
+			$data['date_created'] = date('Y-m-d H:i:s');
+			$result = $this->db->insert('report_acceptance', $data);
+			$msg = 'History berhasil disimpan';
+		} else {
+			$this->db->where('id', $id);
+			$result = $this->db->update('report_acceptance', $data);
+			$msg = 'History berhasil diupdate';
+		}
 
-		if ($insert) {
-			echo json_encode(array('success' => true, 'message' => 'History berhasil disimpan'));
+		if ($result) {
+			echo json_encode(array('success' => true, 'message' => $msg));
 		} else {
 			echo json_encode(array('success' => false, 'message' => 'Gagal menyimpan history'));
 		}
