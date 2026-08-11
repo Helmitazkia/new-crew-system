@@ -63,12 +63,14 @@ class Covid19 extends CI_Controller {
 
     public function save_covid19()
     {
+        $token = md5(uniqid(rand(), true));
         $data = array(
             'id_person'    => $this->input->post('idperson'),
             'fullname'     => $this->input->post('fullname'),
             'rankname'     => $this->input->post('nmrank'),
             'vessel_name'  => $this->input->post('nmvsl'),
-            'sign_on'      => $this->input->post('sign_on'),
+            'sign_on'      => '',
+            'link_token'   => $token,
             'created_at'   => date('Y-m-d H:i:s')
         );
 
