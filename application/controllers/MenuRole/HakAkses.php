@@ -33,33 +33,27 @@ class HakAkses extends CI_Controller {
     public function getRoleCodes() {
         header('Content-Type: application/json');
 
-        // Master daftar role code yang tersedia di sistem
-        $masterCodes = array(
-            array('code' => 'superadmin',    'label' => 'superadmin — Super Admin'),
-            array('code' => 'admincv',       'label' => 'admincv — Admin CV'),
-            array('code' => 'adminlogistic', 'label' => 'adminlogistic — Admin Logistic'),
-            array('code' => 'userlogistic',  'label' => 'userlogistic — User Logistic'),
-            array('code' => 'hrd',           'label' => 'hrd — HRD'),
-            array('code' => 'crewing',       'label' => 'crewing — Crewing'),
-            array('code' => 'finance',       'label' => 'finance — Finance'),
-            array('code' => 'operation',     'label' => 'operation — Operation'),
-            array('code' => 'viewer',        'label' => 'viewer — Viewer (Read Only)'),
-        );
+        // Master daftar role dari m_user_role
+        $dbRoles = $this->db->get('m_user_role')->result();
 
-        // Ambil role code yang sudah dipakai agar bisa di-disable
-        $existing = $this->HakAksesModel->getAllRoles();
-        $usedCodes = array();
-        foreach ($existing as $r) {
-            $usedCodes[] = $r->roleCode;
+        // Ambil role yang sudah digunakan di m_role_menu_access (distinct roleId)
+        $usedRoleIds = array();
+        $queryUsed = $this->db->query("SELECT DISTINCT roleId FROM m_role_menu_access")->result();
+        foreach ($queryUsed as $row) {
+            $usedRoleIds[] = $row->roleId;
         }
 
         $result = array();
-        foreach ($masterCodes as $item) {
-            $result[] = array(
-                'code'   => $item['code'],
-                'label'  => $item['label'],
-                'used'   => in_array($item['code'], $usedCodes),
-            );
+        $seen = array();
+        foreach ($dbRoles as $role) {
+            if (!in_array($role->roleCode, $seen)) {
+                $seen[] = $role->roleCode;
+                $result[] = array(
+                    'code'   => $role->roleCode,
+                    'label'  => $role->roleCode . ' — ' . $role->roleName,
+                    'used'   => in_array($role->roleId, $usedRoleIds)
+                );
+            }
         }
 
         echo json_encode(array('status' => true, 'data' => $result));

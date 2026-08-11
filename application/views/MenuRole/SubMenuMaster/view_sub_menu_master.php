@@ -165,7 +165,6 @@
 <script>
 var table;
 $(document).ready(function() {
-    $('.selectpicker').selectpicker();
 
     table = $('#subMenuTable').DataTable({
         dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end'f>>" +
@@ -326,8 +325,7 @@ $(document).on('click', function (e) {
 function showAddModal() {
     $('#subMenuForm')[0].reset();
     $('#subMenuId').val('');
-    $('#menuId').val('');
-    $('.selectpicker').selectpicker('refresh');
+    $('#menuId').selectpicker('val', '');
     $('#isActive').prop('checked', true);
     $('#modalTitle').text('Add Sub Menu');
     $('#subMenuModal').modal('show');
@@ -338,8 +336,7 @@ function editData(id) {
         if (res.status == 'success') {
             $('#subMenuForm')[0].reset();
             $('#subMenuId').val(res.data.subMenuId);
-            $('#menuId').val(res.data.menuId);
-            $('.selectpicker').selectpicker('refresh');
+            $('#menuId').selectpicker('val', res.data.menuId);
             $('#subMenuCode').val(res.data.subMenuCode);
             $('#subMenuName').val(res.data.subMenuName);
             $('#subMenuUrl').val(res.data.subMenuUrl);
