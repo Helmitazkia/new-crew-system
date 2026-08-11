@@ -14,6 +14,7 @@
                         <th class="text-center">Nama Crew</th>
                         <th class="text-center">Rank</th>
                         <th class="text-center">Vessel Name</th>
+                        <th class="text-center">Signature</th>
                         <th class="text-center" style="width:130px;">Action</th>
                     </tr>
                 </thead>
@@ -270,6 +271,21 @@ $(document).ready(function() {
             { data: 'fullname', className: 'text-center' },
             { data: 'rankname', className: 'text-center' },
             { data: 'vessel_name', className: 'text-center' },
+            {
+                data: null,
+                className: 'text-center',
+                orderable: false,
+                searchable: false,
+                render: function(data) {
+                    if (data.sign_on && data.sign_on !== '') {
+                        var imgUrl = '<?php echo base_url("assets/imgQRCodeCrewCV"); ?>' + "/" + data.sign_on;
+                        return '<img src="' + imgUrl + '" style="height:40px; cursor:pointer;" onclick="window.open(\'' + imgUrl + '\',\'_blank\')" title="Lihat Signature" />';
+                    } else {
+                        var publicLink = '<?php echo base_url("PublicCovid19/form"); ?>' + "/" + data.link_token;
+                        return '<button type="button" class="btn btn-sm btn-outline-info" onclick="navigator.clipboard.writeText(\'' + publicLink + '\'); covidNotify(\'success\', \'Link disalin ke clipboard!\');" title="Copy Link Form"><i class="fa fa-link"></i> Copy Link</button>';
+                    }
+                }
+            },
             {
                 data: null,
                 className: 'text-center',

@@ -25,8 +25,8 @@
                 <div style="font-size:11px; font-weight:bold;">SRPS LICENSE NO:</div>
                 <div style="font-size:10px;">SIUKAK 236.121-R Tahun 2025</div>
                 <div style="margin-top:3px;">
-                    <?php echo "<img src='" . base_url('assets/img/Bureau_Veritas_Logo.jpg') . "' alt='BV' style='width:65px; margin-right:3px;' />"; ?>
-                    <?php echo "<img src='" . base_url('assets/img/iso.jpg') . "' alt='ISO' style='width:65px;' />"; ?>
+                    <?php echo "<img src='./assets/img/Bureau_Veritas_Logo.jpg' alt='BV' style='width:65px; margin-right:3px;' />"; ?>
+                    <?php echo "<img src='./assets/img/iso.jpg' alt='ISO' style='width:65px;' />"; ?>
                 </div>
             </td>
         </tr>
@@ -127,7 +127,11 @@
             <td style="border:1px solid #000; padding:6px;"><?php echo $crew->rankname; ?></td>
             <td style="border:1px solid #000; padding:6px;"><?php echo $crew->fullname; ?></td>
             <td style="border:1px solid #000; padding:6px;">
-                <?php echo (!empty($crew->sign_on) && $crew->sign_on != '0000-00-00') ? date('d M Y', strtotime($crew->sign_on)) : '-'; ?>
+                <?php if (!empty($crew->sign_on)): ?>
+                    <img src="./assets/imgQRCodeCrewCV/<?php echo $crew->sign_on; ?>" style="height:60px;" />
+                <?php else: ?>
+                    <span style="color:#999; font-style:italic;">(Not Signed)</span>
+                <?php endif; ?>
             </td>
             <td style="border:1px solid #000; padding:6px;"><?php echo $today; ?></td>
         </tr>
