@@ -176,7 +176,7 @@ class PersonDetail extends CI_Controller {
                 'motherName' => $row->mothernm,
                 'wifeName'   => $row->wname,
                 'nextOfKin'  => $row->next_of_kin,
-                'address'    => $row->paddress
+                'address'    => $row->famaddrs
             ),
 
             /* ================= LEGAL & TAX ================= */
@@ -466,7 +466,6 @@ class PersonDetail extends CI_Controller {
         $fatherName = $this->input->post('fatherName');
         $motherName = $this->input->post('motherName');
         $wifeName = $this->input->post('wifeName');
-        $address = $this->input->post('address');
         $nextOfKin = $this->input->post('nextOfKin');
         
 
@@ -488,7 +487,6 @@ class PersonDetail extends CI_Controller {
             'mothernm'   => $motherName,
             'wname'      => $wifeName,
             'next_of_kin'=> $nextOfKin,
-            'paddress'   => $address,
             'updusrdt'   => $currentDate . ' - ' . $username 
         );
         

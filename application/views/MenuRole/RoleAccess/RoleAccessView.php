@@ -428,6 +428,7 @@ $(document).ready(function () {
     $.get("<?php echo base_url('hakAkses/getRoleCodes'); ?>", function (res) {
       if (!res.status) return;
       var sel = $('#roleCodeInput');
+      sel.selectpicker('destroy');
       sel.empty();
       $.each(res.data, function (i, item) {
         var disabled = '';
@@ -447,12 +448,18 @@ $(document).ready(function () {
           }
         }
         var opt = '<option value="'+ item.code +'"'+ disabled + subtext;
-        if (item.code === selectedCode) opt += ' selected';
         opt += '>'+ item.label +'</option>';
         sel.append(opt);
       });
-      // Refresh selectpicker setelah isi option
-      sel.selectpicker('refresh');
+      // Inisialisasi ulang selectpicker setelah isi option
+      sel.selectpicker();
+      
+      // Set value menggunakan metode selectpicker bawaan agar bersih dari memori lama
+      if (selectedCode) {
+        sel.selectpicker('val', selectedCode);
+      } else {
+        sel.selectpicker('val', '');
+      }
     }, 'json');
   }
 
@@ -468,9 +475,8 @@ $(document).ready(function () {
     modal.show();
   });
 
-  // Reset selectpicker saat modal ditutup
   $('#modalRole').on('hidden.bs.modal', function () {
-    $('#roleCodeInput').empty().selectpicker('refresh');
+    $('#roleCodeInput').selectpicker('destroy').empty().selectpicker();
   });
 
   // ─────────────────────────────────────────────────────────

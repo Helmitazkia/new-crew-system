@@ -892,19 +892,29 @@ class McuReport extends CI_Controller {
         $idEnc = base64_encode(base64_encode(base64_encode($idReport)));
         $link  = base_url("Report/McuReport/print_approve_mcu/$idEnc");
 
-        $cmEmail = "helmi.tazkia@andhika.com";
-        $this->_sendEmailMCU($cmEmail, $header, $persons, $link);
+        $cmEmail = "Eva.marliana@andhika.com";
+        $ccEmail = array("muhamad.fikri@andhika.com", "helmi.tazkia@andhika.com");
+        $this->_sendEmailMCU($cmEmail, $header, $persons, $link, $ccEmail);
     }
 
     /**
      * Send MCU request email
      */
-    private function _sendEmailMCU($to, $header, $persons, $link)
+    private function _sendEmailMCU($to, $header, $persons, $link, $cc = '')
     {
         try {
             $mail = $this->_initMailer();
             $mail->setFrom('noreply@andhika.com', 'Crewing System');
             $mail->addAddress($to);
+            if (!empty($cc)) {
+                if (is_array($cc)) {
+                    foreach ($cc as $c) {
+                        $mail->addCC($c);
+                    }
+                } else {
+                    $mail->addCC($cc);
+                }
+            }
             $mail->isHTML(true);
             $mail->Subject = 'Medical Check Up (MCU) Request';
 
@@ -955,7 +965,9 @@ class McuReport extends CI_Controller {
             $mail = $this->_initMailer();
             $mail->setFrom('noreply@andhika.com', 'Crewing System - PT. Andhini Eka Karya Sejahtera');
             $mail->addAddress($clinicEmail);
-            $mail->addCC('helmi.tazkia@andhika.com', 'Crew Manager');
+            $mail->addCC('helmi.tazkia@andhika.com', 'IT Developer');
+            $mail->addCC('muhamad.fikri@andhika.com', 'Crew Admin');
+            $mail->addCC('Eva.marliana@andhika.com', 'Crew Manager');
             $mail->isHTML(true);
             $mail->Subject = 'Approval Medical Check Up (MCU) - ' . $header->clinic_name;
 
