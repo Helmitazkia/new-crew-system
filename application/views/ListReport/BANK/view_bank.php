@@ -77,27 +77,27 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-muted small mb-1">Nama</label>
-                                    <input type="text" class="form-control form-control-sm" name="fullname" id="bank_fullname" readonly>
+                                    <input type="text" class="form-control form-control-sm" name="fullname" id="bank_fullname">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-muted small mb-1">NPWP</label>
-                                    <input type="text" class="form-control form-control-sm" name="npwp" id="bank_npwp" readonly>
+                                    <input type="text" class="form-control form-control-sm" name="npwp" id="bank_npwp">
                                 </div>
                                 <div class="col-md-12">
                                     <label class="form-label text-muted small mb-1">Alamat Rumah</label>
-                                    <textarea class="form-control form-control-sm" name="address" id="bank_address_home" rows="2" readonly></textarea>
+                                    <textarea class="form-control form-control-sm" name="address" id="bank_address_home" rows="2"></textarea>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-muted small mb-1">No. Telp</label>
-                                    <input type="text" class="form-control form-control-sm" name="phone" id="bank_phone" readonly>
+                                    <input type="text" class="form-control form-control-sm" name="phone" id="bank_phone">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-muted small mb-1">No. Telp Darurat</label>
-                                    <input type="text" class="form-control form-control-sm" name="emergency_phone" id="bank_emergency_phone" readonly>
+                                    <input type="text" class="form-control form-control-sm" name="emergency_phone" id="bank_emergency_phone">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-muted small mb-1">Hubungan</label>
-                                    <input type="text" class="form-control form-control-sm" name="relation" id="bank_relation" readonly>
+                                    <input type="text" class="form-control form-control-sm" name="relation" id="bank_relation">
                                 </div>
                                 <div class="col-md-6"></div> <!-- spacer -->
 

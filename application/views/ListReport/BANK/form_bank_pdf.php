@@ -12,8 +12,7 @@
         <table style="width:100%; border-collapse:collapse; margin-bottom:10px;">
             <tr>
                 <td style="width:80px; vertical-align:top;">
-                    <img src="<?php echo base_url('assets/img/Logo_Andhika_2017.jpg'); ?>" alt="Logo"
-                        style="width:80px; height:auto;">
+                    <img src="./assets/img/Logo_Andhika_2017.jpg" alt="Logo" style="width:80px; height:auto;">
                 </td>
 
                 <td style="text-align:center; vertical-align:middle;">
@@ -24,9 +23,9 @@
                     <div style="font-size:11px; font-weight:bold;">SRPS LICENSE NO:</div>
                     <div style="font-size:10px;">SIUPPAK 12.12 Tahun 2014</div>
                     <div style="margin-top:3px;">
-                        <img src="<?php echo base_url('assets/img/Bureau_Veritas_Logo.jpg'); ?>" alt="BV"
+                        <img src="./assets/img/Bureau_Veritas_Logo.jpg" alt="BV"
                             style="width:65px; margin-right:3px;">
-                        <img src="<?php echo base_url('assets/img/iso.jpg'); ?>" alt="ISO" style="width:65px;">
+                        <img src="./assets/img/iso.jpg" alt="ISO" style="width:65px;">
                     </div>
                 </td>
             </tr>
