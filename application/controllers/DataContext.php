@@ -2083,6 +2083,18 @@ class DataContext extends CI_Controller {
 		}
 	}
 
+	function getRolesOption()
+	{
+		header('Content-Type: application/json');
+		$sql = "SELECT roleCode, roleName FROM m_user_role WHERE isActive = '1' ORDER BY roleName ASC";
+		$rsl = $this->MCrewscv->getDataQuery($sql);
+		
+		echo json_encode(array(
+			'status' => true,
+			'data'   => $rsl
+		));
+	}
+
 	function indexCrewUser()
 	{
 		$data = array(
@@ -2099,13 +2111,6 @@ class DataContext extends CI_Controller {
 		header('Content-Type: application/json');
 
 		$whereNya = " WHERE status = '0' ";
-
-		$search = $this->input->post('search');
-		$txtSearch = $this->input->post('txtSearch');
-
-		if ($search === 'search' && !empty($txtSearch)) {
-			$whereNya .= " AND userFullNm LIKE '%".$txtSearch."%' ";
-		}
 
 		$sql = "SELECT * FROM login ".$whereNya." ORDER BY userFullNm ASC ";
 		$rsl = $this->MCrewscv->getDataQuery($sql);

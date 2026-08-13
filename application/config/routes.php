@@ -131,6 +131,7 @@ $route['getMasterUserSystem'] = 'DataContext/getDataMasterUserSystem';
 $route['editMasterUserSystem'] = 'DataContext/getDataEdit';
 $route['saveMasterUserSystem'] = 'DataContext/saveDataMasterUser';
 $route['deleteMasterUserSystem'] = 'DataContext/deleteData';
+$route['getRolesOption'] = 'DataContext/getRolesOption';
 
 $route['clinic'] = 'DataContext/indexMasterClinic';
 $route['dataClinic'] = 'DataContext/getDataMasterClinic';

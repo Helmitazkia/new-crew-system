@@ -1,100 +1,195 @@
+
+<style>
+  .crew-header th {
+    background-color: #000099 !important;
+    color: white !important;
+    font-size: 13px;
+    vertical-align: middle;
+  }
+  .column-search {
+    width: 100%;
+    padding: 2px 4px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .filter-icon {
+    font-size: 14px;
+    margin-left: 5px;
+    cursor: pointer;
+    color: #aac4ff;
+  }
+  .filter-icon:hover { color: #fff; }
+  .filter-dropdown {
+    position: absolute; background: #fff; border: 1px solid #ccc;
+    padding: 8px; width: 200px; max-height: 260px; overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,.2); display: none; z-index: 9999;
+  }
+  .filter-dropdown input[type="text"] {
+    width: 100%; margin-bottom: 6px; padding: 4px; font-size: 12px;
+    border: 1px solid #dee2e6; border-radius: 4px;
+  }
+  .filter-dropdown label {
+    display: block; font-size: 13px; cursor: pointer;
+    padding: 4px 8px; margin: 2px 0; border-radius: 4px;
+  }
+  .filter-dropdown label:hover { background: #f8f9fa; }
+  .filter-list { max-height: 120px; overflow-y: auto; margin-bottom: 6px; }
+  .btn-clear-filter {
+    background: transparent; border: 1.5px solid #000099;
+    color: #000099; transition: all .2s ease;
+  }
+  .btn-clear-filter:hover { background: #000099; color: #fff; }
+  .btn-clear-filter i { font-size: 14px; }
+</style>
+
 <script type="text/javascript">
-$(document).ready(function() {});
+var tableUser;
 
 $(document).ready(function() {
-    loadDataUserSystem();
+    loadRoles();
+    
+    tableUser = $('#userSystemTable').DataTable({
+        dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end'f>>" +
+             "<'row'<'col-md-12'tr>>" +
+             "<'row mt-2'<'col-md-6'i><'col-md-6 d-flex justify-content-end'p>>",
+        processing : true,
+        serverSide : false,
+        pageLength : 10,
+        lengthMenu : [10, 25, 50, 100],
+        ajax: {
+            url: "<?php echo base_url('getMasterUserSystem'); ?>",
+            type: "GET",
+            dataSrc: function(json) { return json.data ? json.data : []; }
+        },
+        orderCellsTop: true,
+        columns: [
+            { data: 'no', className: 'text-center' },
+            { data: 'userName' },
+            { data: 'fullName' },
+            { data: 'password', render: function() { return '********'; } },
+            { data: 'jenis' },
+            { data: 'init' },
+            { data: null, className: 'text-center', render: function(data, type, row) {
+                return '<button class="btn btn-success btn-xs" onclick="getDataEdit(\'' + row.id + '\',\'userSystem\')"><i class="fa fa-edit"></i></button> ' +
+                       '<button class="btn btn-danger btn-xs" onclick="delData(\'' + row.id + '\',\'userSystem\')"><i class="fa fa-close"></i></button>';
+            }}
+        ],
+        initComplete: function () {
+            initDropdownFilters(this.api());
+        },
+        language: {
+            lengthMenu: '_MENU_ &nbsp;Entries',
+            info: 'Showing _START_ to _END_ of _TOTAL_ entries',
+            infoEmpty: 'Showing 0 to 0 of 0 entries',
+            infoFiltered: '(filtered from _MAX_ total entries)',
+            search: 'Search:',
+            emptyTable: 'Tidak ada data User System',
+            zeroRecords: 'Data tidak ditemukan'
+        }
+    });
+
+    // Column search
+    $('#userSystemTable thead tr:eq(1) .column-search').on('keyup change', function() {
+        tableUser.column($(this).parent().index()).search(this.value).draw();
+    });
 });
 
-function loadDataUserSystem() {
-
+function loadRoles() {
     $.ajax({
-        url: "<?php echo base_url('getMasterUserSystem'); ?>",
+        url: "<?php echo base_url('getRolesOption'); ?>",
         type: "GET",
         dataType: "json",
         success: function(res) {
-            if (res.status) {
-                renderUserSystemTable(res.data);
+            if (res.status && res.data) {
+                var html = '<option value="">-- Pilih User Jenis --</option>';
+                for (var i = 0; i < res.data.length; i++) {
+                    html += '<option value="' + res.data[i].roleCode + '">' + res.data[i].roleName + ' (' + res.data[i].roleCode + ')</option>';
+                }
+                $('#txtuserjenis').html(html);
             }
         }
     });
-
 }
 
-function renderUserSystemTable(data) {
+function initDropdownFilters(api) {
+    $('#userSystemTable thead th').each(function (colIndex) {
+        var icon = $(this).find('.filter-icon');
+        if (!icon.length) return;
+        
+        var dropdown = $('<div class="filter-dropdown">'
+            + '<input type="text" class="filter-search" placeholder="Search...">'
+            + '<div class="filter-list"></div>'
+            + '<hr style="margin: 6px 0;">'
+            + '<div class="d-flex gap-2 text-center">'
+            + '<button class="btn btn-sm w-100 rounded-pill fst-italic btn-clear-filter" id="clear-filter">'
+            + '<i class="fa fa-eraser"></i> Clear'
+            + '</button>'
+            + '</div>'
+            + '</div>').appendTo('body');
 
-    var html = '';
+        var listContainer = dropdown.find('.filter-list');
 
-    if (data.length === 0) {
-        html = '<tr><td colspan="7" class="text-center">No data found</td></tr>';
-        $('#idTbodyUserSystem').html(html);
-        return;
-    }
-
-    for (var i = 0; i < data.length; i++) {
-
-        html += '<tr>';
-        html += ' <td style="font-size:11px;text-align:center;">' + data[i].no + '</td>';
-        html += ' <td style="font-size:11px;">' + data[i].userName + '</td>';
-        html += ' <td style="font-size:11px;">' + data[i].fullName + '</td>';
-        html += ' <td style="font-size:11px;">' + data[i].password + '</td>';
-        html += ' <td style="font-size:11px;">' + data[i].jenis + '</td>';
-        html += ' <td style="font-size:11px;">' + data[i].init + '</td>';
-        html += ' <td style="font-size:11px;text-align:center;">';
-        html += '   <button class="btn btn-success btn-xs" ';
-        html += '     onclick="getDataEdit(\'' + data[i].id + '\',\'userSystem\')">';
-        html += '     <i class="fa fa-edit"></i>';
-        html += '   </button> ';
-        html += '   <button class="btn btn-danger btn-xs" ';
-        html += '     onclick="delData(\'' + data[i].id + '\',\'userSystem\')">';
-        html += '     <i class="fa fa-close"></i>';
-        html += '   </button>';
-        html += ' </td>';
-        html += '</tr>';
-    }
-
-    $('#idTbodyUserSystem').html(html);
-}
-
-$(document).ready(function() {
-
-    var typingTimer = null;
-    var delay = 400;
-
-    $('#txtSearch').on('keyup', function() {
-
-        var keyword = $(this).val().trim();
-
-        if (typingTimer) {
-            clearTimeout(typingTimer);
-        }
-
-        typingTimer = setTimeout(function() {
-
-            if (keyword === '') {
-                loadDataUserSystem();
-                return;
-            }
-
-            $("#idLoading").show();
-
-            $.post(
-                "<?php echo base_url('getMasterUserSystem'); ?>", {
-                    search: 'search',
-                    txtSearch: keyword
-                },
-                function(res) {
-                    if (res.status) {
-                        renderUserSystemTable(res.data);
+        try {
+            var colData = api.column(colIndex).data();
+            if (colData && typeof colData.unique === 'function') {
+                var uniqueVals = [];
+                colData.unique().each(function (val) {
+                    if (val && val !== '-' && val !== '') {
+                        var tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = val;
+                        var text = tempDiv.textContent || tempDiv.innerText || '';
+                        if (text && !uniqueVals.includes(text)) uniqueVals.push(text);
                     }
-                    $("#idLoading").hide();
-                },
-                "json"
-            );
+                });
 
-        }, delay);
+                uniqueVals.sort().forEach(function (val) {
+                    var safeVal = val.replace(/"/g, '&quot;');
+                    listContainer.append('<label><input type="checkbox" value="' + safeVal + '"> ' + val + '</label>');
+                });
+            }
+        } catch (e) { console.error("Error populating filter:", e); }
+
+        icon.on('click', function (e) {
+            e.stopPropagation();
+            $('.filter-dropdown').not(dropdown).hide();
+            var offset = $(this).offset();
+            dropdown.css({
+                top: offset.top + 20,
+                left: offset.left
+            }).toggle();
+        });
+
+        dropdown.find('.filter-search').on('keyup', function () {
+            var searchTerm = $(this).val().toLowerCase();
+            listContainer.find('label').each(function () {
+                var text = $(this).text().toLowerCase();
+                $(this).toggle(text.indexOf(searchTerm) > -1);
+            });
+        });
+
+        dropdown.find('input[type="checkbox"]').on('change', function () {
+            var selected = [];
+            listContainer.find('input:checked').each(function () {
+                selected.push('^' + $.fn.dataTable.util.escapeRegex($(this).val()) + '$');
+            });
+            var regex = selected.join('|');
+            api.column(colIndex).search(regex ? regex : '', true, false).draw();
+        });
+
+        dropdown.find('.btn-clear-filter').on('click', function () {
+            listContainer.find('input[type="checkbox"]').prop('checked', false);
+            dropdown.find('.filter-search').val('').trigger('keyup');
+            api.column(colIndex).search('').draw();
+        });
+
+        dropdown.on('click', function (e) { e.stopPropagation(); });
     });
 
-});
+    $(document).on('click', function () {
+        $('.filter-dropdown').hide();
+    });
+}
 
 function saveData() {
 
@@ -153,13 +248,15 @@ function saveData() {
                     timer: 1500,
                     showConfirmButton: false
                 }).then(() => {
-                    loadDataUserSystem();
+                    tableUser.ajax.reload(null, false);
 
+                    $("#txtIdEdit").val('');
                     $("#txtusername").val('');
                     $("#txtuserfullname").val('');
                     $("#txtuserpassword").val('');
                     $("#txtuserjenis").val('');
                     $("#txtuserinit").val('');
+                    $("#txtuserpassword").attr("placeholder", "User Password");
                 });
             } else {
                 Swal.fire('Error', res.message, 'error');
@@ -192,7 +289,11 @@ function getDataEdit(id, type) {
             $("#txtIdEdit").val(res.data.userId);
             $("#txtusername").val(res.data.userName);
             $("#txtuserfullname").val(res.data.userFullNm);
-            $("#txtuserpassword").val(res.data.userPass);
+            
+            // Do not fill password hash into the edit input
+            $("#txtuserpassword").val("");
+            $("#txtuserpassword").attr("placeholder", "Kosongkan jika tidak ingin mengubah password");
+            
             $("#txtuserjenis").val(res.data.userJenis);
             $("#txtuserinit").val(res.data.userInit);
 
@@ -242,7 +343,7 @@ function delData(id, type) {
                         timer: 1400,
                         showConfirmButton: false
                     }).then(() => {
-                        loadDataUserSystem();
+                        tableUser.ajax.reload(null, false);
                     });
 
                 } else {
@@ -257,57 +358,50 @@ function delData(id, type) {
 
     });
 }
+
+function reloadPage() {
+    window.location.reload();
+}
 </script>
 
 <div class="row" style="margin:18px 0;">
-    <div class="col-md-3 col-xs-12">
-        <input type="text" id="txtSearch" placeholder="🔍 Search user full name..." class="form-control input-sm" style="
-                padding:10px 14px;
-                border-radius:12px;
-                border:1px solid #d0d7de;
-                font-size:13px;
-                box-shadow:0 2px 6px rgba(0,0,0,0.06);
-            ">
-    </div>
-</div>
-<div class="row">
-
-
     <div class="col-md-8 col-xs-12">
         <div style="
-            max-height:625px;
-            overflow-y:auto;
             background:#fff;
             border-radius:14px;
             border:1px solid #e3e6ea;
             box-shadow:0 4px 14px rgba(0,0,0,0.06);
+            padding: 20px;
         ">
-
-            <table class="table table-bordered table-hover table-condensed" style="margin-bottom:0;font-size:13px;">
-
-                <thead>
-                    <tr style="
-                        background:#f1f4f7;
-                        position:sticky;
-                        top:0;
-                        z-index:2;
-                        border-bottom:1px solid #d9dee3;
-                    ">
-                        <th style="width:5%;text-align:center;background:#000099;color:#fff;">No</th>
-                        <th style="background:#000099;color:#fff;">Username</th>
-                        <th style="background:#000099;color:#fff;">Full Name</th>
-                        <th style="background:#000099;color:#fff;">Password</th>
-                        <th style="background:#000099;color:#fff;">User Jenis</th>
-                        <th style="background:#000099;color:#fff;">User Init</th>
-                        <th style="width:10%;text-align:center;background:#000099;color:#fff;">Action</th>
-                    </tr>
-                </thead>
-
-                <tbody id="idTbodyUserSystem">
-                    <!-- ajax -->
-                </tbody>
-
-            </table>
+            <div class="table-responsive">
+                <table id="userSystemTable" class="table table-bordered table-hover table-condensed" style="margin-bottom:0;font-size:13px; width:100%">
+                    <thead class="crew-header">
+                        <tr style="background:#000099; color:#fff;">
+                            <th style="width:5%;text-align:center;">No</th>
+                            <th>Username <span class="filter-icon">☰</span></th>
+                            <th>Full Name <span class="filter-icon">☰</span></th>
+                            <th>Password</th>
+                            <th>User Jenis <span class="filter-icon">☰</span></th>
+                            <th>User Init <span class="filter-icon">☰</span></th>
+                            <th style="width:10%;text-align:center;">Action</th>
+                        </tr>
+                       </thead>
+                    <thead>
+                        <tr style="background:#f1f4f7;">
+                            <th></th>
+                            <th><input type="text" class="column-search" placeholder="Search..."></th>
+                            <th><input type="text" class="column-search" placeholder="Search..."></th>
+                            <th></th>
+                            <th><input type="text" class="column-search" placeholder="Search..."></th>
+                            <th><input type="text" class="column-search" placeholder="Search..."></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- DataTables -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -396,12 +490,15 @@ function delData(id, type) {
                     display:block;
                 ">User Jenis</label>
 
-                <input type="text" id="txtuserjenis" placeholder="User Jenis" class="form-control input-sm" style="
+                <select id="txtuserjenis" class="form-control input-sm" style="
                         padding:12px 14px;
                         border-radius:12px;
                         border:1px solid #cbd5e1;
                         font-size:13px;
+                        height: 45px;
                     ">
+                    <option value="">-- Pilih User Jenis --</option>
+                </select>
             </div>
 
             <!-- INIT -->
