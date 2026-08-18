@@ -16,8 +16,8 @@ class IntroductionReport extends CI_Controller {
     public function view()
     {
         $data['optTax'] = $this->datacontext->getTaxByOption();
-        $data['title'] = 'Introduction Report';
-        $data['active_menu'] = 'introduction_report';
+        $data['title'] = 'Instruction Report';
+        $data['active_menu'] = 'instruction_letter';
         $this->load->view('layout/header', $data);
         $this->load->view('Report/IntroductionReport/view_introduction_report', $data);
         $this->load->view('layout/footer');
@@ -176,7 +176,8 @@ class IntroductionReport extends CI_Controller {
         }
 
         $batchID = 'BATCH-' . date('YmdHis') . '-' . rand(100, 999);
-        $date_created = isset($post['date_created']) ? $post['date_created'] : date('Y-m-d');
+        $raw_date = isset($post['date_created']) ? $post['date_created'] : '';
+        $date_created = $raw_date ? date('Y-m-d', strtotime($raw_date)) : date('Y-m-d');
         $company = isset($post['company']) ? $post['company'] : '';
         $vessel = isset($post['vessel']) ? $post['vessel'] : '';
         $port = isset($post['port']) ? $post['port'] : '';
@@ -255,6 +256,31 @@ class IntroductionReport extends CI_Controller {
         echo json_encode(array('success' => true, 'message' => 'Data berhasil dihapus'));
     }
 
+    public function get_detail_report_introduction()
+    {
+        $batchID = $this->input->post('batchID', true);
+        if (empty($batchID)) {
+            echo json_encode(array('success' => false, 'message' => 'Batch ID tidak ditemukan'));
+            return;
+        }
+
+        $sql = "
+            SELECT r.* 
+            FROM report_introduction r
+            JOIN batch_report_introduction b ON r.id = b.id_report_introduction
+            WHERE b.batchID = ? AND r.deletes = '0'
+            ORDER BY r.id ASC
+        ";
+        $reports = $this->db->query($sql, array($batchID))->result();
+
+        if (empty($reports)) {
+            echo json_encode(array('success' => false, 'message' => 'Data tidak ditemukan'));
+            return;
+        }
+
+        echo json_encode(array('success' => true, 'data' => $reports));
+    }
+
     public function generatePDF_Introduction($batchID = '')
     {
         if (empty($batchID)) {
@@ -274,6 +300,12 @@ class IntroductionReport extends CI_Controller {
         if (empty($reports)) {
             echo "Data Introduction tidak ditemukan";
             return;
+        }
+
+        foreach ($reports as $r) {
+            if (!empty($r->release_others)) {
+                $r->release_others = $this->datacontext->getTaxStatusById($r->release_others);
+            }
         }
 
         $data['reports'] = $reports;
