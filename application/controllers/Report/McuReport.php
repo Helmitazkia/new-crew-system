@@ -893,6 +893,7 @@ class McuReport extends CI_Controller {
         $link  = base_url("Report/McuReport/print_approve_mcu/$idEnc");
 
         $cmEmail = "Eva.marliana@andhika.com";
+       // $cmEmail = "ahmad.maulana@andhika.com";
         $ccEmail = array("muhamad.fikri@andhika.com", "helmi.tazkia@andhika.com");
         $this->_sendEmailMCU($cmEmail, $header, $persons, $link, $ccEmail);
     }
@@ -909,10 +910,10 @@ class McuReport extends CI_Controller {
             if (!empty($cc)) {
                 if (is_array($cc)) {
                     foreach ($cc as $c) {
-                        $mail->addCC($c);
+                        $mail->addAddress($c);
                     }
                 } else {
-                    $mail->addCC($cc);
+                    $mail->addAddress($cc);
                 }
             }
             $mail->isHTML(true);

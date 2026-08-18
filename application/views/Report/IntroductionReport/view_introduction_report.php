@@ -85,7 +85,7 @@
             </tr>
             <tr>
               <td></td>
-              <td>: <span class="entitas-fill"></span></td>
+              <td>: <span class="entitas-fill" contenteditable="true" style="border-bottom: 1px dashed #999; min-width: 150px; display: inline-block; outline: none;"></span></td>
             </tr>
           </table>
 
@@ -97,7 +97,7 @@
           <table style="width:100%; margin-top:20px; font-size:13px;">
             <tr>
               <td style="width:110px;">Kepada (To)</td>
-              <td>: Master <span class="kapal-fill"></span></td>
+              <td>: Master <span class="kapal-fill" contenteditable="true" style="border-bottom: 1px dashed #999; min-width: 150px; display: inline-block; outline: none;"></span></td>
             </tr>
             <tr>
               <td>Untuk (For)</td>
@@ -162,16 +162,16 @@
 
           <div style="margin-top:18px; font-size:13px; line-height:1.5;">
             3. Selesai pelaksanaan sign off, agar off signer menghadapi Direksi
-            <span class="entitas-fill"></span>
+            <span class="entitas-fill" contenteditable="true" style="border-bottom: 1px dashed #999; min-width: 150px; display: inline-block; outline: none;"></span>
             Cq. Manager Personalia Laut untuk menerima instruksi selanjutnya.<br>
 
             <i>After completing the contract, off signer must report to
-              <span class="entitas-fill"></span>
+              <span class="entitas-fill" contenteditable="true" style="border-bottom: 1px dashed #999; min-width: 150px; display: inline-block; outline: none;"></span>
               Director Cq. Marine Personal Division Manager to receive next instruction.
             </i><br><br>
 
-            4. Pelaksanaan Sign On/Off di pelabuhan: <span class="port-fill"></span><br>
-            <i>The Signing On/Off at: <span class="port-fill"></span></i><br><br>
+            4. Pelaksanaan Sign On/Off di pelabuhan: <span class="port-fill" contenteditable="true" style="border-bottom: 1px dashed #999; min-width: 100px; display: inline-block; outline: none;"></span><br>
+            <i>The Signing On/Off at: <span class="port-fill" contenteditable="true" style="border-bottom: 1px dashed #999; min-width: 100px; display: inline-block; outline: none;"></span></i><br><br>
 
             5. Apabila terdapat kekeliruan dikemudian hari, akan diadakan pembetulan seperlunya.<br>
             <i>If found any mistake in the future, it will be corrected.</i><br><br>
@@ -187,7 +187,7 @@
             </div>
             <div style="text-align:right;">
               Jakarta, <span class="tanggal-fill"><?php echo date('d M Y'); ?></span><br>
-              <span class="entitas-fill"></span>
+              <span class="entitas-fill" contenteditable="true" style="border-bottom: 1px dashed #999; min-width: 150px; display: inline-block; outline: none;"></span>
             </div>
           </div>
 
@@ -284,6 +284,26 @@ $(document).ready(function() {
         calculateTotal();
     });
 
+    $(document).on('input', '.entitas-fill', function() {
+        var val = $(this).text();
+        $('.entitas-fill').not(this).text(val);
+        $('#hid_entitas').val(val);
+    });
+    $(document).on('input', '.kapal-fill', function() {
+        var val = $(this).text();
+        $('.kapal-fill').not(this).text(val);
+        $('#hid_vessel').val(val);
+    });
+    $(document).on('input', '.port-fill', function() {
+        var val = $(this).text();
+        $('.port-fill').not(this).text(val);
+        $('#hid_port').val(val);
+    });
+    $(document).on('input', '.tanggal-fill', function() {
+        var val = $(this).text();
+        $('#hid_tanggal').val(val);
+    });
+
     var introTable = $('#introTable').DataTable({
         processing: true,
         serverSide: false,
@@ -313,7 +333,7 @@ $(document).ready(function() {
                     var detailJson = encodeURIComponent(JSON.stringify(data));
                     return '<div class="btn-group btn-group-sm" role="group">' +
                         '<button type="button" class="btn btn-outline-primary btn-detail-intro" title="Detail" data-batch="' + data.batchID + '">' +
-                            '<i class="fa fa-print"></i>' +
+                            '<i class="fa fa-eye"></i>' +
                         '</button>' +
                         '<button type="button" class="btn btn-outline-danger btn-delete-intro" title="Delete" data-batch="' + data.batchID + '">' +
                             '<i class="fa fa-trash"></i>' +
@@ -332,6 +352,15 @@ $(document).ready(function() {
                     });
                 }
             });
+        },
+        language: {
+            lengthMenu: '_MENU_ &nbsp;Entries',
+            info: 'Showing _START_ to _END_ of _TOTAL_ entries',
+            infoEmpty: 'Showing 0 to 0 of 0 entries',
+            infoFiltered: '(filtered from _MAX_ total entries)',
+            search: 'Search:',
+            emptyTable: 'Tidak ada data Introduction',
+            zeroRecords: 'Data tidak ditemukan'
         }
     });
 
@@ -407,9 +436,14 @@ $(document).ready(function() {
         $('.entitas-fill').text('');
         $('.kapal-fill').text('');
         $('.port-fill').text('');
+        $('.tanggal-fill').text('<?php echo date('d M Y'); ?>');
+        $('#hid_tanggal').val('<?php echo date('Y-m-d'); ?>');
         
         $('#btnSaveAndPrintIntroduction').removeClass('d-none');
         $('#btnPrintModal').addClass('d-none');
+        
+        $('#btnReleaseAdd').show();
+        $('#btnSuccessorAdd').show();
 
         // Add 1 default row for each
         $('#btnReleaseAdd').click();
@@ -484,9 +518,114 @@ $(document).ready(function() {
         calculateTotal();
     });
 
+    var currentPrintBatchID = '';
+
     $('#introTable').on('click', '.btn-detail-intro', function() {
         var batchID = $(this).data('batch');
-        window.open(BASE_URL + '/generatePDF_Introduction/' + batchID, '_blank');
+        currentPrintBatchID = batchID;
+        
+        $.ajax({
+            url: BASE_URL + '/get_detail_report_introduction',
+            type: 'POST',
+            data: { batchID: batchID },
+            dataType: 'json',
+            success: function(res) {
+                if (res.success && res.data.length > 0) {
+                    var first = res.data[0];
+                    $('.entitas-fill').text(first.company);
+                    $('.kapal-fill').text(first.vessel);
+                    $('.port-fill').text(first.port);
+                    
+                    if (first.date_created) {
+                        var dateObj = new Date(first.date_created);
+                        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                        var dateStr = ("0" + dateObj.getDate()).slice(-2) + ' ' + months[dateObj.getMonth()] + ' ' + dateObj.getFullYear();
+                        $('.tanggal-fill').text(dateStr);
+                    }
+                    
+                    $('#hid_entitas').val(first.company);
+                    $('#hid_vessel').val(first.vessel);
+                    $('#hid_port').val(first.port);
+                    $('#hid_tanggal').val(first.date_created);
+
+                    $('#releaseTable tbody').empty();
+                    $('#successorTable tbody').empty();
+
+                    res.data.forEach(function(row) {
+                        if (row.release_name) {
+                            var tr = `
+                                <tr class="release-row">
+                                  <td style="padding:0; border:1px solid #000; vertical-align:middle; width:35%;">
+                                    <input type="text" class="form-control" value="${row.release_name}" style="border:none; height:36px; text-align:center;" readonly>
+                                  </td>
+                                  <td style="padding:0; border:1px solid #000; vertical-align:middle; width:20%;">
+                                    <input type="text" class="form-control input-rank" value="${row.release_rank}" style="border:none; height:36px; text-align:center;" readonly>
+                                  </td>
+                                  <td style="padding:0; border:1px solid:#000; vertical-align:middle; width:20%;">
+                                    <input type="text" class="form-control" value="${row.release_reason}" style="border:none; height:36px; text-align:center;" readonly>
+                                  </td>
+                                  <td style="padding:0; border:1px solid:#000; vertical-align:middle; width:20%;">
+                                    <select class="form-select form-select-sm sel-tax" style="border:none; height:36px; text-align:center;" disabled>
+                                        <option value="" disabled selected>-- Select --</option>
+                                        ${optTaxOptions}
+                                    </select>
+                                  </td>
+                                  <td style="padding:0; border:1px solid #000; vertical-align:middle;"></td>
+                                </tr>
+                            `;
+                            var $tr = $(tr);
+                            $tr.find('.sel-tax').val(row.release_others);
+                            $('#releaseTable tbody').append($tr);
+                        }
+                        
+                        if (row.successor_name) {
+                            var bs = formatRupiah(row.successor_bs ? row.successor_bs.toString() : "0");
+                            var ot = formatRupiah(row.successor_ot ? row.successor_ot.toString() : "0");
+                            var lp = formatRupiah(row.successor_leavepay ? row.successor_leavepay.toString() : "0");
+                            var tr = `
+                                <tr class="successor-row">
+                                  <td style="padding:0; border:1px solid #000; width:35%;">
+                                    <input type="text" class="form-control" value="${row.successor_name}" style="border:none; height:36px; text-align:center;" readonly>
+                                  </td>
+                                  <td style="padding:0; border:1px solid #000; width:20%;">
+                                    <input type="text" class="form-control input-rank" value="${row.successor_rank}" style="border:none; height:36px; text-align:center;" readonly>
+                                  </td>
+                                  <td style="padding:0; border:1px solid #000;">
+                                    <input type="text" class="form-control input-bs" value="${bs}" style="border:none; height:36px; text-align:right;" readonly>
+                                  </td>
+                                  <td style="padding:0; border:1px solid #000;">
+                                    <input type="text" class="form-control input-ot" value="${ot}" style="border:none; height:36px; text-align:right;" readonly>
+                                  </td>
+                                  <td style="padding:0; border:1px solid #000;">
+                                    <input type="text" class="form-control input-lp" value="${lp}" style="border:none; height:36px; text-align:right;" readonly>
+                                  </td>
+                                  <td style="padding:0; border:1px solid #000; vertical-align:middle;"></td>
+                                </tr>
+                            `;
+                            $('#successorTable tbody').append(tr);
+                        }
+                    });
+
+                    calculateTotal();
+
+                    $('#btnSaveAndPrintIntroduction').addClass('d-none');
+                    $('#btnPrintModal').removeClass('d-none');
+                    
+                    $('#btnReleaseAdd').hide();
+                    $('#btnSuccessorAdd').hide();
+
+                    $('#introModal').modal('show');
+                } else {
+                    alert('Data tidak ditemukan');
+                }
+            }
+        });
+    });
+
+    $('#btnPrintModal').on('click', function() {
+        if (currentPrintBatchID) {
+            window.open(BASE_URL + '/generatePDF_Introduction/' + currentPrintBatchID, '_blank');
+        }
     });
 
     $('#introTable').on('click', '.btn-delete-intro', function() {
