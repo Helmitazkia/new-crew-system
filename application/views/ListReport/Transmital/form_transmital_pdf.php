@@ -60,7 +60,7 @@
           <tr>
             <td style="border: 1px solid black; font-weight: bold; text-align: left;">Date</td>
             <td style="border: 1px solid black; text-align: left;">
-              <?php echo isset($date_transmital) ? htmlspecialchars($date_transmital) : date('d/m/Y'); ?>
+              <?php echo isset($date_transmital) ? htmlspecialchars(date("d M Y", strtotime($date_transmital))) : date('d/m/Y'); ?>
             </td>
           </tr>
         </table>

@@ -186,7 +186,7 @@ class Transmital extends CI_Controller {
 		$dataOut['crewName'] = $record->crew_name;
 		$dataOut['crewRank'] = $record->rank;
 		$dataOut['vesselName'] = $record->vessel;
-        $dataOut['date_transmital'] = date('d/m/Y', strtotime($record->date_transmital));
+        $dataOut['date_transmital'] = $record->date_transmital;
 		
         $certs = json_decode($record->cert_data, true);
         
@@ -200,33 +200,33 @@ class Transmital extends CI_Controller {
                 if (strpos($cert['idcertdoc'], 'other_') !== false) {
                     $hasOther = true;
                     $otherCertTable .= '<tr>';
-                    $otherCertTable .= '<td class="cert-name" style="text-align: left;">' . htmlspecialchars($cert['certname']) . '</td>';
+                    $otherCertTable .= '<td class="cert-name" style="text-align: left; padding: 3px 3px;">' . htmlspecialchars($cert['certname']) . '</td>';
                     $check = ($cert['submitted'] == '1') ? '&#10003;' : ''; // Checkmark if 1
-                    $otherCertTable .= '<td style="text-align: center;">' . $check . '</td>';
+                    $otherCertTable .= '<td style="text-align: center; padding: 3px 3px;">' . $check . '</td>';
                     
                     $issDate = (!empty($cert['issdate']) && $cert['issdate'] !== '0000-00-00') ? date('d M Y', strtotime($cert['issdate'])) : 'N/A';
-                    $otherCertTable .= '<td style="text-align: center;">' . $issDate . '</td>';
+                    $otherCertTable .= '<td style="text-align: center; padding: 3px 3px;">' . $issDate . '</td>';
                     
                     $expDate = (!empty($cert['expdate']) && $cert['expdate'] !== '0000-00-00') ? date('d M Y', strtotime($cert['expdate'])) : 'Unlimited';
-                    $otherCertTable .= '<td style="text-align: center;">' . $expDate . '</td>';
+                    $otherCertTable .= '<td style="text-align: center; padding: 3px 3px;">' . $expDate . '</td>';
                     
-                    $otherCertTable .= '<td class="document-number" style="text-align: left;">' . htmlspecialchars($cert['docno']) . '</td>';
-                    $otherCertTable .= '<td class="remarks" style="text-align: left;">' . htmlspecialchars($cert['remarks']) . '</td>';
+                    $otherCertTable .= '<td class="document-number" style="text-align: left; padding: 3px 3px;">' . htmlspecialchars($cert['docno']) . '</td>';
+                    $otherCertTable .= '<td class="remarks" style="text-align: left; padding: 3px 3px;">' . htmlspecialchars($cert['remarks']) . '</td>';
                     $otherCertTable .= '</tr>';
                 } else {
                     $certTable .= '<tr>';
-                    $certTable .= '<td class="cert-name" style="text-align: left;">' . htmlspecialchars($cert['certname']) . '</td>';
+                    $certTable .= '<td class="cert-name" style="text-align: left; padding: 3px 3px;">' . htmlspecialchars($cert['certname']) . '</td>';
                     $check = ($cert['submitted'] == '1') ? '&#10003;' : ''; // Checkmark if 1
-                    $certTable .= '<td style="text-align: center;">' . $check . '</td>';
+                    $certTable .= '<td style="text-align: center; padding: 3px 3px;">' . $check . '</td>';
                     
                     $issDate = (!empty($cert['issdate']) && $cert['issdate'] !== '0000-00-00') ? date('d M Y', strtotime($cert['issdate'])) : 'N/A';
-                    $certTable .= '<td style="text-align: center;">' . $issDate . '</td>';
+                    $certTable .= '<td style="text-align: center; padding: 3px 3px;">' . $issDate . '</td>';
                     
                     $expDate = (!empty($cert['expdate']) && $cert['expdate'] !== '0000-00-00') ? date('d M Y', strtotime($cert['expdate'])) : 'Unlimited';
-                    $certTable .= '<td style="text-align: center;">' . $expDate . '</td>';
+                    $certTable .= '<td style="text-align: center; padding: 3px 3px;">' . $expDate . '</td>';
                     
-                    $certTable .= '<td class="document-number" style="text-align: left;">' . htmlspecialchars($cert['docno']) . '</td>';
-                    $certTable .= '<td class="remarks" style="text-align: left;">' . htmlspecialchars($cert['remarks']) . '</td>';
+                    $certTable .= '<td class="document-number" style="text-align: left; padding: 3px 3px;">' . htmlspecialchars($cert['docno']) . '</td>';
+                    $certTable .= '<td class="remarks" style="text-align: left; padding:3px 3px;">' . htmlspecialchars($cert['remarks']) . '</td>';
                     $certTable .= '</tr>';
                 }
 			}

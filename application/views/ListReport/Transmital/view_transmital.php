@@ -346,9 +346,19 @@ $(document).ready(function() {
             '<td><input type="date" class="form-control form-control-sm" name="other_cert_issdate[' + otherIdx + ']"></td>' +
             '<td><input type="date" class="form-control form-control-sm" name="other_cert_expdate[' + otherIdx + ']"></td>' +
             '<td><input type="text" class="form-control form-control-sm" name="other_cert_docno[' + otherIdx + ']" placeholder="Doc No"></td>' +
-            '<td><input type="text" class="form-control form-control-sm" name="other_cert_remarks[' + otherIdx + ']" placeholder="Remarks"></td>' +
+            '<td>' +
+                '<div class="input-group input-group-sm">' +
+                    '<input type="text" class="form-control" name="other_cert_remarks[' + otherIdx + ']" placeholder="Remarks">' +
+                    '<button class="btn btn-outline-danger btn-remove-other-cert" type="button" title="Remove"><i class="fa fa-times"></i></button>' +
+                '</div>' +
+            '</td>' +
         '</tr>';
         $('#tableCertificates tbody').append(tr);
+    });
+
+    // Remove Other Certificate row
+    $('#tableCertificates').on('click', '.btn-remove-other-cert', function() {
+        $(this).closest('tr').remove();
     });
 
     $('#btnSubmitTransmital').on('click', function() {
