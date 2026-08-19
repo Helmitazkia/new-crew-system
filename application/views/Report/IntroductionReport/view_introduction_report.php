@@ -456,7 +456,7 @@ $(document).ready(function() {
         var tr = `
             <tr class="release-row">
               <td style="padding:0; border:1px solid #000; vertical-align:middle; width:35%;">
-                <select class="form-control select2-crew-row" required></select>
+                <select name="release_idperson[]" class="form-control select2-crew-row" required></select>
                 <input type="hidden" name="release_name[]" class="hidden-name" required>
               </td>
               <td style="padding:0; border:1px solid #000; vertical-align:middle; width:20%;">
@@ -489,7 +489,7 @@ $(document).ready(function() {
         var tr = `
             <tr class="successor-row">
               <td style="padding:0; border:1px solid #000; width:35%;">
-                <select class="form-control select2-crew-row" required></select>
+                <select name="successor_idperson[]" class="form-control select2-crew-row" required></select>
                 <input type="hidden" name="successor_name[]" class="hidden-name" required>
               </td>
               <td style="padding:0; border:1px solid #000; width:20%;">

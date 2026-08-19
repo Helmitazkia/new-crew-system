@@ -142,7 +142,8 @@ $(document).ready(function() {
     'pkl': '<?php echo base_url("ListReport/Pkl/view"); ?>',
     'seafarer': '<?php echo base_url("ListReport/SuntechoPKL/view"); ?>',
     'familiarizationcrew': '<?php echo base_url("ListReport/Familiarization/view"); ?>',
-    'briefingcheck': '<?php echo base_url("ListReport/Briefing/view"); ?>'
+    'briefingcheck': '<?php echo base_url("ListReport/Briefing/view"); ?>',
+    'transmital': '<?php echo base_url("ListReport/Transmital/view"); ?>'
   };
 
   // ================================
@@ -213,25 +214,6 @@ $(document).ready(function() {
     e.preventDefault();
 
     var reportType = $(this).data('report');
-
-    // Untuk Transmital, langsung open tab baru untuk export PDF
-    if (reportType === 'transmital') {
-      var idperson = $('#contentArea').data('idperson');
-      if (idperson) {
-        window.open('<?php echo base_url("ListReport/Transmital/transmital"); ?>' + '/' + idperson, '_blank');
-      } else {
-        if (typeof Swal !== 'undefined') {
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'ID Person tidak ditemukan!'
-          });
-        } else {
-          alert('ID Person tidak ditemukan!');
-        }
-      }
-      return; // Stop eksekusi agar tidak melakukan AJAX load dan tidak mengubah style tab aktif
-    }
 
     // Remove active styling from all tabs
     $('.sidebar-report .nav-link')

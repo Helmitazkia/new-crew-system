@@ -191,7 +191,12 @@ class IntroductionReport extends CI_Controller {
         $this->db->trans_start();
 
         for ($i = 0; $i < $max_rows; $i++) {
+            $release_idperson = isset($post['release_idperson'][$i]) ? $post['release_idperson'][$i] : null;
+            $successor_idperson = isset($post['successor_idperson'][$i]) ? $post['successor_idperson'][$i] : null;
+            $idperson = !empty($release_idperson) ? $release_idperson : (!empty($successor_idperson) ? $successor_idperson : null);
+
             $data = array(
+                'idperson'              => $idperson,
                 'company'               => $company,
                 'vessel'                => $vessel,
                 'port'                  => $port,
@@ -219,7 +224,7 @@ class IntroductionReport extends CI_Controller {
             if ($idReport) {
                 $batchData = array(
                     'batchID' => $batchID,
-                    'idperson' => null, 
+                    'idperson' => $idperson, 
                     'id_report_introduction' => $idReport
                 );
                 $this->db->insert('batch_report_introduction', $batchData);
