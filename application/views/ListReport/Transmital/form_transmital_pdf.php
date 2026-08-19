@@ -7,22 +7,31 @@
 </head>
 
 <body style="font-family: Arial, sans-serif; font-size: 12px;">
-  <table style="width: 100%; border-collapse: collapse;">
-    <tr>
-      <td><img src="./assets/img/Logo_Andhika_2017.jpg" style="width: 50px;"></td>
-      <td style="font-size: 18px; font-weight: bold; text-align: left;">
-        ANDHIKA GROUP<br>
-        <span style="font-size: 12px; font-weight: normal;">
-          (PT. ANDHINI EKA SEJAHTERA, PT. ANDHIKA LINES, PT. ADNYANA)
-        </span>
-      </td>
-      <td style="text-align: right; font-size: 8px;">SRPS LICENSE NO: SIUPPAK 12.12 Tahun 2014</td>
-      <td><img src="./assets/img/iso.png" style="width: 50px;"></td>
-      <td><img src="./assets/img/compliance.png" style="width: 50px;">
-      </td>
-    </tr>
 
+ <table style="width:100%; border-collapse:collapse;">
+      <tr>
+          <td style="width:90px; vertical-align:top;">
+              <img src="./assets/img/Logo_Andhika_2017.jpg" style="width:80px;">
+          </td>
+
+          <td style="text-align:left; vertical-align:middle;">
+              <div style="font-size:15px; font-weight:bold; margin-top:3px;">
+                   PT. ANDHINI EKA KARYA SEJAHTERA
+              </div>
+          </td>
+            <td style="width:170px; text-align:right; vertical-align:top;">
+            <div style="font-size:11px; font-weight:bold;">SRPS LICENSE NO:</div>
+            <div style="font-size:10px;">SIUPPAK 12.12 Tahun 2014</div>
+
+            <div style="margin-top:5px;">
+              <img src="./assets/img/compliance.png" style="width:60px; margin-right:3px;">
+              <img src="./assets/img/Iso.png" style="width:60px;">
+            </div>
+        </td>
+      </tr>
   </table>
+
+
   <table style="width: 100%;">
     <tr>
       <td style="width: 50%; font-size: 12px; font-weight: bold; margin-right: 2px;">
@@ -48,6 +57,12 @@
               <?php echo htmlspecialchars($vesselName); ?>
             </td>
           </tr>
+          <tr>
+            <td style="border: 1px solid black; font-weight: bold; text-align: left;">Date</td>
+            <td style="border: 1px solid black; text-align: left;">
+              <?php echo isset($date_transmital) ? htmlspecialchars($date_transmital) : date('d/m/Y'); ?>
+            </td>
+          </tr>
         </table>
       </td>
     </tr>
@@ -60,11 +75,12 @@
   </p>
   <table style="width: 100%; border-collapse: collapse; text-align: center;">
     <tr>
-      <th style="padding: 5px; background-color: #f2f2f2; text-align: left; width: 30%;">Certificates</th>
-      <th style="padding: 5px; background-color: #f2f2f2;">Submitted</th>
-      <th style="padding: 5px; background-color: #f2f2f2;">Issued</th>
-      <th style="padding: 5px; background-color: #f2f2f2;">Expire</th>
-      <th style="padding: 5px; background-color: #f2f2f2; text-align: left; width: 30%;">Document Number</th>
+      <th style="padding: 5px; background-color: #f2f2f2; text-align: left; width: 25%;">Certificates</th>
+      <th style="padding: 5px; background-color: #f2f2f2; width: 10%;">Submitted</th>
+      <th style="padding: 5px; background-color: #f2f2f2; width: 12%;">Issued</th>
+      <th style="padding: 5px; background-color: #f2f2f2; width: 12%;">Expire</th>
+      <th style="padding: 5px; background-color: #f2f2f2; text-align: left; width: 21%;">Document Number</th>
+      <th style="padding: 5px; background-color: #f2f2f2; text-align: left; width: 20%;">Remarks</th>
     </tr>
     <?php echo $certTable; ?>
   </table>
