@@ -59,6 +59,7 @@
                     </div>
                 </div>
                 <form id="formAddTransmital">
+                    <input type="hidden" name="id_transmital" id="transmital_id">
                     <input type="hidden" name="idperson" id="transmital_idperson">
                     
                     <!-- Section: Person Data -->
@@ -224,6 +225,9 @@ $(document).ready(function() {
                         '<button type="button" class="btn btn-outline-primary btn-print-transmital" title="Print/View PDF" data-id="' + data.id_transmital + '">' +
                             '<i class="fa fa-print"></i>' +
                         '</button>' +
+                        '<button type="button" class="btn btn-outline-warning btn-edit-transmital" title="Edit" data-id="' + data.id_transmital + '">' +
+                            '<i class="fa fa-edit"></i>' +
+                        '</button>' +
                         '<button type="button" class="btn btn-outline-danger btn-delete-transmital" title="Delete" data-id="' + data.id_transmital + '">' +
                             '<i class="fa fa-trash"></i>' +
                         '</button>' +
@@ -270,6 +274,8 @@ $(document).ready(function() {
     $('#btnGlobalAddTransmital').on('click', function() {
         $('#formAddTransmital')[0].reset();
         $('#transmital_idperson').val(idperson);
+        $('#transmital_id').val('');
+        $('#modalAddTransmitalTitle').html('<i class="fa fa-plus-circle me-2"></i>Tambah Data Transmital');
         $('#tableCertificates tbody').empty();
         
         // Set today as default date
@@ -336,6 +342,104 @@ $(document).ready(function() {
         });
     });
     
+    // ================================
+    // EDIT TRANSMITAL
+    // ================================
+    $('#transmitalTable').on('click', '.btn-edit-transmital', function() {
+        var id = $(this).data('id');
+        $('#formAddTransmital')[0].reset();
+        $('#transmital_idperson').val(idperson);
+        $('#transmital_id').val(id);
+        $('#tableCertificates tbody').empty();
+        
+        $('#modalAddTransmitalTitle').html('<i class="fa fa-edit me-2"></i>Edit Data Transmital');
+        $('#modalAddTransmitalOverlay').removeClass('d-none');
+        $('#modalAddTransmital').modal('show');
+
+        $.ajax({
+            url: BASE_URL_TRANSMITAL + '/get_transmital_by_id',
+            type: 'POST',
+            data: { id: id },
+            dataType: 'json',
+            success: function(res) {
+                $('#modalAddTransmitalOverlay').addClass('d-none');
+                if (res.success && res.data) {
+                    var data = res.data;
+                    $('#transmital_fullname').val(data.crew_name);
+                    $('#transmital_nmrank').val(data.rank);
+                    $('#transmital_nmvsl').val(data.vessel);
+                    $('#transmital_date').val(data.date_transmital);
+                    
+                    var certs = [];
+                    if (data.cert_data) {
+                        try {
+                            certs = JSON.parse(data.cert_data);
+                        } catch(e) {}
+                    }
+                    
+                    var tbody = $('#tableCertificates tbody');
+                    if (certs && certs.length > 0) {
+                        $.each(certs, function(i, cert) {
+                            var isOther = String(cert.idcertdoc).indexOf('other_') !== -1;
+                            var isChecked = cert.submitted == '1' ? 'checked' : '';
+                            
+                            if (isOther) {
+                                otherIdx++;
+                                var tr = '<tr>' +
+                                    '<td><input type="text" class="form-control form-control-sm" name="other_cert_name[' + otherIdx + ']" value="' + cert.certname + '" placeholder="Cert Name"></td>' +
+                                    '<td class="text-center"><input type="checkbox" class="form-check-input" name="other_cert_submitted[' + otherIdx + ']" value="1" ' + isChecked + '></td>' +
+                                    '<td><input type="date" class="form-control form-control-sm" name="other_cert_issdate[' + otherIdx + ']" value="' + cert.issdate + '"></td>' +
+                                    '<td><input type="date" class="form-control form-control-sm" name="other_cert_expdate[' + otherIdx + ']" value="' + cert.expdate + '"></td>' +
+                                    '<td><input type="text" class="form-control form-control-sm" name="other_cert_docno[' + otherIdx + ']" value="' + cert.docno + '" placeholder="Doc No"></td>' +
+                                    '<td>' +
+                                        '<div class="input-group input-group-sm">' +
+                                            '<input type="text" class="form-control" name="other_cert_remarks[' + otherIdx + ']" value="' + cert.remarks + '" placeholder="Remarks">' +
+                                            '<button class="btn btn-outline-danger btn-remove-other-cert" type="button" title="Remove"><i class="fa fa-times"></i></button>' +
+                                        '</div>' +
+                                    '</td>' +
+                                '</tr>';
+                                tbody.append(tr);
+                            } else {
+                                var tr = '<tr>' +
+                                    '<td class="fw-bold">' + 
+                                        cert.certname + 
+                                        '<input type="hidden" name="cert_id[]" value="' + cert.idcertdoc + '">' +
+                                        '<input type="hidden" name="cert_name[]" value="' + cert.certname + '">' +
+                                    '</td>' +
+                                    '<td class="text-center">' +
+                                        '<input type="checkbox" class="form-check-input" name="cert_submitted[' + cert.idcertdoc + ']" value="1" ' + isChecked + '>' +
+                                    '</td>' +
+                                    '<td class="text-center">' + 
+                                        ((cert.issdate && cert.issdate !== '0000-00-00') ? cert.issdate : 'N/A') + 
+                                        '<input type="hidden" name="cert_issdate[]" value="' + cert.issdate + '">' +
+                                    '</td>' +
+                                    '<td class="text-center">' + 
+                                        ((cert.expdate && cert.expdate !== '0000-00-00') ? cert.expdate : 'Unlimited') + 
+                                        '<input type="hidden" name="cert_expdate[]" value="' + cert.expdate + '">' +
+                                    '</td>' +
+                                    '<td>' + 
+                                        cert.docno + 
+                                        '<input type="hidden" name="cert_docno[]" value="' + cert.docno + '">' +
+                                    '</td>' +
+                                    '<td><input type="text" class="form-control form-control-sm" name="cert_remarks[' + cert.idcertdoc + ']" value="' + cert.remarks + '"></td>' +
+                                '</tr>';
+                                tbody.append(tr);
+                            }
+                        });
+                    } else {
+                        tbody.append('<tr><td colspan="6" class="text-center text-muted">Belum ada sertifikat di database.</td></tr>');
+                    }
+                } else {
+                    transmitalNotify('error', 'Gagal mengambil data.');
+                }
+            },
+            error: function() {
+                $('#modalAddTransmitalOverlay').addClass('d-none');
+                transmitalNotify('error', 'Terjadi kesalahan sistem.');
+            }
+        });
+    });
+
     // Add Other Certificate dynamically
     var otherIdx = 0;
     $('#btnAddOtherCert').on('click', function() {
