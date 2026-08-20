@@ -78,8 +78,24 @@ class Transmital extends CI_Controller {
         ));
     }
 
+    public function get_transmital_by_id()
+    {
+        $id = $this->input->post('id');
+        $id_esc = $this->db->escape($id);
+        
+        $sql = "SELECT * FROM tblhistorytransmital WHERE id_transmital = $id_esc";
+        $data = $this->MCrewscv->getDataQuery($sql);
+        
+        if ($data) {
+            echo json_encode(array('success' => true, 'data' => $data[0]));
+        } else {
+            echo json_encode(array('success' => false, 'message' => 'Data tidak ditemukan.'));
+        }
+    }
+
     public function save_transmital()
     {
+        $id_transmital = $this->input->post('id_transmital');
         $idperson = $this->input->post('idperson');
         $crew_name = $this->input->post('fullname');
         $rank = $this->input->post('nmrank');
@@ -140,14 +156,21 @@ class Transmital extends CI_Controller {
             'rank' => $rank,
             'vessel' => $vessel,
             'date_transmital' => date('Y-m-d', strtotime(str_replace('/', '-', $date_transmital))),
-            'cert_data' => json_encode($cert_data),
-            'created_at' => date('Y-m-d H:i:s')
+            'cert_data' => json_encode($cert_data)
         );
 
-        $insert = $this->db->insert('tblhistorytransmital', $data);
+        if (!empty($id_transmital)) {
+            $this->db->where('id_transmital', $id_transmital);
+            $result = $this->db->update('tblhistorytransmital', $data);
+            $msg = 'Data Transmital berhasil diupdate.';
+        } else {
+            $data['created_at'] = date('Y-m-d H:i:s');
+            $result = $this->db->insert('tblhistorytransmital', $data);
+            $msg = 'Data Transmital berhasil disimpan.';
+        }
 
-        if ($insert) {
-            echo json_encode(array('success' => true, 'message' => 'Data Transmital berhasil disimpan.'));
+        if ($result) {
+            echo json_encode(array('success' => true, 'message' => $msg));
         } else {
             echo json_encode(array('success' => false, 'message' => 'Gagal menyimpan data.'));
         }
