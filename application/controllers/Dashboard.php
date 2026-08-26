@@ -145,4 +145,148 @@ class Dashboard extends CI_Controller {
             )
         ));
     }
+
+    public function get_crew_rotation_stats()
+    {
+        $vessel = $this->input->post('vessel', true);
+        $status_filter = $this->input->post('status', true);
+        $date_start = $this->input->post('date_start', true);
+        $date_end = $this->input->post('date_end', true);
+
+        // Build Where Clause
+        $whereClause = " R.deletests = '0' ";
+        
+        if (!empty($vessel)) {
+            $whereClause .= " AND R.next_vessel = " . $this->db->escape($vessel);
+        }
+        
+        $sql = "SELECT R.BatchID, R.idcrewrotation, R.status, R.status_crew_change, R.replacement_idperson, R.addusrdt, 
+                       NXVSL.nmvsl AS next_vessel_name
+                FROM tblcrewrotation R
+                LEFT JOIN mstvessel NXVSL ON NXVSL.kdvsl = R.next_vessel AND NXVSL.deletests = '0'
+                WHERE $whereClause";
+
+        $data = $this->db->query($sql)->result();
+        
+        $total_plans = 0;
+        $planned_ready = 0;
+        $joined = 0;
+        $signoff_cancel = 0;
+        
+        $batches = array();
+        $trend_map = array();
+        $vessel_map = array();
+        $status_map = array(
+            'Planned' => 0,
+            'Joined' => 0,
+            'Sign Off' => 0,
+            'Cancel' => 0
+        );
+
+        foreach ($data as $row) {
+            // Parse Date
+            $created_date_raw = '';
+            if (!empty($row->addusrdt)) {
+                $parts = explode('/', $row->addusrdt);
+                if (isset($parts[1]) && strlen($parts[1]) >= 8) {
+                    $year = substr($parts[1], 0, 4);
+                    $month = substr($parts[1], 4, 2);
+                    $day = substr($parts[1], 6, 2);
+                    $created_date_raw = "$year-$month-$day";
+                }
+            }
+            
+            // Filter by Date
+            if (!empty($date_start) && !empty($date_end) && !empty($created_date_raw)) {
+                if ($created_date_raw < $date_start || $created_date_raw > $date_end) {
+                    continue; 
+                }
+            }
+
+            // Determine display status logic
+            $displayStatus = $row->status;
+            if ($row->status === "Submit") {
+                $displayStatus = "Planned";
+            } else if ($row->status === "Cancel") {
+                $displayStatus = "Cancel";
+            } else if ($row->status === "Joined" && $row->status_crew_change === 'Down') {
+                $displayStatus = "Sign Off";
+            } else if ($row->status === "Joined") {
+                $displayStatus = "Joined";
+            } else {
+                $displayStatus = $row->status;
+            }
+            
+            if (empty($displayStatus)) $displayStatus = "Planned"; // Default fallback
+
+            // Filter by Status
+            if (!empty($status_filter) && $displayStatus !== $status_filter) {
+                continue;
+            }
+
+            $total_plans++;
+            if (!empty($row->BatchID)) {
+                $batches[$row->BatchID] = true;
+            } else {
+                $batches['id_'.$row->idcrewrotation] = true;
+            }
+
+            if ($displayStatus === 'Planned') {
+                $planned_ready++;
+            } else if ($displayStatus === 'Joined') {
+                $joined++;
+            } else if ($displayStatus === 'Sign Off' || $displayStatus === 'Cancel') {
+                $signoff_cancel++;
+            }
+
+            if (isset($status_map[$displayStatus])) {
+                $status_map[$displayStatus]++;
+            } else {
+                // If it happens to be another status
+                $status_map[$displayStatus] = 1;
+            }
+
+            // Trend
+            if (!empty($created_date_raw)) {
+                $month_str = date('M Y', strtotime($created_date_raw . '-01'));
+                if (!isset($trend_map[$month_str])) $trend_map[$month_str] = 0;
+                $trend_map[$month_str]++;
+            }
+
+            // Vessel
+            $v_name = !empty($row->next_vessel_name) ? $row->next_vessel_name : 'Unknown';
+            if (!isset($vessel_map[$v_name])) $vessel_map[$v_name] = 0;
+            $vessel_map[$v_name]++;
+        }
+
+        // Sort data
+        arsort($vessel_map);
+
+        $response = array(
+            'success' => true,
+            'summary' => array(
+                'total_plans' => $total_plans,
+                'total_batches' => count($batches),
+                'planned_ready' => $planned_ready,
+                'joined' => $joined,
+                'signoff_cancel' => $signoff_cancel
+            ),
+            'charts' => array(
+                'trend' => array(
+                    'labels' => array_keys($trend_map),
+                    'data' => array_values($trend_map)
+                ),
+                'status' => array(
+                    'labels' => array_keys($status_map),
+                    'data' => array_values($status_map)
+                ),
+                'vessel' => array(
+                    'labels' => array_keys($vessel_map),
+                    'data' => array_values($vessel_map)
+                )
+            )
+        );
+
+        echo json_encode($response);
+    }
 }
