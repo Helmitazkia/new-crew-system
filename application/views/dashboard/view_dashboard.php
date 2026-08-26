@@ -1,9 +1,9 @@
 <div class="container-fluid py-4" style="font-family: 'Inter', 'Segoe UI', sans-serif;">
     <div class="row">
         <div class="col-xl-6 col-lg-6">
-            <h4 class="fw-bold mb-4" style="color: #1e293b;">
+            <!-- <h4 class="fw-bold mb-4" style="color: #1e293b;">
                 <i class="fa fa-dashboard me-2 text-primary"></i> Dashboard System
-            </h4>
+            </h4> -->
 
             <!-- ============================================================
          SECTION 1: FAMILIARIZATION MODULE
@@ -29,7 +29,7 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label fw-bold text-muted small"><i class="fa fa-ship me-1"></i> Vessel</label>
-                        <select class="form-select form-select-sm border-0 bg-light" id="fam_vessel_filter">
+                        <select class="form-control selectpicker border-0 bg-light" data-live-search="true" data-size="6" id="fam_vessel_filter">
                             <option value="">Semua Vessel</option>
                             <?php if(isset($vessels)) { 
                                 foreach($vessels as $v) { ?>
