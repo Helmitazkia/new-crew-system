@@ -224,7 +224,8 @@ class Transmital extends CI_Controller {
                     $hasOther = true;
                     $otherCertTable .= '<tr>';
                     $otherCertTable .= '<td class="cert-name" style="text-align: left; padding: 3px 3px;">' . htmlspecialchars($cert['certname']) . '</td>';
-                    $check = ($cert['submitted'] == '1') ? '&#10003;' : ''; // Checkmark if 1
+                    //$check = ($cert['submitted'] == '1') ? '&#10003;' : ''; // Checkmark if 1
+                    $check = ($cert['submitted'] == '1') ? 'Yes' : 'No'; // Checkmark if 1
                     $otherCertTable .= '<td style="text-align: center; padding: 3px 3px;">' . $check . '</td>';
                     
                     $issDate = (!empty($cert['issdate']) && $cert['issdate'] !== '0000-00-00') ? date('d M Y', strtotime($cert['issdate'])) : 'N/A';
@@ -239,7 +240,8 @@ class Transmital extends CI_Controller {
                 } else {
                     $certTable .= '<tr>';
                     $certTable .= '<td class="cert-name" style="text-align: left; padding: 3px 3px;">' . htmlspecialchars($cert['certname']) . '</td>';
-                    $check = ($cert['submitted'] == '1') ? '&#10003;' : ''; // Checkmark if 1
+                   // $check = ($cert['submitted'] == '1') ? '&#10003;' : ''; // Checkmark if 1
+                    $check = ($cert['submitted'] == '1') ? 'Yes' : 'No'; // Checkmark if 1
                     $certTable .= '<td style="text-align: center; padding: 3px 3px;">' . $check . '</td>';
                     
                     $issDate = (!empty($cert['issdate']) && $cert['issdate'] !== '0000-00-00') ? date('d M Y', strtotime($cert['issdate'])) : 'N/A';

@@ -414,6 +414,7 @@
     </style>
 
     <!-- HERO BANNER SLIDESHOW -->
+    <?php if (!isset($active_menu) || $active_menu !== 'dashboard'): ?>
     <section class="hero-banner position-relative mb-4">
         <div class="hero-slideshow">
             <img src="<?php echo base_url('assets/img/banner/andhika-1.jpg'); ?>" class="hero-slide">
@@ -423,6 +424,7 @@
         <div class="hero-overlay"></div>
         <span class="copyright" style="font-weight: bold;font-size: 15px;">&copy; 2026 Andhika Group</span>
     </section>
+    <?php endif; ?>
 
     <style>
     .hero-banner {
