@@ -289,4 +289,89 @@ class Dashboard extends CI_Controller {
 
         echo json_encode($response);
     }
+
+    public function get_active_roster_stats()
+    {
+        $sql = "
+            SELECT
+                A.idperson,
+                A.inBlacklist,
+                A.inAktif,
+                A.newapplicent,
+                C.signoffdt,
+                C.estsignoffdt
+            FROM mstpersonal A
+            LEFT JOIN (
+                SELECT t1.idperson, t1.signoffdt, t1.estsignoffdt
+                FROM tblcontract t1
+                WHERE t1.deletests = 0
+                AND t1.idcontract = (
+                    SELECT MAX(t2.idcontract)
+                    FROM tblcontract t2
+                    WHERE t2.idperson = t1.idperson
+                    AND t2.deletests = 0
+                )
+            ) C ON A.idperson = C.idperson 
+                AND (A.inAktif = '0' OR A.inAktif IS NULL)
+                AND (A.inBlacklist = '0' OR A.inBlacklist IS NULL)
+            WHERE A.deletests = '0'
+            AND (A.fname != '' OR A.mname != '' OR A.lname != '')
+            GROUP BY A.idperson
+        ";
+        
+        $rows = $this->db->query($sql)->result_array();
+        
+        $stats = array(
+            'On board' => 0,
+            'Stand By' => 0,
+            'New Applicant' => 0,
+            'Non Aktif' => 0,
+            'Not For Emp' => 0
+        );
+
+        foreach ($rows as $row) {
+            $data = null;
+            if (isset($row['inBlacklist']) && $row['inBlacklist'] == '1') {
+                $data = 'Not For Emp';
+            } elseif (isset($row['newapplicent']) && $row['newapplicent'] == '1') {
+                $data = 'New Applicant';
+            } elseif (isset($row['inAktif']) && $row['inAktif'] == '1') {
+                $data = 'Non Aktif';
+            }
+
+            $signoff = isset($row['signoffdt']) ? $row['signoffdt'] : '';
+            $estSignoff = isset($row['estsignoffdt']) ? $row['estsignoffdt'] : '';
+            
+            $signoffValid = ($signoff !== '' && $signoff !== null && $signoff !== '0000-00-00');
+            $estSignoffValid = ($estSignoff !== '' && $estSignoff !== null && $estSignoff !== '0000-00-00');
+
+            if ($data === null || $data === '') {
+                if ($signoffValid && $estSignoffValid) {
+                    $data = 'Stand By';
+                } elseif ($signoff == '' || $signoff == '0000-00-00') {
+                    $data = 'On board';
+                }
+            }
+
+            $displayStatus = $data;
+            $signoffTruthy = ($signoff !== '' && $signoff !== null); 
+            $estSignoffTruthy = ($estSignoff !== '' && $estSignoff !== null);
+            
+            if ($data === 'On board' || $data === 'Stand By' || $data === null || $data === '' || $signoffTruthy || $estSignoffTruthy) {
+                if ($signoffValid && $estSignoffValid) {
+                    $displayStatus = 'Stand By';
+                } elseif (!$signoffTruthy || $signoff === '0000-00-00' || $signoff === '') {
+                    $displayStatus = 'On board';
+                }
+            }
+
+            if ($displayStatus && isset($stats[$displayStatus])) {
+                $stats[$displayStatus]++;
+            }
+        }
+
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode(array('success' => true, 'data' => $stats)));
+    }
 }

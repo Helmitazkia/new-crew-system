@@ -70,6 +70,7 @@ class FamiliarReport extends CI_Controller {
                 COALESCE(batch_id, id) as group_id,
                 MAX(date_created) as date_created,
                 MAX(note) as note,
+                GROUP_CONCAT(DISTINCT vessel SEPARATOR ', ') as vessel,
                 COUNT(id) as total_crew,
                 MAX(item_1) as item_1, MAX(item_2) as item_2, MAX(item_3) as item_3, MAX(item_4) as item_4,
                 MAX(item_5) as item_5, MAX(item_6) as item_6, MAX(item_7) as item_7, MAX(item_8) as item_8,

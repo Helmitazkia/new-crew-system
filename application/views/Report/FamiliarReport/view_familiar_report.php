@@ -15,10 +15,11 @@
                 <thead class="crew-header">
                     <tr>
                         <th class="text-center" style="width:50px;">No</th>
-                        <th class="text-center">Date Request</th>
-                        <th class="text-center">Note</th>
-                        <th class="text-center" style="width:110px;">Total Crew</th>
-                        <th class="text-center" style="width:100px;">Status</th>
+                        <th class="text-center">Date Request <span class="filter-icon">☰</span></th>
+                        <th class="text-center">Vessel <span class="filter-icon">☰</span></th>
+                        <th class="text-center">Note <span class="filter-icon">☰</span></th>
+                        <th class="text-center" style="width:110px;">Total Crew <span class="filter-icon">☰</span></th>
+                        <th class="text-center" style="width:100px;">Status <span class="filter-icon">☰</span></th>
                         <th class="text-center" style="width:220px;">Action</th>
                     </tr>
                 </thead>
@@ -29,6 +30,13 @@
                         <th><input type="text" class="column-search" placeholder="Search"></th>
                         <th><input type="text" class="column-search" placeholder="Search"></th>
                         <th><input type="text" class="column-search" placeholder="Search"></th>
+                        <th>
+                            <select class="column-search">
+                                <option value="">All</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Pending">Pending</option>
+                            </select>
+                        </th>
                         <th></th>
                     </tr>
                 </thead>
@@ -371,6 +379,31 @@
 .crew-header th { background-color: #000099 !important; color: #fff !important; }
 .column-search { width: 100%; padding: 4px; border: 1px solid #ced4da; border-radius: 4px; font-size: 11px; }
 
+/* Filter Dropdown Styling */
+.filter-icon { font-size: 14px; margin-left: 5px; cursor: pointer; color: #aac4ff; }
+.filter-icon:hover { color: #fff; }
+.filter-dropdown {
+    position: absolute; background: #fff; border: 1px solid #ccc;
+    padding: 8px; width: 200px; max-height: 260px; overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,.2); display: none; z-index: 9999;
+}
+.filter-dropdown input[type="text"] {
+    width: 100%; margin-bottom: 6px; padding: 4px; font-size: 12px;
+    border: 1px solid #dee2e6; border-radius: 4px;
+}
+.filter-dropdown label {
+    display: block; font-size: 13px; cursor: pointer;
+    padding: 4px 8px; margin: 2px 0; border-radius: 4px;
+}
+.filter-dropdown label:hover { background: #f8f9fa; }
+.filter-list { max-height: 120px; overflow-y: auto; margin-bottom: 6px; }
+.btn-clear-filter {
+    background: transparent; border: 1.5px solid #000099;
+    color: #000099; transition: all .2s ease;
+}
+.btn-clear-filter:hover { background: #000099; color: #fff; }
+.btn-clear-filter i { font-size: 14px; }
+
 /* Select2 Customization */
 .select2-container .select2-selection--single {
     height: 36px !important;
@@ -424,6 +457,13 @@ $(document).ready(function () {
                 }
             },
             {
+                data: 'vessel',
+                className: 'text-center',
+                render: function (data) {
+                    return data ? data : '-';
+                }
+            },
+            {
                 data: 'note',
                 render: function (data) {
                     return data ? data : '-';
@@ -469,18 +509,20 @@ $(document).ready(function () {
         ],
         initComplete: function () {
             var api = this.api();
-            // Cari input di baris kedua header
-            $('#familiarTable thead tr:eq(1) th').each(function (i) {
-                var input = $(this).find('.column-search');
-                if (input.length) {
-                    input.on('keyup change clear', function () {
-                        var column = api.column(i);
-                        if (column.search() !== this.value) {
-                            column.search(this.value).draw();
-                        }
-                    });
-                }
+            
+            // Standard column search input event
+            $('#familiarTable thead tr:eq(1) .column-search').each(function (i) {
+                $(this).on('keyup change clear', function () {
+                    var column = api.column(i + 1); // Skip 'No' column (index 0) if inputs start at index 1
+                    // But actually, we have an empty <th> for No. So index matches column index directly.
+                    if (column.search() !== this.value) {
+                        column.search(this.value).draw();
+                    }
+                });
             });
+
+            // Initialize Dropdown Filters
+            initDropdownFilters(api);
         },
         language: {
             lengthMenu: '_MENU_ &nbsp;Entries',
@@ -798,39 +840,29 @@ $(document).ready(function () {
 
                         var tr = '<tr>' +
                             '<td><strong>' + link.department + '</strong></td>' +
-                            '<td class="text-center">' + statusBadge + '</td>' +
-                            '<td><input type="text" class="form-control form-control-sm link-url-input" value="' + link.url + '" readonly style="font-size:11px;"></td>' +
-                            '<td class="text-center"><button type="button" class="btn btn-sm btn-outline-primary btn-copy-link" data-url="' + link.url + '" title="Copy Link"><i class="fa fa-copy"></i></button></td>' +
+                            '<td>' + statusBadge + '</td>' +
+                            '<td><input type="text" class="form-control form-control-sm bg-light" value="' + link.url + '" readonly></td>' +
+                            '<td class="text-center">' +
+                            '<button type="button" class="btn btn-sm btn-outline-secondary btn-copy-link" data-url="' + link.url + '" title="Copy Link">' +
+                            '<i class="fa fa-copy"></i>' +
+                            '</button>' +
+                            '</td>' +
                             '</tr>';
                         $('#tblShareLinks tbody').append(tr);
                     });
+                    $('#modalShareLinks').modal('show');
                 } else {
-                    $('#tblShareLinks tbody').html('<tr><td colspan="4" class="text-center text-muted">Tidak ada link</td></tr>');
+                    famNotify('error', res.message || 'Gagal generate link');
                 }
-                $('#modalShareLinks').modal('show');
             }
         });
     }
 
-    // Copy link button
-    $(document).on('click', '.btn-copy-link', function () {
+    $('#tblShareLinks').on('click', '.btn-copy-link', function () {
         var url = $(this).data('url');
-        var btn = $(this);
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(url).then(function () {
-                btn.html('<i class="fa fa-check text-success"></i>');
-                setTimeout(function () { btn.html('<i class="fa fa-copy"></i>'); }, 2000);
-            });
-        } else {
-            // Fallback
-            var tempInput = $('<input>');
-            $('body').append(tempInput);
-            tempInput.val(url).select();
-            document.execCommand('copy');
-            tempInput.remove();
-            btn.html('<i class="fa fa-check text-success"></i>');
-            setTimeout(function () { btn.html('<i class="fa fa-copy"></i>'); }, 2000);
-        }
+        navigator.clipboard.writeText(url).then(function () {
+            famNotify('success', 'Link berhasil disalin!');
+        });
     });
 
     // ============================================================
@@ -840,7 +872,7 @@ $(document).ready(function () {
         var batchId = $(this).data('id');
         $('#tblAuditTrail tbody').empty();
         $('#auditEmptyMsg').hide();
-        $('#modalAuditTrailLabel').html('<i class="fa fa-history me-2"></i>Audit Trail (Batch: ' + batchId + ')');
+        $('#modalAuditTrailLabel').html('<i class="fa fa-history me-2"></i>Audit Trail - Checklist (Batch: ' + batchId + ')');
 
         $.ajax({
             url: BASE_URL_FAM_REP + '/get_checklist_audit',
@@ -848,25 +880,30 @@ $(document).ready(function () {
             data: { batch_id: batchId },
             dataType: 'json',
             success: function (res) {
-                if (res.success && res.data.length > 0) {
-                    $.each(res.data, function (i, a) {
-                        var valueBadge = (a.item_value == 1)
-                            ? '<span class="badge bg-success">Yes</span>'
-                            : '<span class="badge bg-danger">No</span>';
-                        var tr = '<tr>' +
-                            '<td>' + a.item_name + '</td>' +
-                            '<td>' + a.topic + '</td>' +
-                            '<td>' + a.department + '</td>' +
-                            '<td class="text-center">' + valueBadge + '</td>' +
-                            '<td>' + a.filled_by_name + '</td>' +
-                            '<td>' + a.filled_at_fmt + '</td>' +
-                            '</tr>';
-                        $('#tblAuditTrail tbody').append(tr);
-                    });
+                if (res.success) {
+                    if (res.data.length > 0) {
+                        $.each(res.data, function (i, row) {
+                            var valHtml = row.item_value == 1
+                                ? '<span class="text-success fw-bold">✓ Yes</span>'
+                                : '<span class="text-danger fw-bold">✗ No</span>';
+                            
+                            var tr = '<tr>' +
+                                '<td class="fw-bold text-muted">' + row.item_name.toUpperCase() + '</td>' +
+                                '<td>' + row.topic + '</td>' +
+                                '<td><span class="badge bg-info text-dark">' + row.department + '</span></td>' +
+                                '<td class="text-center">' + valHtml + '</td>' +
+                                '<td>' + (row.filled_by_name || '-') + '</td>' +
+                                '<td>' + row.filled_at_fmt + '</td>' +
+                                '</tr>';
+                            $('#tblAuditTrail tbody').append(tr);
+                        });
+                    } else {
+                        $('#auditEmptyMsg').show();
+                    }
+                    $('#modalAuditTrail').modal('show');
                 } else {
-                    $('#auditEmptyMsg').show();
+                    famNotify('error', res.message);
                 }
-                $('#modalAuditTrail').modal('show');
             }
         });
     });
@@ -886,6 +923,92 @@ $(document).ready(function () {
         $('body').append(form);
         form.submit();
         form.remove();
+    });
+
+    // ============================================================
+    //  13. DROPDOWN FILTERS
+    // ============================================================
+    function initDropdownFilters(api) {
+        $('#familiarTable thead th').each(function (colIndex) {
+            var icon = $(this).find('.filter-icon');
+            if (!icon.length) return;
+            if (colIndex === 0 || colIndex === 6) return; // skip No & Action
+
+            var dropdown = $('<div class="filter-dropdown">'
+                + '<input type="text" class="filter-search" placeholder="Search...">'
+                + '<div class="filter-list"></div>'
+                + '<hr>'
+                + '<div class="d-flex gap-2 text-center">'
+                + '<button class="btn btn-sm w-30 rounded-pill fst-italic btn-clear-filter" id="clear-filter">'
+                + '<i class="fa fa-eraser"></i>'
+                + '</button>'
+                + '</div>'
+                + '</div>').appendTo('body');
+
+            var listContainer = dropdown.find('.filter-list');
+
+            // Isi pilihan unik dari kolom
+            try {
+                var colData = api.column(colIndex).data();
+                if (colData && typeof colData.unique === 'function') {
+                    var uniqueVals = [];
+                    colData.unique().each(function (val) {
+                        if (val && val !== '-' && val !== '') {
+                            var tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = val;
+                            var text = tempDiv.textContent || tempDiv.innerText || '';
+                            if (text && !uniqueVals.includes(text)) uniqueVals.push(text);
+                        }
+                    });
+                    uniqueVals.sort().forEach(function (val) {
+                        var safeVal = String(val).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                        listContainer.append('<label><input type="checkbox" value="'+ safeVal +'"> '+ safeVal +'</label>');
+                    });
+                }
+            } catch(e) { console.warn('Filter error col '+ colIndex, e); }
+
+            // Toggle dropdown
+            icon.on('click', function (e) {
+                e.stopPropagation();
+                $('.filter-dropdown').hide();
+                var off = icon.offset();
+                dropdown.css({ top: off.top + icon.outerHeight(), left: off.left }).toggle();
+            });
+
+            // Search dalam dropdown
+            dropdown.find('.filter-search').on('keyup', function () {
+                var kw = $(this).val().toLowerCase();
+                listContainer.find('label').each(function () {
+                    $(this).toggle($(this).text().toLowerCase().includes(kw));
+                });
+            });
+
+            // Checkbox change
+            dropdown.on('change', 'input[type="checkbox"]', function () {
+                var selected = [];
+                dropdown.find('input[type="checkbox"]:checked').each(function () { selected.push($(this).val()); });
+                if (selected.length > 0) {
+                    var regex = selected.map(function(v){ return v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|');
+                    api.column(colIndex).search(regex, true, false).draw();
+                } else {
+                    api.column(colIndex).search('').draw();
+                }
+                dropdown.hide();
+            });
+
+            // Clear
+            dropdown.on('click', '.btn-clear-filter', function () {
+                dropdown.find('input').prop('checked', false);
+                dropdown.find('.filter-search').val('');
+                listContainer.find('label').show();
+                api.column(colIndex).search('').draw();
+                dropdown.hide();
+            });
+        });
+    }
+
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('.filter-dropdown').length) $('.filter-dropdown').hide();
     });
 
 });

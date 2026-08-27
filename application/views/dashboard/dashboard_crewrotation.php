@@ -1,5 +1,5 @@
 <div class="row mb-4">
-    <div class="col-10">
+    <div class="col-xl-10 col-lg-10">
         <!-- <h4 class="fw-bold mb-4" style="color: #1e293b;">
             <i class="fa fa-dashboard me-2 text-primary"></i> Dashboard System
         </h4> -->
@@ -110,7 +110,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- Charts -->
                     <div class="row">
                         <div class="col-lg-5 mb-4">
@@ -145,6 +144,44 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-2 col-lg-2 d-flex flex-column">
+        <div class="card shadow-sm border-0 mb-4 rounded-4 flex-grow-1">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-2 d-flex justify-content-between align-items-center rounded-top-4">
+                <h6 class="fw-bold m-0" style="color: #334155;">
+                    <i class="fa fa-address-book me-1" style="color: #8b5cf6;"></i> Active Roster
+                </h6>
+                <button class="btn btn-sm btn-light border-0 shadow-sm" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseActiveRoster" aria-expanded="true">
+                    <i class="fa fa-chevron-down"></i>
+                </button>
+            </div>
+            <div id="collapseActiveRoster" class="collapse show" style="flex: 1;">
+                <div class="card-body p-3 bg-light rounded-bottom-4 d-flex flex-column gap-2" style="height: 100%;">
+                <div class="p-3 bg-white rounded-3 shadow-sm border-start border-4 border-success flex-fill d-flex flex-column justify-content-center">
+                    <div class="text-xs fw-bold text-muted text-uppercase mb-1" style="font-size: 0.75rem;">On Board</div>
+                    <div class="h4 mb-0 fw-bold text-dark" id="roster_onboard">0</div>
+                </div>
+                <div class="p-3 bg-white rounded-3 shadow-sm border-start border-4 border-warning flex-fill d-flex flex-column justify-content-center">
+                    <div class="text-xs fw-bold text-muted text-uppercase mb-1" style="font-size: 0.75rem;">Stand By</div>
+                    <div class="h4 mb-0 fw-bold text-dark" id="roster_standby">0</div>
+                </div>
+                <div class="p-3 bg-white rounded-3 shadow-sm border-start border-4 border-primary flex-fill d-flex flex-column justify-content-center">
+                    <div class="text-xs fw-bold text-muted text-uppercase mb-1" style="font-size: 0.75rem;">New Applicant</div>
+                    <div class="h4 mb-0 fw-bold text-dark" id="roster_new_applicant">0</div>
+                </div>
+                <div class="p-3 bg-white rounded-3 shadow-sm border-start border-4 border-secondary flex-fill d-flex flex-column justify-content-center">
+                    <div class="text-xs fw-bold text-muted text-uppercase mb-1" style="font-size: 0.75rem;">Non Aktif</div>
+                    <div class="h4 mb-0 fw-bold text-dark" id="roster_non_aktif">0</div>
+                </div>
+                <div class="p-3 bg-white rounded-3 shadow-sm border-start border-4 border-danger flex-fill d-flex flex-column justify-content-center">
+                    <div class="text-xs fw-bold text-muted text-uppercase mb-1" style="font-size: 0.75rem;">Not For Emp</div>
+                    <div class="h4 mb-0 fw-bold text-dark" id="roster_not_for_emp">0</div>
+                </div>
+            </div>
             </div>
         </div>
     </div>
@@ -388,6 +425,27 @@ $(document).ready(function () {
         loadRotationData();
     });
 
+    function loadActiveRosterStats() {
+        $.ajax({
+            url: BASE_URL_DASHBOARD + '/get_active_roster_stats',
+            type: 'GET',
+            dataType: 'json',
+            success: function (res) {
+                if (res.success) {
+                    animateValue("roster_onboard", parseInt($('#roster_onboard').text()), res.data['On board'] || 0, 500);
+                    animateValue("roster_standby", parseInt($('#roster_standby').text()), res.data['Stand By'] || 0, 500);
+                    animateValue("roster_new_applicant", parseInt($('#roster_new_applicant').text()), res.data['New Applicant'] || 0, 500);
+                    animateValue("roster_non_aktif", parseInt($('#roster_non_aktif').text()), res.data['Non Aktif'] || 0, 500);
+                    animateValue("roster_not_for_emp", parseInt($('#roster_not_for_emp').text()), res.data['Not For Emp'] || 0, 500);
+                }
+            },
+            error: function () {
+                console.error("Gagal memuat data Active Roster Stats.");
+            }
+        });
+    }
+
     loadRotationData();
+    loadActiveRosterStats();
 });
 </script>

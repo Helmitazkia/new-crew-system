@@ -7,7 +7,7 @@
             <div
                 class="card-header bg-white border-bottom-0 pt-4 pb-2 d-flex justify-content-between align-items-center rounded-top-4">
                 <h5 class="fw-bold m-0" style="color: #334155;">
-                    <i class="fa fa-file-text-o me-2" style="color: #3b82f6;"></i> Familiarization Overview
+                    <i class="fa fa-universal-access me-2" style="color: #3b82f6;"></i> Familiarization Overview
                 </h5>
                 <button class="btn btn-sm btn-light border-0 shadow-sm" type="button" data-bs-toggle="collapse"
                     data-bs-target="#collapseFamiliarization" aria-expanded="true"
@@ -61,7 +61,7 @@
                                             <div class="h3 mb-0 fw-bold" style="color: #0f172a;"
                                                 id="kpi_fam_batches">0</div>
                                         </div>
-                                        <div class="fs-1" style="color: #e2e8f0;"><i class="fa fa-files-o"></i>
+                                        <div class="fs-1" style="color: #000099;"><i class="fa fa-balance-scale"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -80,7 +80,7 @@
                                             <div class="h3 mb-0 fw-bold" style="color: #0f172a;" id="kpi_fam_crew">0
                                             </div>
                                         </div>
-                                        <div class="fs-1" style="color: #e2e8f0;"><i class="fa fa-users"></i></div>
+                                        <div class="fs-1" style="color: #000099;"><i class="fa fa-user-secret"></i></div>
                                     </div>
                                 </div>
                                 <div class="card-footer bg-info border-0 rounded-bottom-4 p-1"
@@ -98,7 +98,7 @@
                                             <div class="h3 mb-0 fw-bold" style="color: #0f172a;"
                                                 id="kpi_fam_completed">0</div>
                                         </div>
-                                        <div class="fs-1" style="color: #e2e8f0;"><i class="fa fa-check-circle"></i>
+                                        <div class="fs-1" style="color: #000099;"><i class="fa fa-check-circle"></i>
                                         </div>
                                     </div>
                                 </div>
