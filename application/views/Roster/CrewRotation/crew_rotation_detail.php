@@ -394,9 +394,14 @@
 
     if (status === 'On board' || isCurrentOffSigner) {
       optionsPersonOnBoard.push(opt);
-    } else {
-      optionsPersonStandBy.push(opt);
     }
+    //Validasi hanya replacment StandBy
+    // else{
+    //   optionsPersonStandBy.push(opt);
+    // }
+
+    // Masukkan semua crew ke optionsPersonStandBy (yang digunakan untuk dropdown replacement)
+    optionsPersonStandBy.push(opt);
   });
   var standByIds = {};
   optionsPersonStandBy.forEach(function(o) { standByIds[o.value] = true; });

@@ -214,3 +214,6 @@ $route['hakAkses/updatePermission']     = 'MenuRole/HakAkses/updatePermission';
 $route['ActiveRoster'] = 'ActiveRoster/ActiveRoster';
 $route['CrewRotation'] = 'CrewRotation/CrewRotation';
 $route['MasterPersonal'] = 'MasterPersonal/MasterPersonal';
+
+
+$route['dashboard'] = 'Dashboard/view';

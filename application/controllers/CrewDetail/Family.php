@@ -272,6 +272,8 @@ public function getChildData() {
 // Method untuk delete child
 public function deleteChild() {
     $idfm = $this->input->post('idfm');
+    $idperson = $this->input->post('idperson');
+    $fmfname = $this->input->post('fmfname');
     
     if (!$idfm) {
         echo json_encode(array(
@@ -290,6 +292,16 @@ public function deleteChild() {
     );
     
     $this->db->where('idfm', $idfm);
+    
+    // Tambahan safety: karena di data lama (legacy) ada kemungkinan idfm kembar/identik dengan idperson
+    if (!empty($idperson)) {
+        $this->db->where('idperson', $idperson);
+    }
+    if (!empty($fmfname)) {
+        $this->db->where('fmfname', $fmfname);
+    }
+    $this->db->where('fmrel', 'CHILD'); // Pastikan hanya delete anak
+    
     $this->db->update('tblfamily', $data);
     
     if ($this->db->affected_rows() > 0) {
