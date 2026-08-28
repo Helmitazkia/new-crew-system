@@ -108,7 +108,7 @@ class ActiveRoster extends CI_Controller {
                 $statusPerson = 'Not For Emp';
             } elseif (isset($row['inAktif']) && $row['inAktif'] == '1' && isset($row['inBlacklist']) && $row['inBlacklist'] == '0') {
                 $statusPerson = 'Non Aktif';
-            } elseif (isset($row['newapplicent']) && $row['newapplicent'] == '1' && isset($row['kota_deletests']) && $row['kota_deletests'] == '0') {
+            } elseif (isset($row['newapplicent']) && $row['newapplicent'] == '1') {
                 $statusPerson = 'Pickup';
             } elseif (isset($row['signoffdt']) && $row['signoffdt'] !== '' && $row['signoffdt'] !== null && $row['signoffdt'] !== '0000-00-00' && $row['signoffdt'] <= $today) {
                 // Stand By: signoffdt ada value dan sudah lewat hari ini → pakai signoffdt_formatted

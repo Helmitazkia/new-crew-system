@@ -427,7 +427,8 @@ $(document).ready(function() {
   $(document).on('click', '.btn-delete-child', function() {
     var childId = $(this).data('id');
     var childName = $(this).data('name');
-    deleteChild(childId, childName);
+    var childFname = $(this).data('fname');
+    deleteChild(childId, childName, childFname);
   });
 
 
@@ -503,17 +504,21 @@ $(document).ready(function() {
 
 
   // Delete child
-  function deleteChild(idfm, childName) {
+  function deleteChild(idfm, childName, childFname) {
     if (!confirm('Are you sure you want to delete "' + childName + '"?')) {
       return;
     }
+
+    var idperson = $('#contentArea').data('idperson');
 
     $.ajax({
       url: "<?php echo base_url('CrewDetail/Family/deleteChild'); ?>",
       type: "POST",
       dataType: "json",
       data: {
-        idfm: idfm
+        idfm: idfm,
+        idperson: idperson,
+        fmfname: childFname
       },
       success: function(res) {
         if (res.status) {
@@ -625,6 +630,7 @@ function renderChildren(children) {
                 <button class="btn btn-sm btn-outline-danger btn-delete-child" 
                         data-id="${child.idfm}" 
                         data-name="${child.fullName}"
+                        data-fname="${child.firstName}"
                         title="Delete">
                     <i class="fa fa-trash"></i>
                 </button>

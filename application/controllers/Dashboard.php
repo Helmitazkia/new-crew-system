@@ -298,6 +298,7 @@ class Dashboard extends CI_Controller {
                 A.inBlacklist,
                 A.inAktif,
                 A.newapplicent,
+                K.deletests AS kota_deletests,
                 C.signoffdt,
                 C.estsignoffdt
             FROM mstpersonal A
@@ -314,6 +315,7 @@ class Dashboard extends CI_Controller {
             ) C ON A.idperson = C.idperson 
                 AND (A.inAktif = '0' OR A.inAktif IS NULL)
                 AND (A.inBlacklist = '0' OR A.inBlacklist IS NULL)
+            LEFT JOIN tblkota K ON A.pob = K.KdKota
             WHERE A.deletests = '0'
             AND (A.fname != '' OR A.mname != '' OR A.lname != '')
             GROUP BY A.idperson
@@ -329,38 +331,19 @@ class Dashboard extends CI_Controller {
             'Not For Emp' => 0
         );
 
+        $today = date('Y-m-d');
         foreach ($rows as $row) {
-            $data = null;
+            $displayStatus = null;
             if (isset($row['inBlacklist']) && $row['inBlacklist'] == '1') {
-                $data = 'Not For Emp';
-            } elseif (isset($row['newapplicent']) && $row['newapplicent'] == '1') {
-                $data = 'New Applicant';
+                $displayStatus = 'Not For Emp';
             } elseif (isset($row['inAktif']) && $row['inAktif'] == '1') {
-                $data = 'Non Aktif';
-            }
-
-            $signoff = isset($row['signoffdt']) ? $row['signoffdt'] : '';
-            $estSignoff = isset($row['estsignoffdt']) ? $row['estsignoffdt'] : '';
-            
-            $signoffValid = ($signoff !== '' && $signoff !== null && $signoff !== '0000-00-00');
-            $estSignoffValid = ($estSignoff !== '' && $estSignoff !== null && $estSignoff !== '0000-00-00');
-
-            if ($data === null || $data === '') {
-                if ($signoffValid && $estSignoffValid) {
-                    $data = 'Stand By';
-                } elseif ($signoff == '' || $signoff == '0000-00-00') {
-                    $data = 'On board';
-                }
-            }
-
-            $displayStatus = $data;
-            $signoffTruthy = ($signoff !== '' && $signoff !== null); 
-            $estSignoffTruthy = ($estSignoff !== '' && $estSignoff !== null);
-            
-            if ($data === 'On board' || $data === 'Stand By' || $data === null || $data === '' || $signoffTruthy || $estSignoffTruthy) {
-                if ($signoffValid && $estSignoffValid) {
-                    $displayStatus = 'Stand By';
-                } elseif (!$signoffTruthy || $signoff === '0000-00-00' || $signoff === '') {
+                $displayStatus = 'Non Aktif';
+            } elseif (isset($row['newapplicent']) && $row['newapplicent'] == '1') {
+                $displayStatus = 'New Applicant';
+            } elseif (isset($row['signoffdt']) && $row['signoffdt'] !== '' && $row['signoffdt'] !== null && $row['signoffdt'] !== '0000-00-00' && $row['signoffdt'] < $today) {
+                $displayStatus = 'Stand By';
+            } else {
+                if (isset($row['signoffdt']) || isset($row['estsignoffdt'])) {
                     $displayStatus = 'On board';
                 }
             }
