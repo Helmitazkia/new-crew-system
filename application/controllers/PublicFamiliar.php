@@ -229,13 +229,23 @@ class PublicFamiliar extends CI_Controller {
             $qrCol = isset($deptColumnMap[$deptName]) ? $deptColumnMap[$deptName] : '';
 
             if (!empty($qrCol)) {
+                $qrFilename = '';
                 foreach ($crewRows as $crew) {
-                    if (empty($crew->$qrCol)) {
-                        $qrFilename = $this->_generateQRRecord($crew->nama_crew, $filledByName, 'fam_dept_' . strtolower(str_replace(array('/', ' '), '', $deptName)));
-                        if ($qrFilename) {
-                            $this->db->where('id', $crew->id)->update('history_familiarization', array($qrCol => $qrFilename));
-                        }
+                    if (!empty($crew->$qrCol)) {
+                        $qrFilename = $crew->$qrCol;
+                        break;
                     }
+                }
+
+                if (empty($qrFilename)) {
+                    $address_name = 'All Crew - Batch ' . $link->batch_id;
+                    $qrFilename = $this->_generateQRRecord($address_name, $filledByName, 'fam_dept_' . strtolower(str_replace(array('/', ' '), '', $deptName)), $deptName);
+                }
+
+                if ($qrFilename) {
+                    $this->db->where('batch_id', $link->batch_id)
+                             ->where("($qrCol IS NULL OR $qrCol = '')", NULL, FALSE)
+                             ->update('history_familiarization', array($qrCol => $qrFilename));
                 }
             }
 
@@ -351,7 +361,7 @@ class PublicFamiliar extends CI_Controller {
         }
 
         // Generate QR Crew
-        $qrCrew = $this->_generateQRRecord($crew->nama_crew, $crew->nama_crew, 'fam_crew');
+        $qrCrew = $this->_generateQRRecord($crew->nama_crew, $crew->nama_crew, 'fam_crew', "Crew");
         
         if ($qrCrew) {
             $this->db->where('id', $crew->id)
@@ -366,7 +376,7 @@ class PublicFamiliar extends CI_Controller {
     //  PRIVATE UTILITIES
     // ============================================================
 
-    private function _generateQRRecord($address, $createdBy, $prefix)
+    private function _generateQRRecord($address, $createdBy, $prefix, $departement)
     {
         $dateNow = date("Y-m-d");
         $yearNow = date("Y");
@@ -386,7 +396,7 @@ class PublicFamiliar extends CI_Controller {
         $insSql["signedby"]  = $initDivisi;
         $insSql["address"]   = $address;
         $insSql["tglsurat"]  = $dateNow;
-        $insSql["ket"]       = "Familiarization Check List Prior Joining Vessel";
+        $insSql["ket"]       = "Familiarization.".$departement;
         $insSql["copydoc"]   = "0";
         $insSql["canceldoc"] = "0";
         $insSql["createdby"] = $createdBy;
