@@ -1260,7 +1260,6 @@ function submitNotQualifiedLayer1() {
 
         });
 
-
     Swal.fire({
         title: "Confirmation",
         html: `Are you sure you want to mark <b>${name}</b> as 
@@ -1275,8 +1274,8 @@ function submitNotQualifiedLayer1() {
 
         if (!result.isConfirmed) return;
 
-
         $("#idLoadingSpinnerLayer1").fadeIn();
+
 
         $.ajax({
 

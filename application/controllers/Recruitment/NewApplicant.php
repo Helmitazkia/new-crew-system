@@ -271,32 +271,62 @@ class NewApplicant extends CI_Controller {
 		}
 	}
 
-    function getCertificatesByPosition() {
-		$position = $this->input->get('position');
+    function getCertificatesByPosition()
+	{
+		$position = trim($this->input->get('position', true));
 
-		$positionEscaped = $this->db->escape($position);
+		log_message(
+			'error',
+			'GET CERTIFICATE POSITION = [' . $position . ']'
+		);
+
+		header('Content-Type: application/json');
+
+		if ($position == '') {
+			echo json_encode(array());
+			return;
+		}
+
+		$positionNormalized = strtolower(trim($position));
+
+		if (
+			$positionNormalized == 'dozer operator' ||
+			(
+				strpos($positionNormalized, 'dozer') !== false &&
+				strpos($positionNormalized, 'operator') !== false
+			)
+		) {
+			$positionNormalized = 'dozer operator';
+		}
+
+		$positionEscaped = $this->db->escape($positionNormalized);
 
 		$query = "
-			SELECT id, certificate_name
+			SELECT
+				id,
+				certificate_name
 			FROM mstcertificatematrix
-			WHERE rank_name = $positionEscaped ORDER BY certificate_name ASC
+			WHERE LOWER(TRIM(rank_name)) = $positionEscaped
+			ORDER BY certificate_name ASC
 		";
 
 		$result = $this->MCrewscv->getDataQuery($query);
 
-		header('Content-Type: application/json');
 		echo json_encode($result);
 	}
 
     function setNotQualifiedCrewLayer1()
 	{
-		$id = $this->input->post('id');
-		$reasonRaw = $this->input->post('reason'); 
-		$certificatesRaw = $this->input->post('missing_certificates'); 
-		$ranksRaw = $this->input->post('suggested_ranks'); 
+		$id              = $this->input->post('id');
+		$reasonRaw       = $this->input->post('reason');
+		$certificatesRaw = $this->input->post('missing_certificates');
+		$ranksRaw        = $this->input->post('suggested_ranks');
 
 		if (!$id) {
-			echo json_encode(array('status' => 'error', 'message' => 'ID tidak valid'));
+			echo json_encode(array(
+				'status' => 'error',
+				'message' => 'ID tidak valid'
+			));
 			return;
 		}
 
@@ -314,19 +344,35 @@ class NewApplicant extends CI_Controller {
 			$ranksStr = trim((string)$ranksRaw);
 		}
 
-
 		$lines = preg_split("/\r\n|\n|\r/", $reason);
+
 		$manualLines = array();
+		$extractedCerts = null;
+		$extractedRanks = null;
 
 		foreach ($lines as $line) {
 
 			$trim = trim($line);
 			$lower = strtolower($trim);
 
-			if (
-				strpos($lower, 'sertifikat yang belum terpenuhi:') === 0 ||
-				strpos($lower, 'dengan melengkapi sertifikat di atas') === 0
-			) {
+			if (strpos($lower, 'sertifikat yang belum terpenuhi:') === 0) {
+				$cert = trim(substr($trim, strlen('sertifikat yang belum terpenuhi:')));
+				if ($extractedCerts === null) $extractedCerts = $cert;
+				else $extractedCerts .= ", " . $cert;
+				continue;
+			}
+
+			if (strpos($lower, 'dengan melengkapi sertifikat di atas, anda bisa melamar untuk posisi:') === 0) {
+				$rank = trim(substr($trim, strlen('dengan melengkapi sertifikat di atas, anda bisa melamar untuk posisi:')));
+				if ($extractedRanks === null) $extractedRanks = $rank;
+				else $extractedRanks .= ", " . $rank;
+				continue;
+			}
+			
+			if (strpos($lower, 'dengan melengkapi sertifikat di atas') === 0) {
+				$rank = trim(preg_replace('/^dengan melengkapi sertifikat di atas[^\:]*\:?/i', '', $trim));
+				if ($extractedRanks === null) $extractedRanks = $rank;
+				else $extractedRanks .= ", " . $rank;
 				continue;
 			}
 
@@ -336,7 +382,15 @@ class NewApplicant extends CI_Controller {
 		}
 
 		$manualReason = implode("\n", $manualLines);
-
+		
+		if ($extractedCerts !== null) {
+			$certificatesStr = $extractedCerts;
+		}
+		
+		if ($extractedRanks !== null) {
+			$ranksStr = $extractedRanks;
+		}
+		
 		$reasonParts = array();
 
 		if ($manualReason !== '') {
@@ -353,7 +407,6 @@ class NewApplicant extends CI_Controller {
 
 		$reasonFinal = implode("\n", $reasonParts);
 
-
 		$sql = "SELECT email, fullname 
 				FROM new_applicant 
 				WHERE id = '".$id."' 
@@ -362,34 +415,55 @@ class NewApplicant extends CI_Controller {
 		$result = $this->MCrewscv->getDataQuery($sql);
 
 		if (empty($result)) {
-			echo json_encode(array('status' => 'error', 'message' => 'Data tidak ditemukan'));
+			echo json_encode(array(
+				'status' => 'error',
+				'message' => 'Data tidak ditemukan'
+			));
 			return;
 		}
 
 		$applicant = $result[0];
 
-
 		$fullNameUser = $this->session->userdata('userFullNm');
 		$fullNameUser = str_replace("'", "''", $fullNameUser);
+
 		$date = date('Y-m-d H:i:s');
+
+		
+		$autoParts = array();
+		if ($certificatesStr !== '') {
+			$autoParts[] = "Sertifikat yang belum terpenuhi: " . $certificatesStr;
+		}
+		if ($ranksStr !== '') {
+			$autoParts[] = "Dengan melengkapi sertifikat di atas, Anda bisa melamar untuk posisi: " . $ranksStr;
+		}
+		$autoReason = implode("\n", $autoParts);
 
 		$data = array(
 			'st_data' => 3,
-			'reason_not_qualified_layer1' => $reasonFinal,
+			'reason_not_qualified' => $manualReason,
+			'reason_not_qualified_layer1' => $autoReason,
 			'adduserdate_notQualify' => $fullNameUser . "#" . $date,
 		);
 
-		$where = array('id' => $id);
+		$where = array(
+			'id' => $id
+		);
 
-		$this->MCrewscv->updateData($where, $data, 'new_applicant');
+		$this->MCrewscv->updateData(
+			$where,
+			$data,
+			'new_applicant'
+		);
 
 		$this->sendNotQualifiedNotificationLayer1(
 			$applicant->email,
 			$applicant->fullname,
-			$reasonFinal,
+			$manualReason,
 			$certificatesStr,
 			$ranksStr
 		);
+
 
 		echo json_encode(array(
 			'status' => 'success',
