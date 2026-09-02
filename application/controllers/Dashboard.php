@@ -255,12 +255,43 @@ class Dashboard extends CI_Controller {
 
             // Vessel
             $v_name = !empty($row->next_vessel_name) ? $row->next_vessel_name : 'Unknown';
-            if (!isset($vessel_map[$v_name])) $vessel_map[$v_name] = 0;
-            $vessel_map[$v_name]++;
+            if (!isset($vessel_map[$v_name])) {
+                $vessel_map[$v_name] = array(
+                    'total' => 0,
+                    'Planned' => 0,
+                    'Joined' => 0,
+                    'Sign Off' => 0,
+                    'Cancel' => 0
+                );
+            }
+            $vessel_map[$v_name]['total']++;
+            
+            if (isset($vessel_map[$v_name][$displayStatus])) {
+                $vessel_map[$v_name][$displayStatus]++;
+            } else {
+                $vessel_map[$v_name][$displayStatus] = 1;
+            }
         }
 
-        // Sort data
-        arsort($vessel_map);
+        // Sort data by total descending
+        uasort($vessel_map, function($a, $b) {
+            return $b['total'] - $a['total'];
+        });
+
+        $vessel_labels = array_keys($vessel_map);
+        $vessel_datasets = array(
+            'Planned' => array(),
+            'Joined' => array(),
+            'Sign Off' => array(),
+            'Cancel' => array()
+        );
+
+        foreach ($vessel_labels as $v_name) {
+            $vessel_datasets['Planned'][] = isset($vessel_map[$v_name]['Planned']) ? $vessel_map[$v_name]['Planned'] : 0;
+            $vessel_datasets['Joined'][] = isset($vessel_map[$v_name]['Joined']) ? $vessel_map[$v_name]['Joined'] : 0;
+            $vessel_datasets['Sign Off'][] = isset($vessel_map[$v_name]['Sign Off']) ? $vessel_map[$v_name]['Sign Off'] : 0;
+            $vessel_datasets['Cancel'][] = isset($vessel_map[$v_name]['Cancel']) ? $vessel_map[$v_name]['Cancel'] : 0;
+        }
 
         $response = array(
             'success' => true,
@@ -281,8 +312,8 @@ class Dashboard extends CI_Controller {
                     'data' => array_values($status_map)
                 ),
                 'vessel' => array(
-                    'labels' => array_keys($vessel_map),
-                    'data' => array_values($vessel_map)
+                    'labels' => $vessel_labels,
+                    'datasets' => $vessel_datasets
                 )
             )
         );
