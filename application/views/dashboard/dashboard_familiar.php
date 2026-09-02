@@ -57,7 +57,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div>
                                             <div class="text-xs fw-bold text-uppercase mb-1"
-                                                style="color: #64748b;">Total Requests</div>
+                                                style="color: #64748b;">Total</div>
                                             <div class="h3 mb-0 fw-bold" style="color: #0f172a;"
                                                 id="kpi_fam_batches">0</div>
                                         </div>

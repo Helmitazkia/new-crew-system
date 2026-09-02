@@ -220,13 +220,15 @@
               <div class="col-12 form-view" id="crewStatusViewSummary">
                 <label class="form-label mb-1 fst-italic fw-semibold">Crew Status</label>
                 <div class="fst-italic" id="crewStatusSummaryText">-</div>
+                <label class="form-label mt-2 mb-1 fst-italic fw-semibold">Notes</label>
+                <div class="fst-italic text-muted" id="crewStatusNotesText">-</div>
               </div>
               <div class="col-12 form-edit d-none">
                 <label class="form-label mb-1 fst-italic fw-semibold">Crew Status</label>
                 <div class="d-flex flex-column gap-1">
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="crewStatus_newApplicant" data-field="crewStatus.newApplicant">
-                    <label class="form-check-label fst-italic" for="crewStatus_newApplicant">New Applicant</label>
+                    <input class="form-check-input" type="checkbox" id="crewStatus_newApplicant" data-field="crewStatus.newApplicant" disabled>
+                    <label class="form-check-label fst-italic text-muted" for="crewStatus_newApplicant">New Applicant</label>
                   </div>
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="crewStatus_nonAktif" data-field="crewStatus.nonAktif">
@@ -237,13 +239,54 @@
                     <label class="form-check-label fst-italic" for="crewStatus_blackList">Not for Employed</label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="crewStatus_nonCrew" data-field="crewStatus.nonCrew">
-                    <label class="form-check-label fst-italic" for="crewStatus_nonCrew">Non Crew</label>
+                    <input class="form-check-input" type="checkbox" id="crewStatus_nonCrew" data-field="crewStatus.nonCrew" disabled>
+                    <label class="form-check-label fst-italic text-muted" for="crewStatus_nonCrew">Non Crew</label>
+                  </div>
+                  <div class="mt-2">
+                    <label class="form-label mb-1 fst-italic fw-semibold">Notes</label>
+                    <textarea class="form-control form-control-sm" id="crewStatus_notes" rows="2" placeholder="Tulis catatan jika ada perubahan status..."></textarea>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <div class="card-footer bg-transparent border-0 text-end pt-0 pb-2">
+            <button class="btn btn-sm btn-outline-info btn-history">
+              <i class="fa fa-history"></i> History
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crew Status History Modal -->
+  <div class="modal fade" id="crewStatusHistoryModal" tabindex="-1" aria-labelledby="crewStatusHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="crewStatusHistoryModalLabel">Crew Status History</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="table-responsive">
+            <table class="table table-bordered table-sm small">
+              <thead class="table-light">
+                <tr>
+                  <th>Time Update</th>
+                  <th>Status</th>
+                  <th>Notes</th>
+                  <th>Created By</th>
+                </tr>
+              </thead>
+              <tbody id="crewStatusHistoryTableBody">
+                <!-- Data will be loaded via AJAX -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
@@ -1460,6 +1503,8 @@
         if (cs.blackList) labels.push('Not for Employed');
         if (cs.nonCrew) labels.push('Non Crew');
         $('#crewStatusSummaryText').text(labels.length ? labels.join(', ') : '-');
+        $('#crewStatusNotesText').text(cs.notes ? cs.notes : '-');
+        $('#crewStatus_notes').val(''); // Reset form edit
 
         // FOTO (pictureProfile ada di data.identity)
         var pic = (data.identity && data.identity.pictureProfile) ? data.identity.pictureProfile : (data.pictureProfile || '');
@@ -1630,14 +1675,37 @@
       $(document).ready(function () {
         var id_person = "<?php echo $idperson; ?>";
 
+        // Pastikan hanya satu checkbox yang bisa dipilih (seperti radio button)
+        $('#crewStatus_nonAktif').change(function() {
+          if($(this).is(':checked')) {
+            $('#crewStatus_blackList').prop('checked', false);
+          }
+        });
+        
+        $('#crewStatus_blackList').change(function() {
+          if($(this).is(':checked')) {
+            $('#crewStatus_nonAktif').prop('checked', false);
+          }
+        });
+
         $('#crewStatusCard .btn-save').click(function () {
+          var isNonAktif = $('#crewStatus_nonAktif').is(':checked');
+          var isBlacklist = $('#crewStatus_blackList').is(':checked');
+          
+          if (isNonAktif && isBlacklist) {
+            if (typeof Swal !== 'undefined') Swal.fire({ icon: 'warning', title: 'Peringatan', text: 'Hanya boleh memilih satu status saja.' });
+            else alert('Hanya boleh memilih satu status saja.');
+            return;
+          }
+
           var idperson = $('#contentArea').data('idperson') || id_person;
           var data = {
             idperson: idperson,
             inAktif: $('#crewStatus_nonAktif').is(':checked') ? '1' : '0',
             inBlacklist: $('#crewStatus_blackList').is(':checked') ? '1' : '0',
             newapplicent: $('#crewStatus_newApplicant').is(':checked') ? '1' : '0',
-            noncrew: $('#crewStatus_nonCrew').is(':checked') ? '1' : '0'
+            noncrew: $('#crewStatus_nonCrew').is(':checked') ? '1' : '0',
+            notes: $('#crewStatus_notes').val()
           };
           $.ajax({
             url: "<?php echo base_url('PersonDetail/updateCrewStatus'); ?>",
@@ -1652,6 +1720,7 @@
                 card.find('.form-edit').addClass('d-none');
                 card.find('.btn-edit').removeClass('d-none');
                 card.find('.btn-save, .btn-cancel').addClass('d-none');
+                $('#crewStatus_notes').val(''); // Clear notes after save
                 if (typeof Swal !== 'undefined') Swal.fire({ icon: 'success', title: 'Saved', text: res.message });
                 else alert(res.message);
               } else {
@@ -1662,6 +1731,47 @@
             error: function (xhr, status, error) {
               if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update crew status' });
               else alert('Failed to update crew status');
+            }
+          });
+        });
+        
+        // Crew Status History Modal Logic
+        $('#crewStatusCard .btn-history').click(function () {
+          var idperson = $('#contentArea').data('idperson') || id_person;
+          $('#crewStatusHistoryTableBody').html('<tr><td colspan="4" class="text-center">Loading...</td></tr>');
+          var modal = new bootstrap.Modal(document.getElementById('crewStatusHistoryModal'));
+          modal.show();
+
+          $.ajax({
+            url: "<?php echo base_url('PersonDetail/getCrewStatusHistory'); ?>",
+            type: "POST",
+            dataType: "json",
+            data: { idperson: idperson },
+            success: function (res) {
+              if (res.status) {
+                var tbody = $('#crewStatusHistoryTableBody');
+                tbody.empty();
+                if (res.data.length > 0) {
+                  $.each(res.data, function(index, log) {
+                    var statusLabels = [];
+                    if (log.newapplicent == "1") statusLabels.push("New Applicant");
+                    if (log.inAktif == "1") statusLabels.push("Non Aktif");
+                    if (log.inBlacklist == "1") statusLabels.push("Not for Employed");
+                    
+                    var tr = $('<tr>');
+                    tr.append('<td>' + log.created_at + '</td>');
+                    tr.append('<td>' + (statusLabels.length > 0 ? statusLabels.join(', ') : '-') + '</td>');
+                    tr.append('<td>' + (log.notes ? log.notes : '-') + '</td>');
+                    tr.append('<td>' + (log.created_by ? log.created_by : '-') + '</td>');
+                    tbody.append(tr);
+                  });
+                } else {
+                  tbody.html('<tr><td colspan="4" class="text-center">No history found</td></tr>');
+                }
+              }
+            },
+            error: function () {
+              $('#crewStatusHistoryTableBody').html('<tr><td colspan="4" class="text-center text-danger">Failed to load history</td></tr>');
             }
           });
         });

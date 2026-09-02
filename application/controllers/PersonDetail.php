@@ -142,6 +142,10 @@ class PersonDetail extends CI_Controller {
         $row = $rsl[0];
         $dataContext = new DataContext();
 
+        $sqlLog = "SELECT notes FROM log_crew_status WHERE idperson = ? ORDER BY created_at DESC LIMIT 1";
+        $logResult = $this->db->query($sqlLog, array($row->idperson))->row();
+        $latestNotes = $logResult ? $logResult->notes : '-';
+
         $data = array(
 
             /* ================= BASIC IDENTITY ================= */
@@ -276,7 +280,8 @@ class PersonDetail extends CI_Controller {
                 'newApplicant' => ($row->newapplicent == "1"),
                 'nonAktif'     => ($row->inAktif == "1"),
                 'blackList'    => ($row->inBlacklist == "1"),
-                'nonCrew'      => ($row->noncrew == "1")
+                'nonCrew'      => ($row->noncrew == "1"),
+                'notes'        => $latestNotes
             ),
 
             /* ================= CONTACT METHOD ================= */
@@ -435,6 +440,7 @@ class PersonDetail extends CI_Controller {
         $inBlacklist = $this->input->post('inBlacklist');
         $newapplicent = $this->input->post('newapplicent');
         $noncrew = $this->input->post('noncrew');
+        $notes = $this->input->post('notes'); // Tangkap notes dari request
 
         if (!$idperson) {
             echo json_encode(array('status' => false, 'message' => 'ID Person is required'));
@@ -457,7 +463,42 @@ class PersonDetail extends CI_Controller {
             echo json_encode(array('status' => false, 'message' => 'Person data not found'));
             return;
         }
+
+        // --- Save to Tracker (log_crew_status) ---
+        $username = $this->session->userdata('userName') ?: 'system';
+        $currentDate = date('Y-m-d H:i:s');
+        $log_data = array(
+            'idperson' => $idperson,
+            'inAktif' => ($inAktif === '1') ? '1' : '0',
+            'inBlacklist' => ($inBlacklist === '1') ? '1' : '0',
+            'newapplicent' => ($newapplicent === '1') ? '1' : '0',
+            'notes' => $notes,
+            'created_by' => $username,
+            'created_at' => $currentDate
+        );
+        $this->db->insert('log_crew_status', $log_data);
+
         echo json_encode(array('status' => true, 'message' => 'Crew status updated successfully'));
+    }
+
+    public function getCrewStatusHistory() {
+        $idperson = $this->input->post('idperson');
+        if (!$idperson) {
+            echo json_encode(array('status' => false, 'message' => 'ID Person is required'));
+            return;
+        }
+        
+        $this->db->where('idperson', $idperson);
+        $this->db->order_by('created_at', 'DESC');
+        $history = $this->db->get('log_crew_status')->result();
+        
+        foreach ($history as $row) {
+            if (!empty($row->created_at)) {
+                $row->created_at = date('d M Y H:i:s', strtotime($row->created_at));
+            }
+        }
+        
+        echo json_encode(array('status' => true, 'data' => $history));
     }
 
 

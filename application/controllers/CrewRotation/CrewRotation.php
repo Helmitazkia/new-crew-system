@@ -416,9 +416,13 @@ class CrewRotation extends CI_Controller
             $row['replacement_idperson'] = $rid;
             $this->db->insert('tblcrewrotation', $row);
         }
+        // [Bug Fix] Do not update Off-Signer contract when still in Plan (Submit).
+        // It will be updated automatically when status becomes "Joined".
+        /*
         if (!$is_double_up && $signoffdt !== '' && $signoffdt !== '0000-00-00') {
             $this->_updateOffSignerContract($idperson, $signoffdt, $signoffremark);
         }
+        */
         $this->output->set_content_type('application/json')->set_output(
             json_encode(array('status' => true, 'message' => 'Data saved successfully', 'batch_id' => $batch_id))
         );
@@ -551,9 +555,13 @@ class CrewRotation extends CI_Controller
             $r = $this->db->query("SELECT idperson FROM tblcrewrotation WHERE idcrewrotation = ? AND deletests = '0'", array($idcrewrotation))->row();
             $off_idperson = $r ? $r->idperson : null;
         }
+        // [Bug Fix] Do not update Off-Signer contract when still in Plan (Submit).
+        // It will be updated automatically when status becomes "Joined".
+        /*
         if (!$is_double_up && $signoffdt_input !== '' && $signoffdt_input !== '0000-00-00' && $off_idperson) {
             $this->_updateOffSignerContract($off_idperson, $signoffdt_input, $signoffremark_input);
         }
+        */
         $this->output->set_content_type('application/json')->set_output(
             json_encode(array('status' => true, 'message' => 'Data updated successfully'))
         );
