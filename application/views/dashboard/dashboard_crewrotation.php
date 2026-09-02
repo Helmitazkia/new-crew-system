@@ -401,21 +401,47 @@ $(document).ready(function () {
             type: 'bar',
             data: {
                 labels: chartsData.vessel.labels,
-                datasets: [{
-                    label: 'Plans',
-                    data: chartsData.vessel.data,
-                    backgroundColor: '#8b5cf6',
-                    borderRadius: 6,
-                    barPercentage: 0.6
-                }]
+                datasets: [
+                    {
+                        label: 'Planned',
+                        data: chartsData.vessel.datasets['Planned'],
+                        backgroundColor: '#22c55e',
+                        borderRadius: 4,
+                        barPercentage: 0.6
+                    },
+                    {
+                        label: 'Joined',
+                        data: chartsData.vessel.datasets['Joined'],
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4,
+                        barPercentage: 0.6
+                    },
+                    {
+                        label: 'Sign Off',
+                        data: chartsData.vessel.datasets['Sign Off'],
+                        backgroundColor: '#f59e0b',
+                        borderRadius: 4,
+                        barPercentage: 0.6
+                    },
+                    {
+                        label: 'Cancel',
+                        data: chartsData.vessel.datasets['Cancel'],
+                        backgroundColor: '#ef4444',
+                        borderRadius: 4,
+                        barPercentage: 0.6
+                    }
+                ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
+                plugins: { 
+                    legend: { display: true, position: 'top', labels: { usePointStyle: true, font: { family: 'Inter', size: 12 } } },
+                    tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)' }
+                },
                 scales: {
-                    y: { beginAtZero: true, ticks: { precision: 0 } },
-                    x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } }
+                    x: { stacked: true, ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } },
+                    y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } }
                 }
             }
         });
