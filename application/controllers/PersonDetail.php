@@ -464,7 +464,6 @@ class PersonDetail extends CI_Controller {
             return;
         }
 
-        // --- Save to Tracker (log_crew_status) ---
         $username = $this->session->userdata('userName') ?: 'system';
         $currentDate = date('Y-m-d H:i:s');
         $log_data = array(
@@ -472,10 +471,28 @@ class PersonDetail extends CI_Controller {
             'inAktif' => ($inAktif === '1') ? '1' : '0',
             'inBlacklist' => ($inBlacklist === '1') ? '1' : '0',
             'newapplicent' => ($newapplicent === '1') ? '1' : '0',
-            'notes' => $notes,
+                'notes' => $notes,
             'created_by' => $username,
             'created_at' => $currentDate
         );
+
+        // Mencegah duplikasi insert (debounce) dalam rentang waktu 5 detik
+        $this->db->where('idperson', $idperson);
+        $this->db->where('inAktif', $log_data['inAktif']);
+        $this->db->where('inBlacklist', $log_data['inBlacklist']);
+        $this->db->order_by('created_at', 'DESC');
+        $this->db->limit(1);
+        $last_log = $this->db->get('log_crew_status')->row();
+
+        if ($last_log) {
+            $time_diff = strtotime($currentDate) - strtotime($last_log->created_at);
+            if ($time_diff <= 5) {
+                // Jika request masuk lagi dalam <= 5 detik, abaikan insert (mencegah double generate)
+                echo json_encode(array('status' => true, 'message' => 'Crew status updated successfully'));
+                return;
+            }
+        }
+
         $this->db->insert('log_crew_status', $log_data);
 
         echo json_encode(array('status' => true, 'message' => 'Crew status updated successfully'));

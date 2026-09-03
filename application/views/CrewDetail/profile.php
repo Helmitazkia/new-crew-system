@@ -1688,7 +1688,8 @@
           }
         });
 
-        $('#crewStatusCard .btn-save').click(function () {
+        $('#crewStatusCard .btn-save').off('click').on('click', function () {
+          var btnSave = $(this);
           var isNonAktif = $('#crewStatus_nonAktif').is(':checked');
           var isBlacklist = $('#crewStatus_blackList').is(':checked');
           
@@ -1707,12 +1708,16 @@
             noncrew: $('#crewStatus_nonCrew').is(':checked') ? '1' : '0',
             notes: $('#crewStatus_notes').val()
           };
+          
+          btnSave.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+          
           $.ajax({
             url: "<?php echo base_url('PersonDetail/updateCrewStatus'); ?>",
             type: "POST",
             dataType: "json",
             data: data,
             success: function (res) {
+              btnSave.prop('disabled', false).html('<i class="fa fa-save"></i> Save');
               if (res.status) {
                 loadProfile(id_person);
                 var card = $('#crewStatusCard');
@@ -1729,6 +1734,7 @@
               }
             },
             error: function (xhr, status, error) {
+              btnSave.prop('disabled', false).html('<i class="fa fa-save"></i> Save');
               if (typeof Swal !== 'undefined') Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to update crew status' });
               else alert('Failed to update crew status');
             }
