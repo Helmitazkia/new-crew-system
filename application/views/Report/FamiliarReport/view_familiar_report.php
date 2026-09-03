@@ -15,7 +15,7 @@
                 <thead class="crew-header">
                     <tr>
                         <th class="text-center" style="width:50px;">No</th>
-                        <th class="text-center">Date Request <span class="filter-icon">☰</span></th>
+                        <th class="text-center">Date Familiarization <span class="filter-icon">☰</span></th>
                         <th class="text-center">Vessel <span class="filter-icon">☰</span></th>
                         <th class="text-center">Note <span class="filter-icon">☰</span></th>
                         <th class="text-center" style="width:110px;">Total Crew <span class="filter-icon">☰</span></th>

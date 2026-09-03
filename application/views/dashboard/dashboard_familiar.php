@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-xl-7 col-lg-7">
+    <div class="col-xl-8 col-lg-8">
         <!-- ============================================================
      SECTION 1: FAMILIARIZATION MODULE
      ============================================================ -->
