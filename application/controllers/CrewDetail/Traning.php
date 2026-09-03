@@ -44,9 +44,10 @@ class Traning extends CI_Controller {
     private function _getCertificateMatrixOptionsArray()
     {
         $sql = "SELECT id, rank_id, rank_name, certificate_name 
-                  FROM mstcertificatematrix 
-                 WHERE 1=1 
-              ORDER BY rank_name ASC, certificate_name ASC";
+                FROM mstcertificatematrix 
+                WHERE 1=1               
+                GROUP BY certificate_name
+                ORDER BY rank_name ASC, certificate_name ASC";
         $rows = $this->db->query($sql)->result();
         $out = array();
         foreach ($rows as $r) {

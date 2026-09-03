@@ -3362,7 +3362,7 @@ class DataContext extends CI_Controller {
 	{
 		$opt = "";
 
-		$rsl = $this->MCrewscv->getData("*","mstrank","deletests = '0'","nmrank ASC");
+		$rsl = $this->MCrewscv->getData("*","mstrank","deletests = '0' AND urutan > 0","urutan ASC");
 		foreach ($rsl as $key => $val)
 		{
 			$selected = "";
