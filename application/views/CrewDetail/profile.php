@@ -226,7 +226,7 @@
               <div class="col-12 form-edit d-none">
                 <label class="form-label mb-1 fst-italic fw-semibold">Crew Status</label>
                 <div class="d-flex flex-column gap-1">
-                  <div class="form-check">
+                  <div class="form-check d-none">
                     <input class="form-check-input" type="checkbox" id="crewStatus_newApplicant" data-field="crewStatus.newApplicant" disabled>
                     <label class="form-check-label fst-italic text-muted" for="crewStatus_newApplicant">New Applicant</label>
                   </div>
@@ -238,7 +238,7 @@
                     <input class="form-check-input" type="checkbox" id="crewStatus_blackList" data-field="crewStatus.blackList">
                     <label class="form-check-label fst-italic" for="crewStatus_blackList">Not for Employed</label>
                   </div>
-                  <div class="form-check">
+                  <div class="form-check d-none">
                     <input class="form-check-input" type="checkbox" id="crewStatus_nonCrew" data-field="crewStatus.nonCrew" disabled>
                     <label class="form-check-label fst-italic text-muted" for="crewStatus_nonCrew">Non Crew</label>
                   </div>
@@ -1234,12 +1234,14 @@
                       <th>Date of Issue</th>
                       <th>Issue at (Place)</th>
                       <th>Valid Until</th>
+                      <th class="text-center">Notes</th>
                       <th class="text-center">Action</th>
                     </tr>
                   </thead>
                   <thead>
                     <tr class="personal-doc-search-row">
                       <th></th>
+                      <th><input type="text" class="form-control form-control-sm column-search" placeholder="Search"></th>
                       <th><input type="text" class="form-control form-control-sm column-search" placeholder="Search"></th>
                       <th><input type="text" class="form-control form-control-sm column-search" placeholder="Search"></th>
                       <th><input type="text" class="form-control form-control-sm column-search" placeholder="Search"></th>
@@ -1268,7 +1270,7 @@
                     <input type="hidden" name="idperdoc" id="personalDoc_idperdoc">
                     <input type="hidden" name="idperson" id="personalDoc_idperson">
                     <div class="row g-2">
-                      <div class="col-md-6">
+                      <div class="col-md-6 d-none">
                         <label class="form-label fw-semibold">Kd Cert</label>
                         <input type="text" class="form-control" name="kdcert" id="personalDoc_kdcert" placeholder="Optional" readonly>
                       </div>
@@ -1311,6 +1313,10 @@
                         <input type="date" class="form-control" name="docexpdt" id="personalDoc_docexpdt">
                         <!-- <small id="personalDoc_docexpdtFeedback" class="text-danger d-none">Valid Until is required</small>  -->
                         <small id="personalDoc_docexpdtFeedbackDate" class="text-danger d-none">Valid Until must be on or after Date of Issue</small>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label fw-semibold">Notes</label>
+                        <textarea class="form-control" name="notes" id="personalDoc_notes" rows="1" placeholder="Additional notes..."></textarea>
                       </div>
                       <div class="col-12 mt-2">
                         <label class="form-label fw-semibold">Document File (optional)</label>
@@ -2465,6 +2471,7 @@
             { data: 'docissdt', render: function (d) { return fmtDate(d); } },
             { data: 'docissplc' },
             { data: 'docexpdt', render: function (d) { return fmtDate(d); } },
+            { data: 'notes' },
             {
               data: null,
               orderable: false,
@@ -2539,6 +2546,7 @@
           $('#personalDocForm')[0].reset();
           $('#personalDoc_idperdoc').val('');
           $('#personalDoc_idperson').val(idperson);
+          $('#personalDoc_notes').val('');
           hidePersonalDocFeedback();
           $('#personalDocModalTitle').text('Add Personal Document');
           $('#personalDocModal').modal('show');
@@ -2566,6 +2574,7 @@
               $('#personalDoc_docissdt').val(d.docissdt || '');
               $('#personalDoc_docissplc').val(d.docissplc || '');
               $('#personalDoc_docexpdt').val(d.docexpdt || '');
+              $('#personalDoc_notes').val(d.notes || '');
               hidePersonalDocFeedback();
               $('#personalDoc_doc_file').val('');
               $('#personalDocModalTitle').text('Edit Personal Document');
@@ -2627,6 +2636,7 @@
             formData.append('docissdt', $('#personalDoc_docissdt').val());
             formData.append('docissplc', $('#personalDoc_docissplc').val().trim());
             formData.append('docexpdt', $('#personalDoc_docexpdt').val());
+            formData.append('notes', $('#personalDoc_notes').val().trim());
             formData.append('doc_file', fileInput.files[0]);
             ajaxOpt.data = formData;
             ajaxOpt.processData = false;
@@ -2641,7 +2651,8 @@
               docno: $('#personalDoc_docno').val().trim(),
               docissdt: $('#personalDoc_docissdt').val(),
               docissplc: $('#personalDoc_docissplc').val().trim(),
-              docexpdt: $('#personalDoc_docexpdt').val()
+              docexpdt: $('#personalDoc_docexpdt').val(),
+              notes: $('#personalDoc_notes').val().trim()
             };
           }
           $.ajax(ajaxOpt);

@@ -1017,6 +1017,7 @@ class PersonDetail extends CI_Controller {
                 'docissplc' => isset($row['docissplc']) ? $row['docissplc'] : '',
                 'docexpdt' => isset($row['docexpdt']) ? $row['docexpdt'] : '',
                 'doc_file' => isset($row['doc_file']) ? $row['doc_file'] : '',
+                'notes' => isset($row['notes']) ? $row['notes'] : '',
             );
         }
 
@@ -1070,6 +1071,7 @@ class PersonDetail extends CI_Controller {
         $docissdt = $this->input->post('docissdt');
         $docissplc = trim($this->input->post('docissplc'));
         $docexpdt = $this->input->post('docexpdt');
+        $notes = trim($this->input->post('notes'));
 
         if (empty($idperson)) {
             echo json_encode(array('status' => false, 'message' => 'ID Person is required'));
@@ -1119,6 +1121,7 @@ class PersonDetail extends CI_Controller {
             'docissdt' => $docissdt,
             'docissplc' => $docissplc,
             'docexpdt' => $docexpdt,
+            'notes' => $notes,
             'updusrdt' => $currentDate . ' - ' . $username,
         );
 

@@ -216,7 +216,7 @@
           if (res.status == true) {
             console.log("Login berhasil", res);
             // // REDIRECT KE DASHBOARD
-            window.location.href = "<?php echo base_url('CrewLifecycle'); ?>";
+            window.location.href = "<?php echo base_url('dashboard'); ?>";
             setTimeout(function () {
               $('#loginLoading').hide();
             }, 5000); // 5000ms = 5 detik
