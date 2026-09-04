@@ -226,8 +226,8 @@
               <div class="col-12 form-edit d-none">
                 <label class="form-label mb-1 fst-italic fw-semibold">Crew Status</label>
                 <div class="d-flex flex-column gap-1">
-                  <div class="form-check d-none">
-                    <input class="form-check-input" type="checkbox" id="crewStatus_newApplicant" data-field="crewStatus.newApplicant" disabled>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="crewStatus_newApplicant" data-field="crewStatus.newApplicant">
                     <label class="form-check-label fst-italic text-muted" for="crewStatus_newApplicant">New Applicant</label>
                   </div>
                   <div class="form-check">

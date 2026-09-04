@@ -1689,6 +1689,21 @@ class DataContext extends CI_Controller {
 		}
 	}
 
+	function checkInternetConnection()
+	{
+		$this->output
+			->set_content_type('application/json')
+			->set_header('Cache-Control: no-cache, no-store, must-revalidate')
+			->set_header('Pragma: no-cache')
+			->set_header('Expires: 0');
+
+		echo json_encode(array(
+			'status'  => 'success',
+			'message' => 'Server dapat dihubungi.',
+			'time'    => date('Y-m-d H:i:s')
+		));
+	}
+
 	function sendSubmitNotification($recipientEmail, $fullName)
 	{
 		require_once APPPATH . 'third_party/PHPMailer/PHPMailer/class.phpmailer.php';
