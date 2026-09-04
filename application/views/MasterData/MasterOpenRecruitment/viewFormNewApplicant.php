@@ -47,226 +47,1609 @@
         });
     });
 
+    /* ============================================================
+     * GLOBAL SUBMIT LOCK
+     * ============================================================ */
+    window.isSubmittingApplicant = false;
+
+
+    /* ============================================================
+     * SHOW ERROR
+     * ============================================================ */
+    function showConnectionError(message) {
+
+        Swal.fire({
+
+            icon: "warning",
+
+            title: "Koneksi Internet Bermasalah",
+
+            html: `
+            <div style="
+                font-size:14px;
+                line-height:1.7;
+                color:#475569;
+            ">
+                ${message}
+
+                <div style="
+                    margin-top:15px;
+                    padding:12px 14px;
+                    background:#fff7ed;
+                    border:1px solid #fed7aa;
+                    border-radius:10px;
+                    text-align:left;
+                    font-size:13px;
+                ">
+
+                    <b>Yang dapat dilakukan:</b>
+
+                    <br>
+
+                    • Pastikan sinyal internet cukup stabil
+
+                    <br>
+
+                    • Coba pindah ke tempat dengan sinyal lebih baik
+
+                    <br>
+
+                    • Jika menggunakan WiFi, coba dekatkan ke router
+
+                    <br>
+
+                    • Jangan menutup halaman selama proses pengiriman
+
+                </div>
+            </div>
+        `,
+
+            confirmButtonText: "Coba Lagi",
+
+            confirmButtonColor: "#2563eb"
+
+        });
+
+    }
+
+
+    function showCheckingConnection() {
+
+        Swal.fire({
+
+            title: "Memeriksa koneksi...",
+
+            html: `
+            <div style="
+                margin-top:10px;
+                color:#64748b;
+                font-size:14px;
+            ">
+                Sedang memastikan koneksi internet kamu
+                cukup stabil untuk mengirim CV.
+            </div>
+        `,
+
+            allowOutsideClick: false,
+
+            allowEscapeKey: false,
+
+            showConfirmButton: false,
+
+            didOpen: function() {
+
+                Swal.showLoading();
+
+            }
+
+        });
+
+    }
+
+    function checkInternetConnection() {
+
+        return new Promise(function(resolve, reject) {
+
+            if (!navigator.onLine) {
+
+                reject({
+
+                    type: "offline",
+
+                    message: "Perangkat kamu sedang tidak terhubung ke internet."
+
+                });
+
+                return;
+
+            }
+
+
+            const startTime =
+                Date.now();
+
+            $.ajax({
+
+                url: "<?php echo base_url('checkInternetConnection'); ?>?_=" +
+                    Date.now(),
+
+                type: "GET",
+
+                dataType: "json",
+
+                timeout: 8000,
+
+                cache: false,
+
+
+                success: function(res) {
+
+                    const responseTime =
+                        Date.now() - startTime;
+
+
+                    if (
+                        res &&
+                        res.status === "success"
+                    ) {
+
+                        resolve({
+
+                            online: true,
+
+                            responseTime: responseTime
+
+                        });
+
+                    } else {
+
+                        reject({
+
+                            type: "server",
+
+                            message: "Server tidak memberikan respons yang valid."
+
+                        });
+
+                    }
+
+                },
+                error: function(xhr, status) {
+
+                    if (
+                        status === "timeout"
+                    ) {
+
+                        reject({
+
+                            type: "timeout",
+
+                            message: "Server terlalu lama merespons."
+
+                        });
+
+                    } else {
+
+                        reject({
+
+                            type: "server",
+
+                            message: "Tidak dapat menghubungi server aplikasi."
+
+                        });
+
+                    }
+
+                }
+
+            });
+
+        });
+
+    }
+
+    /* ============================================================
+     * UPLOAD APPLICANT CV
+     * ============================================================ */
+    function uploadApplicantCV(formData) {
+
+        Swal.fire({
+
+            title: "Mengirim CV...",
+
+            html: `
+
+                <div style="
+                    margin-top:10px;
+                    color:#64748b;
+                    font-size:14px;
+                ">
+
+                    Jangan tutup halaman ini sampai
+                    proses pengiriman selesai.
+
+                </div>
+
+
+                <div style="
+                    margin-top:20px;
+                    width:100%;
+                    height:8px;
+                    background:#e2e8f0;
+                    border-radius:10px;
+                    overflow:hidden;
+                ">
+
+                    <div
+                        id="uploadProgressBar"
+                        style="
+                            width:0%;
+                            height:100%;
+                            background:#2563eb;
+                            transition:width .2s ease;
+                        "
+                    ></div>
+
+                </div>
+
+
+                <div
+                    id="uploadProgressText"
+                    style="
+                        margin-top:8px;
+                        font-size:13px;
+                        font-weight:600;
+                        color:#334155;
+                    "
+                >
+                    0%
+                </div>
+
+            `,
+
+            allowOutsideClick: false,
+
+            allowEscapeKey: false,
+
+            showConfirmButton: false
+
+        });
+
+
+        $.ajax({
+
+            url: "<?php echo base_url('saveNewApplicant'); ?>",
+
+            type: "POST",
+
+            data: formData,
+
+            processData: false,
+
+            contentType: false,
+
+            dataType: "json",
+
+            /*
+             * 2 menit.
+             *
+             * Jangan terlalu kecil karena CV 5MB
+             * di daerah dengan koneksi lambat
+             * bisa membutuhkan waktu cukup lama.
+             */
+            timeout: 120000,
+
+
+            /* =====================================================
+             * XHR
+             * ===================================================== */
+
+            xhr: function() {
+
+                const xhr =
+                    new window.XMLHttpRequest();
+
+
+                /* -------------------------------------------------
+                 * UPLOAD PROGRESS
+                 * ------------------------------------------------- */
+
+                xhr.upload.addEventListener(
+
+                    "progress",
+
+                    function(event) {
+
+                        if (
+                            event.lengthComputable
+                        ) {
+
+                            const percent =
+                                Math.round(
+                                    (
+                                        event.loaded /
+                                        event.total
+                                    ) * 100
+                                );
+
+
+                            $("#uploadProgressBar")
+                                .css(
+                                    "width",
+                                    percent + "%"
+                                );
+
+
+                            $("#uploadProgressText")
+                                .text(
+                                    "Mengirim CV... " +
+                                    percent +
+                                    "%"
+                                );
+
+                        }
+
+                    },
+
+                    false
+
+                );
+
+
+                return xhr;
+
+            },
+
+
+            /* =====================================================
+             * SUCCESS
+             * ===================================================== */
+
+            success: function(res) {
+
+                Swal.close();
+
+
+                window.isSubmittingApplicant =
+                    false;
+
+
+                if (
+                    res.status === "success"
+                ) {
+
+                    Swal.fire({
+
+                        icon: "success",
+
+                        title: "Pendaftaran Berhasil 🎉",
+
+                        html: `
+                            <div style="
+                                font-size:14px;
+                                line-height:1.6;
+                                color:#475569;
+                            ">
+
+                                Data dan CV berhasil dikirim.
+
+                            </div>
+                        `,
+
+                        confirmButtonText: "OK",
+
+                        confirmButtonColor: "#2563eb"
+
+                    }).then(function() {
+
+                        window.location.reload();
+
+                    });
+
+                } else {
+
+                    showError(
+
+                        res.message ||
+                        "Terjadi kesalahan."
+
+                    );
+
+                }
+
+            },
+            error: function(
+                xhr,
+                status,
+                error
+            ) {
+
+                Swal.close();
+
+
+                window.isSubmittingApplicant =
+                    false;
+
+
+                /* -------------------------------------------------
+                 * TIMEOUT
+                 * ------------------------------------------------- */
+
+                if (
+                    status === "timeout"
+                ) {
+
+                    Swal.fire({
+
+                        icon: "warning",
+
+                        title: "Upload Terlalu Lama",
+
+                        html: `
+
+                            <div style="
+                                font-size:14px;
+                                line-height:1.7;
+                                color:#475569;
+                            ">
+
+                                Proses upload CV membutuhkan
+                                waktu terlalu lama.
+
+                                <br><br>
+
+                                Kemungkinan koneksi internet
+                                sedang terlalu lambat atau
+                                tidak stabil.
+
+                                <br><br>
+
+                                <b>
+                                    Data belum dapat dipastikan
+                                    berhasil dikirim ke server.
+                                </b>
+
+                            </div>
+
+                        `,
+
+                        confirmButtonText: "Coba Lagi",
+
+                        confirmButtonColor: "#2563eb"
+
+                    });
+
+                    return;
+
+                }
+
+
+                /* -------------------------------------------------
+                 * INTERNET PUTUS
+                 * ------------------------------------------------- */
+
+                if (
+                    !navigator.onLine
+                ) {
+
+                    Swal.fire({
+
+                        icon: "warning",
+
+                        title: "Koneksi Terputus",
+
+                        html: `
+
+                        <div style="
+                            font-size:14px;
+                            line-height:1.7;
+                            color:#475569;
+                        ">
+
+                            Koneksi internet terputus
+                            saat proses pengiriman CV.
+
+                            <br><br>
+
+                            <br>
+
+                            Setelah koneksi kembali stabil,
+                            silakan coba kirim kembali.
+
+                        </div>
+
+                    `,
+
+                        confirmButtonText: "Mengerti",
+
+                        confirmButtonColor: "#2563eb"
+
+                    });
+
+                    return;
+
+                }
+
+
+                /* -------------------------------------------------
+                 * SERVER / NETWORK ERROR
+                 * ------------------------------------------------- */
+
+                Swal.fire({
+
+                    icon: "error",
+
+                    title: "Gagal Mengirim CV",
+
+                    html: `
+
+                    <div style="
+                        font-size:14px;
+                        line-height:1.7;
+                        color:#475569;
+                    ">
+
+                        CV belum berhasil dikirim
+                        ke server.
+
+                        <br><br>
+
+                        Kemungkinan penyebab:
+
+                        <br>
+
+                        • Koneksi internet tidak stabil
+
+                        <br>
+
+                        • Sinyal terlalu lemah
+
+                        <br>
+
+                        • Server tidak dapat dijangkau
+
+                        <br>
+
+                        • Proses upload terputus
+
+                        <br><br>
+
+                        Silakan coba kembali ketika
+                        koneksi internet lebih stabil.
+
+                    </div>
+
+                `,
+
+                    confirmButtonText: "Coba Lagi",
+
+                    confirmButtonColor: "#ef4444"
+
+                });
+
+            }
+
+        });
+
+    }
+
     function saveNewApplicant() {
-        const formData = new FormData();
 
-        const v = (selector) => {
-            const el = $(selector);
-            return el.length ? (el.val() || "").trim() : "";
+
+        /* ========================================================
+         * PREVENT DOUBLE SUBMIT
+         * ======================================================== */
+
+        if (
+            window.isSubmittingApplicant
+        ) {
+
+            return;
+
+        }
+
+
+        /* ========================================================
+         * FORM DATA
+         * ======================================================== */
+
+        const formData =
+            new FormData();
+
+
+        /* ========================================================
+         * HELPER
+         * ======================================================== */
+
+        const v = selector => {
+
+            const el =
+                $(selector);
+
+            return el.length ?
+                (el.val() || "").trim() :
+                "";
+
         };
 
-        const vRaw = (selector) => {
-            const el = $(selector);
-            return el.length ? el.val() : "";
-        };
 
-        const email = v("input[name='txtemail']");
-        const nama = v("input[name='txtnama']");
-        const tempatLahir = v("input[name='txttempat_lahir']");
-        const handphone = v("input[name='txthandphone']");
-        const posisi = $("#slcRank").val();
-        const ijazah = $("select[name='ijazah_terakhir']").val();
-        const pengalaman = $("select[name='pengalaman_terakhir']").val();
-        const ipk = v("#ipk_terakhir");
-        const gaji = v("input[name='last_salary']");
-        const infoSource = $("input[name='info_source']:checked").val();
-        const tanggalLahir = v("input[name='txttanggal_lahir']");
-        const gender = $("select[name='gender']").val();
-        const applicantId = v("input[name='txtIdNewApplicant']");
-        const joinDate = v("input[name='join_date']");
-        const recruitmentId = $("#recruitment_id").val();
-        const vesselType = $("#vessel_type").val();
-        const expectedSalary = $("input[name='expected_salary']").val();
+        /* ========================================================
+         * GET FORM VALUE
+         * ======================================================== */
+
+        const email =
+            v("input[name='txtemail']");
+
+
+        const nama =
+            v("input[name='txtnama']");
+
+
+        const tempatLahir =
+            v("input[name='txttempat_lahir']");
+
+
+        const handphone =
+            v("input[name='txthandphone']");
+
+
+        const posisi =
+            $("#slcRank").val();
+
+
+        const ijazah =
+            $("select[name='ijazah_terakhir']").val();
+
+
+        const pengalaman =
+            $("select[name='pengalaman_terakhir']").val();
+
+
+        const ipk =
+            v("#ipk_terakhir");
+
+
+        const gaji =
+            v("input[name='last_salary']");
+
+
+        const infoSource =
+            $("input[name='info_source']:checked").val();
+
+
+        const tanggalLahir =
+            v("input[name='txttanggal_lahir']");
+
+
+        const gender =
+            $("select[name='gender']").val();
+
+
+        const applicantId =
+            v("input[name='txtIdNewApplicant']");
+
+
+        const joinDate =
+            v("input[name='join_date']");
+
+
+        const recruitmentId =
+            $("#recruitment_id").val();
+
+
+        const vesselType =
+            $("#vessel_type").val();
+
+
+        const expectedSalary =
+            $("input[name='expected_salary']").val();
+
 
         const lastSalaryCurrency =
             $("select[name='last_salary_currency']").val();
 
+
         const expectedSalaryCurrency =
             $("select[name='expected_salary_currency']").val();
 
-        if (!expectedSalaryCurrency) {
-            return showError("Silakan pilih Expected Salary Currency.");
-        }
+
+        /* ========================================================
+         * VALIDASI EXPECTED SALARY CURRENCY
+         * ======================================================== */
 
         if (
-            !posisi.toLowerCase().includes("cadet") &&
+            !expectedSalaryCurrency
+        ) {
+
+            return showError(
+                "Silakan pilih Expected Salary Currency."
+            );
+
+        }
+
+
+        /* ========================================================
+         * VALIDASI LAST SALARY CURRENCY
+         * ======================================================== */
+
+        if (
+            posisi &&
+            !posisi
+            .toLowerCase()
+            .includes("cadet") &&
             !lastSalaryCurrency
         ) {
-            return showError("Silakan pilih Last Salary Currency.");
+
+            return showError(
+                "Silakan pilih Last Salary Currency."
+            );
+
         }
+
+
+        /* ========================================================
+         * POSITION
+         * ======================================================== */
 
         if (!posisi) {
-            return showError("Silakan pilih jabatan yang dilamar.");
+
+            return showError(
+                "Silakan pilih jabatan yang dilamar."
+            );
+
         }
 
+
+        /* ========================================================
+         * VESSEL TYPE
+         * ======================================================== */
+
         if (!vesselType) {
-            return showError("Silakan pilih vessel type.");
+
+            return showError(
+                "Silakan pilih vessel type."
+            );
+
         }
+
+
+        /* ========================================================
+         * RECRUITMENT
+         * ======================================================== */
 
         if (!recruitmentId) {
 
             if (!posisi) {
-                return showError("Silakan pilih rank.");
+
+                return showError(
+                    "Silakan pilih rank."
+                );
+
             }
 
+
             if (!vesselType) {
-                return showError("Silakan pilih vessel type.");
+
+                return showError(
+                    "Silakan pilih vessel type."
+                );
+
             }
+
         }
 
 
-        formData.append("txtIdNewApplicant", applicantId);
+        /* ========================================================
+         * GENDER
+         * ======================================================== */
 
-        if (!gender) return showError("Silakan pilih jenis kelamin.");
-        if (!nama || !tempatLahir || !handphone || !posisi || !ijazah || !tanggalLahir)
-            return showError("Silakan lengkapi semua field wajib terlebih dahulu.");
-        if (!infoSource) return showError("Silakan pilih sumber informasi.");
+        if (!gender) {
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email))
-            return showError("Format email tidak valid.");
+            return showError(
+                "Silakan pilih jenis kelamin."
+            );
 
-        const birthDate = new Date(tanggalLahir);
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+        }
 
-        if (age < 18 || age > 55)
-            return showError("Usia pelamar harus antara 18 hingga 55 tahun.");
 
-        formData.append("gender", gender);
+        /* ========================================================
+         * REQUIRED DATA
+         * ======================================================== */
 
-        if (posisi.toLowerCase().includes("cadet")) {
-            if (!ipk)
-                return showError("Silakan isi IPK terakhir untuk posisi Cadet.");
+        if (
+            !nama ||
+            !tempatLahir ||
+            !handphone ||
+            !posisi ||
+            !ijazah ||
+            !tanggalLahir
+        ) {
 
-            const sekolah = v("#sekolah");
-            const jurusan = v("#jurusan");
+            return showError(
+                "Silakan lengkapi semua field wajib terlebih dahulu."
+            );
 
-            if (!sekolah)
-                return showError("Silakan isi nama sekolah.");
-            if (!jurusan)
-                return showError("Silakan isi jurusan.");
+        }
 
-            formData.append("ipk_terakhir", ipk);
-            formData.append("sekolah", sekolah);
-            formData.append("jurusan", jurusan);
-            formData.append("pengalaman_terakhir", "");
-            formData.append("crew_foreign", "N");
-            formData.append("last_salary", "");
-            formData.append("last_salary_currency", "");
 
-            formData.append("expected_salary", expectedSalary);
+        /* ========================================================
+         * INFO SOURCE
+         * ======================================================== */
+
+        if (!infoSource) {
+
+            return showError(
+                "Silakan pilih sumber informasi."
+            );
+
+        }
+
+
+        /* ========================================================
+         * EMAIL
+         * ======================================================== */
+
+        const emailRegex =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+        if (
+            !emailRegex.test(email)
+        ) {
+
+            return showError(
+                "Format email tidak valid."
+            );
+
+        }
+
+
+        /* ========================================================
+         * AGE
+         * ======================================================== */
+
+        const birthDate =
+            new Date(tanggalLahir);
+
+
+        const today =
+            new Date();
+
+
+        let age =
+            today.getFullYear() -
+            birthDate.getFullYear();
+
+
+        const m =
+            today.getMonth() -
+            birthDate.getMonth();
+
+
+        if (
+            m < 0 ||
+            (
+                m === 0 &&
+                today.getDate() <
+                birthDate.getDate()
+            )
+        ) {
+
+            age--;
+
+        }
+
+
+        if (
+            age < 18 ||
+            age > 55
+        ) {
+
+            return showError(
+                "Usia pelamar harus antara 18 hingga 55 tahun."
+            );
+
+        }
+
+
+        /* ========================================================
+         * GENDER
+         * ======================================================== */
+
+        formData.append(
+            "gender",
+            gender
+        );
+
+
+        /* ========================================================
+         * CADET
+         * ======================================================== */
+
+        if (
+            posisi
+            .toLowerCase()
+            .includes("cadet")
+        ) {
+
+
+            if (!ipk) {
+
+                return showError(
+                    "Silakan isi IPK terakhir untuk posisi Cadet."
+                );
+
+            }
+
+
+            const sekolah =
+                v("#sekolah");
+
+
+            const jurusan =
+                v("#jurusan");
+
+
+            if (!sekolah) {
+
+                return showError(
+                    "Silakan isi nama sekolah."
+                );
+
+            }
+
+
+            if (!jurusan) {
+
+                return showError(
+                    "Silakan isi jurusan."
+                );
+
+            }
+
+
+            formData.append(
+                "ipk_terakhir",
+                ipk
+            );
+
+
+            formData.append(
+                "sekolah",
+                sekolah
+            );
+
+
+            formData.append(
+                "jurusan",
+                jurusan
+            );
+
+
+            formData.append(
+                "pengalaman_terakhir",
+                ""
+            );
+
+
+            formData.append(
+                "crew_foreign",
+                "N"
+            );
+
+
+            formData.append(
+                "last_salary",
+                ""
+            );
+
+
+            formData.append(
+                "last_salary_currency",
+                ""
+            );
+
+
+            formData.append(
+                "expected_salary",
+                expectedSalary
+            );
+
+
             formData.append(
                 "expected_salary_currency",
                 expectedSalaryCurrency
             );
 
-        } else {
-            if (!pengalaman)
-                return showError("Silakan isi pengalaman terakhir.");
-            if (!gaji)
-                return showError("Silakan isi gaji terakhir.");
+        }
 
-            const crewForeign = $("input[name='crew_foreign']:checked").val();
-            if (!crewForeign)
-                return showError("Silakan pilih pengalaman crew asing.");
 
-            formData.append("pengalaman_terakhir", pengalaman);
-            formData.append("last_salary", gaji);
+        /* ========================================================
+         * NON CADET
+         * ======================================================== */
+        else {
+
+
+            if (!pengalaman) {
+
+                return showError(
+                    "Silakan isi pengalaman terakhir."
+                );
+
+            }
+
+
+            if (!gaji) {
+
+                return showError(
+                    "Silakan isi gaji terakhir."
+                );
+
+            }
+
+
+            const crewForeign =
+                $(
+                    "input[name='crew_foreign']:checked"
+                ).val();
+
+
+            if (!crewForeign) {
+
+                return showError(
+                    "Silakan pilih pengalaman crew asing."
+                );
+
+            }
+
+
+            formData.append(
+                "pengalaman_terakhir",
+                pengalaman
+            );
+
+
+            formData.append(
+                "last_salary",
+                gaji
+            );
+
 
             formData.append(
                 "last_salary_currency",
                 lastSalaryCurrency
             );
 
-            formData.append("crew_foreign", crewForeign);
 
-            formData.append("ipk_terakhir", "");
+            formData.append(
+                "crew_foreign",
+                crewForeign
+            );
 
-            formData.append("expected_salary", expectedSalary);
+
+            formData.append(
+                "ipk_terakhir",
+                ""
+            );
+
+
+            formData.append(
+                "expected_salary",
+                expectedSalary
+            );
+
 
             formData.append(
                 "expected_salary_currency",
                 expectedSalaryCurrency
             );
 
-            if (crewForeign === "Y") {
-                const foreignCountry = v("input[name='foreign_country']");
-                if (!foreignCountry)
-                    return showError("Silakan isi negara crew asing.");
-                formData.append("foreign_country", foreignCountry);
-            }
-        }
 
-        formData.append("txtemail", email);
-        formData.append("txtnama", nama);
-        formData.append("txttempat_lahir", tempatLahir);
-        formData.append("txttanggal_lahir", tanggalLahir);
-        formData.append("txthandphone", handphone);
-        formData.append("position_applied", posisi);
-        formData.append("ijazah_terakhir", ijazah);
-        formData.append("pernah_join", $("input[name='pernah_join']:checked").val() || "N");
-        formData.append("info_source", infoSource);
-        formData.append("join_date", joinDate);
-        formData.append("recruitment_id", recruitmentId);
-        formData.append("vessel_type", vesselType);
+            if (
+                crewForeign === "Y"
+            ) {
 
-        $("input[name='kapal[]']:checked").each(function() {
-            formData.append("kapal[]", $(this).val());
-        });
 
-        if ($("#otherKapalCheckbox").is(":checked")) {
-            const kapalOther = v("input[name='kapal_other']");
-            if (kapalOther)
-                formData.append("kapal[]", "OTHER: " + kapalOther);
-        }
+                const foreignCountry =
+                    v("input[name='foreign_country']");
 
-        const cvInput = $("input[name='cv_files[]']");
-        if (!cvInput.length || cvInput[0].files.length === 0)
-            return showError("Silakan unggah CV.");
 
-        for (let file of cvInput[0].files) {
-            if (file.size / (1024 * 1024) > 5)
-                return showError(`File ${file.name} melebihi 5MB.`);
-            formData.append("cv_files[]", file);
-        }
+                if (!foreignCountry) {
 
-        showLoading("Mengirim data pendaftaran...");
+                    return showError(
+                        "Silakan isi negara crew asing."
+                    );
 
-        $.ajax({
-            url: "<?php echo base_url('saveNewApplicant') ?>",
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            dataType: "json",
-            success: function(res) {
-                Swal.close();
-
-                if (res.status === "success") {
-                    Swal.fire({
-                        icon: "success",
-                        title: "Pendaftaran Berhasil 🎉",
-                        text: "Data berhasil dikirim.",
-                        confirmButtonColor: "#2563eb"
-                    }).then(() => window.location.reload());
-                } else {
-                    showError(res.message || "Terjadi kesalahan.");
                 }
-            },
-            error: function() {
-                Swal.close();
-                Swal.fire({
-                    icon: "error",
-                    title: "Koneksi Bermasalah",
-                    text: "Gagal menghubungi server.",
-                    confirmButtonColor: "#ef4444"
-                });
+
+
+                formData.append(
+                    "foreign_country",
+                    foreignCountry
+                );
+
             }
+
+        }
+
+
+        /* ========================================================
+         * BASIC DATA
+         * ======================================================== */
+
+        formData.append(
+            "txtIdNewApplicant",
+            applicantId
+        );
+
+
+        formData.append(
+            "txtemail",
+            email
+        );
+
+
+        formData.append(
+            "txtnama",
+            nama
+        );
+
+
+        formData.append(
+            "txttempat_lahir",
+            tempatLahir
+        );
+
+
+        formData.append(
+            "txttanggal_lahir",
+            tanggalLahir
+        );
+
+
+        formData.append(
+            "txthandphone",
+            handphone
+        );
+
+
+        formData.append(
+            "position_applied",
+            posisi
+        );
+
+
+        formData.append(
+            "ijazah_terakhir",
+            ijazah
+        );
+
+
+        formData.append(
+            "pernah_join",
+            $(
+                "input[name='pernah_join']:checked"
+            ).val() || "N"
+        );
+
+
+        formData.append(
+            "info_source",
+            infoSource
+        );
+
+
+        formData.append(
+            "join_date",
+            joinDate
+        );
+
+
+        formData.append(
+            "recruitment_id",
+            recruitmentId
+        );
+
+
+        formData.append(
+            "vessel_type",
+            vesselType
+        );
+
+
+        /* ========================================================
+         * KAPAL
+         * ======================================================== */
+
+        $(
+            "input[name='kapal[]']:checked"
+        ).each(function() {
+
+            formData.append(
+                "kapal[]",
+                $(this).val()
+            );
+
         });
+
+
+        /* ========================================================
+         * OTHER KAPAL
+         * ======================================================== */
+
+        if (
+            $("#otherKapalCheckbox")
+            .is(":checked")
+        ) {
+
+
+            const kapalOther =
+                v("input[name='kapal_other']");
+
+
+            if (kapalOther) {
+
+                formData.append(
+                    "kapal[]",
+                    "OTHER: " +
+                    kapalOther
+                );
+
+            }
+
+        }
+
+
+        /* ========================================================
+         * CV
+         * ======================================================== */
+
+        const cvInput =
+            $("input[name='cv_files[]']");
+
+
+        if (
+            !cvInput.length ||
+            cvInput[0].files.length === 0
+        ) {
+
+            return showError(
+                "Silakan unggah CV."
+            );
+
+        }
+
+
+        for (
+            let file of cvInput[0].files
+        ) {
+
+
+            /* ----------------------------------------------------
+             * SIZE
+             * ---------------------------------------------------- */
+
+            if (
+                file.size /
+                (1024 * 1024) > 5
+            ) {
+
+                return showError(
+                    `File ${file.name} melebihi 5MB.`
+                );
+
+            }
+
+
+            /* ----------------------------------------------------
+             * EXTENSION
+             * ---------------------------------------------------- */
+
+            const extension =
+                file.name
+                .split(".")
+                .pop()
+                .toLowerCase();
+
+
+            if (
+                extension !== "pdf"
+            ) {
+
+                return showError(
+                    `File ${file.name} harus berupa PDF.`
+                );
+
+            }
+
+
+            formData.append(
+                "cv_files[]",
+                file
+            );
+
+        }
+
+
+        /* ========================================================
+         * REQUEST ID
+         * ======================================================== */
+
+        const requestId =
+            "APP-" +
+            Date.now() +
+            "-" +
+            Math.random()
+            .toString(36)
+            .substring(2, 8)
+            .toUpperCase();
+
+
+        formData.append(
+            "request_id",
+            requestId
+        );
+
+
+        console.log(
+            "Applicant Request ID:",
+            requestId
+        );
+
+
+        /* ========================================================
+         * LOCK
+         * ======================================================== */
+
+        window.isSubmittingApplicant =
+            true;
+
+
+        /* ========================================================
+         * CHECK CONNECTION
+         * ======================================================== */
+
+        showCheckingConnection();
+
+
+        checkInternetConnection()
+
+            .then(function(connection) {
+
+
+                console.log(
+                    "Server response time:",
+                    connection.responseTime +
+                    " ms"
+                );
+
+
+                /* =================================================
+                 * CONNECTION VERY SLOW
+                 * ================================================= */
+
+                if (
+                    connection.responseTime > 5000
+                ) {
+
+
+                    Swal.fire({
+
+                            icon: "warning",
+
+                            title: "Koneksi Internet Lambat",
+
+                            html: `
+
+                        <div style="
+                            font-size:14px;
+                            line-height:1.7;
+                            color:#475569;
+                        ">
+
+                            Koneksi ke server terdeteksi
+                            cukup lambat.
+
+                            <br><br>
+
+                            Waktu respons:
+
+                            <b>
+                                ${(connection.responseTime / 1000).toFixed(1)}
+                                detik
+                            </b>
+
+                            <br><br>
+
+                            Mengirim CV membutuhkan
+                            koneksi yang cukup stabil.
+
+                            <br><br>
+
+                            <b>
+                                Apakah kamu tetap ingin
+                                mencoba mengirim?
+                            </b>
+
+                        </div>
+
+                    `,
+
+                            showCancelButton: true,
+
+                            confirmButtonText: "Tetap Kirim CV",
+
+                            cancelButtonText: "Batal",
+
+                            confirmButtonColor: "#2563eb",
+
+                            cancelButtonColor: "#64748b"
+
+                        })
+
+                        .then(function(result) {
+
+
+                            if (
+                                result.isConfirmed
+                            ) {
+
+                                uploadApplicantCV(
+                                    formData
+                                );
+
+                            } else {
+
+                                window.isSubmittingApplicant =
+                                    false;
+
+                            }
+
+                        });
+
+
+                    return;
+
+                }
+
+
+                /* =================================================
+                 * CONNECTION OK
+                 * ================================================= */
+
+                uploadApplicantCV(
+                    formData
+                );
+
+            })
+
+
+            /* ====================================================
+             * CONNECTION FAILED
+             * ==================================================== */
+
+            .catch(function(error) {
+
+
+                window.isSubmittingApplicant =
+                    false;
+
+
+                Swal.close();
+
+
+                if (
+                    error.type === "offline"
+                ) {
+
+                    showConnectionError(
+                        "Perangkat kamu sedang tidak terhubung ke internet."
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    error.type === "timeout"
+                ) {
+
+                    showConnectionError(
+                        "Koneksi ke server terlalu lambat atau tidak stabil."
+                    );
+
+                    return;
+
+                }
+
+
+                showConnectionError(
+                    "Server aplikasi tidak dapat dihubungi."
+                );
+
+            });
+
     }
+
+
+    /* ============================================================
+     * DEVICE OFFLINE
+     * ============================================================ */
+
+    window.addEventListener(
+        "offline",
+        function() {
+
+
+            /*
+             * Jangan tampilkan alert kalau sedang tidak
+             * melakukan submit.
+             */
+            if (
+                !window.isSubmittingApplicant
+            ) {
+
+                return;
+
+            }
+
+
+            Swal.fire({
+
+                icon: "warning",
+
+                title: "Internet Terputus",
+
+                text: "Koneksi internet perangkat kamu terputus.",
+
+                confirmButtonText: "Mengerti",
+
+                confirmButtonColor: "#f59e0b"
+
+            });
+
+        }
+    );
+
+
+    /* ============================================================
+     * DEVICE ONLINE AGAIN
+     * ============================================================ */
+
+    window.addEventListener(
+        "online",
+        function() {
+
+
+            /*
+             * Hanya tampilkan kalau sedang submit.
+             */
+            if (
+                !window.isSubmittingApplicant
+            ) {
+
+                return;
+
+            }
+
+
+            Swal.fire({
+
+                icon: "success",
+
+                title: "Internet Terhubung",
+
+                text: "Koneksi internet kembali tersedia.",
+
+                timer: 2000,
+
+                showConfirmButton: false
+
+            });
+
+        }
+    );
 
     function showError(message) {
         Swal.fire({
@@ -567,28 +1950,6 @@
 
     });
 
-    // function applyJob(id, vessel, rank, subject) {
-    //     $('#recruitment_id').val(id);
-    //     $('#vessel_type').val(vessel);
-
-    //     $('#selectedRank').html(rank);
-    //     $('#selectedVessel').html('🚢 ' + vessel);
-
-    //     $('#slcRank').html(
-    //         '<option value="' + rank + '" selected>' + rank + '</option>'
-    //     );
-
-    //     $('#selectedJobCard').show();
-
-    //     // pindah page
-    //     $('#idWelcome').hide();
-    //     $('#formRecruitment').fadeIn(300);
-
-    //     // scroll top
-    //     $('html, body').animate({
-    //         scrollTop: $("#formRecruitment").offset().top
-    //     }, 400);
-    // }
     let isOpenRecruitment = false;
 
     function selectRecruitment(id, vesselType, rank) {
@@ -701,18 +2062,45 @@
         }
 
     });
+
+    window.addEventListener("load", () => setTimeout(() => new bootstrap.Modal(document.getElementById(
+        "modalBewareScam")).show(), 300));
+
+    function closeBewareScam() {
+
+        $("#modalBewareScam").modal("hide");
+
+    }
     </script>
     <style>
-    @keyframes accentLoad {
-        from {
-            width: 0%;
-            opacity: 0;
+    body {
+        background: #eef2f7;
+        font-family: Segoe UI, Tahoma, sans-serif
+    }
+
+    @media(max-width:768px) {
+        .hero {
+            flex-direction: column !important
         }
 
-        to {
-            width: 100%;
-            opacity: 1;
+        .grid1,
+        .grid2 {
+            grid-template-columns: 1fr !important
         }
+
+        .title {
+            font-size: 34px !important
+        }
+    }
+
+    .modal-content {
+        border: none;
+        border-radius: 22px;
+        overflow: hidden
+    }
+
+    .modal-backdrop.show {
+        opacity: .65;
     }
 
     .vessel-content {
@@ -732,10 +2120,192 @@
     .vessel-header:hover {
         background: #e2e8f0;
     }
+
+    @keyframes popupAnimation {
+
+        from {
+
+            opacity: 0;
+            transform: translateY(25px) scale(.96);
+
+        }
+
+        to {
+
+            opacity: 1;
+            transform: translateY(0) scale(1);
+
+        }
+
+    }
     </style>
 </head>
 
 <body>
+
+    <div class="modal fade" id="modalBewareScam" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog" style="max-width:760px">
+            <div class="modal-content" style="
+                border:none;
+                border-radius:18px;
+                overflow:hidden;
+                max-height:calc(100vh - 50px);
+            ">
+                <div style="
+                    background:linear-gradient(135deg,#b91c1c 0%,#dc2626 60%,#ef4444 100%);
+                    color:#fff;
+                    padding:18px 20px;
+                    position:relative;
+                    
+                    ">
+
+                    <!-- Decorative -->
+                    <div style="
+                        position:absolute;
+                        width:120px;
+                        height:120px;
+                        border-radius:50%;
+                        background:rgba(255,255,255,.08);
+                        top:-55px;
+                        right:-45px;
+                    "></div>
+
+                    <div style="
+                        position:absolute;
+                        width:90px;
+                        height:90px;
+                        border-radius:50%;
+                        background:rgba(255,255,255,.05);
+                        bottom:-45px;
+                        left:-35px;
+                    "></div>
+
+                    <div style="
+                            position:relative;
+                            z-index:2;
+                            display:flex;
+                            align-items:flex-start;
+                            gap:14px;
+                        ">
+
+                        <!-- Icon -->
+                        <div style="
+                            width:50px;
+                            height:50px;
+                            min-width:50px;
+                            border-radius:14px;
+                            background:rgba(255,255,255,.15);
+                            display:flex;
+                            justify-content:center;
+                            align-items:center;
+                            font-size:24px;
+                        ">
+                            🚨
+                        </div>
+
+                        <div style="flex:1;">
+
+                            <!-- Badge -->
+                            <div style="
+                                display:inline-block;
+                                padding:5px 12px;
+                                border-radius:999px;
+                                background:rgba(255,255,255,.16);
+                                font-size:11px;
+                                font-weight:700;
+                                letter-spacing:.6px;
+                                margin-bottom:10px;
+                            ">
+                                ⚠️ BEWARE OF SCAM
+                            </div>
+
+                            <!-- Title -->
+                            <div style="
+                                font-size:20px;
+                                font-weight:800;
+                                line-height:1.2;
+                                margin-bottom:8px;
+                            ">
+                                Hati-Hati Terhadap Penipuan Rekrutmen
+                            </div>
+
+                            <div style="
+                                font-size:14px;
+                                line-height:1.6;
+                                opacity:.95;
+                            ">
+                                <strong>Andhika Group</strong> tidak pernah memungut biaya dalam bentuk apa pun selama
+                                proses rekrutmen.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div style="
+                        margin-top:16px;
+                        display:grid;
+                        grid-template-columns:1fr 1fr;
+                        gap:10px;
+                    ">
+
+                        <div style="
+                            background:rgba(255,255,255,.10);
+                            padding:12px;
+                            border-radius:10px;
+                            font-size:13px;
+                            line-height:1.55;
+                        ">
+                            💰 Tidak ada biaya administrasi.
+                        </div>
+
+                        <div style="
+                            background:rgba(255,255,255,.10);
+                            padding:12px;
+                            border-radius:10px;
+                            font-size:13px;
+                            line-height:1.55;
+                        ">
+                            📱 Abaikan pihak yang meminta transfer uang.
+                        </div>
+
+                        <div style="
+                            background:rgba(255,255,255,.10);
+                            padding:12px;
+                            border-radius:10px;
+                            font-size:13px;
+                            line-height:1.55;
+                        ">
+                            📄 Waspadai surat panggilan kerja yang meminta pembayaran.
+                        </div>
+
+                        <div style="
+                            background:rgba(255,255,255,.10);
+                            padding:12px;
+                            border-radius:10px;
+                            font-size:13px;
+                            line-height:1.55;
+                        ">
+                            🏦 Jangan transfer ke rekening pribadi maupun perusahaan.
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-body" style="margin:0;padding:0;overflow:auto;max-height:calc(100vh - 200px)">
+                    <div style="padding:22px;background:#fafbfd">
+                        <div
+                            style="margin-top:16px;padding:16px;background:#eaf3ff;border:1px solid #bfd9ff;border-radius:12px;text-align:center;color:#1e3a8a">
+                            ℹ️ Seluruh proses rekrutmen di Andhika Group tidak dipungut biaya (free of charge). Harap
+                            berhati-hati terhadap segala bentuk penipuan yang mengatasnamakan Andhika Group.</div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center"><button class="btn btn-primary px-4"
+                        data-bs-dismiss="modal">Saya Mengerti</button></div>
+            </div>
+        </div>
+    </div>
+
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 sticky-top">
         <a class="navbar-brand fw-bold text-primary">
             <img src="<?php echo base_url("/assets/img/banner/andhika.png");?>" class="rounded-circle rounded-pill"
@@ -751,11 +2321,11 @@
 
 
             <h2 style="
-            margin-top:25px;
-            font-size:30px;
-            font-weight:800;
-            color:#1e3a8a;
-        ">
+                margin-top:25px;
+                font-size:15px;
+                font-weight:800;
+                color:#1e3a8a;
+            ">
                 Informasi Penting Sebelum Melamar
             </h2>
 
@@ -764,92 +2334,17 @@
             </p>
         </header>
 
-        <article style="margin-bottom:60px;">
-            <h4 style="
-                font-weight:800;
-                font-size:22px;
-                color:#0f172a;
-                margin-bottom:28px;
-            ">
-                Open Positions
-            </h4>
-
-            <section style="
-                display:grid;
-                grid-template-columns:repeat(auto-fit,minmax(420px,1fr));
-                gap:32px;
-                width:100%;
-            ">
-                <?php echo $liNamaJabatan; ?>
-            </section>
-        </article>
-
-        <div style="
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            gap:18px;
-            margin-bottom:50px;
-        ">
-            <div style="
-                background:#f8fafc;
-                border:1px solid #e2e8f0;
-                border-radius:14px;
-                padding:16px 24px;
-                max-width:700px;
-                text-align:center;
-                box-shadow:0 4px 12px rgba(15,23,42,0.05);
-            ">
-                <div style="
-                    font-size:16px;
-                    font-weight:700;
-                    color:#0f172a;
-                    margin-bottom:6px;
-                ">
-                    Can't find your position?
-                </div>
-
-                <div style="
-                    font-size:14px;
-                    line-height:1.7;
-                    color:#64748b;
-                ">
-                    We are continuously expanding our crew database. Submit your application today and our recruitment
-                    team will contact you when a suitable opportunity becomes available.
-                </div>
-            </div>
-
-            <button id="btnNext" onclick="showRecruitment()" style="
-                padding:14px 50px;
-                background:linear-gradient(135deg,#1976d2,#1565c0);
-                color:#fff;
-                border:none;
-                border-radius:40px;
-                font-size:16px;
-                font-weight:700;
-                cursor:pointer;
-                box-shadow:0 8px 24px rgba(25,118,210,0.30);
-                transition:all .3s ease;
-            ">
-                Join Our Talent Pool
-            </button>
-            ```
-
-        </div>
-
-
         <article style="
-            position:relative;
-            margin-bottom:60px;
-            padding:36px;
-            border-radius:24px;
-            background:linear-gradient(145deg,#ffffff,#f8fafc);
-            border:1px solid rgba(15,23,42,0.06);
-            box-shadow:0 15px 40px rgba(0,0,0,0.05);
-            overflow:hidden;
-        ">
+                position:relative;
+                margin-bottom:60px;
+                padding:36px;
+                border-radius:24px;
+                background:linear-gradient(145deg,#ffffff,#f8fafc);
+                border:1px solid rgba(15,23,42,0.06);
+                box-shadow:0 15px 40px rgba(0,0,0,0.05);
+                overflow:hidden;
+            ">
 
-            <!-- Premium top accent line -->
             <div style="
                 position:absolute;
                 top:0;
@@ -861,7 +2356,7 @@
 
             <h4 style="
                 font-weight:800;
-                font-size:20px;
+                font-size:15px;
                 margin-bottom:28px;
                 color:#0f172a;
                 letter-spacing:.3px;
@@ -905,11 +2400,11 @@
                 </li>
 
                 <li style="
-                    display:flex;
-                    gap:16px;
-                    align-items:flex-start;
-                    margin-bottom:20px;
-                ">
+                        display:flex;
+                        gap:16px;
+                        align-items:flex-start;
+                        margin-bottom:20px;
+                    ">
                     <span style="
                         min-width:28px;
                         height:28px;
@@ -956,7 +2451,7 @@
                         font-size:14px;
                         font-weight:800;
                         box-shadow:0 6px 16px rgba(220,38,38,0.4);
-                    ">!</span>
+                    ">3</span>
 
                     <span style="
                         font-size:15px;
@@ -992,7 +2487,8 @@
                         color:#334155;
                         line-height:1.8;
                     ">
-                        Jika tidak ada respon dalam 14 hari, kemungkinan data belum memenuhi kriteria.
+                        Jika tidak ada respons dalam 14 hari setelah pengajuan lamaran, berarti Anda belum memenuhi
+                        kriteria untuk posisi yang dilamar.
                     </span>
                 </li>
 
@@ -1048,7 +2544,7 @@
                 <div>
 
                     <div style="
-                        font-size:16px;
+                        font-size:13px;
                         font-weight:800;
                         color:#991b1b;
                         margin-bottom:8px;
@@ -1078,6 +2574,76 @@
 
         </aside>
 
+        <article style="margin-bottom:60px;">
+            <h4 style="
+                font-weight:800;
+                font-size:15px;
+                color:#0f172a;
+                margin-bottom:28px;
+            ">
+                Posisi / Jabatan yang Dibuka
+            </h4>
+
+            <section style="
+                display:grid;
+                grid-template-columns:repeat(auto-fit,minmax(420px,1fr));
+                gap:32px;
+                width:100%;
+            ">
+                <?php echo $liNamaJabatan; ?>
+            </section>
+        </article>
+
+        <div style="
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            gap:18px;
+            margin-bottom:50px;
+        ">
+            <div style="
+                background:#f8fafc;
+                border:1px solid #e2e8f0;
+                border-radius:14px;
+                padding:16px 24px;
+                max-width:700px;
+                text-align:center;
+                box-shadow:0 4px 12px rgba(15,23,42,0.05);
+            ">
+                <div style="
+                    font-size:16px;
+                    font-weight:700;
+                    color:#0f172a;
+                    margin-bottom:6px;
+                ">
+                    Posisi yang Anda Cari Belum Tersedia?
+                </div>
+
+                <div style="
+                    font-size:14px;
+                    line-height:1.8;
+                    color:#64748b;
+                ">
+                    Kirimkan CV Anda ke Talent Pool kami agar profil Anda dapat dipertimbangkan untuk peluang kerja yang
+                    sesuai di masa mendatang. Tim rekrutmen akan menghubungi Anda apabila terdapat posisi yang relevan
+                </div>
+
+                <button id="btnNext" onclick="showRecruitment()" style="
+                    padding: 20px 20px;
+                    background:linear-gradient(135deg,#1976d2,#1565c0);
+                    color:#fff;
+                    border:none;
+                    border-radius:40px;
+                    font-size:16px;
+                    font-weight:700;
+                    cursor:pointer;
+                    box-shadow:0 8px 24px rgba(25,118,210,0.30);
+                    transition:all .3s ease;
+                ">
+                    Bergabung dengan Talent Pool Kami!
+                </button>
+
+            </div>
 
 
     </section>
@@ -1323,20 +2889,6 @@
 
                             </div>
 
-                            <!-- Bottom Notice
-                            <div style="
-                                margin-top:18px;
-                                display:flex;
-                                align-items:center;
-                                gap:10px;
-                                color:rgba(255,255,255,.75);
-                                font-size:13px;
-                                line-height:1.7;
-                            ">
-                                <span style="font-size:16px;">ℹ️</span>
-                                Pastikan data yang Anda input sesuai dengan posisi dan vessel yang dipilih.
-                            </div> -->
-
                         </div>
 
                     </div>
@@ -1354,7 +2906,6 @@
                     </div>
                 </div>
 
-                <!-- Status Badge -->
                 <div style="
                     background:linear-gradient(135deg,#2563eb,#1e40af);
                     color:#ffffff;
@@ -1382,7 +2933,6 @@
 
         </div>
 
-
         <div style="
             background:#ffffff;
             border-radius:22px;
@@ -1404,7 +2954,6 @@
 
             <div class="row" style="margin-bottom:28px;">
 
-                <!-- POSITION APPLIED -->
                 <div class="col-md-4 col-12">
 
                     <label style="font-weight:600;color:#374151;margin-bottom:6px;display:block;">
@@ -1711,6 +3260,20 @@
                     ">
                         <div class="row row-cols-2 g-2">
 
+                            <label
+                                style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px;font-size:13px;cursor:pointer;">
+                                <input type="checkbox" name="kapal[]" value="AHTS DP2"
+                                    style="width:16px;height:16px;accent-color:#2563eb;">
+                                AHTS DP2
+                            </label>
+
+                            <label
+                                style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px;font-size:13px;cursor:pointer;">
+                                <input type="checkbox" name="kapal[]" value="AHTS LCT & SSRV"
+                                    style="width:16px;height:16px;accent-color:#2563eb;">
+                                AHTS, LCT & SSRV
+                            </label>
+
                             <label style="
                                         display:flex;align-items:center;gap:10px;
                                         background:#ffffff;border:1px solid #e5e7eb;
@@ -1754,14 +3317,14 @@
                                 style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px;font-size:13px;cursor:pointer;">
                                 <input type="checkbox" name="kapal[]" value="TANKER OIL"
                                     style="width:16px;height:16px;accent-color:#2563eb;">
-                                TANKER OIL
+                                TANKER CRUDE
                             </label>
 
                             <label
                                 style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px;font-size:13px;cursor:pointer;">
                                 <input type="checkbox" name="kapal[]" value="CRUDE OIL"
                                     style="width:16px;height:16px;accent-color:#2563eb;">
-                                CRUDE OIL
+                                TANKER OIL
                             </label>
 
                             <label
@@ -1812,6 +3375,8 @@
                                     style="width:16px;height:16px;accent-color:#2563eb;">
                                 RORO / PASSENGER
                             </label>
+
+
                         </div>
 
                         <!-- OTHER -->
@@ -2227,6 +3792,7 @@
     <!-- <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/owl.carousel.min.js"></script> -->
     <!-- <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/custom.js"></script> -->
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/jquery-ui-1.9.2.custom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

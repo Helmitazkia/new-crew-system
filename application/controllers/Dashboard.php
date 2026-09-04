@@ -369,7 +369,7 @@ class Dashboard extends CI_Controller {
                 $displayStatus = 'Not For Emp';
             } elseif (isset($row['inAktif']) && $row['inAktif'] == '1') {
                 $displayStatus = 'Non Aktif';
-            } elseif (isset($row['newapplicent']) && $row['newapplicent'] == '1') {
+            } elseif (isset($row['newapplicent']) && $row['newapplicent'] == '1' && $row['signoffdt'] === null) {
                 $displayStatus = 'New Applicant';
             } elseif (isset($row['signoffdt']) && $row['signoffdt'] !== '' && $row['signoffdt'] !== null && $row['signoffdt'] !== '0000-00-00' && $row['signoffdt'] < $today) {
                 $displayStatus = 'Stand By';
