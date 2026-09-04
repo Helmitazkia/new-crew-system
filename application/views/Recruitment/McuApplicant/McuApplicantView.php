@@ -221,514 +221,285 @@
     word-break: break-word;
     overflow-wrap: break-word;
 }
+.column-search {
+    width: 100%;
+    padding: 2px 4px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.filter-icon {
+    font-size: 14px;
+    margin-left: 5px;
+    cursor: pointer;
+    color: #aac4ff;
+}
+.filter-icon:hover { color: #fff; }
+.filter-dropdown {
+    position: absolute; background: #fff; border: 1px solid #ccc;
+    padding: 8px; width: 200px; max-height: 260px; overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,.2); display: none; z-index: 9999;
+}
+.filter-dropdown input[type="text"] {
+    width: 100%; margin-bottom: 6px; padding: 4px; font-size: 12px;
+    border: 1px solid #dee2e6; border-radius: 4px;
+}
+.filter-dropdown label {
+    display: block; font-size: 13px; cursor: pointer;
+    padding: 4px 8px; margin: 2px 0; border-radius: 4px;
+}
+.filter-dropdown label:hover { background: #f8f9fa; }
+.filter-list { max-height: 120px; overflow-y: auto; margin-bottom: 6px; }
+.btn-clear-filter {
+    background: transparent; border: 1.5px solid #000099;
+    color: #000099; transition: all .2s ease;
+}
+.btn-clear-filter:hover { background: #000099; color: #fff; }
+.btn-clear-filter i { font-size: 14px; }
 </style>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const input = document.querySelector(".sap-search input");
-    if (input) {
-        input.addEventListener("keyup", function() {
-            searchTableDataMCU(input, 1);
-        });
-    }
-    searchTableDataMCU(input, 1);
+var tableDataMCUCrew;
+$(document).ready(function() {
+    tableDataMCUCrew = $('#tableDataMCUCrew').DataTable({
+        dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end'f>>" +
+             "<'row'<'col-md-12'tr>>" +
+             "<'row mt-2'<'col-md-6'i><'col-md-6 d-flex justify-content-end'p>>",
+        processing : true,
+        serverSide : false,
+        pageLength : 10,
+        lengthMenu : [10, 25, 50, 100],
+        ajax: {
+            url: '<?php echo base_url("searchTableDataMCU"); ?>',
+            dataSrc: function(json) { return json.data ? json.data : []; }
+        },
+        orderCellsTop: true,
+        columns: [
+            { data: null, className: 'text-center', render: function(data, type, row, meta) { return meta.row + 1; } },
+            { data: 'fullname', render: function(data, type, row) { 
+                if (type === 'display') {
+                    return '<div style="font-weight:600;font-size:12px;color:#1f2d3d;">'+(data||'-')+'</div>'+
+                           '<div style="font-size:11px;color:#868e96;margin-top:2px;">'+(row.email||'-')+'</div>';
+                }
+                return data;
+            }},
+            { data: 'position_applied', render: function(data, type, row) {
+                if (type === 'display') {
+                    return '<div style="font-size:12px;font-weight:600;color:#34495e;">'+(data||'-')+'</div>'+
+                           '<div style="font-size:11px;color:#7f8c8d;margin-top:2px;">'+(row.ijazah_terakhir||'-')+'</div>';
+                }
+                return data;
+            }},
+            { data: 'born_place', render: function(data, type, row) {
+                if (type === 'display') {
+                    return '<div>'+(data||'-')+'</div>'+
+                           '<div style="color:#868e96;">'+(row.born_date||'-')+'</div>';
+                }
+                return data;
+            }},
+            { data: 'handphone', render: function(data) { return data || '-'; } },
+            { data: 'vessel_type', render: function(data) { return data || '-'; } },
+            { data: 'last_experience', render: function(data, type, row) {
+                if (type === 'display') {
+                    let vesselExp = "-";
+                    if (row.pengalaman_jeniskapal) {
+                        vesselExp = `<div style="color:#868e96;line-height:1.4;white-space:normal;word-break:break-word;margin-top:4px;">`+
+                                    row.pengalaman_jeniskapal.split(',').map(v => `<div>${v.trim()}</div>`).join('') +
+                                    `</div>`;
+                    }
+                    return `<div style="font-weight:600;color:#34495e;margin-bottom:6px;">${data || "-"}</div>${vesselExp}`;
+                }
+                return data;
+            }},
+            { data: 'berlayardengancrewasing', render: function(data, type, row) {
+                if (type === 'display') {
+                    let foreignBlock = "-";
+                    const foreignCrew = data || "-";
+                    if (foreignCrew !== "-" && foreignCrew.includes("-")) {
+                        const parts = foreignCrew.split("-");
+                        const status = parts[0].trim();
+                        const countries = parts.slice(1).join("-").trim();
+                        foreignBlock = `
+                            <div style="font-weight:600;color:#0b7285;margin-bottom:4px;">${status} -</div>
+                            <div style="color:#495057;font-size:11px;line-height:1.4;text-align:center;white-space:normal;word-break:break-word;margin:auto;">` +
+                            countries.split(',').map(c => c.trim()).join(', ') +
+                            `</div>`;
+                    } else {
+                        foreignBlock = `<div>${foreignCrew}</div>`;
+                    }
+                    return foreignBlock;
+                }
+                return data;
+            }},
+            { data: null, className: 'text-center', render: function(data, type, row) {
+                return `
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                        <span style="background:#e7f5ff;color:#1971c2;padding:2px 6px;border-radius:10px;font-size:9px;font-weight:600;">
+                            ${row.last_salary_currency || '-'}
+                        </span>
+                        <span style="font-size:11px;font-weight:600;color:#065f46;">
+                            ${formatSalary(row.last_salary, '')}
+                        </span>
+                    </div>`;
+            }},
+            { data: null, className: 'text-center', render: function(data, type, row) {
+                return `
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                        <span style="background:#e7f5ff;color:#1971c2;padding:2px 6px;border-radius:10px;font-size:9px;font-weight:600;">
+                            ${row.expected_salary_currency || '-'}
+                        </span>
+                        <span style="font-size:11px;font-weight:600;color:#065f46;">
+                            ${formatSalary(row.expected_salary, '')}
+                        </span>
+                    </div>`;
+            }},
+            { data: 'join_inAndhika', className: 'text-center', render: function(data) { return data || '-'; } },
+            { data: 'submit_cv', render: function(data) { return data || '-'; } },
+            { data: null, className: 'text-center', render: function(data, type, row) {
+                return `
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                        <button style="border:1px solid #dee2e6;background:#fff;font-size:11px;padding:4px;border-radius:4px;cursor:pointer;" onclick="window.open('${row.cv_url}','_blank')">📄 View CV</button>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:4px;margin-top:4px;">
+                        <button style="border:1px solid #dc3545;background:#fff;color:#dc3545;font-size:11px;padding:4px;border-radius:4px;cursor:pointer;" onclick="withdrawApplicant('${row.id}')">🚫 Withdraw</button>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:4px;margin-top:4px;">
+                        <button style="border:1px solid #dc3545;background:#fff;color:#dc3545;font-size:11px;padding:4px;border-radius:4px;cursor:pointer;" onclick="setNotFitApplicant('${row.id}')"><i class="fas fa-user-slash"></i> Not Fit</button>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:4px;margin-top:4px;">
+                        <button style="border:1px solid #28a745;background:#fff;color:#28a745;font-size:11px;padding:4px;border-radius:4px;cursor:pointer;" onclick="setMCUApplicant('${row.id}')"><i class="fas fa-user-check"></i> Fit</button>
+                    </div>`;
+            }}
+        ],
+        initComplete: function () {
+            initDropdownFilters(this.api());
+        },
+        language: {
+            lengthMenu: '_MENU_ &nbsp;Entries',
+            info: 'Showing _START_ to _END_ of _TOTAL_ entries',
+            infoEmpty: 'Showing 0 to 0 of 0 entries',
+            infoFiltered: '(filtered from _MAX_ total entries)',
+            search: 'Search:',
+            emptyTable: 'Tidak ada data MCU Applicant',
+            zeroRecords: 'Data tidak ditemukan'
+        },
+        createdRow: function(row, data, dataIndex) {
+            $(row).attr('id', 'row_' + data.id);
+            $(row).css('border-bottom', '1px solid #eef1f5');
+            $(row).css('transition', 'background 0.3s ease');
+            
+            $('td', row).eq(0).css({'font-size':'11px','color':'#868e96','vertical-align':'top'});
+            $('td', row).eq(1).css({'vertical-align':'top'});
+            $('td', row).eq(2).css({'vertical-align':'top'});
+            $('td', row).eq(3).css({'font-size':'11px','color':'#495057','vertical-align':'top'});
+            $('td', row).eq(4).css({'font-size':'11px','vertical-align':'top'});
+            $('td', row).eq(5).css({'font-size':'11px','vertical-align':'top','white-space':'normal','word-break':'break-word','max-width':'140px'});
+            $('td', row).eq(6).css({'font-size':'11px','vertical-align':'top'});
+            $('td', row).eq(7).css({'font-size':'11px','text-align':'center','vertical-align':'top'});
+            $('td', row).eq(8).css({'font-size':'11px','text-align':'center','vertical-align':'top','padding-top':'12px'});
+            $('td', row).eq(9).css({'font-size':'11px','text-align':'center','vertical-align':'top','padding-top':'12px'});
+            $('td', row).eq(10).css({'font-size':'11px','text-align':'center','vertical-align':'top'});
+            $('td', row).eq(11).css({'font-size':'11px','color':'#868e96','vertical-align':'top'});
+            $('td', row).eq(12).css({'text-align':'center','min-width':'120px','vertical-align':'top'});
+        }
+    });
+
+    // Column search
+    $('#tableDataMCUCrew thead tr:eq(1) .column-search').on('keyup change', function() {
+        tableDataMCUCrew.column($(this).parent().index()).search(this.value).draw();
+    });
 });
 
-function searchTableDataMCU(input, page = 1) {
-    const searchValue = input ? input.value : "";
-    loadDataMCUCrew(page, searchValue);
-}
+function initDropdownFilters(api) {
+    $('#tableDataMCUCrew thead th').each(function (colIndex) {
+        var icon = $(this).find('.filter-icon');
+        if (!icon.length) return;
+        if (colIndex === 0 || colIndex === 12) return; // skip No & Action
 
-function loadDataMCUCrew(page = 1, searchValue = "") {
-    const table = document.getElementById("tableDataMCUCrew");
-    if (table) table.dataset.page = page;
+        var dropdown = $('<div class="filter-dropdown">'
+            + '<input type="text" class="filter-search" placeholder="Search...">'
+            + '<div class="filter-list"></div>'
+            + '<hr>'
+            + '<div class="d-flex gap-2 text-center">'
+            + '<button class="btn btn-sm w-30 rounded-pill fst-italic btn-clear-filter" id="clear-filter">'
+            + '<i class="fa-solid fa-eraser"></i>'
+            + '</button>'
+            + '</div>'
+            + '</div>').appendTo('body');
 
-    const search = searchValue !== undefined ?
-        searchValue :
-        ($("#searchMCUCrew").val() || "");
+        var listContainer = dropdown.find('.filter-list');
 
-    const rows = table?.dataset.rows ? parseInt(table.dataset.rows) : 10;
-
-    $.ajax({
-        url: '<?php echo base_url("searchTableDataMCU"); ?>',
-        method: 'GET',
-        data: {
-            search,
-            page,
-            rows
-        },
-        dataType: 'json',
-        success: function(res) {
-
-            let html = "";
-
-            const rowsPerPage = parseInt(res.pagination.rows_per_page) || 10;
-            const currentPage = parseInt(res.pagination.current_page) || 1;
-            let no = (currentPage - 1) * rowsPerPage + 1;
-
-            if (!res.data || res.data.length === 0) {
-                $("#idTbodyMCUCrew").html(`
-                    <tr>
-                        <td colspan="13" style="text-align:center;padding:20px;color:#adb5bd;">
-                            No data found
-                        </td>
-                    </tr>
-                `);
-
-                renderPaginationMCU(
-                    currentPage,
-                    res.pagination.total_pages,
-                    search,
-                    res.pagination.total_rows,
-                    rowsPerPage
-                );
-                return;
+        try {
+            var colData = api.column(colIndex).data();
+            if (colData && typeof colData.unique === 'function') {
+                var uniqueVals = [];
+                colData.unique().each(function (val) {
+                    if (val && val !== '-' && val !== '') {
+                        var tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = val;
+                        var text = tempDiv.textContent || tempDiv.innerText || '';
+                        if (text && !uniqueVals.includes(text)) uniqueVals.push(text);
+                    }
+                });
+                uniqueVals.sort().forEach(function (val) {
+                    var safeVal = String(val).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    listContainer.append('<label><input type="checkbox" value="'+ safeVal +'"> '+ safeVal +'</label>');
+                });
             }
+        } catch(e) { console.warn('Filter error col '+ colIndex, e); }
 
-            res.data.forEach(row => {
+        icon.on('click', function (e) {
+            e.stopPropagation();
+            $('.filter-dropdown').hide();
+            var off = icon.offset();
+            dropdown.css({ top: off.top + icon.outerHeight(), left: off.left }).toggle();
+        });
 
-                const fullname = highlightText(row.fullname, search);
-                const email = highlightText(row.email, search);
-                const position = highlightText(row.position_applied, search);
-                const ijazah = highlightText(row.ijazah_terakhir, search);
-                const vesselType = highlightText(row.vessel_type, search);
-
-                let vesselExp = "-";
-
-                if (row.pengalaman_jeniskapal) {
-
-                    vesselExp = `
-                        <div style="
-                            color:#868e96;
-                            line-height:1.4;
-                            white-space:normal;
-                            word-break:break-word;
-                            margin-top:4px;
-                        ">
-                            ${row.pengalaman_jeniskapal
-                                .split(',')
-                                .map(v => `
-                                    <div>
-                                        ${highlightText(v.trim(), search)}
-                                    </div>
-                                `)
-                                .join('')
-                            }
-                        </div>
-                    `;
-                }
-
-                let foreignBlock = "-";
-
-                const foreignCrew = row.berlayardengancrewasing || "-";
-
-                if (
-                    foreignCrew !== "-" &&
-                    foreignCrew.includes("-")
-                ) {
-
-                    const parts = foreignCrew.split("-");
-
-                    const status = parts[0].trim();
-                    const countries = parts.slice(1).join("-").trim();
-
-                    foreignBlock = `
-                        <div style="
-                            font-weight:600;
-                            color:#0b7285;
-                            margin-bottom:4px;
-                        ">
-                            ${highlightText(status, search)} -
-                        </div>
-
-                        <div style="
-                            color:#495057;
-                            font-size:11px;
-                            line-height:1.4;
-                            text-align:center;
-                            white-space:normal;
-                            word-break:break-word;
-                            max-width:150px;
-                            margin:auto;
-                        ">
-                            ${countries
-                                .split(',')
-                                .map(country => `
-                                    <div>
-                                        ${highlightText(country.trim(), search)}
-                                    </div>
-                                `)
-                                .join('')
-                            }
-                        </div>
-                    `;
-
-                } else {
-
-                    foreignBlock = `
-                        <div>
-                            ${highlightText(foreignCrew, search)}
-                        </div>
-                    `;
-                }
-
-                let btnAct = `
-                <div style="display:flex;flex-direction:column;gap:4px;">
-                    <button style="border:1px solid #dee2e6;background:#fff;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;"
-                            onclick="window.open('${row.cv_url}','_blank')">
-                        📄 View CV
-                    </button>
-                </div>`;
-
-                let btnWithDraw = `
-                <div style="display:flex;flex-direction:column;gap:4px;margin-top:4px;">
-                    <button style="border:1px solid #dc3545;background:#fff;color:#dc3545;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;"
-                            onclick="withdrawApplicant('${row.id}')">
-                        🚫 Withdraw
-                    </button>
-                </div>`;
-
-                let btnUnfit = `
-                <div style="display:flex;flex-direction:column;gap:4px;margin-top:4px;">
-                    <button style="border:1px solid #dc3545;background:#fff;color:#dc3545;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;"
-                            onclick="setNotFitApplicant('${row.id}')">
-                        <i class ="fas fa-user-slash"></i> Not Fit 
-                    </button>
-                </div>`;
-
-                let btnfit = `
-                <div style="display:flex;flex-direction:column;gap:4px;margin-top:4px;">
-                    <button style="border:1px solid #28a745;background:#fff;color:#28a745;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;"
-                            onclick="setMCUApplicant('${row.id}')">
-                        <i class ="fas fa-user-check"></i> Fit 
-                    </button>
-                </div>`;
-
-                html += `
-                <tr id="row_${row.id}" style="border-bottom:1px solid #eef1f5; transition: background 0.3s ease;">
-                    
-                    <td style="text-align:center;font-size:12px;color:#868e96;vertical-align:top;">
-                        ${no++}
-                    </td>
-
-                    <td style="min-width:260px;vertical-align:top;">
-                        <div style="font-weight:600;font-size:14px;color:#1f2d3d;">${fullname}</div>
-                        <div style="font-size:12px;color:#868e96;margin-top:2px;">${email}</div>
-                    </td>
-
-                    <td style="min-width:160px;vertical-align:top;">
-                        <div style="font-size:13px;font-weight:600;color:#34495e;">${position}</div>
-                        <div style="font-size:12px;color:#7f8c8d;margin-top:2px;">${ijazah}</div>
-                    </td>
-
-                    <td style="font-size:12px;color:#495057;vertical-align:top;">
-                        <div>${row.born_place}</div>
-                        <div style="color:#868e96;">${row.born_date}</div>
-                    </td>
-
-                    <td style="font-size:12px;vertical-align:top;">
-                        ${row.handphone}
-                    </td>
-
-                    <td style="
-                        font-size:12px;
-                        vertical-align:top;
-                        white-space:normal;
-                        word-break:break-word;
-                        max-width:140px;
-                    ">
-                        ${vesselType}
-                    </td>
-
-                   <td style="
-                        font-size:12px;
-                        vertical-align:top;
-                        min-width:220px;
-                    ">
-                        <div style="
-                            font-weight:600;
-                            color:#34495e;
-                            margin-bottom:6px;
-                        ">
-                            ${highlightText(row.last_experience || "-", search)}
-                        </div>
-
-                        ${vesselExp}
-                    </td>
-
-                    <td style="
-                        font-size:12px;
-                        text-align:center;
-                        vertical-align:top;
-                        min-width:170px;
-                        padding-top:6px;
-                    ">
-                        ${foreignBlock}
-                    </td>
-
-                   <td style="
-                        font-size:12px;
-                        text-align:center;
-                        vertical-align:top;
-                        padding-top:12px;
-                    ">
-                        <div style="
-                            display:flex;
-                            flex-direction:column;
-                            align-items:center;
-                            gap:4px;
-                        ">
-                            <span style="
-                                background:#e7f5ff;
-                                color:#1971c2;
-                                padding:2px 6px;
-                                border-radius:10px;
-                                font-size:10px;
-                                font-weight:600;
-                            ">
-                                ${row.last_salary_currency || '-'}
-                            </span>
-
-                            <span style="
-                                font-size:13px;
-                                font-weight:600;
-                                color:#065f46;
-                            ">
-                                ${highlightText(
-                                    formatSalary(row.last_salary, ''),
-                                    search
-                                )}
-                            </span>
-                        </div>
-                    </td>
-
-                    <td style="
-                        font-size:12px;
-                        text-align:center;
-                        vertical-align:top;
-                        padding-top:12px;
-                    ">
-                        <div style="
-                            display:flex;
-                            flex-direction:column;
-                            align-items:center;
-                            gap:4px;
-                        ">
-                            <span style="
-                                background:#e7f5ff;
-                                color:#1971c2;
-                                padding:2px 6px;
-                                border-radius:10px;
-                                font-size:10px;
-                                font-weight:600;
-                            ">
-                                ${row.expected_salary_currency || '-'}
-                            </span>
-
-                            <span style="
-                                font-size:13px;
-                                font-weight:600;
-                                color:#065f46;
-                            ">
-                                ${highlightText(
-                                    formatSalary(row.expected_salary, ''),
-                                    search
-                                )}
-                            </span>
-                        </div>
-                    </td>
-
-                    <td style="font-size:12px;text-align:center;vertical-align:top;">
-                        ${row.join_inAndhika}
-                    </td>
-
-                    <td style="font-size:12px;color:#868e96;vertical-align:top;">
-                        ${row.submit_cv}
-                    </td>
-
-                    <td style="text-align:center;min-width:120px;vertical-align:top;">
-                        ${btnAct}
-                        ${btnWithDraw}
-                        ${btnUnfit}
-                        ${btnfit}
-                    </td>
-
-                </tr>`;
+        dropdown.find('.filter-search').on('keyup', function () {
+            var kw = $(this).val().toLowerCase();
+            listContainer.find('label').each(function () {
+                $(this).toggle($(this).text().toLowerCase().includes(kw));
             });
+        });
 
-            $("#idTbodyMCUCrew").html(html);
+        dropdown.on('change', 'input[type="checkbox"]', function () {
+            var selected = [];
+            dropdown.find('input[type="checkbox"]:checked').each(function () { selected.push($(this).val()); });
+            if (selected.length > 0) {
+                var regex = selected.map(function(v){ return v.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'); }).join('|');
+                api.column(colIndex).search(regex, true, false).draw();
+            } else {
+                api.column(colIndex).search('').draw();
+            }
+            dropdown.hide();
+        });
 
-            renderPaginationMCU(
-                currentPage,
-                res.pagination.total_pages,
-                search,
-                res.pagination.total_rows,
-                rowsPerPage
-            );
-        }
+        dropdown.on('click', '.btn-clear-filter', function () {
+            dropdown.find('input').prop('checked', false);
+            dropdown.find('.filter-search').val('');
+            listContainer.find('label').show();
+            api.column(colIndex).search('').draw();
+            dropdown.hide();
+        });
     });
 }
 
-function highlightText(text = "", search = "") {
-
-    if (!search) return text;
-
-    const regex = new RegExp(
-        `(${search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`,
-        'gi'
-    );
-
-    return String(text).replace(regex, `
-        <span style="
-            background: linear-gradient(90deg, #ffe066, #ffd43b);
-            color: #1c1c1c;
-            padding:2px 4px;
-            border-radius:4px;
-            font-weight:700;
-            box-shadow:0 0 4px rgba(255,200,0,0.3);
-        ">$1</span>
-    `);
-}
-
-function changerowsPerPageMCU(val, searchValue) {
-    const table = document.getElementById("tableDataMCUCrew");
-    if (table) table.dataset.rows = val;
-    goToPageMCU(1, searchValue);
-}
-
-function renderPaginationMCU(currentPage, totalPages, searchValue, totalRows, rowsPerPage) {
-    const pagination = document.getElementById("pagination");
-    if (!pagination) return;
-
-    if (totalPages <= 0) {
-        pagination.innerHTML = "";
-        return;
-    }
-
-    const maxVisible = 5;
-    let start = Math.max(1, currentPage - 2);
-    let end = Math.min(totalPages, start + maxVisible - 1);
-    if (end - start < maxVisible - 1) {
-        start = Math.max(1, end - maxVisible + 1);
-    }
-
-    const btnStyle =
-        `border:1px solid #d0d7de;background:#fff;padding:5px 11px;font-size:12px;border-radius:7px;cursor:pointer;font-weight:600;color:#344054;min-width:34px;`;
-
-    const activeStyle =
-        `background:#0a6ed1;border:1px solid #0a6ed1;color:#fff;padding:5px 11px;font-size:12px;border-radius:7px;font-weight:700;min-width:34px;`;
-
-    const disabledStyle =
-        `border:1px solid #e5e7eb;background:#f1f3f5;padding:5px 11px;font-size:12px;border-radius:7px;color:#adb5bd;min-width:34px;`;
-
-    let html =
-        `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:14px;padding:12px 16px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;font-size:13px;">`;
-
-    html += `<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:#475467;">
-        <div><strong>${totalRows}</strong> Data • Page <strong>${currentPage}</strong> / <strong>${totalPages}</strong></div>
-
-        <div style="display:flex;align-items:center;gap:6px;">
-            Rows :
-            <select onchange="changerowsPerPageMCU(this.value,'${searchValue}')" 
-                style="border:1px solid #d0d7de;border-radius:6px;padding:3px 6px;font-size:12px;background:white;cursor:pointer;">
-                
-                <option value="10" ${rowsPerPage==10?'selected':''}>10</option>
-                <option value="25" ${rowsPerPage==25?'selected':''}>25</option>
-                <option value="50" ${rowsPerPage==50?'selected':''}>50</option>
-                <option value="100" ${rowsPerPage==100?'selected':''}>100</option>
-            </select>
-        </div>
-    </div>`;
-
-    html += `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">`;
-
-    if (currentPage > 1)
-        html += `<button style="${btnStyle}" onclick="goToPageMCU(${currentPage-1},'${searchValue}')">‹</button>`;
-    else
-        html += `<button disabled style="${disabledStyle}">‹</button>`;
-
-    for (let i = start; i <= end; i++) {
-        html += `<button style="${i===currentPage?activeStyle:btnStyle}" 
-            onclick="goToPageMCU(${i},'${searchValue}')">${i}</button>`;
-    }
-
-    if (end < totalPages) {
-        if (end < totalPages - 1)
-            html += `<span style="padding:0 4px;color:#98a2b3;font-weight:600;">...</span>`;
-
-        html += `<button style="${btnStyle}" 
-            onclick="goToPageMCU(${totalPages},'${searchValue}')">${totalPages}</button>`;
-    }
-
-    if (currentPage < totalPages)
-        html += `<button style="${btnStyle}" onclick="goToPageMCU(${currentPage+1},'${searchValue}')">›</button>`;
-    else
-        html += `<button disabled style="${disabledStyle}">›</button>`;
-
-    html += `<div style="display:flex;align-items:center;gap:5px;margin-left:8px;">
-        Go :
-        <input type="number" min="1" max="${totalPages}" id="jumpPageInputMCU"
-            style="width:55px;border:1px solid #d0d7de;border-radius:6px;padding:3px 6px;font-size:12px;">
-        <button style="${btnStyle}" onclick="jumpToPage('${searchValue}')">OK</button>
-    </div>`;
-
-    html += `</div></div>`;
-
-    pagination.innerHTML = html;
-}
-
-function goToPageMCU(page, searchValue) {
-    loadDataMCUCrew(page, searchValue);
-}
-
-function jumpToPage(searchValue) {
-    const input = document.getElementById("jumpPageInputMCU");
-    if (!input) return;
-    let page = parseInt(input.value);
-    if (!page || page < 1) return;
-    goToPageMCU(page, searchValue);
-}
-
-
-
-function renumberTableRows() {
-
-    const tbody = document.getElementById("idTbodyMCUCrew");
-
-    if (!tbody) return;
-
-    const rows = tbody.querySelectorAll("tr");
-
-    rows.forEach((row, index) => {
-
-        const firstCell = row.querySelector("td");
-
-        if (firstCell) {
-            firstCell.innerText = index + 1;
-        }
-
-    });
-}
+$(document).on('click', function (e) {
+    if (!$(e.target).closest('.filter-dropdown').length) $('.filter-dropdown').hide();
+});
 
 function animateRemoveRow(row) {
-
     if (!row) return;
-
     row.style.transition = "all 0.5s ease";
     row.style.backgroundColor = "#ffe8e8";
-
     setTimeout(() => {
         row.style.opacity = "0";
         row.style.transform = "translateX(-40px)";
         row.style.height = "0";
     }, 50);
-
     setTimeout(() => {
-
         row.remove();
-
-        renumberTableRows();
-
+        if(tableDataMCUCrew) tableDataMCUCrew.draw(false);
     }, 500);
 }
 
@@ -957,114 +728,98 @@ function setMCUApplicant(applicantId) {
     });
 }
 
-function formatSalary(amount, currency, searchValue = '') {
-
-    if (
-        amount === null ||
-        amount === undefined ||
-        amount === '' ||
-        amount === 0 ||
-        amount === '0'
-    ) {
+function formatSalary(amount, currency) {
+    if (amount === null || amount === undefined || amount === '' || amount === 0 || amount === '0') {
         return '-';
     }
-
-    const num = parseFloat(
-        String(amount).replace(/,/g, '')
-    );
-
+    const num = parseFloat(String(amount).replace(/,/g, ''));
     if (isNaN(num)) {
-        return `
-            <span style="
-                background:#e7f5ff;
-                color:#1971c2;
-                padding:2px 6px;
-                border-radius:10px;
-                font-size:10px;
-            ">
-                ${currency || '-'}
-            </span>
-            ${highlightText(String(amount), searchValue)}
-        `;
+        return String(amount);
     }
-
-    return `
-        <span style="
-            background:#e7f5ff;
-            color:#1971c2;
-            padding:2px 6px;
-            border-radius:10px;
-            font-size:10px;
-        ">
-            ${currency || '-'}
-        </span>
-        ${highlightText(
-            num.toLocaleString('en-US', {
-                maximumFractionDigits: 2
-            }),
-            searchValue
-        )}
-    `;
+    return num.toLocaleString('en-US', { maximumFractionDigits: 2 });
 }
 </script>
 
 
-<div id="applicantsWorkspace" class="sap-workspace">
+<style>
+  /* .crew-header th {
+    background-color: #000099 !important;
+    color: white !important;
+    font-size: 11px;
+    vertical-align: middle;
+  } */
+     .crew-header th {
+    background-color: #000099 !important;
+    color: white !important;
+    font-size: 11px;
+    vertical-align: middle;
+  }
+</style>
 
-    <div class="sap-header">
-        <div class="sap-header-left">
-            <h2><?php echo $title; ?></h2>
-            <span>Recruitment Management · Talent Intake</span>
-        </div>
-    </div>
+<div class="crew-rotation-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card shadow">
+          <div class="card-body">
 
-    <div class="sap-toolbar">
-        <div class="sap-search">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search name, email, position applied"
-                onkeyup="searchTableDataMCU(this,'Datainterview')">
-        </div>
-    </div>
+            <div id="idLoadingSpinnerMCU" class="sap-loading" style="display:none;">
+                <svg width="56" height="56" viewBox="0 0 50 50">
+                    <circle cx="25" cy="25" r="20" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round" stroke-dasharray="31.4 31.4">
+                        <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite" />
+                    </circle>
+                </svg>
+                <p>Processing data…</p>
+            </div>
 
-    <div class="sap-content">
-
-        <div id="idLoadingSpinnerMCU" class="sap-loading" style="display:none;">
-            <svg width="56" height="56" viewBox="0 0 50 50">
-                <circle cx="25" cy="25" r="20" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round"
-                    stroke-dasharray="31.4 31.4">
-                    <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s"
-                        repeatCount="indefinite" />
-                </circle>
-            </svg>
-            <p>Processing data…</p>
-        </div>
-
-        <div class="sap-table-wrapper">
-            <div id="searchIndicator"></div>
-
-            <table class="sap-table" id="tableDataMCUCrew" data-page="1" data-search="">
-                <thead>
+            <div class="table-responsive">
+              <table class="table table-bordered align-middle mb-0 crew-table" id="tableDataMCUCrew" style="width:100%; font-size:11px;">
+                <thead class="crew-header">
                     <tr>
-                        <th style="width:50px;">No</th>
-                        <th style="min-width:220px;">Seafarer</th>
-                        <th style="min-width:160px;">Position Applied & Certificate</th>
-                        <th style="min-width:140px;">Birth</th>
-                        <th style="min-width:120px;">Phone</th>
-                        <th style="min-width:120px;">Apply Vessel Type</th>
-                        <th style="min-width:220px;">Experience</th>
-                        <th style="width:90px;">Foreign</th>
-                        <th style="width:140px;text-align:center;">Last Salary</th>
-                        <th style="width:140px;text-align:center;">Expected Salary</th>
-                        <th style="width:100px;">Prev Join</th>
-                        <th style="width:120px;">Submit Date</th>
-                        <th style="width:140px;">Action</th>
+                        <th style="width:40px;" class="text-center">No</th>
+                        <th style="min-width:150px;">Seafarer <span class="filter-icon">☰</span></th>
+                        <th style="min-width:160px;">Position Applied & Cert <span class="filter-icon">☰</span></th>
+                        <th style="min-width:100px;">Birth <span class="filter-icon">☰</span></th>
+                        <th style="min-width:100px;">Phone <span class="filter-icon">☰</span></th>
+                        <th style="min-width:110px;">Apply Vessel Type <span class="filter-icon">☰</span></th>
+                        <th style="min-width:140px;">Experience <span class="filter-icon">☰</span></th>
+                        <th style="min-width:100px;">Foreign <span class="filter-icon">☰</span></th>
+                        <th style="min-width:80px;text-align:center;">Last Salary</th>
+                        <th style="min-width:100px;text-align:center;">Expected Salary</th>
+                        <th style="min-width:70px;">Prev Join <span class="filter-icon">☰</span></th>
+                        <th style="min-width:110px;">Submit Date</th>
+                        <th style="min-width:120px;">Action</th>
                     </tr>
                 </thead>
-
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th>
+                            <select class="column-search">
+                                <option value="">All</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th></th>
+                    </tr>
+                </thead>
                 <tbody id="idTbodyMCUCrew"></tbody>
-            </table>
+              </table>
+            </div>
+          </div>
         </div>
-
-        <div id="pagination" class="mt-3"></div>
+      </div>
     </div>
+  </div>
 </div>

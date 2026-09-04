@@ -34,28 +34,6 @@ class McuApplicant extends CI_Controller {
     {
         $dataContext = new DataContext();
 
-        $search = isset($_GET['search']) ? $_GET['search'] : "";
-        $page   = isset($_GET['page']) && is_numeric($_GET['page']) ? intval($_GET['page']) : 1;
-        $limit  = isset($_GET['rows']) && is_numeric($_GET['rows']) ? intval($_GET['rows']) : 10;
-
-        $offset = ($page - 1) * $limit;
-
-        $search = $this->db->escape_like_str($search);
-
-        $sqlTotal = "SELECT COUNT(*) as total FROM new_applicant 
-            WHERE deletests = '0' AND st_data = '6' 
-            AND (
-                position_applied LIKE '%$search%' 
-                OR fullname LIKE '%$search%' 
-                OR email LIKE '%$search%' 
-                OR pengalaman_jeniskapal LIKE '%$search%'
-                OR vessel_type LIKE '%$search%'
-            )";
-
-        $resultTotal = $this->MCrewscv->getDataQuery($sqlTotal);
-        $totalRows = isset($resultTotal[0]) ? (int)$resultTotal[0]->total : 0;
-        $totalPages = $totalRows > 0 ? ceil($totalRows / $limit) : 0;
-
         $sql = "
             SELECT 
                 a.*, 
@@ -67,15 +45,7 @@ class McuApplicant extends CI_Controller {
                 AND f.deletests = '0'
             WHERE a.deletests = '0' 
                 AND a.st_data = '6'
-                AND (
-                    a.position_applied LIKE '%$search%' 
-                    OR a.fullname LIKE '%$search%' 
-                    OR a.email LIKE '%$search%' 
-                    OR a.pengalaman_jeniskapal LIKE '%$search%'
-                    OR a.vessel_type LIKE '%$search%'
-                )
             ORDER BY a.submit_cv DESC
-            LIMIT $limit OFFSET $offset
         ";
 
         $rsl = $this->MCrewscv->getDataQuery($sql);
@@ -109,13 +79,7 @@ class McuApplicant extends CI_Controller {
         }
 
         echo json_encode(array(
-            "data" => $data,
-            "pagination" => array(
-                "current_page" => $page,
-                "rows_per_page" => $limit,
-                "total_pages" => $totalPages,
-                "total_rows" => $totalRows
-            )
+            "data" => $data
         ));
     }
 
