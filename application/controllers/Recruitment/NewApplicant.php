@@ -35,66 +35,6 @@ class NewApplicant extends CI_Controller {
 
         header('Content-Type: application/json'); 
         $dataContext = new DataContext();
-
-        $search = $this->input->get('search', true);
-		
-        $page = $this->input->get('page', true);
-		$rows = $this->input->get('rows', true);
-
-		$page = (is_numeric($page) && $page > 0)
-			? (int)$page
-			: 1;
-
-		$limit = (is_numeric($rows) && $rows > 0)
-			? (int)$rows
-			: 10;
-
-		$offset = ($page - 1) * $limit;
-
-        $whereSearch = "";
-
-        if (!empty($search)) {
-
-			$keywords = preg_split('/\s+/', trim($search));
-			$conditions = array();
-
-			foreach ($keywords as $word) {
-
-				$word = $this->db->escape_like_str($word);
-
-				if ($word === '') continue;
-
-				$conditions[] = "(
-					LOWER(position_applied) LIKE LOWER('%$word%')
-					OR LOWER(pengalaman_jeniskapal) LIKE LOWER('%$word%')
-					OR LOWER(last_experience) LIKE LOWER('%$word%')
-					OR LOWER(vessel_type) LIKE LOWER('%$word%')
-				)";
-
-			}
-
-			if (!empty($conditions)) {
-
-				$whereSearch = " AND (" . implode(" OR ", $conditions) . ")";
-
-			}
-		}
-
-        $sqlTotal = "
-            SELECT COUNT(*) AS total
-            FROM new_applicant
-            WHERE deletests='0'
-            AND st_data='0'
-            AND st_qualify='N'
-            AND st_qualify2='N'
-            $whereSearch
-        ";
-
-        $resultTotal = $this->MCrewscv->getDataQuery($sqlTotal);
-
-        $totalRows = (!empty($resultTotal)) ? (int)$resultTotal[0]->total : 0;
-        $totalPages = max(1, ceil($totalRows / $limit));
-
         $sql = "
             SELECT *
             FROM new_applicant
@@ -102,9 +42,7 @@ class NewApplicant extends CI_Controller {
             AND st_data='0'
             AND st_qualify='N'
             AND st_qualify2='N'
-            $whereSearch
             ORDER BY submit_cv DESC
-            LIMIT $limit OFFSET $offset
         ";
 
         $rows = $this->MCrewscv->getDataQuery($sql);
@@ -133,17 +71,12 @@ class NewApplicant extends CI_Controller {
 				'expected_salary_currency' => $row->expected_salary_currency,
 				'prev_join' => $row->join_inAndhika,
 				'submit_cv' => $dataContext->convertReturnNameWithTime($row->submit_cv),
+				'submit_cv_raw' => $row->submit_cv,
 				'cv_url' => base_url('assets/uploads/CV_NewApplicant/' . $row->new_cv)
 			);
 		}
 
         echo json_encode(array(
-			'page' => $page,
-			'rows_per_page' => $limit,
-			'total_pages' => $totalPages,
-			'total_rows' => $totalRows,
-			'start' => ($totalRows > 0) ? $offset + 1 : 0,
-			'end' => min($offset + $limit, $totalRows),
 			'data' => $data
 		));
     }

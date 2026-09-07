@@ -185,16 +185,20 @@
     border-bottom: none;
 }
 
-/* FIX QUALIFY */
+/* FIX QUALIFY - RESPONSIVE */
 #tableDataQualifiedCrew {
     width: 100%;
-    table-layout: fixed;
+    table-layout: auto;
 }
 #tableDataQualifiedCrew th,
 #tableDataQualifiedCrew td {
     white-space: normal !important;
     word-break: break-word;
     overflow-wrap: break-word;
+}
+.table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
 }
 .crew-header th {
     background-color: #000099 !important;
@@ -1489,19 +1493,19 @@ function submitNotQualifiedCrew() {
             <table class="table table-bordered align-middle mb-0 sap-table" id="tableDataQualifiedCrew" style="width:100%;">
                 <thead class="crew-header">
                     <tr>
-                        <th style="width:5%;" class="text-center">No</th>
-                        <th style="width:15%;">Seafarer <span class="filter-icon">☰</span></th>
-                        <th style="width:12%;">Position Applied <span class="filter-icon">☰</span></th>
-                        <th style="width:8%;">Birth <span class="filter-icon">☰</span></th>
-                        <th style="width:8%;">Phone <span class="filter-icon">☰</span></th>
-                        <th style="width:8%;">Vessel Type <span class="filter-icon">☰</span></th>
-                        <th style="width:14%;">Experience <span class="filter-icon">☰</span></th>
-                        <th style="width:10%;">Foreign <span class="filter-icon">☰</span></th>
-                        <th style="width:7%;text-align:right;">Last Salary</th>
-                        <th style="width:7%;text-align:right;">Expected Salary</th>
-                        <th style="width:8%;">Prev Join <span class="filter-icon">☰</span></th>
-                        <th style="width:8%;">Submit Date</th>
-                        <th style="width:10%;" class="text-center">Action</th>
+                        <th style="min-width:40px;" class="text-center">No</th>
+                        <th style="min-width:150px;">Seafarer <span class="filter-icon">☰</span></th>
+                        <th style="min-width:150px;">Position Applied <span class="filter-icon">☰</span></th>
+                        <th style="min-width:100px;">Birth <span class="filter-icon">☰</span></th>
+                        <th style="min-width:110px;">Phone <span class="filter-icon">☰</span></th>
+                        <th style="min-width:110px;">Vessel Type <span class="filter-icon">☰</span></th>
+                        <th style="min-width:140px;">Experience <span class="filter-icon">☰</span></th>
+                        <th style="min-width:120px;">Foreign <span class="filter-icon">☰</span></th>
+                        <th style="min-width:90px;text-align:right;">Last Salary</th>
+                        <th style="min-width:110px;text-align:right;">Expected Salary</th>
+                        <th style="min-width:70px;">Prev Join <span class="filter-icon">☰</span></th>
+                        <th style="min-width:120px;border-right:2px solid rgba(255,255,255,0.9) !important;">Submit Date</th>
+                        <th style="min-width:150px;border-left:2px solid rgba(255,255,255,0.9) !important;">Action</th>
                     </tr>
                 </thead>
                 <thead class="crew-search-header">
