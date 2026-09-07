@@ -33,6 +33,7 @@ class QualifyApplicant extends CI_Controller {
 		$this->getQualifiedCrew($search, $page, '', $sortBy, $sortOrder);
 	}
 
+	// new improvement
     function getQualifiedCrew()
 	{
 		header("X-Robots-Tag: noindex, nofollow, noarchive, nosnippet", true);

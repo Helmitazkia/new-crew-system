@@ -1472,7 +1472,7 @@ function submitNotQualifiedCrew() {
             </div>
         </div>
     </div> -->
-
+    <!-- new improvement -->
     <div class="sap-content">
         <div id="idLoadingSpinnerQualifiedCrew" class="sap-loading" style="display:none;">
             <svg width="56" height="56" viewBox="0 0 50 50">
