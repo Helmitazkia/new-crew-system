@@ -249,6 +249,55 @@
     font-weight: 600;
     color: #374151;
 }
+
+/* Dropdown filter for New Applicant */
+.na-filter-dropdown {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 10px;
+    width: 220px;
+    max-height: 280px;
+    overflow-y: auto;
+    box-shadow: 0 6px 20px rgba(0,0,0,.15);
+    display: none;
+    z-index: 9999;
+    font-size: 13px;
+}
+.na-filter-search {
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 5px 8px;
+    font-size: 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+.na-filter-list {
+    max-height: 140px;
+    overflow-y: auto;
+    margin-bottom: 4px;
+}
+.na-filter-list label {
+    display: block;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+.na-filter-list label:hover { background: #f0f4ff; }
+.na-btn-clear-filter {
+    background: transparent;
+    border: 1.5px solid #000099;
+    color: #000099;
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all .2s;
+}
+.na-btn-clear-filter:hover { background: #000099; color: #fff; }
 </style>
 
 <script>
@@ -417,7 +466,7 @@ $(document).ready(function() {
                 if (total) total.innerText = api.rows({ search: 'applied' }).count();
             });
 
-            // Column search
+            // Column search inputs
             api.columns().every(function(colIdx) {
                 const column = this;
                 const input = $('thead.crew-search-header tr th').eq(colIdx).find('.column-search');
@@ -429,6 +478,9 @@ $(document).ready(function() {
                     });
                 }
             });
+
+            // Dropdown filter icons
+            initNewApplicantDropdownFilters(api);
         }, 
          language: {
             lengthMenu: '_MENU_ &nbsp;Entries',
@@ -441,6 +493,86 @@ $(document).ready(function() {
         },
     });
 });
+
+function initNewApplicantDropdownFilters(api) {
+    $('#tableDataReady thead.crew-header th').each(function(colIndex) {
+        var icon = $(this).find('.filter-icon');
+        if (!icon.length) return;
+        if (colIndex === 0 || colIndex === 12) return; // skip No & Action
+
+        var dropdown = $('<div class="na-filter-dropdown">'
+            + '<input type="text" class="na-filter-search" placeholder="Search options...">'
+            + '<div class="na-filter-list"></div>'
+            + '<hr style="margin:6px 0;">'
+            + '<div style="text-align:center;">'
+            + '<button class="na-btn-clear-filter"><i class="fas fa-eraser"></i> Clear</button>'
+            + '</div>'
+            + '</div>').appendTo('body');
+
+        var listContainer = dropdown.find('.na-filter-list');
+
+        try {
+            var colData = api.column(colIndex).data();
+            if (colData && typeof colData.unique === 'function') {
+                var uniqueVals = [];
+                colData.unique().each(function(val) {
+                    if (val && val !== '-' && val !== '') {
+                        var tmp = document.createElement('div');
+                        tmp.innerHTML = val;
+                        var text = (tmp.textContent || tmp.innerText || '').trim();
+                        if (text && !uniqueVals.includes(text)) uniqueVals.push(text);
+                    }
+                });
+                uniqueVals.sort().forEach(function(val) {
+                    var safe = String(val).replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                    listContainer.append('<label><input type="checkbox" value="'+ safe +'"> '+ safe +'</label>');
+                });
+            }
+        } catch(err) { console.warn('Filter err col '+ colIndex, err); }
+
+        icon.on('click', function(e) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            $('.na-filter-dropdown').not(dropdown).hide();
+            var off = icon.offset();
+            dropdown.css({ top: off.top + icon.outerHeight() + 4, left: off.left }).toggle();
+        });
+
+        dropdown.find('.na-filter-search').on('keyup', function() {
+            var kw = $(this).val().toLowerCase();
+            listContainer.find('label').each(function() {
+                $(this).toggle($(this).text().toLowerCase().includes(kw));
+            });
+        });
+
+        dropdown.on('change', 'input[type="checkbox"]', function() {
+            var selected = [];
+            dropdown.find('input[type="checkbox"]:checked').each(function() { selected.push($(this).val()); });
+            if (selected.length > 0) {
+                var regex = selected.map(function(v){ return v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }).join('|');
+                api.column(colIndex).search(regex, true, false).draw();
+            } else {
+                api.column(colIndex).search('').draw();
+            }
+            dropdown.hide();
+        });
+
+        dropdown.on('click', '.na-btn-clear-filter', function() {
+            dropdown.find('input').prop('checked', false);
+            dropdown.find('.na-filter-search').val('');
+            listContainer.find('label').show();
+            api.column(colIndex).search('').draw();
+            dropdown.hide();
+        });
+    });
+
+    $(document).on('click.naFilter', function(e) {
+        if (!$(e.target).closest('.na-filter-dropdown').length &&
+            !$(e.target).hasClass('filter-icon')) {
+            $('.na-filter-dropdown').hide();
+        }
+    });
+}
 
 function deleteData(id, name) {
 
