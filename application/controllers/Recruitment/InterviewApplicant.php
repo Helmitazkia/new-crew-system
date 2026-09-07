@@ -25,59 +25,22 @@ class InterviewApplicant extends CI_Controller {
 
     function searchDataInterview()
 	{
-		$search = $this->input->get('search');
-		$page = $this->input->get('page');
-		$this->getDataInterviewCrew($search, $page);
+		$this->getDataInterviewCrew();
 	}
     
-    function getDataInterviewCrew($search = "", $page = 1)
+    function getDataInterviewCrew()
     {
         $dataContext = new DataContext();
 
-        $search = isset($_GET['search']) ? $_GET['search'] : $search;
-
-        $page = isset($_GET['page']) && is_numeric($_GET['page']) ? intval($_GET['page']) : $page;
-        if ($page < 1) $page = 1;
-
-        $limit = isset($_GET['rows']) && is_numeric($_GET['rows']) ? intval($_GET['rows']) : 10;
-
-        if ($limit <= 0) $limit = 10;
-
-        $sqlTotal = "SELECT COUNT(*) as total FROM new_applicant 
-            WHERE deletests = '0' AND st_data = '5' 
-            AND (position_applied LIKE '%$search%' 
-            OR fullname LIKE '%$search%' 
-            OR vessel_type LIKE '%$search%'
-            OR email LIKE '%$search%' 
-            OR pengalaman_jeniskapal LIKE '%$search%')";
-
-        $resultTotal = $this->MCrewscv->getDataQuery($sqlTotal);
-        $totalRows = isset($resultTotal[0]) ? $resultTotal[0]->total : 0;
-
-        $totalPages = $limit > 0 ? ceil($totalRows / $limit) : 1;
-
-        if ($page > $totalPages && $totalPages > 0) {
-            $page = $totalPages;
-        }
-
-        $offset = max(0, ($page - 1) * $limit);
-
         $sql = "SELECT * FROM new_applicant 
             WHERE deletests = '0' AND st_data = '5' 
-            AND (position_applied LIKE '%$search%' 
-            OR fullname LIKE '%$search%' 
-            OR vessel_type LIKE '%$search%'
-            OR email LIKE '%$search%' 
-            OR pengalaman_jeniskapal LIKE '%$search%')
-            ORDER BY submit_cv DESC
-            LIMIT $limit OFFSET $offset";
+            ORDER BY submit_cv DESC";
 
         $rsl = $this->MCrewscv->getDataQuery($sql);
 
         $data = array();
 
         foreach ($rsl as $val) {
-
 
             $data[] = array(
                 'id' => $val->id,   
@@ -102,19 +65,10 @@ class InterviewApplicant extends CI_Controller {
             );
         }
 
-        $response = array(
-            'data' => $data,
-            'pagination' => array(
-                'current_page' => $page,
-                'total_pages' => $totalPages,
-                'total_rows' => $totalRows,
-                'rows_per_page' => $limit,
-                'search' => $search
-            )
-        );
-
         header('Content-Type: application/json');
-        echo json_encode($response);
+        echo json_encode(array(
+            'data' => $data
+        ));
         exit;
     }
 

@@ -373,280 +373,299 @@
     background: #edf4ff;
     transition: .15s ease;
 }
+
+/* FIX INTERVIEW */
+#tableDataInterviewCrew {
+    width: 100%;
+    table-layout: fixed;
+}
+#tableDataInterviewCrew th,
+#tableDataInterviewCrew td {
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+.column-search {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 2px 4px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.filter-icon {
+    font-size: 14px;
+    margin-left: 5px;
+    cursor: pointer;
+    color: #aac4ff;
+}
+.filter-icon:hover { color: #fff; }
+.filter-dropdown {
+    position: absolute; background: #fff; border: 1px solid #ccc;
+    padding: 8px; width: 200px; max-height: 260px; overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,.2); display: none; z-index: 9999;
+}
+.filter-dropdown input[type="text"] {
+    width: 100%; margin-bottom: 6px; padding: 4px; font-size: 12px;
+    border: 1px solid #dee2e6; border-radius: 4px;
+}
+.filter-dropdown label {
+    display: block; font-size: 13px; cursor: pointer;
+    padding: 4px 8px; margin: 2px 0; border-radius: 4px;
+}
+.filter-dropdown label:hover { background: #f8f9fa; }
+.filter-list { max-height: 120px; overflow-y: auto; margin-bottom: 6px; }
+.btn-clear-filter {
+    background: transparent; border: 1.5px solid #000099;
+    color: #000099; transition: all .2s ease;
+}
+.btn-clear-filter:hover { background: #000099; color: #fff; }
+.btn-clear-filter i { font-size: 14px; }
 </style>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const input = document.querySelector(".sap-search input");
-    if (input) {
-        input.addEventListener("keyup", function() {
-            searchTableDatainterview(input, 1);
-        });
-    }
-    searchTableDatainterview(input, 1);
+    // Left empty for compatibility
 });
 
-function searchTableDatainterview(input, page = 1) {
-    const searchValue = input ? input.value : "";
-    loadDataInterviewCrew(page, searchValue);
-}
-
-function formatSalary(amount, currency, searchValue = '') {
-
-    if (
-        amount === null ||
-        amount === undefined ||
-        amount === '' ||
-        amount === 0 ||
-        amount === '0'
-    ) {
-        return '-';
-    }
-
-    const num = parseFloat(
-        String(amount).replace(/,/g, '')
-    );
-
-    if (isNaN(num)) {
-        return `
-            <span style="
-                background:#e7f5ff;
-                color:#1971c2;
-                padding:2px 6px;
-                border-radius:10px;
-                font-size:10px;
-            ">
-                ${currency || '-'}
-            </span>
-            ${highlightText(String(amount), searchValue)}
-        `;
-    }
-
-    return `
-        <span style="
-            background:#e7f5ff;
-            color:#1971c2;
-            padding:2px 6px;
-            border-radius:10px;
-            font-size:10px;
-        ">
-            ${currency || '-'}
-        </span>
-        ${highlightText(
-            num.toLocaleString('en-US', {
-                maximumFractionDigits: 2
-            }),
-            searchValue
-        )}
-    `;
-}
-
-function loadDataInterviewCrew(page = 1, searchValue = "") {
-    const table = document.getElementById("tableDataInterviewCrew");
-    if (table) table.dataset.page = page;
-
-    const search = searchValue !== undefined ? searchValue : ($("#searchInterviewCrew").val() || "");
-
-
-    const rows = table?.dataset.rows ? parseInt(table.dataset.rows) : 10;
-
-    $.ajax({
-        url: '<?php echo base_url("searchDataInterview"); ?>',
-        method: 'GET',
-        data: {
-            search,
-            page,
-            rows
+var tableDataInterviewCrew;
+$(document).ready(function() {
+    tableDataInterviewCrew = $('#tableDataInterviewCrew').DataTable({
+        dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end'f>>" +
+             "<'row'<'col-md-12'tr>>" +
+             "<'row mt-2'<'col-md-6'i><'col-md-6 d-flex justify-content-end'p>>",
+        processing : true,
+        serverSide : false,
+        autoWidth  : false,
+        pageLength : 10,
+        lengthMenu : [10, 25, 50, 100],
+        ajax: {
+            url: '<?php echo base_url("searchDataInterview"); ?>',
+            dataSrc: function(json) { return json.data ? json.data : []; }
         },
-        dataType: 'json',
-        success: function(res) {
-            let html = "";
-            const rowsPerPage = parseInt(res.pagination.rows_per_page) || 10;
-            const currentPage = parseInt(res.pagination.current_page) || 1;
-            let no = (currentPage - 1) * rowsPerPage + 1;
-
-            if (!res.data || res.data.length === 0) {
-                $("#idTbodyInterviewCrew").html(`
-                    <tr>
-                        <td colspan="11" style="text-align:center;padding:20px;color:#adb5bd;">
-                            No data found
-                        </td>
-                    </tr>
-                `);
-
-                renderPagination(currentPage, res.pagination.total_pages, search, res.pagination.total_rows,
-                    rowsPerPage);
-                return;
-            }
-
-            res.data.forEach(row => {
-
-                const fullname = highlightText(row.fullname, search);
-                const email = highlightText(row.email, search);
-                const position = highlightText(row.position_applied, search);
-                const ijazah = highlightText(row.ijazah_terakhir, search);
-                const vesselType = highlightText(row.vessel_type, search);
-
-
-                let vesselExp = "-";
-
-                if (row.pengalaman_jeniskapal) {
-
-                    vesselExp = `
-                        <div style="
-                            color:#868e96;
-                            line-height:1.4;
-                            white-space:normal;
-                            word-break:break-word;
-                            margin-top:4px;
-                        ">
-                            ${row.pengalaman_jeniskapal
-                                .split(',')
-                                .map(v => `
-                                    <div>
-                                        ${highlightText(v.trim(), search)}
-                                    </div>
-                                `)
-                                .join('')
-                            }
-                        </div>
-                    `;
+        orderCellsTop: true,
+        columns: [
+            { data: null, className: 'text-left', render: function(data, type, row, meta) { return meta.row + 1; } },
+            { data: 'fullname', render: function(data, type, row) { 
+                if (type === 'display') {
+                    return '<div style="font-weight:600;font-size:14px;color:#1f2d3d;">'+(data||'-')+'</div>'+
+                           '<div style="font-size:12px;color:#868e96;margin-top:2px;">'+(row.email||'-')+'</div>';
                 }
-
-                let foreignBlock = "-";
-
-                const foreignCrew = row.berlayardengancrewasing || "-";
-
-                if (
-                    foreignCrew !== "-" &&
-                    foreignCrew.includes("-")
-                ) {
-
-                    const parts = foreignCrew.split("-");
-
-                    const status = parts[0].trim();
-                    const countries = parts.slice(1).join("-").trim();
-
-                    foreignBlock = `
-                        <div style="
-                            font-weight:600;
-                            color:#0b7285;
-                            margin-bottom:4px;
-                        ">
-                            ${highlightText(status, search)} -
-                        </div>
-
-                        <div style="
-                            color:#495057;
-                            font-size:11px;
-                            line-height:1.4;
-                            text-align:left;
-                            white-space:normal;
-                            word-break:break-word;
-                            max-width:150px;
-                            margin:auto;
-                        ">
-                            ${countries
-                                .split(',')
-                                .map(country => `
-                                    <div>
-                                        ${highlightText(country.trim(), search)}
-                                    </div>
-                                `)
-                                .join('')
-                            }
-                        </div>
-                    `;
-
-                } else {
-
-                    foreignBlock = `
-                        <div>
-                            ${highlightText(foreignCrew, search)}
-                        </div>
-                    `;
+                return data;
+            }},
+            { data: 'position_applied', render: function(data, type, row) {
+                if (type === 'display') {
+                    return '<div style="font-size:13px;font-weight:600;color:#34495e;">'+(data||'-')+'</div>'+
+                           '<div style="font-size:12px;color:#7f8c8d;white-space:normal;word-break:break-word;">'+(row.ijazah_terakhir||'-')+'</div>';
                 }
-
-                let btnAct = `
+                return data;
+            }},
+            { data: 'born_place', render: function(data, type, row) {
+                if (type === 'display') {
+                    return '<div>'+(data||'-')+'</div>'+
+                           '<div style="color:#868e96;">'+(row.born_date||'-')+'</div>';
+                }
+                return data;
+            }},
+            { data: 'handphone', render: function(data) { return data || '-'; } },
+            { data: 'vessel_type', render: function(data, type) { 
+                if (type === 'display') {
+                    return '<div style="font-size:12px;color:#7f8c8d;text-align:left;white-space:normal;word-break:break-word;">'+(data||'-')+'</div>';
+                }
+                return data;
+            }},
+            { data: 'last_experience', render: function(data, type, row) {
+                if (type === 'display') {
+                    let vesselExp = "-";
+                    if (row.pengalaman_jeniskapal) {
+                        vesselExp = `<div style="color:#868e96;line-height:1.4;white-space:normal;word-break:break-word;margin-top:4px;">`+
+                                    row.pengalaman_jeniskapal.split(',').map(v => `<div>${v.trim()}</div>`).join('') +
+                                    `</div>`;
+                    }
+                    return `<div style="font-weight:600;color:#34495e;margin-bottom:6px;">${data || "-"}</div>${vesselExp}`;
+                }
+                return data;
+            }},
+            { data: 'berlayardengancrewasing', render: function(data, type, row) {
+                if (type === 'display') {
+                    let foreignBlock = "-";
+                    const foreignCrew = data || "-";
+                    if (foreignCrew !== "-" && foreignCrew.includes("-")) {
+                        const parts = foreignCrew.split("-");
+                        const status = parts[0].trim();
+                        const countries = parts.slice(1).join("-").trim();
+                        foreignBlock = `
+                            <div style="font-weight:600;color:#0b7285;margin-bottom:4px;">${status} -</div>
+                            <div style="color:#495057;font-size:11px;line-height:1.4;text-align:center;white-space:normal;word-break:break-word;max-width:150px;margin:auto;">` +
+                            countries.split(',').map(c => `<div>${c.trim()}</div>`).join('') +
+                            `</div>`;
+                    } else {
+                        foreignBlock = `<div>${foreignCrew}</div>`;
+                    }
+                    return foreignBlock;
+                }
+                return data;
+            }},
+            { data: null, className: 'text-right', render: function(data, type, row) {
+                return `
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                        <span style="background:#e7f5ff;color:#1971c2;padding:2px 6px;border-radius:10px;font-size:9px;font-weight:600;">
+                            ${row.last_salary_currency || '-'}
+                        </span>
+                        <span style="font-size:11px;font-weight:600;color:#065f46;">
+                            ${formatSalary(row.last_salary, '')}
+                        </span>
+                    </div>`;
+            }},
+            { data: null, className: 'text-right', render: function(data, type, row) {
+                return `
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+                        <span style="background:#e7f5ff;color:#1971c2;padding:2px 6px;border-radius:10px;font-size:9px;font-weight:600;">
+                            ${row.expected_salary_currency || '-'}
+                        </span>
+                        <span style="font-size:11px;font-weight:600;color:#065f46;">
+                            ${formatSalary(row.expected_salary, '')}
+                        </span>
+                    </div>`;
+            }},
+            { data: 'join_inAndhika', className: 'text-center', render: function(data) { return data || '-'; } },
+            { data: 'submit_cv', render: function(data) { return data || '-'; } },
+            { data: null, className: 'text-center', render: function(data, type, row) {
+                return `
                     <div style="display:flex;flex-direction:column;gap:4px;">
                         <button style="border:1px solid #dee2e6;background:#fff;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;" onclick="window.open('${row.cv_url}','_blank')">📄 View CV</button>
                         <button style="background:#e6fcf5;border:1px solid #20c997;color:#087f5b;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;" onclick="passInterview('${row.id}')">✔ Qualified</button>
-                        <button style="background:#fff5f5;border:1px solid #ffa8a8;color:#c92a2a;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;" onclick="notQualifyInterview('${row.id}','<b><i>:: ${row.fullname} ::</i></b>')">✖ Not Qualified</button>
+                        <button style="background:#fff5f5;border:1px solid #ffa8a8;color:#c92a2a;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;" onclick="notQualifyInterview('${row.id}','<b><i>:: '+(row.fullname||'-')+' ::</i></b>')">✖ Not Qualified</button>
                     </div>`;
-
-                html += `
-                <tr id="row_${row.id}" style="border-bottom:1px solid #eef1f5; transition: background 0.3s ease;">
-                    <td style="text-align:center;font-size:12px;color:#868e96;vertical-align:top;">${no++}</td>
-                    <td style="vertical-align:top;">
-                        <div style="font-weight:600;font-size:14px;color:#1f2d3d;">${fullname}</div>
-                        <div style="font-size:12px;color:#868e96;margin-top:2px;">${email}</div>
-                    </td>
-                    <td style="vertical-align:top;">
-                        <div style="font-size:13px;font-weight:600;color:#34495e;">${position}</div>
-                        <div style="font-size:12px;
-                        color:#7f8c8d;
-                        white-space:normal;
-                        word-break:break-word;">${ijazah}</div>
-                    </td>
-                    <td style="color:#495057;vertical-align:top;">
-                        <div>${row.born_place}</div>
-                        <div style="color:#868e96;">${row.born_date}</div>
-                    </td>
-                    <td style=" vertical-align:top;">${row.handphone}</td>
-                    <td style="vertical-align:top;">
-                        <div style="font-size:12px;
-                        color:#7f8c8d;
-                        white-space:normal;
-                        word-break:break-word;">${vesselType}</div>
-                    </td>
-                    <td style="
-                        font-size:12px;
-                        vertical-align:top;
-                        min-width:220px;
-                    ">
-                        <div style="
-                            font-weight:600;
-                            color:#34495e;
-                            margin-bottom:6px;
-                        ">
-                            ${highlightText(row.last_experience || "-", search)}
-                        </div>
-                        ${vesselExp}
-                    </td>
-                    <td style="
-                        font-size:12px;
-                        text-align:center;
-                        vertical-align:top;
-                        min-width:170px;
-                        padding-top:6px;
-                    ">
-                        ${foreignBlock}
-                    </td>
-                    <td style="font-size:12px;text-align:right;font-weight:600;color:#065f46;vertical-align:top;">
-                        ${formatSalary(
-                            row.last_salary,
-                            row.last_salary_currency,
-                            search
-                        )}
-                    </td>
-                    <td style="font-size:12px;text-align:right;font-weight:600;color:#065f46;vertical-align:top;">
-                        ${formatSalary(
-                            row.expected_salary,
-                            row.expected_salary_currency,
-                            search
-                        )}
-                    </td>
-                    <td style="font-size:12px;text-align:center;vertical-align:top;">${row.join_inAndhika}</td>
-                    <td style="font-size:12px;color:#868e96;vertical-align:top;">${row.submit_cv}</td>
-                    <td style="text-align:center;min-width:120px;vertical-align:top;">${btnAct}</td>
-                </tr>`;
-            });
-
-            $("#idTbodyInterviewCrew").html(html);
-            renderPagination(currentPage, res.pagination.total_pages, search, res.pagination.total_rows,
-                rowsPerPage);
+            }}
+        ],
+        initComplete: function () {
+            initDropdownFilters(this.api());
+        },
+        language: {
+            lengthMenu: '_MENU_ &nbsp;Entries',
+            info: 'Showing _START_ to _END_ of _TOTAL_ entries',
+            infoEmpty: 'Showing 0 to 0 of 0 entries',
+            infoFiltered: '(filtered from _MAX_ total entries)',
+            search: 'Search:',
+            emptyTable: 'Tidak ada data Interview Applicant',
+            zeroRecords: 'Data tidak ditemukan'
+        },
+        createdRow: function(row, data, dataIndex) {
+            $(row).attr('id', 'row_' + data.id);
+            $(row).css('border-bottom', '1px solid #eef1f5');
+            $(row).css('transition', 'background 0.3s ease');
+            
+            $('td', row).eq(0).css({'text-align':'center','font-size':'12px','color':'#868e96','vertical-align':'top'});
+            $('td', row).eq(1).css({'vertical-align':'top'});
+            $('td', row).eq(2).css({'vertical-align':'top'});
+            $('td', row).eq(3).css({'color':'#495057','vertical-align':'top'});
+            $('td', row).eq(4).css({'vertical-align':'top'});
+            $('td', row).eq(5).css({'vertical-align':'top'});
+            $('td', row).eq(6).css({'font-size':'12px','vertical-align':'top','min-width':'220px'});
+            $('td', row).eq(7).css({'font-size':'12px','text-align':'center','vertical-align':'top','min-width':'170px','padding-top':'6px'});
+            $('td', row).eq(8).css({'font-size':'12px','text-align':'right','font-weight':'600','color':'#065f46','vertical-align':'top'});
+            $('td', row).eq(9).css({'font-size':'12px','text-align':'right','font-weight':'600','color':'#065f46','vertical-align':'top'});
+            $('td', row).eq(10).css({'font-size':'12px','text-align':'center','vertical-align':'top'});
+            $('td', row).eq(11).css({'font-size':'12px','color':'#868e96','vertical-align':'top'});
+            $('td', row).eq(12).css({'text-align':'center','min-width':'120px','vertical-align':'top'});
         }
     });
+
+    // Column search
+    $('#tableDataInterviewCrew thead tr:eq(1) .column-search').on('keyup change', function() {
+        tableDataInterviewCrew.column($(this).parent().index()).search(this.value).draw();
+    });
+});
+
+function initDropdownFilters(api) {
+    $('#tableDataInterviewCrew thead th').each(function (colIndex) {
+        var icon = $(this).find('.filter-icon');
+        if (!icon.length) return;
+        if (colIndex === 0 || colIndex === 12) return; // skip No & Action
+
+        var dropdown = $('<div class="filter-dropdown">'
+            + '<input type="text" class="filter-search" placeholder="Search...">'
+            + '<div class="filter-list"></div>'
+            + '<hr>'
+            + '<div class="d-flex gap-2 text-center">'
+            + '<button class="btn btn-sm w-30 rounded-pill fst-italic btn-clear-filter" id="clear-filter">'
+            + '<i class="fa-solid fa-eraser"></i>'
+            + '</button>'
+            + '</div>'
+            + '</div>').appendTo('body');
+
+        var listContainer = dropdown.find('.filter-list');
+
+        try {
+            var colData = api.column(colIndex).data();
+            if (colData && typeof colData.unique === 'function') {
+                var uniqueVals = [];
+                colData.unique().each(function (val) {
+                    if (val && val !== '-' && val !== '') {
+                        var tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = val;
+                        var text = tempDiv.textContent || tempDiv.innerText || '';
+                        if (text && !uniqueVals.includes(text)) uniqueVals.push(text);
+                    }
+                });
+                uniqueVals.sort().forEach(function (val) {
+                    var safeVal = String(val).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    listContainer.append('<label><input type="checkbox" value="'+ safeVal +'"> '+ safeVal +'</label>');
+                });
+            }
+        } catch(e) { console.warn('Filter error col '+ colIndex, e); }
+
+        icon.on('click', function (e) {
+            e.stopPropagation();
+            $('.filter-dropdown').hide();
+            var off = icon.offset();
+            dropdown.css({ top: off.top + icon.outerHeight(), left: off.left }).toggle();
+        });
+
+        dropdown.find('.filter-search').on('keyup', function () {
+            var kw = $(this).val().toLowerCase();
+            listContainer.find('label').each(function () {
+                $(this).toggle($(this).text().toLowerCase().includes(kw));
+            });
+        });
+
+        dropdown.on('change', 'input[type="checkbox"]', function () {
+            var selected = [];
+            dropdown.find('input[type="checkbox"]:checked').each(function () { selected.push($(this).val()); });
+            if (selected.length > 0) {
+                var regex = selected.map(function(v){ return v.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'); }).join('|');
+                api.column(colIndex).search(regex, true, false).draw();
+            } else {
+                api.column(colIndex).search('').draw();
+            }
+            dropdown.hide();
+        });
+
+        dropdown.on('click', '.btn-clear-filter', function () {
+            dropdown.find('input').prop('checked', false);
+            dropdown.find('.filter-search').val('');
+            listContainer.find('label').show();
+            api.column(colIndex).search('').draw();
+            dropdown.hide();
+        });
+    });
+}
+
+$(document).on('click', function (e) {
+    if (!$(e.target).closest('.filter-dropdown').length) $('.filter-dropdown').hide();
+});
+
+function formatSalary(amount, currency) {
+    if (amount === null || amount === undefined || amount === '' || amount === 0 || amount === '0') {
+        return '-';
+    }
+    const num = parseFloat(String(amount).replace(/,/g, ''));
+    if (isNaN(num)) {
+        return String(amount);
+    }
+    return num.toLocaleString('en-US', { maximumFractionDigits: 2 });
 }
 
 function notQualifyInterview(id, name) {
@@ -667,130 +686,6 @@ function notQualifyInterview(id, name) {
 
 function closeNotReffModal() {
     $("#modalNotReff").modal("hide");
-}
-
-function highlightText(text = "", search = "") {
-
-    if (!search) return text;
-
-    const regex = new RegExp(
-        `(${search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`,
-        'gi'
-    );
-
-    return String(text).replace(regex, `
-        <span style="
-            background: linear-gradient(90deg, #ffe066, #ffd43b);
-            color: #1c1c1c;
-            padding:2px 4px;
-            border-radius:4px;
-            font-weight:700;
-            box-shadow:0 0 4px rgba(255,200,0,0.3);
-        ">$1</span>
-    `);
-}
-
-function renderPagination(currentPage, totalPages, searchValue, totalRows, rowsPerPage) {
-    const pagination = document.getElementById("pagination");
-    if (!pagination) return;
-
-    if (totalPages <= 0) {
-        pagination.innerHTML = "";
-        return;
-    }
-
-    const maxVisible = 5;
-    let start = Math.max(1, currentPage - 2);
-    let end = Math.min(totalPages, start + maxVisible - 1);
-    if (end - start < maxVisible - 1) {
-        start = Math.max(1, end - maxVisible + 1);
-    }
-
-    const btnStyle =
-        `border:1px solid #d0d7de;background:#fff;padding:5px 11px;font-size:12px;border-radius:7px;cursor:pointer;font-weight:600;color:#344054;min-width:34px;`;
-
-    const activeStyle =
-        `background:#0a6ed1;border:1px solid #0a6ed1;color:#fff;padding:5px 11px;font-size:12px;border-radius:7px;font-weight:700;min-width:34px;`;
-
-    const disabledStyle =
-        `border:1px solid #e5e7eb;background:#f1f3f5;padding:5px 11px;font-size:12px;border-radius:7px;color:#adb5bd;min-width:34px;`;
-
-    let html =
-        `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:14px;padding:12px 16px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;font-size:13px;">`;
-
-    html += `<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:#475467;">
-        <div><strong>${totalRows}</strong> Data • Page <strong>${currentPage}</strong> / <strong>${totalPages}</strong></div>
-
-        <div style="display:flex;align-items:center;gap:6px;">
-            Rows :
-            <select onchange="changeRowsPerPageInterview(this.value,'${searchValue}')" 
-                style="border:1px solid #d0d7de;border-radius:6px;padding:3px 6px;font-size:12px;background:white;cursor:pointer;">
-                
-                <option value="10" ${rowsPerPage==10?'selected':''}>10</option>
-                <option value="25" ${rowsPerPage==25?'selected':''}>25</option>
-                <option value="50" ${rowsPerPage==50?'selected':''}>50</option>
-                <option value="100" ${rowsPerPage==100?'selected':''}>100</option>
-            </select>
-        </div>
-    </div>`;
-
-    html += `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">`;
-
-    if (currentPage > 1)
-        html += `<button style="${btnStyle}" onclick="goToPageInterview(${currentPage-1},'${searchValue}')">‹</button>`;
-    else
-        html += `<button disabled style="${disabledStyle}">‹</button>`;
-
-    for (let i = start; i <= end; i++) {
-        html += `<button style="${i===currentPage?activeStyle:btnStyle}" 
-            onclick="goToPageInterview(${i},'${searchValue}')">${i}</button>`;
-    }
-
-    if (end < totalPages) {
-        if (end < totalPages - 1)
-            html += `<span style="padding:0 4px;color:#98a2b3;font-weight:600;">...</span>`;
-
-        html += `<button style="${btnStyle}" 
-            onclick="goToPageInterview(${totalPages},'${searchValue}')">${totalPages}</button>`;
-    }
-
-    if (currentPage < totalPages)
-        html += `<button style="${btnStyle}" onclick="goToPageInterview(${currentPage+1},'${searchValue}')">›</button>`;
-    else
-        html += `<button disabled style="${disabledStyle}">›</button>`;
-
-
-    html += `<div style="display:flex;align-items:center;gap:5px;margin-left:8px;">
-        Go :
-        <input type="number" min="1" max="${totalPages}" id="jumpPageInputInterview" placeholder="Page" value="${currentPage}"
-            style="width:55px;border:1px solid #d0d7de;border-radius:6px;padding:3px 6px;font-size:12px;">
-        <button style="${btnStyle}" onclick="jumpToPageInterview('${searchValue}')">OK</button>
-    </div>`;
-
-    html += `</div></div>`;
-
-    pagination.innerHTML = html;
-}
-
-function goToPageInterview(page, searchValue) {
-    loadDataInterviewCrew(page, searchValue);
-}
-
-function jumpToPageInterview(searchValue) {
-    const input = document.getElementById("jumpPageInputInterview");
-    if (!input) return;
-
-    let page = parseInt(input.value);
-    if (!page || page < 1) return;
-
-    loadDataInterviewCrew(page, searchValue);
-}
-
-function changeRowsPerPageInterview(val, searchValue) {
-    const table = document.getElementById("tableDataInterviewCrew");
-    if (table) table.dataset.rows = val;
-
-    loadDataInterviewCrew(1, searchValue);
 }
 
 
@@ -1003,78 +898,66 @@ function submitNotReff() {
 
 <div id="applicantsWorkspace" class="sap-workspace">
 
-    <div class="sap-header">
+    <!-- <div class="sap-header">
         <div class="sap-header-left">
             <h2><?php echo $title; ?></h2>
             <span>Recruitment Management · Talent Intake</span>
         </div>
-    </div>
+    </div> -->
 
-    <div class="sap-toolbar">
-        <div class="sap-search">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search name, email, position applied"
-                onkeyup="searchTableDatainterview(this,'Datainterview')">
-        </div>
-    </div>
 
-    <div class="sap-content">
-        <div id="idLoadingSpinnerNotReff" style="
-                        display:none;
-                        pointer-events:none;
-                        position:absolute;
-                        top:0; left:0;
-                        width:100%; height:100%;
-                        background:rgba(255,255,255,0.85);
-                        backdrop-filter: blur(6px);
-                        z-index:9999;
-                        justify-content:center;
-                        align-items:center;
-                        flex-direction:column;
-                        border-radius:16px;
-                    ">
-            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 50 50">
-                <circle cx="25" cy="25" r="20" fill="none" stroke="#067780" stroke-width="4" stroke-linecap="round"
-                    stroke-dasharray="31.4 31.4">
-                    <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.9s"
-                        repeatCount="indefinite" />
-                </circle>
-            </svg>
-            <p style="
-                            margin-top:16px;
-                            font-size:14px;
-                            color:#444;
-                            font-weight:500;
-                        ">
-                Processing data...
-            </p>
-        </div>
-        <div class="sap-table-wrapper">
-            <div id="searchIndicator"></div>
-            <table class="sap-table" id="tableDataInterviewCrew" data-page="1" data-search="">
-                <thead>
+<style>
+  .crew-header th {
+    background-color: #000099 !important;
+    color: white !important;
+    font-size: 11px;
+    vertical-align: middle;
+  }
+  .crew-search-header th {
+    background-color: #ffffff !important;
+    padding: 8px 4px !important;
+  }
+</style>
+
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle mb-0 sap-table" id="tableDataInterviewCrew" style="width:100%;">
+                <thead class="crew-header">
                     <tr>
-                        <th style="width:4%;">No</th>
-                        <th style="width:15%;">Seafarer</th>
-                        <th style="width:12%;">Position Applied & Certificate</th>
-                        <th style="width:8%;">Birth</th>
-                        <th style="width:8%;">Phone</th>
-                        <th style="width:8%;">Apply Vessel Type</th>
-                        <th style="width:14%;">Experience</th>
-                        <th style="width:10%;">Foreign</th>
-                        <th style="width:7%;">Last Salary</th>
-                        <th style="width:7%;">Expected Salary</th>
-                        <th style="width:5%;">Prev Join</th>
+                        <th style="width:5%; min-width:40px;" class="text-center">No</th>
+                        <th style="width:15%;">Seafarer <span class="filter-icon">☰</span></th>
+                        <th style="width:12%;">Position Applied & Cert <span class="filter-icon">☰</span></th>
+                        <th style="width:8%;">Birth <span class="filter-icon">☰</span></th>
+                        <th style="width:8%;">Phone <span class="filter-icon">☰</span></th>
+                        <th style="width:8%;">Apply Vessel Type <span class="filter-icon">☰</span></th>
+                        <th style="width:14%;">Experience <span class="filter-icon">☰</span></th>
+                        <th style="width:10%;">Foreign <span class="filter-icon">☰</span></th>
+                        <th style="width:7%;text-align:right;">Last Salary</th>
+                        <th style="width:7%;text-align:right;">Expected Salary</th>
+                        <th style="width:5%;">Prev Join <span class="filter-icon">☰</span></th>
                         <th style="width:7%;">Submit Date</th>
-                        <th style="width:10%;">Action</th>
+                        <th style="width:10%;text-align:center;">Action</th>
                     </tr>
                 </thead>
-
+                <thead class="crew-search-header">
+                    <tr>
+                        <th></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th></th>
+                    </tr>
+                </thead>
                 <tbody id="idTbodyInterviewCrew"></tbody>
             </table>
         </div>
-
-        <div id="pagination" class="mt-3"></div>
     </div>
 </div>
 
