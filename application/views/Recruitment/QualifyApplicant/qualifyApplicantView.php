@@ -184,22 +184,288 @@
 .sap-table tbody tr:last-child {
     border-bottom: none;
 }
+
+/* FIX QUALIFY */
+#tableDataQualifiedCrew {
+    width: 100%;
+    table-layout: fixed;
+}
+#tableDataQualifiedCrew th,
+#tableDataQualifiedCrew td {
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+.crew-header th {
+    background-color: #000099 !important;
+    color: white !important;
+    font-size: 11px;
+    vertical-align: middle;
+}
+.crew-search-header th {
+    background-color: #ffffff !important;
+    padding: 8px 4px !important;
+}
+.column-search {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 2px 4px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.filter-icon {
+    font-size: 14px;
+    margin-left: 5px;
+    cursor: pointer;
+    color: #aac4ff;
+}
+.filter-icon:hover { color: #fff; }
+.filter-dropdown {
+    position: absolute; background: #fff; border: 1px solid #ccc;
+    padding: 8px; width: 200px; max-height: 260px; overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,.2); display: none; z-index: 9999;
+}
+.filter-dropdown input[type="text"] {
+    width: 100%; margin-bottom: 6px; padding: 4px; font-size: 12px;
+    border: 1px solid #dee2e6; border-radius: 4px;
+}
+.filter-dropdown label {
+    display: block; font-size: 13px; cursor: pointer;
+    padding: 4px 8px; margin: 2px 0; border-radius: 4px;
+}
+.filter-dropdown label:hover { background: #f8f9fa; }
+.filter-list { max-height: 120px; overflow-y: auto; margin-bottom: 6px; }
+.btn-clear-filter {
+    background: transparent; border: 1.5px solid #000099;
+    color: #000099; transition: all .2s ease;
+}
+.btn-clear-filter:hover { background: #000099; color: #fff; }
+.btn-clear-filter i { font-size: 14px; }
 </style>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+var tableDataQualifiedCrew;
 
-    const input = document.querySelector(".sap-search input");
+$(document).ready(function() {
+    tableDataQualifiedCrew = $('#tableDataQualifiedCrew').DataTable({
+        dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end'f>>" +
+             "<'row'<'col-md-12'tr>>" +
+             "<'row mt-2'<'col-md-6'i><'col-md-6 d-flex justify-content-end'p>>",
+        processing : true,
+        serverSide : false,
+        autoWidth  : false,
+        pageLength : 10,
+        lengthMenu : [10, 25, 50, 100],
+        ajax: {
+            url: '<?php echo base_url("searchDataQualifiedCrew"); ?>',
+            dataSrc: function(json) { return json.data ? json.data : []; }
+        },
+        orderCellsTop: true,
+        columns: [
+            { data: null, className: 'text-center', render: function(data, type, row, meta) { return meta.row + 1; } },
+            { 
+                data: 'fullname',
+                render: function(data, type, row) {
+                    if (type === 'display') {
+                        let badge = '';
+                        if (row.submit_cv_raw && row.submit_cv_raw.startsWith(new Date().toISOString().slice(0, 10))) {
+                            badge = '<span style="background:#0a6ed1;color:white;font-size:10px;font-weight:700;padding:3px 7px;border-radius:20px;margin-left:6px;">NEW</span>';
+                        }
+                        return '<div style="font-weight:600;font-size:14px;color:#1f2d3d;">' + (data || "-") + badge + '</div>' +
+                               '<div style="font-size:12px;color:#868e96;margin-top:2px;">' + (row.email || "-") + '</div>';
+                    }
+                    return data;
+                }
+            },
+            { 
+                data: 'position_applied',
+                render: function(data, type, row) {
+                    if (type === 'display') {
+                        return '<div style="display:inline-block;background:#e7f5ff;color:#1971c2;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;margin-bottom:3px;">APPLIED POSITION</div>' +
+                               '<div style="font-size:13px;font-weight:600;color:#0b7285;margin-bottom:6px;">' + (data || "-") + '</div>' +
+                               '<div style="display:inline-block;background:#f1f3f5;color:#495057;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;margin-bottom:3px;">CURRENT POSITION</div>' +
+                               '<div style="font-size:12px;color:#495057;margin-bottom:6px;">' + (row.position_existing || "-") + '</div>' +
+                               '<div style="display:inline-block;background:#e7f5ff;color:#1971c2;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;margin-bottom:3px;">CERTIFICATE</div>' +
+                               '<div style="font-size:11px;color:#868e96;border-top:1px dashed #dee2e6;padding-top:4px;">🎓 ' + (row.ijazah_terakhir || "-") + '</div>';
+                    }
+                    return data;
+                }
+            },
+            {
+                data: 'born_place',
+                render: function(data, type, row) {
+                    if (type === 'display') {
+                        return '<div style="font-size:12px;color:#495057;">' + (data || "-") + '</div>' +
+                               '<div style="font-size:12px;color:#868e96;">' + (row.born_date || "-") + '</div>';
+                    }
+                    return data;
+                }
+            },
+            { data: 'handphone', className: 'text-left' },
+            { data: 'vessel_type', className: 'text-left' },
+            { 
+                data: 'last_experience',
+                render: function(data, type, row) {
+                    if (type === 'display') {
+                        return '<div style="font-size:12px;font-weight:500;">' + (data || "-") + '</div>' +
+                               '<div style="font-size:12px;color:#868e96;">' + (row.pengalaman_jeniskapal || "-") + '</div>';
+                    }
+                    return data;
+                }
+            },
+            {
+                data: 'foreign_crew',
+                className: 'text-center',
+                render: function(data, type, row) {
+                    if (type === 'display') {
+                        let foreignCrew = data || '-';
+                        if (foreignCrew !== '-' && foreignCrew.includes('-')) {
+                            let parts = foreignCrew.split('-');
+                            let status = parts[0].trim();
+                            let countries = parts.slice(1).join('-').trim();
+                            return '<div style="font-weight:600;color:#0b7285;margin-bottom:4px;">' + status + ' -</div>' +
+                                   '<div style="color:#495057;font-size:11px;line-height:1.4;white-space:normal;max-width:140px;margin:auto;">' + 
+                                   countries.split(',').map(i => i.trim()).join('<br>') + '</div>';
+                        }
+                        return '<div style="font-size:12px;color:#495057;">' + foreignCrew + '</div>';
+                    }
+                    return data;
+                }
+            },
+            { 
+                data: 'last_salary', 
+                className: 'text-right',
+                render: function(data, type, row) {
+                    return '<span style="background:#e7f5ff;color:#1971c2;padding:2px 6px;border-radius:10px;font-size:10px;margin-right:4px;">' + (row.last_salary_currency || '-') + '</span>' + 
+                           '<span style="font-size:12px;font-weight:600;color:#065f46;">' + (parseFloat(data) > 0 ? parseFloat(data).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2}) : '-') + '</span>';
+                }
+            },
+            { 
+                data: 'expected_salary', 
+                className: 'text-right',
+                render: function(data, type, row) {
+                    return '<span style="background:#e7f5ff;color:#1971c2;padding:2px 6px;border-radius:10px;font-size:10px;margin-right:4px;">' + (row.expected_salary_currency || '-') + '</span>' + 
+                           '<span style="font-size:12px;font-weight:600;color:#065f46;">' + (parseFloat(data) > 0 ? parseFloat(data).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2}) : '-') + '</span>';
+                }
+            },
+            { data: 'prev_join', className: 'text-center' },
+            { data: 'submit_cv', className: 'text-center' },
+            { 
+                data: null, 
+                className: 'text-center',
+                orderable: false,
+                render: function(data, type, row) {
+                    return '<div style="display:flex;flex-direction:column;gap:4px;">' +
+                           '<button onclick="window.open(\'' + row.cv_url + '\',\'_blank\')" style="border:1px solid #dee2e6;background:#fff;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;">📄 View CV</button>' +
+                           '<button data-id="' + row.id + '" data-name=":: ' + row.fullname + ' ::" data-link="' + row.interview_link + '" onclick="interviewCrewQualify(this)" style="background:#e6fcf5;border:1px solid #20c997;color:#087f5b;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;">✔ Qualified</button>' +
+                           '<button data-id="' + row.id + '" data-name="' + row.fullname + '" data-position="' + row.position_applied + '" data-vessel-type="' + row.vessel_type + '" onclick="showNotQualifyModal(this)" style="background:#fff5f5;border:1px solid #ff6b6b;color:#c92a2a;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;">✕ Not Qualified</button>' +
+                           '</div>';
+                }
+            }
+        ],
+        initComplete: function() {
+            initDropdownFilters(this.api());
+        },
+        language: {
+            lengthMenu: '_MENU_ &nbsp;Entries',
+            info: 'Showing _START_ to _END_ of _TOTAL_ entries',
+            infoEmpty: 'Showing 0 to 0 of 0 entries',
+            infoFiltered: '(filtered from _MAX_ total entries)',
+            search: 'Search:',
+            emptyTable: 'Tidak ada data Qualify Applicant',
+            zeroRecords: 'Data tidak ditemukan'
+        },
+        drawCallback: function(settings) {
+            var api = this.api();
+            $('#totalApplicants').text(api.rows().count());
+        }
+    });
 
-    if (input) {
+    $('.column-search').on('keyup change', function() {
+        var colIndex = $(this).parent().index();
+        if (tableDataQualifiedCrew.column(colIndex).search() !== this.value) {
+            tableDataQualifiedCrew.column(colIndex).search(this.value).draw();
+        }
+    });
+});
 
-        input.addEventListener("keyup", function() {
-            searchTableDataQualifiedCrew(input, 1);
+function initDropdownFilters(api) {
+    $('#tableDataQualifiedCrew thead th').each(function (colIndex) {
+        var icon = $(this).find('.filter-icon');
+        if (!icon.length) return;
+        if (colIndex === 0 || colIndex === 12) return; // skip No & Action
+
+        var dropdown = $('<div class="filter-dropdown">'
+            + '<input type="text" class="filter-search" placeholder="Search...">'
+            + '<div class="filter-list"></div>'
+            + '<hr>'
+            + '<div class="d-flex gap-2 text-center">'
+            + '<button class="btn btn-sm w-30 rounded-pill fst-italic btn-clear-filter" id="clear-filter">'
+            + '<i class="fa-solid fa-eraser"></i>'
+            + '</button>'
+            + '</div>'
+            + '</div>').appendTo('body');
+
+        var listContainer = dropdown.find('.filter-list');
+
+        try {
+            var colData = api.column(colIndex).data();
+            if (colData && typeof colData.unique === 'function') {
+                var uniqueVals = [];
+                colData.unique().each(function (val) {
+                    if (val && val !== '-' && val !== '') {
+                        var tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = val;
+                        var text = tempDiv.textContent || tempDiv.innerText || '';
+                        if (text && !uniqueVals.includes(text)) uniqueVals.push(text);
+                    }
+                });
+                uniqueVals.sort().forEach(function (val) {
+                    var safeVal = String(val).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    listContainer.append('<label><input type="checkbox" value="'+ safeVal +'"> '+ safeVal +'</label>');
+                });
+            }
+        } catch(e) { console.warn('Filter error col '+ colIndex, e); }
+
+        icon.on('click', function (e) {
+            e.stopPropagation();
+            $('.filter-dropdown').hide();
+            var off = icon.offset();
+            dropdown.css({ top: off.top + icon.outerHeight(), left: off.left }).toggle();
         });
 
-    }
+        dropdown.find('.filter-search').on('keyup', function () {
+            var kw = $(this).val().toLowerCase();
+            listContainer.find('label').each(function () {
+                $(this).toggle($(this).text().toLowerCase().includes(kw));
+            });
+        });
 
-    searchTableDataQualifiedCrew(input, 1);
+        dropdown.on('change', 'input[type="checkbox"]', function () {
+            var selected = [];
+            dropdown.find('input[type="checkbox"]:checked').each(function () { selected.push($(this).val()); });
+            if (selected.length > 0) {
+                var regex = selected.map(function(v){ return v.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&'); }).join('|');
+                api.column(colIndex).search(regex, true, false).draw();
+            } else {
+                api.column(colIndex).search('').draw();
+            }
+            dropdown.hide();
+        });
 
+        dropdown.on('click', '.btn-clear-filter', function () {
+            dropdown.find('input').prop('checked', false);
+            dropdown.find('.filter-search').val('');
+            listContainer.find('label').show();
+            api.column(colIndex).search('').draw();
+            dropdown.hide();
+        });
+    });
+}
+
+$(document).on('click', function (e) {
+    if (!$(e.target).closest('.filter-dropdown').length) $('.filter-dropdown').hide();
 });
 
 function goToPage(page, searchValue) {
@@ -950,9 +1216,6 @@ function animateRemoveRow(row) {
 
     if (!row) return;
 
-    const tbody = document.getElementById("idTbodyQualifiedCrew");
-    const table = document.getElementById("tableDataQualifiedCrew");
-
     row.style.transition = "all .35s cubic-bezier(.4,0,.2,1)";
     row.style.background = "#fff5f5";
 
@@ -963,29 +1226,14 @@ function animateRemoveRow(row) {
 
     setTimeout(() => {
 
-        row.remove();
+        if (tableDataQualifiedCrew) {
+            tableDataQualifiedCrew.row($(row)).remove().draw(false);
+        }
 
         const total = document.getElementById("totalApplicants");
 
         if (total) {
             total.innerText = parseInt(total.innerText) - 1;
-        }
-
-        const remainingRows = tbody.querySelectorAll("tr").length;
-
-        if (remainingRows === 0) {
-
-            const currentPage = parseInt(table.dataset.page) || 1;
-            const searchValue = table.dataset.search || "";
-
-            const targetPage = currentPage > 1 ? currentPage - 1 : 1;
-
-            searchTableDataQualifiedCrew(null, targetPage);
-
-        } else {
-
-            renumberTableRows();
-
         }
 
     }, 350);
@@ -1211,7 +1459,7 @@ function submitNotQualifiedCrew() {
 
 <div id="applicantsWorkspace" class="sap-workspace">
 
-    <div class="sap-header">
+    <!-- <div class="sap-header">
         <div class="sap-header-left">
             <h2><?php echo $title; ?></h2>
             <span>Recruitment Management · Talent Intake</span>
@@ -1223,15 +1471,7 @@ function submitNotQualifiedCrew() {
                 <strong id="totalApplicants">0</strong>
             </div>
         </div>
-    </div>
-
-    <div class="sap-toolbar">
-        <div class="sap-search">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search name, email, position applied"
-                onkeyup="searchTableDataQualifiedCrew(this,'DataQualifiedCrew')">
-        </div>
-    </div>
+    </div> -->
 
     <div class="sap-content">
         <div id="idLoadingSpinnerQualifiedCrew" class="sap-loading" style="display:none;">
@@ -1245,51 +1485,45 @@ function submitNotQualifiedCrew() {
             <p>Processing data…</p>
         </div>
 
-        <div style="
-            width:100%;
-            max-height:700px;
-            overflow:auto;
-            background:white;
-            border:1px solid #e5e7eb;
-            border-radius:10px;
-            box-shadow:0 1px 3px rgba(0,0,0,.04);
-            position:relative;
-        ">
-
-            <div id="searchIndicator" style="padding:10px 10px 0 10px;"></div>
-
-            <table class="sap-table" id="tableDataQualifiedCrew" data-page="1" data-search="" data-rows="10">
-
-                <thead style="
-                    position:sticky;
-                    top:0;
-                    z-index:20;
-                    background:#fff;
-                ">
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle mb-0 sap-table" id="tableDataQualifiedCrew" style="width:100%;">
+                <thead class="crew-header">
                     <tr>
-                        <th style="width:50px;">No</th>
-                        <th style="min-width:240px;">Seafarer</th>
-                        <th style="min-width:220px;">Applied & Existing Position</th>
-                        <th style="min-width:140px;">Birth</th>
-                        <th style="min-width:130px;">Phone</th>
-                        <th style="min-width:140px;">Apply Vessel Type</th>
-                        <th style="min-width:200px;">Experience</th>
-                        <th style="width:90px;">Foreign</th>
-                        <th style="width:130px;">Last Salary</th>
-                        <th style="width:130px;">Expected Salary</th>
-                        <th style="width:100px;">Prev Join</th>
-                        <th style="width:120px;">Submit Date</th>
-                        <th style="width:150px;">Action</th>
+                        <th style="width:5%;" class="text-center">No</th>
+                        <th style="width:15%;">Seafarer <span class="filter-icon">☰</span></th>
+                        <th style="width:12%;">Position Applied <span class="filter-icon">☰</span></th>
+                        <th style="width:8%;">Birth <span class="filter-icon">☰</span></th>
+                        <th style="width:8%;">Phone <span class="filter-icon">☰</span></th>
+                        <th style="width:8%;">Vessel Type <span class="filter-icon">☰</span></th>
+                        <th style="width:14%;">Experience <span class="filter-icon">☰</span></th>
+                        <th style="width:10%;">Foreign <span class="filter-icon">☰</span></th>
+                        <th style="width:7%;text-align:right;">Last Salary</th>
+                        <th style="width:7%;text-align:right;">Expected Salary</th>
+                        <th style="width:8%;">Prev Join <span class="filter-icon">☰</span></th>
+                        <th style="width:8%;">Submit Date</th>
+                        <th style="width:10%;" class="text-center">Action</th>
                     </tr>
                 </thead>
-
-                <tbody id="idTbodyQualifiedCrew"></tbody>
-
+                <thead class="crew-search-header">
+                    <tr style="background-color: #ffffff !important;">
+                        <th style="background-color: #ffffff !important;"></th>
+                        <th style="background-color: #ffffff !important;"><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th style="background-color: #ffffff !important;"><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th style="background-color: #ffffff !important;"><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th style="background-color: #ffffff !important;"><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th style="background-color: #ffffff !important;"><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th style="background-color: #ffffff !important;"><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th style="background-color: #ffffff !important;"><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th style="background-color: #ffffff !important;"><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th style="background-color: #ffffff !important;"><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th style="background-color: #ffffff !important;"><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th style="background-color: #ffffff !important;"><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th style="background-color: #ffffff !important;"></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
             </table>
-
         </div>
-
-        <div id="pagination"></div>
     </div>
 </div>
 

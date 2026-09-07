@@ -40,98 +40,6 @@ class QualifyApplicant extends CI_Controller {
 
 		$dataContext = new DataContext();
 
-		$search    = $this->input->get('search', true);
-		$page      = $this->input->get('page', true);
-		$sortBy    = $this->input->get('sortBy', true);
-		$sortOrder = $this->input->get('sortOrder', true);
-
-		$page = (is_numeric($page) && $page > 0) ? (int)$page : 1;
-
-		$rows = $this->input->get('rows', true);
-
-		$allowedRows = array(10, 25, 50, 100);
-
-		$limit = in_array((int)$rows, $allowedRows)
-			? (int)$rows
-			: 10;
-
-		$offset = ($page - 1) * $limit;
-
-		$whereSearch = "";
-
-		if (!empty($search)) {
-
-			$keywords   = preg_split('/\s+/', trim($search));
-			$conditions = array();
-
-			foreach ($keywords as $word) {
-
-				$word = $this->db->escape_like_str($word);
-
-				if ($word == '') {
-					continue;
-				}
-
-				$conditions[] = "(
-					LOWER(position_applied) LIKE LOWER('%$word%')
-					OR LOWER(fullname) LIKE LOWER('%$word%')
-					OR LOWER(email) LIKE LOWER('%$word%')
-					OR LOWER(pengalaman_jeniskapal) LIKE LOWER('%$word%')
-					OR LOWER(vessel_type) LIKE LOWER('%$word%')
-				)";
-			}
-
-			if (!empty($conditions)) {
-				$whereSearch = " AND (" . implode(" OR ", $conditions) . ")";
-			}
-		}
-
-		$allowedColumns = array(
-			'email',
-			'fullname',
-			'born_place',
-			'born_date',
-			'handphone',
-			'vessel_type',
-			'position_applied',
-			'position_existing',
-			'ijazah_terakhir',
-			'last_experience',
-			'pengalaman_jeniskapal',
-			'berlayardengancrewasing',
-			'last_salary',
-			'expected_salary',
-			'join_inAndhika',
-			'submit_cv'
-		);
-
-		$order = "ORDER BY submit_cv DESC";
-
-		if (!empty($sortBy) && in_array($sortBy, $allowedColumns)) {
-
-			$sortOrder = strtoupper($sortOrder) === 'DESC' ? 'DESC' : 'ASC';
-			$order = "ORDER BY $sortBy $sortOrder";
-		}
-
-		$sqlTotal = "
-			SELECT COUNT(*) AS total
-			FROM new_applicant
-			WHERE deletests='0'
-			AND st_qualify='Y'
-			AND st_data='0'
-			AND st_qualify2='N'
-			AND position_existing != ''
-			$whereSearch
-		";
-
-		$resultTotal = $this->MCrewscv->getDataQuery($sqlTotal);
-
-		$totalRows  = (!empty($resultTotal))
-			? (int)$resultTotal[0]->total
-			: 0;
-
-		$totalPages = ceil($totalRows / $limit);
-
 		$sql = "
 			SELECT *
 			FROM new_applicant
@@ -140,9 +48,7 @@ class QualifyApplicant extends CI_Controller {
 			AND st_data='0'
 			AND st_qualify2='N'
 			AND position_existing != ''
-			$whereSearch
-			$order
-			LIMIT $limit OFFSET $offset
+			ORDER BY submit_cv DESC
 		";
 
 		$rows = $this->MCrewscv->getDataQuery($sql);
@@ -172,19 +78,14 @@ class QualifyApplicant extends CI_Controller {
 				'expected_salary_currency' => $row->expected_salary_currency,
 				'prev_join'             => $row->join_inAndhika,
 				'submit_cv'             => $dataContext->convertReturnNameWithTime($row->submit_cv),
+				'submit_cv_raw'         => $row->submit_cv,
 				'cv_url'                => base_url('assets/uploads/CV_NewApplicant/' . $row->new_cv),
 				'interview_link'        => base_url('crew/getLoginCrew')
 			);
 		}
 
 		echo json_encode(array(
-			'page'          => $page,
-			'total_pages'   => $totalPages,
-			'total_rows'    => $totalRows,
-			'rows_per_page' => $limit,
-			'start'         => ($totalRows > 0) ? $offset + 1 : 0,
-			'end'           => min($offset + $limit, $totalRows),
-			'data'          => $data
+			'data' => $data
 		));
 	}
 	
