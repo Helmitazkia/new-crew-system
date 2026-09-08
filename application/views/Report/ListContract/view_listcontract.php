@@ -9,14 +9,14 @@
                 <thead class="crew-header">
                   <tr>
                     <th class="text-center">No</th>
-                    <th class="text-center">Company</th>
-                    <th class="text-left">Full Name Crew</th>
-                    <th class="text-center">Apply For</th>
-                    <th class="text-center">Religion</th>
-                    <th class="text-center">Gender</th>
-                    <th class="text-center">Sign On</th>
-                    <th class="text-center">Sign Off</th>
-                    <th class="text-center">Contract</th>
+                    <th class="text-center">Company <span class="filter-icon">☰</span></th>
+                    <th class="text-left">Full Name Crew <span class="filter-icon">☰</span></th>
+                    <th class="text-center">Apply For <span class="filter-icon">☰</span></th>
+                    <th class="text-center">Religion <span class="filter-icon">☰</span></th>
+                    <th class="text-center">Gender <span class="filter-icon">☰</span></th>
+                    <th class="text-center">Sign On <span class="filter-icon">☰</span></th>
+                    <th class="text-center">Sign Off <span class="filter-icon">☰</span></th>
+                    <th class="text-center">Contract <span class="filter-icon">☰</span></th>
                   </tr>
                 </thead>
                 <thead>
@@ -44,21 +44,42 @@
 </div>
 
 <script>
-function ordinalSup(num) {
-  num = parseInt(num, 10);
-  if (isNaN(num)) return '-';
-  if (num % 100 >= 11 && num % 100 <= 13) {
-    return num + '<sup>th</sup>';
-  }
-  const suffix = {
-    1: 'st',
-    2: 'nd',
-    3: 'rd'
-  };
-  return num + '<sup>' + (suffix[num % 10] || 'th') + '</sup>';
-}
-
 $(document).ready(function() {
+  var selectedContractRanges = [];
+
+  if ($.fn.dataTable && $.fn.dataTable.ext) {
+    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+        var tableId = settings.sTableId || (settings.nTable ? settings.nTable.id : '');
+        if (tableId && tableId !== 'crewTable') return true;
+        if (!selectedContractRanges || selectedContractRanges.length === 0) return true;
+
+        var row = (settings.aoData && settings.aoData[dataIndex]) ? settings.aoData[dataIndex]._aData : null;
+        var contractStr = '';
+        if (row && typeof row.total_contract !== 'undefined') {
+            contractStr = String(row.total_contract);
+        } else if (data && data.length > 8) {
+            contractStr = String(data[8]);
+        }
+
+        var yMatch = contractStr.match(/(\d+)\s+Years?/i);
+        var years = yMatch ? parseInt(yMatch[1], 10) : 0;
+        var mMatch = contractStr.match(/(\d+)\s+Months?/i);
+        var months = mMatch ? parseInt(mMatch[1], 10) : 0;
+        var totalYears = years + (months / 12);
+
+        return selectedContractRanges.some(function(range) {
+            if (range === '< 1 Year') return totalYears < 1;
+            if (range === '1 - 3 Years') return totalYears >= 1 && totalYears < 3;
+            if (range === '3 - 5 Years') return totalYears >= 3 && totalYears <= 5;
+            if (range === '> 5 Years') return totalYears > 5;
+            if (range === '> 10 Years') return totalYears > 10;
+            if (range === '> 15 Years') return totalYears > 15;
+            if (range === '> 20 Years') return totalYears > 20;
+            return false;
+        });
+    });
+  }
+
   let table = $('#crewTable').DataTable({
     dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end custom-btn'>>" +
          "<'row'<'col-md-12'tr>>" +
@@ -97,9 +118,8 @@ $(document).ready(function() {
         render: function(data, type, row) {
           if (type === 'display') {
             var name = data || '-';
-            return '<a href="#" class="crew-name crew-name-link text-dark text-decoration-none" onclick="showCrewDetail(\'' +
-            (row.idperson || '') + '\'); return false;" title="View detail">' + (name.replace(/</g, '&lt;')
-              .replace(/>/g, '&gt;')) + '</a>';
+            var detailUrl = "<?php echo base_url('PersonDetail/index'); ?>/" + encodeURIComponent(row.idperson || '');
+            return '<a href="' + detailUrl + '" class="crew-name crew-name-link text-dark text-decoration-none" target="_blank" title="View detail">' + (name.replace(/</g, '&lt;').replace(/>/g, '&gt;')) + '</a>';
           }
           return data;
         }
@@ -130,19 +150,14 @@ $(document).ready(function() {
       },
       { 
         data: 'total_contract', 
-        className: 'text-center',
-        render: function(data, type, row) {
-          if (type === 'display') {
-             return `${ordinalSup(row.total_contract)} Contract`;
-          }
-          return data;
-        }
+        className: 'text-center'
       }
     ],
     order: [[2, 'asc']], // default order by fullname
     initComplete: function() {
       // Inject Export Excel Button
       $('.custom-btn').html('<button type="button" id="btnExportExcel" class="btn btn-success btn-sm"><i class="fa fa-file-excel" style="margin-right: 5px;"></i> Export Excel</button>');
+      initDropdownFilters(this.api());
     }
   });
 
@@ -198,12 +213,130 @@ $(document).ready(function() {
     form.submit();
     form.remove();
   });
-});
 
   window.showCrewDetail = function(crewNo) {
-    window.location.href =
-      "<?php echo base_url('PersonDetail/index'); ?>/" + crewNo;
+    window.open("<?php echo base_url('PersonDetail/index'); ?>/" + crewNo, '_blank');
   };
+
+  function initDropdownFilters(api) {
+      $('#crewTable thead tr:first th').each(function (colIndex) {
+          var icon = $(this).find('.filter-icon');
+          if (!icon.length) return;
+  
+          var dropdown = $('<div class="filter-dropdown">'
+              + '<input type="text" class="filter-search" placeholder="Search...">'
+              + '<div class="filter-list"></div>'
+              + '<hr>'
+              + '<div class="d-flex gap-2 text-center">'
+              + '<button class="btn btn-sm w-30 rounded-pill fst-italic btn-clear-filter" id="clear-filter">'
+              + '<i class="fa-solid fa-eraser"></i>'
+              + '</button>'
+              + '</div>'
+              + '</div>').appendTo('body');
+  
+          var listContainer = dropdown.find('.filter-list');
+          var isContractCol = $(this).text().indexOf('Contract') !== -1 || colIndex === 8;
+
+          if (isContractCol) {
+              var contractRanges = [
+                  '< 1 Year',
+                  '1 - 3 Years',
+                  '3 - 5 Years',
+                  '> 5 Years',
+                  '> 10 Years',
+                  '> 15 Years',
+                  '> 20 Years'
+              ];
+              contractRanges.forEach(function (val) {
+                  listContainer.append('<label><input type="checkbox" value="'+ val +'"> '+ val +'</label>');
+              });
+          } else {
+              try {
+                  var colData = api.column(colIndex).data();
+                  if (colData && typeof colData.unique === 'function') {
+                      var uniqueVals = [];
+                      colData.unique().each(function (val) {
+                          if (val && val !== '-' && val !== '') {
+                              var tempDiv = document.createElement('div');
+                              tempDiv.innerHTML = val;
+                              var text = tempDiv.textContent || tempDiv.innerText || '';
+                              if (text && !uniqueVals.includes(text)) uniqueVals.push(text);
+                          }
+                      });
+                      uniqueVals.sort().forEach(function (val) {
+                          var safeVal = String(val).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                          listContainer.append('<label><input type="checkbox" value="'+ safeVal +'"> '+ safeVal +'</label>');
+                      });
+                  }
+              } catch(e) { console.warn('Filter error col '+ colIndex, e); }
+          }
+  
+          icon.on('click', function (e) {
+              e.stopPropagation();
+              $('.filter-dropdown').hide();
+              var off = icon.offset();
+              var leftPos = off.left;
+              var dropdownWidth = 200; // default from CSS
+              if (leftPos + dropdownWidth > $(window).width()) {
+                  leftPos = off.left - dropdownWidth + icon.outerWidth();
+              }
+              dropdown.css({ top: off.top + icon.outerHeight(), left: leftPos }).toggle();
+          });
+  
+          dropdown.find('.filter-search').on('keyup', function () {
+              var kw = $(this).val().toLowerCase();
+              listContainer.find('label').each(function () {
+                  $(this).toggle($(this).text().toLowerCase().includes(kw));
+              });
+          });
+  
+          dropdown.on('change', 'input[type="checkbox"]', function () {
+              if (isContractCol) {
+                  selectedContractRanges = [];
+                  dropdown.find('input[type="checkbox"]:checked').each(function () {
+                      selectedContractRanges.push($(this).val());
+                  });
+                  if (selectedContractRanges.length > 0) {
+                      icon.css('color', '#ffc107');
+                  } else {
+                      icon.css('color', '');
+                  }
+                  api.draw();
+              } else {
+                  var selected = [];
+                  dropdown.find('input[type="checkbox"]:checked').each(function () { selected.push($(this).val()); });
+                  if (selected.length > 0) {
+                      icon.css('color', '#ffc107');
+                      var regex = selected.map(function(v){ return v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|');
+                      api.column(colIndex).search(regex, true, false).draw();
+                  } else {
+                      icon.css('color', '');
+                      api.column(colIndex).search('').draw();
+                  }
+              }
+              dropdown.hide();
+          });
+  
+          dropdown.on('click', '.btn-clear-filter', function () {
+              dropdown.find('input').prop('checked', false);
+              dropdown.find('.filter-search').val('');
+              listContainer.find('label').show();
+              icon.css('color', '');
+              if (isContractCol) {
+                  selectedContractRanges = [];
+                  api.draw();
+              } else {
+                  api.column(colIndex).search('').draw();
+              }
+              dropdown.hide();
+          });
+      });
+  }
+
+  $(document).on('click', function (e) {
+      if (!$(e.target).closest('.filter-dropdown').length) $('.filter-dropdown').hide();
+  });
+});
 </script>
 
 <style>
@@ -224,6 +357,36 @@ $(document).ready(function() {
   border-radius: 8px;
   border: none;
 }
+/* Filter Dropdown Styles */
+.filter-icon {
+    font-size: 14px;
+    margin-left: 5px;
+    cursor: pointer;
+    color: #aac4ff;
+}
+.filter-icon:hover { color: #fff; }
+.filter-dropdown {
+    position: absolute; background: #fff; border: 1px solid #ccc;
+    padding: 8px; width: 200px; max-height: 260px; overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,.2); display: none; z-index: 9999;
+}
+.filter-dropdown input[type="text"] {
+    width: 100%; margin-bottom: 6px; padding: 4px; font-size: 12px;
+    border: 1px solid #dee2e6; border-radius: 4px;
+}
+.filter-dropdown label {
+    display: block; font-size: 13px; cursor: pointer;
+    padding: 4px 8px; margin: 2px 0; border-radius: 4px;
+}
+.filter-dropdown label:hover { background: #f8f9fa; }
+.filter-list { max-height: 120px; overflow-y: auto; margin-bottom: 6px; }
+.btn-clear-filter {
+    background: transparent; border: 1.5px solid #000099;
+    color: #000099; transition: all .2s ease;
+}
+.btn-clear-filter:hover { background: #000099; color: #fff; }
+.btn-clear-filter i { font-size: 14px; }
+
 /* Column Search Input */
 .column-search {
   width: 100%;
