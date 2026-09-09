@@ -732,11 +732,11 @@ class FamiliarReport extends CI_Controller {
             }
 
             // Fetch signatures from history_fam_dept_signature
-            $sqlSigs = "SELECT dept_id, qr_code_value FROM history_fam_dept_signature WHERE history_id = ?";
+            $sqlSigs = "SELECT d.department_name, s.qr_code_value FROM history_fam_dept_signature s JOIN mst_fam_department d ON d.id = s.dept_id WHERE s.history_id = ?";
             $sigs = $this->db->query($sqlSigs, array($row->id))->result();
             $deptSigs = array();
             foreach ($sigs as $s) {
-                $deptSigs[$s->dept_id] = $s->qr_code_value;
+                $deptSigs[$s->department_name] = $s->qr_code_value;
             }
 
             $crewInfo = (object) array(

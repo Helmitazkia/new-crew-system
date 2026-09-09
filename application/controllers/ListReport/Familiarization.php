@@ -321,6 +321,14 @@ class Familiarization extends CI_Controller {
             }
         }
 
+        // Fetch signatures from history_fam_dept_signature
+        $sqlSigs = "SELECT d.department_name, s.qr_code_value FROM history_fam_dept_signature s JOIN mst_fam_department d ON d.id = s.dept_id WHERE s.history_id = ?";
+        $sigs = $this->db->query($sqlSigs, array($history->id))->result();
+        $deptSigs = array();
+        foreach ($sigs as $s) {
+            $deptSigs[$s->department_name] = $s->qr_code_value;
+        }
+
         $crew = (object) array(
             'fullname'      => $history->nama_crew,
             'date_of_birth' => $dob,
@@ -330,14 +338,14 @@ class Familiarization extends CI_Controller {
             'is_top4'       => $isTop4,
             'qr_crew'       => isset($history->qr_crew) ? $history->qr_crew : '',
             'qr_checkedby'  => isset($history->qr_checkedby) ? $history->qr_checkedby : '',
-            'qr_dpa'        => isset($history->qr_dpa) ? $history->qr_dpa : '',
-            'qr_dept_technical'    => isset($history->qr_dept_technical) ? $history->qr_dept_technical : '',
-            'qr_dept_marinesafety' => isset($history->qr_dept_marinesafety) ? $history->qr_dept_marinesafety : '',
-            'qr_dept_finance'      => isset($history->qr_dept_finance) ? $history->qr_dept_finance : '',
-            'qr_dept_purchasing'   => isset($history->qr_dept_purchasing) ? $history->qr_dept_purchasing : '',
-            'qr_dept_qhse'         => isset($history->qr_dept_qhse) ? $history->qr_dept_qhse : '',
-            'qr_dept_operation'    => isset($history->qr_dept_operation) ? $history->qr_dept_operation : '',
-            'qr_dept_crewing'      => isset($history->qr_dept_crewing) ? $history->qr_dept_crewing : '',
+            'qr_dpa'        => isset($deptSigs['DPA']) ? $deptSigs['DPA'] : (isset($deptSigs['DPA / Marine Safety']) ? $deptSigs['DPA / Marine Safety'] : ''),
+            'qr_dept_technical'    => isset($deptSigs['Technical']) ? $deptSigs['Technical'] : '',
+            'qr_dept_marinesafety' => isset($deptSigs['Marine Safety']) ? $deptSigs['Marine Safety'] : '',
+            'qr_dept_finance'      => isset($deptSigs['Finance']) ? $deptSigs['Finance'] : '',
+            'qr_dept_purchasing'   => isset($deptSigs['Purchasing']) ? $deptSigs['Purchasing'] : '',
+            'qr_dept_qhse'         => isset($deptSigs['QHSE']) ? $deptSigs['QHSE'] : '',
+            'qr_dept_operation'    => isset($deptSigs['Operation']) ? $deptSigs['Operation'] : '',
+            'qr_dept_crewing'      => isset($deptSigs['Crewing']) ? $deptSigs['Crewing'] : '',
             'signature_checkedBy'  => $signature_checkedBy,
             'signature_DPA'        => $signature_DPA,
             'license'              => $license,
