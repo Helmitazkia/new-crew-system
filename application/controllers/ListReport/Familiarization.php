@@ -20,7 +20,9 @@ class Familiarization extends CI_Controller {
 
     public function view()
     {
-        $this->load->view('ListReport/Familiarization/view_familiar');
+        $topics = $this->db->where('is_active', 1)->order_by('order_no', 'ASC')->get('mst_fam_topic')->result();
+        $data['topics'] = $topics;
+        $this->load->view('ListReport/Familiarization/view_familiar', $data);
     }
 
 	function getStatementCrew()
@@ -97,6 +99,16 @@ class Familiarization extends CI_Controller {
 			$row->date_created_fmt = !empty($row->date_created)
 				? date('d M Y H:i', strtotime($row->date_created))
 				: '-';
+
+			// Get details from history_fam_topic_detail
+			$details = $this->db->where('history_id', $row->id)->get('history_fam_topic_detail')->result();
+			$items = array();
+			foreach ($details as $d) {
+				$items['item_' . $d->topic_id] = $d->is_checked;
+				$items[$d->topic_id] = $d->is_checked;
+			}
+			$row->items = $items;
+
 			$result[] = $row;
 		}
 
@@ -202,6 +214,16 @@ class Familiarization extends CI_Controller {
 			return;
 		}
         
+        // Fetch master topics
+        $topics = $this->db->where('is_active', 1)->order_by('order_no', 'ASC')->get('mst_fam_topic')->result();
+
+        // FETCH TOPIC DETAILS and map to $history->item_X
+        $topicDetails = $this->db->where('history_id', $history->id)->get('history_fam_topic_detail')->result();
+        foreach ($topicDetails as $td) {
+            $prop = 'item_' . $td->topic_id;
+            $history->$prop = $td->is_checked;
+        }
+
         $idPerson = $history->idperson;
 
         // Define batch_id fallback for signature and audit fetching
@@ -354,6 +376,7 @@ class Familiarization extends CI_Controller {
 
 		$dataOut['crew']    = $crew;
 		$dataOut['history'] = $history;
+		$dataOut['topics']  = $topics;
 		$dataOut['today']   = date('d F Y');
         $dataOut['reps']    = $reps;
         $dataOut['times']   = $times;
