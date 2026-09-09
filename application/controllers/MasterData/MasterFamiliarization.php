@@ -31,9 +31,18 @@ class MasterFamiliarization extends CI_Controller
 
     public function getAllDataTopic()
     {
-        $sql = "SELECT * FROM mst_fam_topic ORDER BY order_no ASC, id ASC";
+        $sql = "SELECT t.*, d.department_name FROM mst_fam_topic t
+                LEFT JOIN mst_fam_department d ON d.id = t.dept_id
+                ORDER BY t.order_no ASC, t.id ASC";
         $data = $this->db->query($sql)->result_array();
         echo json_encode(array('data' => $data));
+    }
+
+    public function getAllDataDepartmentActive()
+    {
+        $sql = "SELECT id, department_name FROM mst_fam_department WHERE is_active = 1 ORDER BY department_name ASC";
+        $data = $this->db->query($sql)->result_array();
+        echo json_encode(array('success' => true, 'data' => $data));
     }
 
     public function getTopicById()
@@ -49,9 +58,20 @@ class MasterFamiliarization extends CI_Controller
 
     public function saveTopic()
     {
-        $id = $this->input->post('topicId');
+        $id      = $this->input->post('topicId');
+        $dept_id = $this->input->post('deptId') ? (int)$this->input->post('deptId') : null;
+
+        // Ambil dept_name dari mst_fam_department
+        $dept_name = null;
+        if ($dept_id) {
+            $dept = $this->db->get_where('mst_fam_department', array('id' => $dept_id))->row();
+            if ($dept) $dept_name = $dept->department_name;
+        }
+
         $data = array(
             'topic_name' => $this->input->post('topicName'),
+            'dept_id'    => $dept_id,
+            'dept_name'  => $dept_name,
             'order_no'   => $this->input->post('orderNo') ? $this->input->post('orderNo') : 0,
             'is_active'  => $this->input->post('isActive') ? 1 : 0
         );

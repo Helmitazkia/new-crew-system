@@ -4,38 +4,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class FamiliarReport extends CI_Controller {
 
     /**
-     * Mapping checklist item => department
-     */
-    private $itemDepartmentMap = array(
-        'item_1'  => 'Crewing',
-        'item_2'  => 'QHSE',
-        'item_3'  => 'DPA / Marine Safety',
-        'item_4'  => 'DPA',
-        'item_5'  => 'Operation',
-        'item_6'  => 'DPA / Marine Safety',
-        'item_7'  => 'Technical',
-        'item_8'  => 'Purchasing',
-        'item_9'  => 'Finance',
-        'item_10' => 'Operation',
-        'item_11' => 'DPA / Marine Safety',
-        'item_12' => 'DPA / Marine Safety',
-        'item_13' => 'DPA / Marine Safety',
-        'item_14' => 'DPA / Marine Safety',
-        'item_15' => 'Marine Safety',
-        'item_16' => 'Marine Safety',
-    );
-
-    /**
-     * Daftar departemen unik (untuk generate link)
-     */
-    private $departments = array(
-        'Crewing', 'QHSE', 'DPA','DPA / Marine Safety','Operation', 'Technical', 'Purchasing', 'Finance' ,'Marine Safety'
-    );
-
-    /**
      * Top 4 rank keywords (untuk validasi PDF 2 halaman)
      */
     private $top4Ranks = array('MASTER', 'C/O', 'C/E', '2/E');
+
+    // -------------------------------------------------------------------
+    // HELPER: Load master topics & departments secara dinamis dari DB
+    // -------------------------------------------------------------------
+    private function _getActiveTopics()
+    {
+        return $this->db->where('is_active', 1)
+                        ->order_by('order_no', 'ASC')
+                        ->order_by('id', 'ASC')
+                        ->get('mst_fam_topic')->result();
+    }
+
+    private function _getActiveDepartments()
+    {
+        return $this->db->where('is_active', 1)
+                        ->order_by('department_name', 'ASC')
+                        ->get('mst_fam_department')->result();
+    }
 
     public function __construct()
     {
@@ -64,18 +53,16 @@ class FamiliarReport extends CI_Controller {
      */
     public function get_report_familiar()
     {
-        // Group by batch_id or id if batch_id is null
+        // Ambil total topic aktif untuk cek status "Completed"
+        $totalTopics = $this->db->where('is_active', 1)->count_all_results('mst_fam_topic');
+
         $sql = "
-            SELECT 
+            SELECT
                 COALESCE(batch_id, id) as group_id,
                 MAX(date_created) as date_created,
                 MAX(note) as note,
                 GROUP_CONCAT(DISTINCT REPLACE(vessel, '.', '') SEPARATOR ', ') as vessel,
-                COUNT(id) as total_crew,
-                MAX(item_1) as item_1, MAX(item_2) as item_2, MAX(item_3) as item_3, MAX(item_4) as item_4,
-                MAX(item_5) as item_5, MAX(item_6) as item_6, MAX(item_7) as item_7, MAX(item_8) as item_8,
-                MAX(item_9) as item_9, MAX(item_10) as item_10, MAX(item_11) as item_11, MAX(item_12) as item_12,
-                MAX(item_13) as item_13, MAX(item_14) as item_14, MAX(item_15) as item_15, MAX(item_16) as item_16
+                COUNT(id) as total_crew
             FROM history_familiarization
             GROUP BY COALESCE(batch_id, id)
             ORDER BY MAX(date_created) DESC
@@ -89,17 +76,24 @@ class FamiliarReport extends CI_Controller {
                 $row->date_created_fmt = !empty($row->date_created)
                     ? date('d M Y H:i', strtotime($row->date_created))
                     : '-';
-                
-                $isCompleted = true;
-                for ($i = 1; $i <= 16; $i++) {
-                    $itemKey = 'item_' . $i;
-                    if ($row->$itemKey === null || $row->$itemKey === '') {
-                        $isCompleted = false;
-                        break;
-                    }
+
+                // Ambil salah satu history_id dari batch ini
+                $firstRow = $this->db->where('batch_id', $row->group_id)
+                                     ->limit(1)
+                                     ->get('history_familiarization')->row();
+                $historyId = $firstRow ? $firstRow->id : $row->group_id;
+
+                // Hitung berapa topic yang sudah diisi (is_checked) pada batch ini
+                $checkedCount = 0;
+                if ($firstRow) {
+                    // Count distinct topics yang sudah diisi di salah satu anggota batch
+                    $checkedCount = $this->db
+                        ->where('history_id', $historyId)
+                        ->where('is_checked', 1)
+                        ->count_all_results('history_fam_topic_detail');
                 }
-                
-                if ($isCompleted) {
+
+                if ($totalTopics > 0 && $checkedCount >= $totalTopics) {
                     $row->status_html = '<span class="badge bg-success" style="font-size: 11px;">Completed</span>';
                     $row->status_text = 'Completed';
                 } else {
@@ -119,6 +113,7 @@ class FamiliarReport extends CI_Controller {
 
     /**
      * Detail report familiarization (untuk modal view/update)
+     * Mengembalikan juga checklist items yang sudah diisi per history_id
      */
     public function get_report_familiar_detail()
     {
@@ -139,8 +134,16 @@ class FamiliarReport extends CI_Controller {
             return;
         }
 
-        // Ambil data checklist dari salah satu row (karena semuanya sama dalam 1 batch)
         $master = $data[0];
+
+        // Ambil checklist topics yang sudah diisi untuk history pertama
+        $topicDetails = $this->db
+            ->select('d.topic_id, d.is_checked, t.topic_name, t.dept_name, t.order_no')
+            ->from('history_fam_topic_detail d')
+            ->join('mst_fam_topic t', 't.id = d.topic_id', 'left')
+            ->where('d.history_id', $master->id)
+            ->order_by('t.order_no', 'ASC')
+            ->get()->result();
 
         $crew_list = array();
         foreach ($data as $row) {
@@ -156,14 +159,15 @@ class FamiliarReport extends CI_Controller {
         echo json_encode(array(
             'success' => true,
             'data'    => array(
-                'master'    => $master,
-                'crew_list' => $crew_list
+                'master'       => $master,
+                'crew_list'    => $crew_list,
+                'topic_detail' => $topicDetails
             )
         ));
     }
 
     /**
-     * Submit form multiple crew
+     * Submit form multiple crew - Menyimpan ke tabel Header + Detail (dinamis)
      */
     public function submit_report_familiar()
     {
@@ -180,44 +184,38 @@ class FamiliarReport extends CI_Controller {
         }
 
         $batch_id = $this->input->post('batch_id', true);
-        
+
+        // Load semua active topics untuk disimpan di detail
+        $activeTopics = $this->_getActiveTopics();
+        if (empty($activeTopics)) {
+            echo json_encode(array('success' => false, 'message' => 'Tidak ada Topic aktif. Silahkan isi Master Familiarization Topic terlebih dahulu.'));
+            return;
+        }
+
         $this->db->trans_begin();
 
-        // Ambil data lama jika update untuk mempertahankan QR code
-        $existingDataMap = array();
+        // Jika update, hapus data lama
         if (!empty($batch_id)) {
+            // Ambil history IDs yang akan dihapus
             $this->db->where('batch_id', $batch_id);
-            $this->db->or_where('id', $batch_id);
-            $oldData = $this->db->get('history_familiarization')->result();
-            foreach ($oldData as $od) {
-                // map by idperson (atau nama_crew jika idperson kosong)
-                $key = !empty($od->idperson) ? $od->idperson : $od->nama_crew;
-                $existingDataMap[$key] = $od;
+            $oldRows = $this->db->get('history_familiarization')->result();
+            $oldIds  = array_map(function($r) { return $r->id; }, $oldRows);
+
+            if (!empty($oldIds)) {
+                $this->db->where_in('history_id', $oldIds)->delete('history_fam_topic_detail');
             }
 
-            $this->db->where('batch_id', $batch_id);
-            $this->db->or_where('id', $batch_id); // Fallback for old single data
-            $this->db->delete('history_familiarization');
+            $this->db->where('batch_id', $batch_id)->delete('history_familiarization');
         } else {
-            // Generate batch_id baru untuk mode insert
             $batch_id = 'FAM_' . date('YmdHis') . '_' . rand(100, 999);
         }
 
         $date_created = date('Y-m-d H:i:s');
-        $note = $this->input->post('note', true);
-
-        // Helper: convert radio value (0/1) or NULL if not sent
-        $self = $this;
-        $getItem = function($field) use ($self) {
-            $val = $self->input->post($field);
-            return ($val !== false && $val !== null && $val !== '') ? (int)$val : null;
-        };
+        $note         = $this->input->post('note', true);
 
         foreach ($crewList as $crew) {
-            $idperson = isset($crew['id_person']) ? $crew['id_person'] : '';
+            $idperson  = isset($crew['id_person']) ? $crew['id_person'] : '';
             $nama_crew = isset($crew['name_crew']) ? $crew['name_crew'] : '';
-            $key = !empty($idperson) ? $idperson : $nama_crew;
-            $oldCrew = isset($existingDataMap[$key]) ? $existingDataMap[$key] : null;
 
             $dataInsert = array(
                 'batch_id'     => $batch_id,
@@ -227,37 +225,24 @@ class FamiliarReport extends CI_Controller {
                 'vessel'       => isset($crew['vessel_name']) ? $crew['vessel_name'] : '',
                 'signon_date'  => isset($crew['signon_date']) && !empty($crew['signon_date']) ? date('Y-m-d', strtotime($crew['signon_date'])) : NULL,
                 'note'         => $note,
-                'date_created' => $oldCrew ? $oldCrew->date_created : $date_created,
-                'item_1'       => $getItem('item_1'),
-                'item_2'       => $getItem('item_2'),
-                'item_3'       => $getItem('item_3'),
-                'item_4'       => $getItem('item_4'),
-                'item_5'       => $getItem('item_5'),
-                'item_6'       => $getItem('item_6'),
-                'item_7'       => $getItem('item_7'),
-                'item_8'       => $getItem('item_8'),
-                'item_9'       => $getItem('item_9'),
-                'item_10'      => $getItem('item_10'),
-                'item_11'      => $getItem('item_11'),
-                'item_12'      => $getItem('item_12'),
-                'item_13'      => $getItem('item_13'),
-                'item_14'      => $getItem('item_14'),
-                'item_15'      => $getItem('item_15'),
-                'item_16'      => $getItem('item_16'),
-                
-                // Pertahankan QR Codes yang sudah ter-generate sebelumnya
-                'qr_checkedby' => $oldCrew && isset($oldCrew->qr_checkedby) ? $oldCrew->qr_checkedby : null,
-                'qr_crew'      => $oldCrew && isset($oldCrew->qr_crew) ? $oldCrew->qr_crew : null,
-                'qr_dpa'       => $oldCrew && isset($oldCrew->qr_dpa) ? $oldCrew->qr_dpa : null,
-                'qr_dept_technical'    => $oldCrew && isset($oldCrew->qr_dept_technical) ? $oldCrew->qr_dept_technical : null,
-                'qr_dept_marinesafety' => $oldCrew && isset($oldCrew->qr_dept_marinesafety) ? $oldCrew->qr_dept_marinesafety : null,
-                'qr_dept_finance'      => $oldCrew && isset($oldCrew->qr_dept_finance) ? $oldCrew->qr_dept_finance : null,
-                'qr_dept_purchasing'   => $oldCrew && isset($oldCrew->qr_dept_purchasing) ? $oldCrew->qr_dept_purchasing : null,
-                'qr_dept_qhse'         => $oldCrew && isset($oldCrew->qr_dept_qhse) ? $oldCrew->qr_dept_qhse : null,
-                'qr_dept_operation'    => $oldCrew && isset($oldCrew->qr_dept_operation) ? $oldCrew->qr_dept_operation : null,
-                'qr_dept_crewing'      => $oldCrew && isset($oldCrew->qr_dept_crewing) ? $oldCrew->qr_dept_crewing : null
+                'date_created' => $date_created,
             );
+
             $this->db->insert('history_familiarization', $dataInsert);
+            $newHistoryId = $this->db->insert_id();
+
+            // Insert detail topic untuk setiap topic aktif
+            foreach ($activeTopics as $topic) {
+                $fieldName  = 'topic_' . $topic->id; // e.g. topic_1, topic_2
+                $isChecked  = $this->input->post($fieldName);
+                $checkedVal = ($isChecked !== false && $isChecked !== null && $isChecked !== '') ? (int)$isChecked : 0;
+
+                $this->db->insert('history_fam_topic_detail', array(
+                    'history_id' => $newHistoryId,
+                    'topic_id'   => $topic->id,
+                    'is_checked' => $checkedVal
+                ));
+            }
         }
 
         if ($this->db->trans_status() === FALSE) {
@@ -265,7 +250,6 @@ class FamiliarReport extends CI_Controller {
             echo json_encode(array('success' => false, 'message' => 'Gagal menyimpan data'));
         } else {
             $this->db->trans_commit();
-            // Auto-generate public links jika belum ada
             $this->_generate_links_for_batch($batch_id);
             echo json_encode(array('success' => true, 'message' => 'Data berhasil disimpan', 'batch_id' => $batch_id));
         }
@@ -285,18 +269,27 @@ class FamiliarReport extends CI_Controller {
 
         $this->db->trans_start();
 
-        // 1. Delete dari history_familiarization
+        // 1. Ambil semua history_id dalam batch ini
+        $this->db->where('batch_id', $group_id);
+        $historyRows = $this->db->get('history_familiarization')->result();
+        $historyIds  = array_map(function($r) { return $r->id; }, $historyRows);
+
+        // 2. Delete detail tables
+        if (!empty($historyIds)) {
+            $this->db->where_in('history_id', $historyIds)->delete('history_fam_topic_detail');
+            $this->db->where_in('history_id', $historyIds)->delete('history_fam_dept_signature');
+        }
+
+        // 3. Delete header
         $this->db->where('batch_id', $group_id);
         $this->db->or_where('id', $group_id);
         $this->db->delete('history_familiarization');
 
-        // 2. Delete dari fam_public_links
-        $this->db->where('batch_id', $group_id);
-        $this->db->delete('fam_public_links');
+        // 4. Delete dari fam_public_links
+        $this->db->where('batch_id', $group_id)->delete('fam_public_links');
 
-        // 3. Delete dari fam_checklist_audit
-        $this->db->where('batch_id', $group_id);
-        $this->db->delete('fam_checklist_audit');
+        // 5. Delete dari fam_checklist_audit
+        $this->db->where('batch_id', $group_id)->delete('fam_checklist_audit');
 
         $this->db->trans_complete();
 
@@ -425,24 +418,26 @@ class FamiliarReport extends CI_Controller {
     // ============================================================
 
     /**
-     * Internal: Generate public links for all departments for a batch
+     * Internal: Generate public links for all departments (dari mst_fam_department)
      */
     private function _generate_links_for_batch($batch_id)
     {
         $checkedBy = $this->session->userdata('userFullNm');
 
-        foreach ($this->departments as $dept) {
-            // Cek apakah sudah ada link aktif untuk batch+dept ini
+        // Load departments dari master (dinamis)
+        $departments = $this->_getActiveDepartments();
+
+        foreach ($departments as $dept) {
             $existing = $this->db->where('batch_id', $batch_id)
-                                ->where('department', $dept)
-                                ->where('is_active', 1)
-                                ->get('fam_public_links')->row();
+                                 ->where('department', $dept->department_name)
+                                 ->where('is_active', 1)
+                                 ->get('fam_public_links')->row();
 
             if (!$existing) {
-                $token = hash('sha256', $batch_id . $dept . microtime(true) . rand(1000, 9999));
+                $token = hash('sha256', $batch_id . $dept->department_name . microtime(true) . rand(1000, 9999));
                 $this->db->insert('fam_public_links', array(
                     'batch_id'   => $batch_id,
-                    'department' => $dept,
+                    'department' => $dept->department_name,
                     'token'      => $token,
                     'created_by' => $checkedBy,
                     'created_at' => date('Y-m-d H:i:s'),
@@ -451,19 +446,17 @@ class FamiliarReport extends CI_Controller {
             }
         }
 
-        // --- Generate QR Signatures (CheckedBy & Crew) ---
+        // Generate QR Checkedby untuk setiap crew dalam batch
         $this->db->where('batch_id', $batch_id);
         $crewRows = $this->db->get('history_familiarization')->result();
 
         foreach ($crewRows as $crew) {
             $updateData = array();
 
-            // 1. QR Checked By
             if (empty($crew->qr_checkedby)) {
                 $qrChecked = $this->_generateQRRecord($crew->nama_crew, $checkedBy, 'fam_check');
                 if ($qrChecked) $updateData['qr_checkedby'] = $qrChecked;
             }
-
 
             if (!empty($updateData)) {
                 $this->db->where('id', $crew->id);
@@ -473,7 +466,7 @@ class FamiliarReport extends CI_Controller {
     }
 
     /**
-     * API: Get public links for a batch (untuk modal share)
+     * API: Get public links for a batch (dinamis dari mst_fam_department)
      */
     public function get_public_links()
     {
@@ -483,7 +476,6 @@ class FamiliarReport extends CI_Controller {
             return;
         }
 
-        // Generate links jika belum ada
         $this->_generate_links_for_batch($batch_id);
 
         $links = $this->db->where('batch_id', $batch_id)
@@ -493,35 +485,34 @@ class FamiliarReport extends CI_Controller {
 
         $result = array();
 
-        // 1. Tambahkan link konfirmasi khusus crew (Shared Link)
-        $crewTotal = $this->db->where('batch_id', $batch_id)->get('history_familiarization')->num_rows();
+        // Link crew
+        $crewTotal  = $this->db->where('batch_id', $batch_id)->get('history_familiarization')->num_rows();
         $crewFilled = $this->db->where('batch_id', $batch_id)->where('qr_crew IS NOT NULL', null, false)->where('qr_crew !=', '')->get('history_familiarization')->num_rows();
-        
-        $crewToken = md5($batch_id . 'CREW_ALL_SECRET');
-        $crewLink = new stdClass();
-        $crewLink->department = 'Semua Crew (Link Konfirmasi Bersama)';
-        $crewLink->url = base_url('PublicFamiliar/crew_checklist?batch=' . $batch_id . '&token=' . $crewToken);
+        $crewToken  = md5($batch_id . 'CREW_ALL_SECRET');
+        $crewLink   = new stdClass();
+        $crewLink->department  = 'Semua Crew (Link Konfirmasi Bersama)';
+        $crewLink->url         = base_url('PublicFamiliar/crew_checklist?batch=' . $batch_id . '&token=' . $crewToken);
         $crewLink->filled_count = $crewFilled;
-        $crewLink->total_items = $crewTotal;
-        $crewLink->status = ($crewFilled >= $crewTotal && $crewTotal > 0) ? 'completed' : ($crewFilled > 0 ? 'partial' : 'pending');
+        $crewLink->total_items  = $crewTotal;
+        $crewLink->status       = ($crewFilled >= $crewTotal && $crewTotal > 0) ? 'completed' : ($crewFilled > 0 ? 'partial' : 'pending');
         $result[] = $crewLink;
 
+        // Load topics per dept dari mst_fam_topic
+        $topicsByDept = array();
+        $topics = $this->_getActiveTopics();
+        foreach ($topics as $t) {
+            if (!isset($topicsByDept[$t->dept_name])) $topicsByDept[$t->dept_name] = 0;
+            $topicsByDept[$t->dept_name]++;
+        }
+
         foreach ($links as $link) {
-            // Cek apakah departemen sudah mengisi (ada audit trail)
-            $filled = $this->db->where('batch_id', $batch_id)
-                               ->where('department', $link->department)
-                               ->get('fam_checklist_audit')->num_rows();
+            $filled     = $this->db->where('batch_id', $batch_id)->where('department', $link->department)->get('fam_checklist_audit')->num_rows();
+            $totalItems = isset($topicsByDept[$link->department]) ? $topicsByDept[$link->department] : 0;
 
-            // Hitung total items untuk departemen ini
-            $totalItems = 0;
-            foreach ($this->itemDepartmentMap as $item => $dept) {
-                if ($dept === $link->department) $totalItems++;
-            }
-
-            $link->url = base_url('PublicFamiliar/form/' . $link->token);
+            $link->url         = base_url('PublicFamiliar/form/' . $link->token);
             $link->filled_count = $filled;
-            $link->total_items = $totalItems;
-            $link->status = ($filled >= $totalItems && $totalItems > 0) ? 'completed' : ($filled > 0 ? 'partial' : 'pending');
+            $link->total_items  = $totalItems;
+            $link->status       = ($filled >= $totalItems && $totalItems > 0) ? 'completed' : ($filled > 0 ? 'partial' : 'pending');
             $result[] = $link;
         }
 
@@ -533,7 +524,7 @@ class FamiliarReport extends CI_Controller {
     // ============================================================
 
     /**
-     * API: Get checklist audit trail for a batch
+     * API: Get checklist audit trail - join mst_fam_topic untuk topic label
      */
     public function get_checklist_audit()
     {
@@ -548,28 +539,17 @@ class FamiliarReport extends CI_Controller {
                            ->order_by('filled_at', 'DESC')
                            ->get('fam_checklist_audit')->result();
 
-        // Enrich with topic labels
-        $itemLabels = array(
-            'item_1'  => 'Procedures Related Crewing',
-            'item_2'  => 'QHSE Policy',
-            'item_3'  => 'Safety Management System',
-            'item_4'  => 'Duties and Responsibility',
-            'item_5'  => 'Procedures Related Ship Operation',
-            'item_6'  => 'Procedures Related Emergency',
-            'item_7'  => 'Maintenance - Technical',
-            'item_8'  => 'Maintenance - Purchasing',
-            'item_9'  => 'Maintenance - Finance',
-            'item_10' => 'Cargo Handling',
-            'item_11' => 'Safety Drill',
-            'item_12' => 'Procedures Related Health',
-            'item_13' => 'Environmental Protection',
-            'item_14' => 'Audit External / Internal',
-            'item_15' => 'Hazard Identification / JSA',
-            'item_16' => 'Wearing PPE'
-        );
+        // Load topic labels dari DB
+        $topicLabels = array();
+        $topicRows   = $this->db->get('mst_fam_topic')->result();
+        foreach ($topicRows as $t) {
+            // Support both old key format (item_N) and new key format (topic_N)
+            $topicLabels['item_'  . $t->id] = $t->topic_name;
+            $topicLabels['topic_' . $t->id] = $t->topic_name;
+        }
 
         foreach ($audits as &$a) {
-            $a->topic = isset($itemLabels[$a->item_name]) ? $itemLabels[$a->item_name] : $a->item_name;
+            $a->topic       = isset($topicLabels[$a->item_name]) ? $topicLabels[$a->item_name] : $a->item_name;
             $a->filled_at_fmt = !empty($a->filled_at) ? date('d M Y H:i', strtotime($a->filled_at)) : '-';
             $a->value_label = ($a->item_value == 1) ? 'Yes' : 'No';
         }
@@ -622,6 +602,14 @@ class FamiliarReport extends CI_Controller {
 
         // Get master data (checklist values sama untuk semua crew)
         $master = $crewRows[0];
+        
+        // FETCH TOPIC DETAILS and map to $master->item_X
+        $topicDetails = $this->db->where('history_id', $master->id)->get('history_fam_topic_detail')->result();
+        foreach ($topicDetails as $td) {
+            $prop = 'item_' . $td->topic_id;
+            $master->$prop = $td->is_checked;
+        }
+
 
         // Get signature_checkedBy from fam_public_links
         $link = $this->db->where('batch_id', $batch_id)->limit(1)->get('fam_public_links')->row();
@@ -743,6 +731,14 @@ class FamiliarReport extends CI_Controller {
                 }
             }
 
+            // Fetch signatures from history_fam_dept_signature
+            $sqlSigs = "SELECT dept_id, qr_code_value FROM history_fam_dept_signature WHERE history_id = ?";
+            $sigs = $this->db->query($sqlSigs, array($row->id))->result();
+            $deptSigs = array();
+            foreach ($sigs as $s) {
+                $deptSigs[$s->dept_id] = $s->qr_code_value;
+            }
+
             $crewInfo = (object) array(
                 'fullname'      => $row->nama_crew,
                 'date_of_birth' => $dob,
@@ -752,14 +748,14 @@ class FamiliarReport extends CI_Controller {
                 'is_top4'       => $this->isTop4Rank($row->rank),
                 'qr_crew'       => isset($row->qr_crew) ? $row->qr_crew : '',
                 'qr_checkedby'  => isset($row->qr_checkedby) ? $row->qr_checkedby : '',
-                'qr_dpa'        => isset($row->qr_dpa) ? $row->qr_dpa : '',
-                'qr_dept_technical'    => isset($row->qr_dept_technical) ? $row->qr_dept_technical : '',
-                'qr_dept_marinesafety' => isset($row->qr_dept_marinesafety) ? $row->qr_dept_marinesafety : '',
-                'qr_dept_finance'      => isset($row->qr_dept_finance) ? $row->qr_dept_finance : '',
-                'qr_dept_purchasing'   => isset($row->qr_dept_purchasing) ? $row->qr_dept_purchasing : '',
-                'qr_dept_qhse'         => isset($row->qr_dept_qhse) ? $row->qr_dept_qhse : '',
-                'qr_dept_operation'    => isset($row->qr_dept_operation) ? $row->qr_dept_operation : '',
-                'qr_dept_crewing'      => isset($row->qr_dept_crewing) ? $row->qr_dept_crewing : '',
+                'qr_dpa'        => isset($deptSigs['DPA']) ? $deptSigs['DPA'] : (isset($deptSigs['DPA / Marine Safety']) ? $deptSigs['DPA / Marine Safety'] : ''),
+                'qr_dept_technical'    => isset($deptSigs['Technical']) ? $deptSigs['Technical'] : '',
+                'qr_dept_marinesafety' => isset($deptSigs['Marine Safety']) ? $deptSigs['Marine Safety'] : '',
+                'qr_dept_finance'      => isset($deptSigs['Finance']) ? $deptSigs['Finance'] : '',
+                'qr_dept_purchasing'   => isset($deptSigs['Purchasing']) ? $deptSigs['Purchasing'] : '',
+                'qr_dept_qhse'         => isset($deptSigs['QHSE']) ? $deptSigs['QHSE'] : '',
+                'qr_dept_operation'    => isset($deptSigs['Operation']) ? $deptSigs['Operation'] : '',
+                'qr_dept_crewing'      => isset($deptSigs['Crewing']) ? $deptSigs['Crewing'] : '',
                 'signature_checkedBy'  => $signature_checkedBy,
                 'signature_DPA'        => $signature_DPA,
                 'license'              => $license,
@@ -774,7 +770,8 @@ class FamiliarReport extends CI_Controller {
             'crewList'  => $crewList,
             'today'     => date('d F Y'),
             'reps'      => $reps,
-            'times'     => $times
+            'times'     => $times,
+            'topics'    => $this->_getActiveTopics()
         );
 
         require(APPPATH . 'views/frontend/pdf/mpdf60/mpdf.php');
@@ -791,11 +788,26 @@ class FamiliarReport extends CI_Controller {
     }
 
     /**
-     * API: Get item-department mapping (untuk frontend)
+     * API: Get active topics untuk frontend (dinamis)
+     */
+    public function get_active_topics()
+    {
+        $topics = $this->_getActiveTopics();
+        echo json_encode(array('success' => true, 'data' => $topics));
+    }
+
+    /**
+     * API: Get item-department mapping (compatibility / deprecated)
      */
     public function get_item_department_map()
     {
-        echo json_encode(array('success' => true, 'data' => $this->itemDepartmentMap));
+        // Build dinamis dari mst_fam_topic
+        $topics = $this->_getActiveTopics();
+        $map    = array();
+        foreach ($topics as $t) {
+            $map['topic_' . $t->id] = $t->dept_name;
+        }
+        echo json_encode(array('success' => true, 'data' => $map));
     }
 
     // ============================================================

@@ -107,11 +107,10 @@ class ListContract extends CI_Controller {
 				$s_on = $c->signondt;
 				$s_off = (!empty($c->signoffdt) && $c->signoffdt != '0000-00-00' && $c->signoffdt != 'On Board') ? $c->signoffdt : $today;
 
-				$start = new DateTime($s_on);
-				$end = new DateTime($s_off);
-				if ($end >= $start) {
-					$diff = $start->diff($end);
-					$days = (int)$diff->format('%r%a');
+				$start = strtotime($s_on);
+				$end = strtotime($s_off);
+				if ($start > 0 && $end >= $start) {
+					$days = (int)round(($end - $start) / 86400);
 					$total_days += max(0, $days);
 				}
 			}
@@ -268,12 +267,10 @@ class ListContract extends CI_Controller {
 			foreach ($contracts as $c) {
 				$s_on = $c->signondt;
 				$s_off = (!empty($c->signoffdt) && $c->signoffdt != '0000-00-00' && $c->signoffdt != 'On Board') ? $c->signoffdt : $today;
-
-				$start = new DateTime($s_on);
-				$end = new DateTime($s_off);
-				if ($end >= $start) {
-					$diff = $start->diff($end);
-					$days = (int)$diff->format('%r%a');
+				$start = strtotime($s_on);
+				$end = strtotime($s_off);
+				if ($start > 0 && $end >= $start) {
+					$days = (int)round(($end - $start) / 86400);
 					$total_days += max(0, $days);
 				}
 			}
