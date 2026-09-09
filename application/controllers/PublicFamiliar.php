@@ -21,6 +21,14 @@ class PublicFamiliar extends CI_Controller {
             ->get('mst_fam_topic')->result();
     }
 
+    private function _getAllActiveTopics()
+    {
+        return $this->db
+            ->where('is_active', 1)
+            ->order_by('order_no', 'ASC')
+            ->get('mst_fam_topic')->result();
+    }
+
     private function _getDeptByName($deptName)
     {
         return $this->db->where('department_name', $deptName)
@@ -72,26 +80,35 @@ class PublicFamiliar extends CI_Controller {
             );
         }
 
-        // Load topics untuk department ini (dinamis dari mst_fam_topic)
-        $checklistTopics = $this->_getTopicsForDept($link->department);
+        // Load ALL active topics (semua department)
+        $allTopics = $this->_getAllActiveTopics();
 
-        // Get existing audit trail untuk pre-fill form
+        // Get existing audit trail untuk pre-fill form (semua department)
         $existingAudit = $this->db->where('batch_id', $link->batch_id)
-                                  ->where('department', $link->department)
                                   ->get('fam_checklist_audit')->result();
 
         $auditMap = array();
         foreach ($existingAudit as $a) {
-            // audit bisa memakai item_name = 'topic_N'
             $auditMap[$a->item_name] = $a;
+        }
+
+        // Get existing topic detail values dari history_fam_topic_detail (untuk readonly topics)
+        $topicDetailMap = array();
+        if (!empty($master->id)) {
+            $details = $this->db->where('history_id', $master->id)->get('history_fam_topic_detail')->result();
+            foreach ($details as $d) {
+                $topicDetailMap[$d->topic_id] = $d->is_checked;
+            }
         }
 
         $data = array(
             'link'            => $link,
             'master'          => $master,
             'crewList'        => $crewList,
-            'checklistTopics' => $checklistTopics, // Ganti allowedItems + checklistItems
+            'checklistTopics' => $allTopics,
             'auditMap'        => $auditMap,
+            'topicDetailMap'  => $topicDetailMap,
+            'currentDept'     => $link->department,
             'token'           => $token
         );
 

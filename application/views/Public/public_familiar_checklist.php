@@ -225,35 +225,70 @@
                     $no = 1;
                     foreach ($checklistTopics as $topic):
                         $fieldKey      = 'topic_' . $topic->id;
+                        $isOwnDept     = ($topic->dept_name === $currentDept);
                         $isFilledBefore = isset($auditMap[$fieldKey]);
                         $existingValue  = $isFilledBefore ? $auditMap[$fieldKey]->item_value : null;
                         $existingFiller = $isFilledBefore ? $auditMap[$fieldKey]->filled_by_name : '';
                         $existingDate   = $isFilledBefore ? date('d M Y H:i', strtotime($auditMap[$fieldKey]->filled_at)) : '';
-                        $rowClass = $isFilledBefore ? 'item-filled' : '';
+                        
+                        // For readonly topics, also check topicDetailMap
+                        if (!$isOwnDept && $existingValue === null && isset($topicDetailMap[$topic->id])) {
+                            $existingValue = $topicDetailMap[$topic->id];
+                        }
+                        
+                        $rowClass = '';
+                        if ($isFilledBefore && $isOwnDept) {
+                            $rowClass = 'item-filled';
+                        } elseif (!$isOwnDept) {
+                            $rowClass = 'item-disabled';
+                        }
                     ?>
                     <tr class="<?php echo $rowClass; ?>">
                         <td class="text-center"><?php echo $no++; ?></td>
                         <td>
                             <?php echo htmlspecialchars($topic->topic_name); ?>
-                            <?php if ($isFilledBefore): ?>
+                            <?php if ($isFilledBefore && $isOwnDept): ?>
                                 <div class="audit-info">
                                     <i class="fa fa-check-circle text-success"></i>
                                     Diisi oleh: <?php echo htmlspecialchars($existingFiller); ?> pada <?php echo $existingDate; ?>
                                 </div>
+                            <?php elseif ($isFilledBefore && !$isOwnDept): ?>
+                                <div class="audit-info">
+                                    <i class="fa fa-info-circle text-muted"></i>
+                                    Diisi oleh: <?php echo htmlspecialchars($existingFiller); ?> pada <?php echo $existingDate; ?>
+                                </div>
                             <?php endif; ?>
                         </td>
-                        <td class="text-center"><?php echo htmlspecialchars(!empty($topic->dept_name) ? $topic->dept_name : '-'); ?></td>
                         <td class="text-center">
-                            <div class="form-check form-check-inline mb-0">
-                                <input class="form-check-input fam-radio-public" type="radio" name="<?php echo $fieldKey; ?>" value="1"
-                                    <?php echo ($existingValue == 1) ? 'checked' : ''; ?>>
-                                <label class="form-check-label text-success fw-bold">✓</label>
-                            </div>
-                            <div class="form-check form-check-inline mb-0">
-                                <input class="form-check-input fam-radio-public" type="radio" name="<?php echo $fieldKey; ?>" value="2"
-                                    <?php echo ($existingValue !== null && $existingValue == 2) ? 'checked' : ''; ?>>
-                                <label class="form-check-label text-danger fw-bold">✗</label>
-                            </div>
+                            <?php if ($isOwnDept): ?>
+                                <span class="badge" style="background:#000099;font-size:11px;"><?php echo htmlspecialchars(!empty($topic->dept_name) ? $topic->dept_name : '-'); ?></span>
+                            <?php else: ?>
+                                <span style="font-size:11px;"><?php echo htmlspecialchars(!empty($topic->dept_name) ? $topic->dept_name : '-'); ?></span>
+                            <?php endif; ?>
+                        </td>
+                        <td class="text-center">
+                            <?php if ($isOwnDept): ?>
+                                <!-- Editable: radio buttons aktif -->
+                                <div class="form-check form-check-inline mb-0">
+                                    <input class="form-check-input fam-radio-public" type="radio" name="<?php echo $fieldKey; ?>" value="1"
+                                        <?php echo ($existingValue == 1) ? 'checked' : ''; ?>>
+                                    <label class="form-check-label text-success fw-bold">✓</label>
+                                </div>
+                                <div class="form-check form-check-inline mb-0">
+                                    <input class="form-check-input fam-radio-public" type="radio" name="<?php echo $fieldKey; ?>" value="2"
+                                        <?php echo ($existingValue !== null && $existingValue == 2) ? 'checked' : ''; ?>>
+                                    <label class="form-check-label text-danger fw-bold">✗</label>
+                                </div>
+                            <?php else: ?>
+                                <!-- Read-only: tampilkan value saja -->
+                                <?php if ($existingValue == 1): ?>
+                                    <span class="text-success fw-bold" style="font-size:16px;">✓</span>
+                                <?php elseif ($existingValue == 2): ?>
+                                    <span class="text-danger fw-bold" style="font-size:16px;">✗</span>
+                                <?php else: ?>
+                                    <span class="text-muted">-</span>
+                                <?php endif; ?>
+                            <?php endif; ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>

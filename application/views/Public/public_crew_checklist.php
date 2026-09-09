@@ -217,13 +217,17 @@
                                     <i class="fa fa-check-circle text-success"></i>
                                     Diisi oleh dept terkait pada <?php echo $existingDate; ?>
                                 </div>
-                            <?php endif; ?>
+                            <?php endif; ?> 
                         </td>
                         <td class="text-center"><?php echo htmlspecialchars(!empty($topic->dept_name) ? $topic->dept_name : '-'); ?></td>
                         <td class="text-center">
                             <?php if ($currentValue !== null): ?>
                                 <span style="font-size:16px;">
-                                    <?php echo ($currentValue == 1) ? '<span class="text-success fw-bold">✓ Ya</span>' : '<span class="text-danger fw-bold">✗ Tidak</span>'; ?>
+                                    <?php if ($currentValue == 1) { ?>
+                                        <span class="text-success fw-bold">✓</span>
+                                    <?php } elseif ($currentValue == 2) { ?>
+                                        <span class="text-danger fw-bold">✗</span>
+                                    <?php } ?>
                                 </span>
                             <?php else: ?>
                                 <span class="text-muted">—</span>
