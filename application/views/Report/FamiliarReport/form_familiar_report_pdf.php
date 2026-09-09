@@ -44,7 +44,7 @@
 function famMarkReport($val) {
     $style = "font-family:'DejaVu Sans',sans-serif; font-size:13px;";
     if ($val === 1 || $val === '1') return '<span style="' . $style . '">&#10003;</span>'; // ✓
-    if ($val === 0 || $val === '0') return '<span style="' . $style . '">&#10007;</span>'; // ✗
+    if ($val === 2 || $val === '2') return '<span style="' . $style . '">&#10007;</span>'; // ✗
     return '';
 }
 
@@ -99,123 +99,22 @@ foreach ($crewList as $crew):
             <tr>
                 <th style="width: 60%; text-align:center;">Material</th>
                 <th style="width: 30%; text-align:center;">PIC</th>
-                <th style="width: 10%; text-align:center;"><?php echo famMarkReport("1"); ?> / <?php echo famMarkReport("0"); ?></th>
+                <th style="width: 10%; text-align:center;"><?php echo famMarkReport("1"); ?> / <?php echo famMarkReport("2"); ?></th>
             </tr>
         </thead>
         <tbody>
+            <?php foreach ($topics as $topic): ?>
             <tr>
-                <td>Procedures Related Crewing (Payroll, Working Hours, etc)</td>
-                <td style="text-align:center;">Crewing</td>
+                <td><?php echo htmlspecialchars($topic->topic_name); ?></td>
+                <td style="text-align:center;"><?php echo htmlspecialchars(!empty($topic->dept_name) ? $topic->dept_name : '-'); ?></td>
                 <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_1); ?>
+                    <?php 
+                        $prop = 'item_' . $topic->id;
+                        echo famMarkReport(isset($master->$prop) ? $master->$prop : null); 
+                    ?>
                 </td>
             </tr>
-            <tr>
-                <td colspan="3">Company Policy :</td>
-            </tr>
-            <tr>
-                <td>- Quality, Health, Safety and Environmental (QHSE) Policy</td>
-                <td style="text-align:center;">QHSE</td>
-                <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_2); ?>
-                </td>
-            </tr>
-            <tr>
-                <td>Safety Management System Manual and Document</td>
-                <td style="text-align:center;">DPA / Marine Safety</td>
-                <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_3); ?>
-                </td>
-            </tr>
-            <tr>
-                <td>Duties and Responsibility</td>
-                <td style="text-align:center;">DPA</td>
-                <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_4); ?>
-                </td>
-            </tr>
-            <tr>
-                <td>Procedures Related Ship Operation</td>
-                <td style="text-align:center;">Operation</td>
-                <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_5); ?>
-                </td>
-            </tr>
-            <tr>
-                <td>Procedures Related Emergency</td>
-                <td style="text-align:center;">DPA / Marine Safety</td>
-                <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_6); ?>
-                </td>
-            </tr>
-            <tr>
-                <td rowspan="3">Procedures Related Maintenance of Ship (Plan Maintenance System)</td>
-                <td style="text-align:center;">Technical</td>
-                <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_7); ?>
-                </td>
-            </tr>
-            <tr>
-                <td style="text-align:center;">Purchasing</td>
-                <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_8); ?>
-                </td>
-            </tr>
-            <tr>
-                <td style="text-align:center;">Finance</td>
-                <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_9); ?>
-                </td>
-            </tr>
-            <tr>
-                <td>Procedures Related Cargo Handling</td>
-                <td style="text-align:center;">Operation</td>
-                <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_10); ?>
-                </td>
-            </tr>
-            <tr>
-                <td>Procedures Related Safety Drill</td>
-                <td style="text-align:center;">DPA / Marine Safety</td>
-                <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_11); ?>
-                </td>
-            </tr>
-            <tr>
-                <td>Procedures Related Health</td>
-                <td style="text-align:center;">DPA / Marine Safety</td>
-                <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_12); ?>
-                </td>
-            </tr>
-            <tr>
-                <td>Procedures Related Environmental Protection</td>
-                <td style="text-align:center;">DPA / Marine Safety</td>
-                <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_13); ?>
-                </td>
-            </tr>
-            <tr>
-                <td>Procedures Related Audit (External / Internal)</td>
-                <td style="text-align:center;">DPA / Marine Safety</td>
-                <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_14); ?>
-                </td>
-            </tr>
-            <tr>
-                <td>Hazard Identification / Risk Assessment / Job Safety Analysis (JSA)</td>
-                <td style="text-align:center;">Marine Safety</td>
-                <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_15); ?>
-                </td>
-            </tr>
-            <tr>
-                <td>Wearing PPE and PPE Maintenance</td>
-                <td style="text-align:center;">Marine Safety</td>
-                <td style="text-align:center; font-size:14px; font-family:'DejaVu Sans',sans-serif;">
-                    <?php echo famMarkReport($master->item_16); ?>
-                </td>
-            </tr>
+            <?php endforeach; ?>
         </tbody>
     </table>
 

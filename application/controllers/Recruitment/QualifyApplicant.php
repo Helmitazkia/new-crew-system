@@ -15,7 +15,7 @@ class QualifyApplicant extends CI_Controller {
     {
         $data = array(
             'title' => 'Qualify Applicant',
-            'active_menu' => 'qualify_applicant',
+			'active_menu' => 'general_recruitment',
 			'active_submenu' => 'qualify_applicant',
             'content' => 'Recruitment/QualifyApplicant/qualifyApplicantView',
         );

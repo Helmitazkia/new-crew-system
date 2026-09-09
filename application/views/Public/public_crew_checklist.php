@@ -200,47 +200,41 @@
                 </thead>
                 <tbody>
                     <?php
-                    $prevNo = '';
-                    foreach ($checklistItems as $itemKey => $item):
-                        $isFilledBefore = isset($auditMap[$itemKey]);
-                        $existingFiller = $isFilledBefore ? $auditMap[$itemKey]->filled_by_name : '';
-                        $existingDate = $isFilledBefore ? date('d M Y H:i', strtotime($auditMap[$itemKey]->filled_at)) : '';
-                        
-                        $currentValue = isset($master->{$itemKey}) ? $master->{$itemKey} : null;
-                        
-                        $rowClass = $isFilledBefore ? 'item-filled' : '';
-
-                        if ($item['no'] === '2' && $prevNo !== '2'):
+                    $no = 1;
+                    foreach ($checklistItems as $topic):
+                        $fieldKey       = 'topic_' . $topic->id;
+                        $isFilledBefore = isset($auditMap[$fieldKey]);
+                        $existingDate   = $isFilledBefore ? date('d M Y H:i', strtotime($auditMap[$fieldKey]->filled_at)) : '';
+                        $currentValue   = isset($topicDetailMap[$topic->id]) ? $topicDetailMap[$topic->id] : null;
+                        $rowClass       = $isFilledBefore ? 'item-filled' : '';
                     ?>
-                        <tr style="background-color:#f8f9fa;"><td colspan="4" class="fw-bold">Company Policy :</td></tr>
-                    <?php endif; ?>
-
                     <tr class="<?php echo $rowClass; ?>">
-                        <td class="text-center"><?php echo $item['no']; ?></td>
+                        <td class="text-center"><?php echo $no++; ?></td>
                         <td>
-                            <?php echo htmlspecialchars($item['topic']); ?>
+                            <?php echo htmlspecialchars($topic->topic_name); ?>
                             <?php if ($isFilledBefore): ?>
                                 <div class="audit-info">
                                     <i class="fa fa-check-circle text-success"></i>
                                     Diisi oleh dept terkait pada <?php echo $existingDate; ?>
                                 </div>
-                            <?php endif; ?>
+                            <?php endif; ?> 
                         </td>
-                        <td class="text-center"><?php echo htmlspecialchars($item['dept']); ?></td>
+                        <td class="text-center"><?php echo htmlspecialchars(!empty($topic->dept_name) ? $topic->dept_name : '-'); ?></td>
                         <td class="text-center">
-                            <?php if ($currentValue !== null && $currentValue !== ''): ?>
+                            <?php if ($currentValue !== null): ?>
                                 <span style="font-size:16px;">
-                                    <?php echo ($currentValue == 1) ? '<span class="text-success fw-bold">✓ Ya</span>' : '<span class="text-danger fw-bold">✗ Tidak</span>'; ?>
+                                    <?php if ($currentValue == 1) { ?>
+                                        <span class="text-success fw-bold">✓</span>
+                                    <?php } elseif ($currentValue == 2) { ?>
+                                        <span class="text-danger fw-bold">✗</span>
+                                    <?php } ?>
                                 </span>
                             <?php else: ?>
                                 <span class="text-muted">—</span>
                             <?php endif; ?>
                         </td>
                     </tr>
-                    <?php
-                        $prevNo = $item['no'];
-                    endforeach;
-                    ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
 

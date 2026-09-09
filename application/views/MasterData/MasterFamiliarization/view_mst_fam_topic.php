@@ -65,6 +65,7 @@
                   <tr>
                     <th class="text-center" style="width:50px;">No</th>
                     <th>Topic Name <span class="filter-icon">☰</span></th>
+                    <th class="text-center">Department <span class="filter-icon">☰</span></th>
                     <th class="text-center">Order <span class="filter-icon">☰</span></th>
                     <th class="text-center">Status <span class="filter-icon">☰</span></th>
                     <th class="text-center" style="width:120px;">Action</th>
@@ -73,6 +74,7 @@
                 <thead>
                   <tr>
                     <th></th>
+                    <th><input type="text" class="column-search" placeholder="Search..."></th>
                     <th><input type="text" class="column-search" placeholder="Search..."></th>
                     <th><input type="text" class="column-search" placeholder="Search..."></th>
                     <th>
@@ -111,6 +113,12 @@
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Topic Name <span class="text-danger">*</span></label>
                         <input type="text" class="form-control form-control-sm" name="topicName" id="topicName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Department <span class="text-danger">*</span></label>
+                        <select class="form-control form-control-sm" name="deptId" id="deptId" required>
+                            <option value="">-- Pilih Department --</option>
+                        </select>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -158,6 +166,9 @@ $(document).ready(function() {
         columns: [
             { data: null, className: 'text-center', render: function(data, type, row, meta) { return meta.row + 1; } },
             { data: 'topic_name' },
+            { data: 'dept_name', className: 'text-center', render: function(data) {
+                return data ? '<span class="badge" style="background:#000099;">'+data+'</span>' : '<span class="badge bg-secondary">-</span>';
+            }},
             { data: 'order_no', className: 'text-center' },
             { data: 'is_active', className: 'text-center', render: function(data) {
                 return data == 1 ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
@@ -211,6 +222,28 @@ $(document).ready(function() {
         });
     });
 });
+
+// Load department options on page load
+var deptOptions = [];
+function loadDepartmentOptions(selectedId) {
+    if (deptOptions.length > 0) {
+        renderDeptOptions(selectedId);
+        return;
+    }
+    $.getJSON('<?php echo base_url("MasterData/MasterFamiliarization/getAllDataDepartmentActive") ?>', function(res) {
+        if (res.success) {
+            deptOptions = res.data;
+            renderDeptOptions(selectedId);
+        }
+    });
+}
+function renderDeptOptions(selectedId) {
+    var $sel = $('#deptId');
+    $sel.find('option:not(:first)').remove();
+    $.each(deptOptions, function(i, d) {
+        $sel.append($('<option>', { value: d.id, text: d.department_name, selected: (d.id == selectedId) }));
+    });
+}
 
 function initDropdownFilters(api) {
     $('#topicTable thead th').each(function (colIndex) {
@@ -300,6 +333,7 @@ function showAddModal() {
     $('#topicId').val('');
     $('#isActive').prop('checked', true);
     $('#modalTitle').text('Add Topic');
+    loadDepartmentOptions(null);
     $('#topicModal').modal('show');
 }
 
@@ -312,6 +346,7 @@ function editData(id) {
             $('#orderNo').val(res.data.order_no);
             $('#isActive').prop('checked', res.data.is_active == 1);
             $('#modalTitle').text('Edit Topic');
+            loadDepartmentOptions(res.data.dept_id);
             $('#topicModal').modal('show');
         } else {
             Swal.fire('Error', res.message, 'error');

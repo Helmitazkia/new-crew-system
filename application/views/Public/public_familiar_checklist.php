@@ -222,66 +222,76 @@
                 </thead>
                 <tbody>
                     <?php
-                    $prevNo = '';
-                    foreach ($checklistItems as $itemKey => $item):
-                        $isAllowed = in_array($itemKey, $allowedItems);
-                        $isFilledBefore = isset($auditMap[$itemKey]);
-                        $existingValue = $isFilledBefore ? $auditMap[$itemKey]->item_value : null;
-                        $existingFiller = $isFilledBefore ? $auditMap[$itemKey]->filled_by_name : '';
-                        $existingDate = $isFilledBefore ? date('d M Y H:i', strtotime($auditMap[$itemKey]->filled_at)) : '';
-
-                        // Get current value from master
-                        $currentValue = isset($master->{$itemKey}) ? $master->{$itemKey} : null;
-
+                    $no = 1;
+                    foreach ($checklistTopics as $topic):
+                        $fieldKey      = 'topic_' . $topic->id;
+                        $isOwnDept     = ($topic->dept_name === $currentDept);
+                        $isFilledBefore = isset($auditMap[$fieldKey]);
+                        $existingValue  = $isFilledBefore ? $auditMap[$fieldKey]->item_value : null;
+                        $existingFiller = $isFilledBefore ? $auditMap[$fieldKey]->filled_by_name : '';
+                        $existingDate   = $isFilledBefore ? date('d M Y H:i', strtotime($auditMap[$fieldKey]->filled_at)) : '';
+                        
+                        // For readonly topics, also check topicDetailMap
+                        if (!$isOwnDept && $existingValue === null && isset($topicDetailMap[$topic->id])) {
+                            $existingValue = $topicDetailMap[$topic->id];
+                        }
+                        
                         $rowClass = '';
-                        if (!$isAllowed) $rowClass = 'item-disabled';
-                        elseif ($isFilledBefore) $rowClass = 'item-filled';
-
-                        // Insert section header before item 2
-                        if ($item['no'] === '2' && $prevNo !== '2'):
+                        if ($isFilledBefore && $isOwnDept) {
+                            $rowClass = 'item-filled';
+                        } elseif (!$isOwnDept) {
+                            $rowClass = 'item-disabled';
+                        }
                     ?>
-                        <tr style="background-color:#f8f9fa;"><td colspan="4" class="fw-bold">Company Policy :</td></tr>
-                    <?php endif; ?>
-
                     <tr class="<?php echo $rowClass; ?>">
-                        <td class="text-center"><?php echo $item['no']; ?></td>
+                        <td class="text-center"><?php echo $no++; ?></td>
                         <td>
-                            <?php echo htmlspecialchars($item['topic']); ?>
-                            <?php if ($isFilledBefore && $isAllowed): ?>
+                            <?php echo htmlspecialchars($topic->topic_name); ?>
+                            <?php if ($isFilledBefore && $isOwnDept): ?>
                                 <div class="audit-info">
                                     <i class="fa fa-check-circle text-success"></i>
                                     Diisi oleh: <?php echo htmlspecialchars($existingFiller); ?> pada <?php echo $existingDate; ?>
                                 </div>
+                            <?php elseif ($isFilledBefore && !$isOwnDept): ?>
+                                <div class="audit-info">
+                                    <i class="fa fa-info-circle text-muted"></i>
+                                    Diisi oleh: <?php echo htmlspecialchars($existingFiller); ?> pada <?php echo $existingDate; ?>
+                                </div>
                             <?php endif; ?>
                         </td>
-                        <td class="text-center"><?php echo htmlspecialchars($item['dept']); ?></td>
                         <td class="text-center">
-                            <?php if ($isAllowed): ?>
+                            <?php if ($isOwnDept): ?>
+                                <span class="badge" style="background:#000099;font-size:11px;"><?php echo htmlspecialchars(!empty($topic->dept_name) ? $topic->dept_name : '-'); ?></span>
+                            <?php else: ?>
+                                <span style="font-size:11px;"><?php echo htmlspecialchars(!empty($topic->dept_name) ? $topic->dept_name : '-'); ?></span>
+                            <?php endif; ?>
+                        </td>
+                        <td class="text-center">
+                            <?php if ($isOwnDept): ?>
+                                <!-- Editable: radio buttons aktif -->
                                 <div class="form-check form-check-inline mb-0">
-                                    <input class="form-check-input fam-radio-public" type="radio" name="<?php echo $itemKey; ?>" value="1"
-                                        <?php echo ($currentValue === '1' || $currentValue === 1) ? 'checked' : ''; ?>>
+                                    <input class="form-check-input fam-radio-public" type="radio" name="<?php echo $fieldKey; ?>" value="1"
+                                        <?php echo ($existingValue == 1) ? 'checked' : ''; ?>>
                                     <label class="form-check-label text-success fw-bold">✓</label>
                                 </div>
                                 <div class="form-check form-check-inline mb-0">
-                                    <input class="form-check-input fam-radio-public" type="radio" name="<?php echo $itemKey; ?>" value="0"
-                                        <?php echo ($currentValue === '0' || $currentValue === 0) ? 'checked' : ''; ?>>
+                                    <input class="form-check-input fam-radio-public" type="radio" name="<?php echo $fieldKey; ?>" value="2"
+                                        <?php echo ($existingValue !== null && $existingValue == 2) ? 'checked' : ''; ?>>
                                     <label class="form-check-label text-danger fw-bold">✗</label>
                                 </div>
                             <?php else: ?>
-                                <?php if ($currentValue !== null && $currentValue !== ''): ?>
-                                    <span style="font-size:16px;">
-                                        <?php echo ($currentValue == 1) ? '<span class="text-success">✓</span>' : '<span class="text-danger">✗</span>'; ?>
-                                    </span>
+                                <!-- Read-only: tampilkan value saja -->
+                                <?php if ($existingValue == 1): ?>
+                                    <span class="text-success fw-bold" style="font-size:16px;">✓</span>
+                                <?php elseif ($existingValue == 2): ?>
+                                    <span class="text-danger fw-bold" style="font-size:16px;">✗</span>
                                 <?php else: ?>
-                                    <span class="text-muted">—</span>
+                                    <span class="text-muted">-</span>
                                 <?php endif; ?>
                             <?php endif; ?>
                         </td>
                     </tr>
-                    <?php
-                        $prevNo = $item['no'];
-                    endforeach;
-                    ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
 

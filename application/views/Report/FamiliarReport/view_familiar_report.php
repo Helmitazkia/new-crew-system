@@ -110,170 +110,8 @@
                             <th class="text-center" style="width:120px;">Yes / No</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- ITEM 1 -->
-                        <tr>
-                            <td class="text-center">1</td>
-                            <td>Procedures Related Crewing (Payroll, Working Hours, etc)</td>
-                            <td class="text-center">Crewing</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0">
-                                    <input class="form-check-input fam-radio" type="radio" name="item_1" id="item_1_y" value="1">
-                                    <label class="form-check-label text-success fw-bold">✓</label>
-                                </div>
-                                <div class="form-check form-check-inline mb-0">
-                                    <input class="form-check-input fam-radio" type="radio" name="item_1" id="item_1_n" value="0">
-                                    <label class="form-check-label text-danger fw-bold">✗</label>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr style="background-color:#f8f9fa;"><td colspan="4" class="fw-bold">Company Policy :</td></tr>
-                        <!-- ITEM 2 -->
-                        <tr>
-                            <td class="text-center">2</td>
-                            <td>- Quality, Health, Safety and Environmental (QHSE) Policy</td>
-                            <td class="text-center">QHSE</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_2" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_2" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
-                            </td>
-                        </tr>
-                        <!-- ITEM 3 -->
-                        <tr>
-                            <td class="text-center">3</td>
-                            <td>Safety Management System Manual and Document</td>
-                            <td class="text-center">DPA / Marine Safety</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_3" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_3" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
-                            </td>
-                        </tr>
-                        <!-- ITEM 4 -->
-                        <tr>
-                            <td class="text-center">4</td>
-                            <td>Duties and Responsibility</td>
-                            <td class="text-center">DPA</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_4" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_4" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
-                            </td>
-                        </tr>
-                        <!-- ITEM 5 -->
-                        <tr>
-                            <td class="text-center">5</td>
-                            <td>Procedures Related Ship Operation</td>
-                            <td class="text-center">Operation</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_5" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_5" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
-                            </td>
-                        </tr>
-                        <!-- ITEM 6 -->
-                        <tr>
-                            <td class="text-center">6</td>
-                            <td>Procedures Related Emergency</td>
-                            <td class="text-center">DPA / Marine Safety</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_6" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_6" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
-                            </td>
-                        </tr>
-                        <!-- ITEM 7 -->
-                        <tr>
-                            <td class="text-center" rowspan="3" style="vertical-align: middle;">7-9</td>
-                            <td rowspan="3" style="vertical-align: middle;">Procedures Related Maintenance of Ship (Plan Maintenance System)</td>
-                            <td class="text-center">Technical</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_7" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_7" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
-                            </td>
-                        </tr>
-                        <!-- ITEM 8 -->
-                        <tr>
-                            <td class="text-center">Purchasing</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_8" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_8" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
-                            </td>
-                        </tr>
-                        <!-- ITEM 9 -->
-                        <tr>
-                            <td class="text-center">Finance</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_9" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_9" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
-                            </td>
-                        </tr>
-                        <!-- ITEM 10 -->
-                        <tr>
-                            <td class="text-center">10</td>
-                            <td>Procedures Related Cargo Handling</td>
-                            <td class="text-center">Operation</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_10" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_10" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
-                            </td>
-                        </tr>
-                        <!-- ITEM 11 -->
-                        <tr>
-                            <td class="text-center">11</td>
-                            <td>Safety Drill</td>
-                            <td class="text-center">DPA / Marine Safety</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_11" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_11" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
-                            </td>
-                        </tr>
-                        <!-- ITEM 12 -->
-                        <tr>
-                            <td class="text-center">12</td>
-                            <td>Procedures Related Health</td>
-                            <td class="text-center">DPA / Marine Safety</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_12" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_12" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
-                            </td>
-                        </tr>
-                        <!-- ITEM 13 -->
-                        <tr>
-                            <td class="text-center">13</td>
-                            <td>Procedures Related Environmental Protection</td>
-                            <td class="text-center">DPA / Marine Safety</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_13" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_13" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
-                            </td>
-                        </tr>
-                        <!-- ITEM 14 -->
-                        <tr>
-                            <td class="text-center">14</td>
-                            <td>Audit External / Internal</td>
-                            <td class="text-center">DPA / Marine Safety</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_14" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_14" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
-                            </td>
-                        </tr>
-                        <!-- ITEM 15 -->
-                        <tr>
-                            <td class="text-center">15</td>
-                            <td>Hazard Identification / JSA</td>
-                            <td class="text-center">Marine Safety</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_15" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_15" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
-                            </td>
-                        </tr>
-                        <!-- ITEM 16 -->
-                        <tr>
-                            <td class="text-center">16</td>
-                            <td>Wearing Personal Protective Equipment (PPE)</td>
-                            <td class="text-center">Marine Safety</td>
-                            <td class="text-center">
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_16" value="1"><label class="form-check-label text-success fw-bold">✓</label></div>
-                                <div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="item_16" value="0"><label class="form-check-label text-danger fw-bold">✗</label></div>
-                            </td>
-                        </tr>
+                    <tbody id="checklistTopicBody">
+                        <!-- <tr><td colspan="4" class="text-center text-muted"><i class="fa fa-spinner fa-spin"></i> Loading topics...</td></tr> -->
                     </tbody>
                 </table>
 
@@ -633,6 +471,7 @@ $(document).ready(function () {
     function resetFormModal() {
         $('#formAddFamiliar')[0].reset();
         $('#fam_batch_id').val('');
+        $('#fam_note').val('');
         $('#tblAddCrewList tbody').empty();
         $('#searchCrewSelect').val(null).trigger('change');
         
@@ -640,7 +479,18 @@ $(document).ready(function () {
         $('#formAddFamiliar input, #formAddFamiliar textarea, #formAddFamiliar button').prop('disabled', false);
         $('#btnSubmitAddFamiliar').show();
         $('.btn-remove-crew, #btnAddToCrewList, #searchCrewSelect').show();
+
+        // Bersihkan checklist radio buttons agar history edit tidak terbawa
+        if (famTopics && famTopics.length > 0) {
+            renderChecklistTable({});
+        } else {
+            $('#checklistTopicBody').empty();
+        }
     }
+
+    $('#modalAddFamiliar').on('hidden.bs.modal', function () {
+        resetFormModal();
+    });
 
     function disableFormForView() {
         $('#formAddFamiliar input, #formAddFamiliar textarea').prop('disabled', true);
@@ -649,19 +499,70 @@ $(document).ready(function () {
         $('#searchCrewSelect').prop('disabled', true);
     }
 
-    function fillRadioChecklist(masterData) {
-        for(var i=1; i<=16; i++) {
-            var val = masterData['item_'+i];
-            if(val !== null && val !== undefined && val !== '') {
-                $('input[name="item_'+i+'"][value="'+val+'"]').prop('checked', true);
-            }
+    // Dynamic Topics: load dari API
+    var famTopics = [];
+    function loadFamTopics(callback, forceReload) {
+        if (!forceReload && famTopics.length > 0) { 
+            if(callback) callback(); 
+            return; 
         }
+        $.ajax({
+            url: BASE_URL_FAM_REP + '/get_active_topics',
+            type: 'POST',
+            dataType: 'json',
+            success: function(res) {
+                if (res.success) {
+                    famTopics = res.data;
+                    renderChecklistTable({});
+                    if(callback) callback();
+                }
+            }
+        });
+    }
+
+    function renderChecklistTable(checkedMap) {
+        checkedMap = checkedMap || {};
+        var $tbody = $('#checklistTopicBody');
+        $tbody.empty();
+        if (!famTopics.length) {
+            $tbody.html('<tr><td colspan="4" class="text-center text-danger">Tidak ada topic aktif. Silahkan isi Master Familiarization Topic.</td></tr>');
+            return;
+        }
+        $.each(famTopics, function(i, t) {
+            var fieldName = 'topic_' + t.id;
+            var checkedYes = (checkedMap[t.id] == 1) ? 'checked' : '';
+            var checkedNo  = (checkedMap[t.id] == 2) ? 'checked' : ''; // 2 is No, 0 is Empty
+            var tr = '<tr>' +
+                '<td class="text-center">' + (i+1) + '</td>' +
+                '<td>' + t.topic_name + '</td>' +
+                '<td class="text-center"><span class="badge" style="background:#000099;font-size:11px;">' + (t.dept_name || '-') + '</span></td>' +
+                '<td class="text-center">' +
+                    '<div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="' + fieldName + '" value="1" ' + checkedYes + '><label class="form-check-label text-success fw-bold">✓</label></div>' +
+                    '<div class="form-check form-check-inline mb-0"><input class="form-check-input fam-radio" type="radio" name="' + fieldName + '" value="2" ' + checkedNo  + '><label class="form-check-label text-danger fw-bold">✗</label></div>' +
+                '</td>' +
+                '</tr>';
+            $tbody.append(tr);
+        });
+    }
+
+    function fillRadioChecklist(topicDetails) {
+        var checkedMap = {};
+        if (topicDetails && topicDetails.length) {
+            $.each(topicDetails, function(i, d) {
+                checkedMap[d.topic_id] = d.is_checked;
+            });
+        }
+        renderChecklistTable(checkedMap);
     }
 
     // 5. Button Action: ADD Baru
     $('#btnAddFamiliar').on('click', function () {
         resetFormModal();
         $('#modalAddFamiliarLabel').html('<i class="fa fa-plus-circle me-2"></i>Tambah Familiarization Baru');
+        // Selalu refresh topics dan render checklist kosong tanpa sisa centang edit
+        loadFamTopics(function() {
+            renderChecklistTable({});
+        }, true);
         $('#modalAddFamiliar').modal('show');
     });
 
@@ -670,7 +571,7 @@ $(document).ready(function () {
         var group_id = $(this).data('id');
         resetFormModal();
         $('#modalAddFamiliarLabel').html('<i class="fa fa-pencil-square-o me-2"></i>Update Familiarization (Batch: '+group_id+')');
-        
+
         $.ajax({
             url: BASE_URL_FAM_REP + '/get_report_familiar_detail',
             type: 'POST',
@@ -678,15 +579,20 @@ $(document).ready(function () {
             dataType: 'json',
             success: function(res) {
                 if(res.success) {
-                    var m = res.data.master;
+                    var m     = res.data.master;
                     var cList = res.data.crew_list;
+                    var tDet  = res.data.topic_detail || [];
 
                     $('#fam_batch_id').val(group_id);
                     $('#fam_note').val(m.note);
-                    fillRadioChecklist(m);
 
                     $.each(cList, function(i, c) {
                         appendCrewRow(c.name_crew, c.jabatan, c.vessel_name, c.signon_date, c.id_person);
+                    });
+
+                    // Load topics then fill checklist
+                    loadFamTopics(function() {
+                        fillRadioChecklist(tDet);
                     });
 
                     $('#modalAddFamiliar').modal('show');

@@ -15,7 +15,7 @@ class PipelineApplicant extends CI_Controller {
     {
         $data = array(
             'title' => 'Pipeline Applicant',
-            'active_menu' => 'pipeline_applicant',
+            'active_menu' => 'general_recruitment',
 			'active_submenu' => 'pipeline_applicant',
             'content' => 'Recruitment/PipelineApplicant/pipelineApplicantView',
         );

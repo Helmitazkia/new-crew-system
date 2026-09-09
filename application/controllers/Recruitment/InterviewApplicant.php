@@ -15,7 +15,7 @@ class InterviewApplicant extends CI_Controller {
     {
         $data = array(
             'title' => 'Interview Applicant',
-            'active_menu' => 'interview_applicant',
+        	'active_menu' => 'general_recruitment',
 			'active_submenu' => 'interview_applicant',
             'content' => 'Recruitment/InterviewApplicant/interviewApplicantView',
         );

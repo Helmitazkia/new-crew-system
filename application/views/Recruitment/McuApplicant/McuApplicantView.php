@@ -533,6 +533,10 @@ function withdrawApplicant(applicantId) {
 
                 if (res.status === 'success') {
 
+                    if (typeof tableDataMCUCrew !== 'undefined' && tableDataMCUCrew.ajax) {
+                        tableDataMCUCrew.ajax.reload(null, false);
+                    }
+
                     const row = document.getElementById(`row_${applicantId}`);
 
                     if (row) {
@@ -604,6 +608,10 @@ function setNotFitApplicant(applicantId) {
                 $("#idLoadingSpinnerMCU").hide();
 
                 if (res.status === 'success') {
+
+                    if (typeof tableDataMCUCrew !== 'undefined' && tableDataMCUCrew.ajax) {
+                        tableDataMCUCrew.ajax.reload(null, false);
+                    }
 
                     const row = document.getElementById(`row_${applicantId}`);
 
@@ -686,6 +694,10 @@ function setMCUApplicant(applicantId) {
                     });
 
                     return;
+                }
+
+                if (typeof tableDataMCUCrew !== 'undefined' && tableDataMCUCrew.ajax) {
+                    tableDataMCUCrew.ajax.reload(null, false);
                 }
 
                 const row = document.getElementById(`row_${applicantId}`);

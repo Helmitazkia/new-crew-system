@@ -1,4 +1,49 @@
 <style>
+.crew-header th {
+    background-color: #000099 !important;
+    color: white !important;
+    font-size: 11px;
+    vertical-align: middle;
+}
+.crew-search-header th {
+    background-color: #ffffff !important;
+    padding: 8px 4px !important;
+}
+.column-search {
+    width: 100%;
+    padding: 2px 4px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.filter-icon {
+    font-size: 14px;
+    margin-left: 5px;
+    cursor: pointer;
+    color: #aac4ff;
+}
+.filter-icon:hover { color: #fff; }
+.filter-dropdown {
+    position: absolute; background: #fff; border: 1px solid #ccc;
+    padding: 8px; width: 200px; max-height: 260px; overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,.2); display: none; z-index: 9999;
+}
+.filter-dropdown input[type="text"] {
+    width: 100%; margin-bottom: 6px; padding: 4px; font-size: 12px;
+    border: 1px solid #dee2e6; border-radius: 4px;
+}
+.filter-dropdown label {
+    display: block; font-size: 13px; cursor: pointer;
+    padding: 4px 8px; margin: 2px 0; border-radius: 4px;
+}
+.filter-dropdown label:hover { background: #f8f9fa; }
+.filter-list { max-height: 120px; overflow-y: auto; margin-bottom: 6px; }
+.btn-clear-filter {
+    background: transparent; border: 1.5px solid #000099;
+    color: #000099; transition: all .2s ease;
+}
+.btn-clear-filter:hover { background: #000099; color: #fff; }
+.btn-clear-filter i { font-size: 14px; }
 .sap-workspace {
     background: #f8fafc;
     border-radius: 22px;
@@ -204,670 +249,329 @@
     font-weight: 600;
     color: #374151;
 }
+
+/* Dropdown filter for New Applicant */
+.na-filter-dropdown {
+    position: absolute;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 10px;
+    width: 220px;
+    max-height: 280px;
+    overflow-y: auto;
+    box-shadow: 0 6px 20px rgba(0,0,0,.15);
+    display: none;
+    z-index: 9999;
+    font-size: 13px;
+}
+.na-filter-search {
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 5px 8px;
+    font-size: 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+.na-filter-list {
+    max-height: 140px;
+    overflow-y: auto;
+    margin-bottom: 4px;
+}
+.na-filter-list label {
+    display: block;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+.na-filter-list label:hover { background: #f0f4ff; }
+.na-btn-clear-filter {
+    background: transparent;
+    border: 1.5px solid #000099;
+    color: #000099;
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all .2s;
+}
+.na-btn-clear-filter:hover { background: #000099; color: #fff; }
 </style>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
+var tableDataReady;
+$(document).ready(function() {
+    tableDataReady = $('#tableDataReady').DataTable({
+        dom: "<'row mb-2'<'col-md-6 d-flex align-items-center'l><'col-md-6 text-end'f>>" +
+             "<'row'<'col-md-12'tr>>" +
+             "<'row mt-2'<'col-md-6'i><'col-md-6 d-flex justify-content-end'p>>",
+        processing : true,
+        serverSide : false,
+        autoWidth  : false,
+        pageLength : 10,
+        lengthMenu : [10, 25, 50, 100],
+        ajax: {
+            url: '<?php echo base_url("searchDataReady"); ?>',
+            dataSrc: function(json) { return json.data ? json.data : []; }
+        },
+        orderCellsTop: true,
+        columns: [
+            { data: null, className: 'text-center', render: function(data, type, row, meta) { return meta.row + 1; } },
+            { data: 'fullname', render: function(data, type, row) { 
+                if (type === 'display') {
+                    let badge = '';
+                    if (row.submit_cv_raw && row.submit_cv_raw.startsWith(new Date().toISOString().slice(0, 10))) {
+                        badge = '<span style="background:#0a6ed1;color:white;font-size:10px;font-weight:700;padding:3px 7px;border-radius:20px;margin-left:6px;">NEW</span>';
+                    }
+                    return '<div style="font-weight:600;font-size:14px;color:#1f2d3d;">'+(data||'-')+badge+'</div>'+
+                           '<div style="font-size:12px;color:#868e96;margin-top:2px;">'+(row.email||'-')+'</div>';
+                }
+                return data;
+            }},
+            { data: 'position_applied', render: function(data, type, row) {
+                if (type === 'display') {
+                    return '<div style="font-size:13px;font-weight:600;color:#34495e;">'+(data||'-')+'</div>'+
+                           '<div style="font-size:12px;color:#7f8c8d;white-space:normal;word-break:break-word;">'+(row.ijazah_terakhir||'-')+'</div>';
+                }
+                return data;
+            }},
+            { data: 'born_place', render: function(data, type, row) {
+                if (type === 'display') {
+                    return '<div style="font-size:12px;color:#495057;">'+(data||'-')+'</div>'+
+                           '<div style="font-size:12px;color:#868e96;">'+(row.born_date||'-')+'</div>';
+                }
+                return data;
+            }},
+            { data: 'handphone', render: function(data) { return data || '-'; }, className: 'text-left' },
+            { data: 'vessel_type', render: function(data, type) { 
+                if (type === 'display') {
+                    return '<div style="font-size:12px;color:#7f8c8d;white-space:normal;word-break:break-word;">'+(data||'-')+'</div>';
+                }
+                return data;
+            }, className: 'text-left' },
+            { data: 'last_experience', render: function(data, type, row) {
+                if (type === 'display') {
+                    let vesselExp = "-";
+                    if (row.pengalaman_jeniskapal) {
+                        vesselExp = `<div style="color:#868e96;line-height:1.4;white-space:normal;word-break:break-word;max-width:130px;">`+
+                                    row.pengalaman_jeniskapal.split(',').map(v => `<div>${v.trim()}</div>`).join('') +
+                                    `</div>`;
+                    }
+                    return `<div style="font-weight:600;color:#34495e;margin-bottom:6px;">${data || "-"}</div>${vesselExp}`;
+                }
+                return data;
+            }},
+            { data: 'foreign_crew', className: 'text-center', render: function(data, type, row) {
+                if (type === 'display') {
+                    let foreignBlock = "-";
+                    const foreignCrew = data || "-";
+                    if (foreignCrew !== "-" && foreignCrew.includes("-")) {
+                        const parts = foreignCrew.split("-");
+                        const status = parts[0].trim();
+                        const countries = parts.slice(1).join("-").trim();
+                        foreignBlock = `
+                            <div style="font-weight:600;color:#0b7285;margin-bottom:4px;">${status} -</div>
+                            <div style="color:#495057;font-size:11px;line-height:1.4;text-align:left;white-space:normal;word-break:break-word;max-width:160px;margin:auto;">` +
+                            countries.split(',').map(c => c.trim()).join('<br>') +
+                            `</div>`;
+                    } else {
+                        foreignBlock = foreignCrew !== "-" ? foreignCrew : "-";
+                    }
+                    return foreignBlock;
+                }
+                return data;
+            }},
+            { data: 'last_salary', className: 'text-right', render: function(data, type) {
+                if (type === 'display') {
+                    return data ? '<div style="font-size:12px;color:#495057;">' + data + '</div>' : '-';
+                }
+                return data;
+            }},
+            { data: 'expected_salary', className: 'text-right', render: function(data, type) {
+                if (type === 'display') {
+                    return data ? '<div style="font-size:12px;color:#495057;">' + data + '</div>' : '-';
+                }
+                return data;
+            }},
+            { data: 'prev_join', className: 'text-center', render: function(data, type) {
+                if (type === 'display') {
+                    return data ? '<div style="font-size:12px;color:#495057;">' + data + '</div>' : '-';
+                }
+                return data;
+            }},
+            { data: 'submit_cv', className: 'text-center', render: function(data, type) {
+                if (type === 'display') {
+                    return data ? '<div style="font-size:12px;color:#495057;">' + data + '</div>' : '-';
+                }
+                return data;
+            }},
+            { data: null, className: 'text-center', orderable: false, render: function(data, type, row) {
+                if (type === 'display') {
+                    const name = (row.fullname || '').replace(/'/g, "\\'");
+                    const position = (row.position_applied || '').replace(/'/g, "\\'");
+                    const lastExp = (row.last_experience || '').replace(/'/g, "\\'");
+                    const btnStyle = 'display:flex;align-items:center;justify-content:center;gap:5px;padding:5px 8px;font-size:11px;font-weight:500;border-radius:8px;cursor:pointer;transition:all .2s;width:calc(50% - 3px);white-space:nowrap;';
+                    return `<div style="display:flex;flex-wrap:wrap;gap:5px;min-width:170px;">
+                        <a href="${row.cv_url}" target="_blank"
+                            style="${btnStyle}background:#f0f4ff;color:#2563eb;border:1px solid #c7d9ff;text-decoration:none;"
+                            onmouseover="this.style.background='#2563eb';this.style.color='#fff'"
+                            onmouseout="this.style.background='#f0f4ff';this.style.color='#2563eb'">
+                            <i class="fas fa-file-alt" style="font-size:10px;"></i> View CV
+                        </a>
+                        <button
+                            style="${btnStyle}background:#f0fff4;color:#067740;border:1px solid #a7f3c5;"
+                            onmouseover="this.style.background='#067740';this.style.color='#fff'"
+                            onmouseout="this.style.background='#f0fff4';this.style.color='#067740'"
+                            onclick="QualifiedCrew(${row.id}, '${name}')">
+                            <i class="fas fa-check" style="font-size:10px;"></i> Qualified
+                        </button>
+                        <button
+                            style="${btnStyle}background:#fffbf0;color:#b45309;border:1px solid #fcd97a;"
+                            onmouseover="this.style.background='#b45309';this.style.color='#fff'"
+                            onmouseout="this.style.background='#fffbf0';this.style.color='#b45309'"
+                            onclick="notPositionCrew(${row.id}, '${name}')">
+                            <i class="fas fa-exclamation-triangle" style="font-size:10px;"></i> Not Position
+                        </button>
+                        <button
+                            style="${btnStyle}background:#fff0f0;color:#b91c1c;border:1px solid #fca5a5;"
+                            onmouseover="this.style.background='#b91c1c';this.style.color='#fff'"
+                            onmouseout="this.style.background='#fff0f0';this.style.color='#b91c1c'"
+                            data-id="${row.id}"
+                            data-name="${name}"
+                            data-position="${position}"
+                            data-last-experience="${lastExp}"
+                            onclick="showNotQualifyModalLayer1(this)">
+                            <i class="fas fa-times" style="font-size:10px;"></i> Not Qualified
+                        </button>
+                        <button
+                            style="${btnStyle}width:100%;background:#fff5f5;color:#9b1c1c;border:1px solid #fecaca;"
+                            onmouseover="this.style.background='#9b1c1c';this.style.color='#fff'"
+                            onmouseout="this.style.background='#fff5f5';this.style.color='#9b1c1c'"
+                            onclick="deleteData(${row.id}, '${name}')">
+                            <i class="fas fa-trash-alt" style="font-size:10px;"></i> Delete
+                        </button>
+                    </div>`;
+                }
+                return '';
+            }}
+        ],
+        initComplete: function() {
+            const api = this.api();
+            const total = document.getElementById('totalApplicants');
+            if (total) total.innerText = api.rows().count();
 
-    const input = document.querySelector(".sap-search input");
+            api.on('draw', function() {
+                if (total) total.innerText = api.rows({ search: 'applied' }).count();
+            });
 
-    if (input) {
+            // Column search inputs
+            api.columns().every(function(colIdx) {
+                const column = this;
+                const input = $('thead.crew-search-header tr th').eq(colIdx).find('.column-search');
+                if (input.length) {
+                    input.on('keyup change clear', function() {
+                        if (column.search() !== this.value) {
+                            column.search(this.value).draw();
+                        }
+                    });
+                }
+            });
 
-        input.addEventListener("keyup", function() {
-            searchTableDataReady(input, 1);
-        });
-
-    }
-
-    searchTableDataReady(input, 1);
-
+            // Dropdown filter icons
+            initNewApplicantDropdownFilters(api);
+        }, 
+         language: {
+            lengthMenu: '_MENU_ &nbsp;Entries',
+            info: 'Showing _START_ to _END_ of _TOTAL_ entries',
+            infoEmpty: 'Showing 0 to 0 of 0 entries',
+            infoFiltered: '(filtered from _MAX_ total entries)',
+            search: 'Search:',
+            emptyTable: 'Tidak ada data New Applicant',
+            zeroRecords: 'Data tidak ditemukan'
+        },
+    });
 });
 
-function goToPageReady(page, searchValue = "") {
-
-    const input = document.querySelector(".sap-search input");
-    if (input) input.value = searchValue;
-
-    searchTableDataReady(input, page);
-}
-
-function jumpToPageReady(searchValue = "") {
-
-    const input = document.getElementById("jumpPageReady");
-    if (!input) return;
-
-    let page = parseInt(input.value);
-    if (!page || page < 1) return;
-
-    goToPageReady(page, searchValue);
-}
-
-function changeRowsPerPageReady(val, searchValue = "") {
-
-    const table = document.getElementById("tableDataReady");
-
-    if (table) {
-        table.dataset.rows = val;
-    }
-
-    goToPageReady(1, searchValue);
-
-}
-
-function renderPagination(currentPage, totalPages, searchValue, totalRows, rowsPerPage) {
-
-    const pagination = document.getElementById("pagination");
-    if (!pagination) return;
-
-    if (totalPages <= 0) {
-        pagination.innerHTML = "";
-        return;
-    }
-
-    const maxVisible = 5;
-
-    let start = Math.max(1, currentPage - 2);
-    let end = Math.min(totalPages, start + maxVisible - 1);
-
-    if (end - start < maxVisible - 1) {
-        start = Math.max(1, end - maxVisible + 1);
-    }
-
-    const btnStyle = `
-        border:1px solid #d0d7de;
-        background:#fff;
-        padding:5px 11px;
-        font-size:12px;
-        border-radius:7px;
-        cursor:pointer;
-        font-weight:600;
-        color:#344054;
-        min-width:34px;
-        transition:all .18s ease;
-    `;
-
-    const activeStyle = `
-        background:#0a6ed1;
-        border:1px solid #0a6ed1;
-        color:#fff;
-        padding:5px 11px;
-        font-size:12px;
-        border-radius:7px;
-        font-weight:700;
-        min-width:34px;
-        box-shadow:0 2px 6px rgba(10,110,209,.25);
-    `;
-
-    const disabledStyle = `
-        border:1px solid #e5e7eb;
-        background:#f1f3f5;
-        padding:5px 11px;
-        font-size:12px;
-        border-radius:7px;
-        color:#adb5bd;
-        min-width:34px;
-    `;
-
-    let html = `
-    <div style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        flex-wrap:wrap;
-        gap:12px;
-        margin-top:14px;
-        padding:12px 16px;
-        background:#f8fafc;
-        border:1px solid #e5e7eb;
-        border-radius:10px;
-        font-size:13px;">
-    `;
-
-    /* ===== LEFT INFO ===== */
-
-    html += `
-    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:#475467;">
-        <div>
-            <strong>${totalRows}</strong> Data • 
-            Page <strong>${currentPage}</strong> / <strong>${totalPages}</strong>
-        </div>
-
-        <div style="display:flex;align-items:center;gap:6px;">
-            Rows :
-            <select 
-                onchange="changeRowsPerPageReady(this.value,'${searchValue}')"
-                style="
-                border:1px solid #d0d7de;
-                border-radius:6px;
-                padding:3px 6px;
-                font-size:12px;
-                background:white;
-                cursor:pointer;">
-                <option value="10" ${rowsPerPage == 10 ? 'selected' : ''}>10</option>
-                <option value="25" ${rowsPerPage == 25 ? 'selected' : ''}>25</option>
-                <option value="50" ${rowsPerPage == 50 ? 'selected' : ''}>50</option>
-                <option value="100" ${rowsPerPage == 100 ? 'selected' : ''}>100</option>
-            </select>
-        </div>
-    </div>
-    `;
-
-    /* ===== RIGHT CONTROL ===== */
-
-    html += `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">`;
-
-    /* BIG PREVIOUS */
-
-    if (currentPage > 1) {
-        html += `
-        <button
-            style="
-                border:1px solid #0a6ed1;
-                background:#e7f1ff;
-                padding:6px 14px;
-                font-size:13px;
-                border-radius:8px;
-                cursor:pointer;
-                font-weight:700;
-                color:#0a6ed1;
-                margin-right:6px;
-            "
-            onclick="goToPageReady(${currentPage - 1}, '${searchValue}')">
-            ← Previous
-        </button>`;
-    }
-
-    /* SMALL PREV */
-
-    if (currentPage > 1) {
-        html += `
-        <button
-            style="${btnStyle}"
-            onclick="goToPageReady(${currentPage - 1}, '${searchValue}')">
-            ‹
-        </button>`;
-    } else {
-        html += `<button disabled style="${disabledStyle}">‹</button>`;
-    }
-
-    /* FIRST */
-
-    if (start > 1) {
-
-        html += `
-        <button
-            style="${btnStyle}"
-            onclick="goToPageReady(1, '${searchValue}')">
-            1
-        </button>`;
-
-        if (start > 2) {
-            html += `<span style="padding:0 4px;color:#98a2b3;font-weight:600;">...</span>`;
-        }
-    }
-
-    /* PAGE NUMBERS */
-
-    for (let i = start; i <= end; i++) {
-
-        html += `
-        <button
-            style="${i === currentPage ? activeStyle : btnStyle}"
-            onclick="goToPageReady(${i}, '${searchValue}')">
-            ${i}
-        </button>`;
-    }
-
-    /* LAST */
-
-    if (end < totalPages) {
-
-        if (end < totalPages - 1) {
-            html += `<span style="padding:0 4px;color:#98a2b3;font-weight:600;">...</span>`;
-        }
-
-        html += `
-        <button
-            style="${btnStyle}"
-            onclick="goToPageReady(${totalPages}, '${searchValue}')">
-            ${totalPages}
-        </button>`;
-    }
-
-    /* SMALL NEXT */
-
-    if (currentPage < totalPages) {
-        html += `
-        <button
-            style="${btnStyle}"
-            onclick="goToPageReady(${currentPage + 1}, '${searchValue}')">
-            ›
-        </button>`;
-    } else {
-        html += `<button disabled style="${disabledStyle}">›</button>`;
-    }
-
-    /* BIG NEXT */
-
-    if (currentPage < totalPages) {
-        html += `
-        <button
-            style="
-                border:1px solid #0a6ed1;
-                background:#0a6ed1;
-                padding:6px 14px;
-                font-size:13px;
-                border-radius:8px;
-                cursor:pointer;
-                font-weight:700;
-                color:white;
-                margin-left:6px;
-            "
-            onclick="goToPageReady(${currentPage + 1}, '${searchValue}')">
-            Next →
-        </button>`;
-    }
-
-    /* JUMP PAGE */
-
-    html += `
-    <div style="display:flex;align-items:center;gap:5px;margin-left:8px;">
-        Go :
-        <input
-            type="number"
-            min="1"
-            max="${totalPages}"
-            id="jumpPageReady"
-            style="
-                width:55px;
-                border:1px solid #d0d7de;
-                border-radius:6px;
-                padding:3px 6px;
-                font-size:12px;">
-        <button
-            style="${btnStyle}"
-            onclick="jumpToPageReady('${searchValue}')">
-            OK
-        </button>
-    </div>
-    `;
-
-    html += `</div></div>`;
-
-    pagination.innerHTML = html;
-}
-
-function highlightText(text = "", search = "") {
-
-    if (!search) return text;
-
-    const regex = new RegExp(
-        `(${search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`,
-        'gi'
-    );
-
-    return String(text).replace(regex, `
-        <span style="
-            background: linear-gradient(90deg, #ffe066, #ffd43b);
-            color: #1c1c1c;
-            padding:2px 4px;
-            border-radius:4px;
-            font-weight:700;
-            box-shadow:0 0 4px rgba(255,200,0,0.3);
-        ">$1</span>
-    `);
-}
-
-function formatSalary(amount, currency = '') {
-
-    const num = parseFloat(amount);
-
-    if (isNaN(num) || num <= 0) {
-        return "-";
-    }
-
-    const formatted = num.toLocaleString('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
-    });
-
-    return currency ?
-        `${currency} ${formatted}` :
-        formatted;
-}
-
-function searchTableDataReady(inputElement, page = 1) {
-
-    const table = document.getElementById("tableDataReady");
-    const tbody = document.getElementById("idTbodylistCrewNewModal");
-    const totalEl = document.getElementById("totalApplicants");
-
-    if (!table || !tbody) return;
-
-    const searchValue = inputElement ? inputElement.value.toLowerCase() : "";
-
-    if (!table.dataset.rows) {
-        table.dataset.rows = 10;
-    }
-
-    const rowsPerPage = parseInt(table.dataset.rows);
-
-    table.dataset.page = page;
-    table.dataset.search = searchValue;
-
-    table.style.transition = "opacity .25s ease";
-    table.style.opacity = "0.35";
-
-    const base_url = "<?php echo base_url(); ?>";
-
-    $.ajax({
-        url: base_url + "searchDataReady",
-        type: "GET",
-        data: {
-            search: searchValue,
-            page: page,
-            rows: rowsPerPage
-        },
-        success: function(res) {
-
-            let response = typeof res === "string" ? JSON.parse(res) : res;
-
-            tbody.innerHTML = "";
-
-            if (totalEl) totalEl.innerText = response.total_rows;
-
-            if (searchValue) {
-
-                document.getElementById("searchIndicator").innerHTML = `
-                <div style="
-                    display:inline-flex;
-                    align-items:center;
-                    gap:8px;
-                    background:#f1f5f9;
-                    padding:6px 12px;
-                    border-radius:20px;
-                    font-size:12px;
-                    font-weight:600;
-                    color:#334155;
-                    margin-bottom:8px;
-                ">
-                🔎 Search : 
-                    <span style="
-                        background:linear-gradient(120deg,#c7e0ff,#8ec5ff);
-                        padding:3px 8px;
-                        border-radius:6px;
-                        font-weight:700;
-                        color:#0a3d91;
-                    ">
-                        ${searchValue}
-                    </span>
-                </div>`;
-            } else {
-                document.getElementById("searchIndicator").innerHTML = "";
-            }
-
-            if (!response.data.length) {
-
-                tbody.innerHTML = `
-                <tr>
-                    <td colspan="15" style="padding:40px;text-align:center;color:#6b7280;">
-                        No applicant found
-                    </td>
-                </tr>`;
-
-            } else {
-
-                const today = new Date().toISOString().slice(0, 10);
-
-                response.data.forEach((row, index) => {
-
-                    const tr = document.createElement("tr");
-                    tr.id = "row_" + row.id;
-                    tr.style.borderBottom = "1px solid #eef1f5";
-
-                    let badge = "";
-
-                    const today = new Date().toISOString().slice(0, 10);
-
-                    let foreignCrewHtml = '-';
-
-                    const foreignCrew = row.foreign_crew || '-';
-
-                    if (
-                        foreignCrew !== '-' &&
-                        foreignCrew.includes('-')
-                    ) {
-
-                        const parts = foreignCrew.split('-');
-
-                        const status = parts[0].trim();
-                        const countries = parts.slice(1).join('-').trim();
-
-                        foreignCrewHtml = `
-                            <div style="
-                                font-weight:600;
-                                color:#0b7285;
-                                margin-bottom:4px;
-                            ">
-                                ${highlightText(status, searchValue)} -
-                            </div>
-
-                            <div style="
-                                color:#495057;
-                                font-size:12px;
-                                line-height:1.5;
-                                text-align:left;
-                                white-space:normal;
-                                word-break:break-word;
-                                max-width:160px;
-                                margin:auto;
-                            ">
-                                ${highlightText(
-                                    countries
-                                        .split(',')
-                                        .map(item => item.trim())
-                                        .join('<br>'),
-                                    searchValue
-                                )}
-                            </div>
-                        `;
-
-                    } else {
-
-                        foreignCrewHtml = `
-                            <div style="
-                                font-size:12px;
-                                color:#495057;
-                            ">
-                                ${highlightText(foreignCrew, searchValue)}
-                            </div>
-                        `;
+function initNewApplicantDropdownFilters(api) {
+    $('#tableDataReady thead.crew-header th').each(function(colIndex) {
+        var icon = $(this).find('.filter-icon');
+        if (!icon.length) return;
+        if (colIndex === 0 || colIndex === 12) return; // skip No & Action
+
+        var dropdown = $('<div class="na-filter-dropdown">'
+            + '<input type="text" class="na-filter-search" placeholder="Search options...">'
+            + '<div class="na-filter-list"></div>'
+            + '<hr style="margin:6px 0;">'
+            + '<div style="text-align:center;">'
+            + '<button class="na-btn-clear-filter"><i class="fas fa-eraser"></i> Clear</button>'
+            + '</div>'
+            + '</div>').appendTo('body');
+
+        var listContainer = dropdown.find('.na-filter-list');
+
+        try {
+            var colData = api.column(colIndex).data();
+            if (colData && typeof colData.unique === 'function') {
+                var uniqueVals = [];
+                colData.unique().each(function(val) {
+                    if (val && val !== '-' && val !== '') {
+                        var tmp = document.createElement('div');
+                        tmp.innerHTML = val;
+                        var text = (tmp.textContent || tmp.innerText || '').trim();
+                        if (text && !uniqueVals.includes(text)) uniqueVals.push(text);
                     }
-
-                    if (row.submit_cv_raw && row.submit_cv_raw.startsWith(today)) {
-                        badge = `
-                        <span style="
-                            background:#0a6ed1;
-                            color:white;
-                            font-size:10px;
-                            font-weight:700;
-                            padding:3px 7px;
-                            border-radius:20px;
-                            margin-left:6px;
-                        ">
-                        NEW
-                        </span>`;
-                    }
-
-                    tr.innerHTML = `
-                        <td style="text-align:center;font-size:12px;color:#868e96;vertical-align:middle;">
-                            ${response.start + index}
-                        </td>
-
-                        <td style="min-width:260px;vertical-align:middle;">
-                            <div style="font-weight:600;font-size:14px;color:#1f2d3d;">
-                                ${highlightText(row.fullname || "-", searchValue)}
-                                ${badge}
-                            </div>
-                            <div style="font-size:12px;color:#868e96;margin-top:2px;">
-                                ${highlightText(row.email || "-", searchValue)}
-                            </div>
-                        </td>
-
-                        <td style="min-width:160px;vertical-align:middle;">
-                            <div style="font-size:13px;font-weight:600;color:#34495e;">
-                                ${highlightText(row.position_applied || "-", searchValue)}
-                            </div>
-                            <div style="font-size:12px;color:#7f8c8d;margin-top:2px;">
-                                ${highlightText(row.ijazah_terakhir || "-", searchValue)}
-                            </div>
-                        </td>
-
-                        <td style="font-size:12px;color:#495057;vertical-align:middle;">
-                            <div>${highlightText(row.born_place || "-", searchValue)}</div>
-                            <div style="color:#868e96;">
-                                ${highlightText(row.born_date || "-", searchValue)}
-                            </div>
-                        </td>
-
-                        <td style="font-size:12px;vertical-align:middle;">
-                            ${highlightText(row.handphone || "-", searchValue)}
-                        </td>
-
-                        <td style="font-size:12px;vertical-align:middle;">
-                            ${highlightText(row.vessel_type || "-", searchValue)}
-                        </td>
-
-                        <td style="
-                            font-size:12px;
-                            vertical-align:middle;
-                            min-width:220px;
-                        ">
-                            <div style="
-                                font-weight:600;
-                                color:#34495e;
-                                margin-bottom:6px;
-                            ">
-                                ${highlightText(row.last_experience || "-", searchValue)}
-                            </div>
-
-                            <div style="
-                                color:#868e96;
-                                line-height:1.4;
-                                white-space:normal;
-                                word-break:break-word;
-                                max-width:130px;
-                            ">
-                                ${(row.pengalaman_jeniskapal || "-")
-                                    .split(',')
-                                    .map(item =>
-                                        `<div>${highlightText(item.trim(), searchValue)}</div>`
-                                    )
-                                    .join('')
-                                }
-                            </div>
-                        </td>
-
-                        <td style="font-size:12px;text-align:center;vertical-align:middle;">
-                           ${foreignCrewHtml}
-                        </td>
-
-                        <td style="font-size:12px;text-align:right;font-weight:600;color:#065f46;text-align:center;vertical-align:middle;">
-                            <span style="
-                                background:#e7f5ff;
-                                color:#1971c2;
-                                padding:2px 6px;
-                                border-radius:10px;
-                                font-size:10px;
-                                margin-right:4px;
-                            ">
-                                ${row.last_salary_currency || '-'}
-                            </span>
-                            ${highlightText(
-                                formatSalary(row.last_salary, ''),
-                                searchValue
-                            )}
-                        </td>
-
-                        <td style="font-size:12px;text-align:right;font-weight:600;color:#065f46;text-align:center;vertical-align:middle;">
-                            <span style="
-                                background:#e7f5ff;
-                                color:#1971c2;
-                                padding:2px 6px;
-                                border-radius:10px;
-                                font-size:10px;
-                                margin-right:4px;
-                            ">
-                                ${row.expected_salary_currency || '-'}
-                            </span>
-                            ${highlightText(
-                                formatSalary(row.expected_salary, ''),
-                                searchValue
-                            )}
-                        </td>
-                        
-                        <td style="font-size:12px;text-align:center;vertical-align:middle;">
-                            ${highlightText(row.prev_join || "-", searchValue)}
-                        </td>
-
-                        <td style="font-size:12px;color:#868e96;vertical-align:middle;">
-                            ${highlightText(row.submit_cv || "-", searchValue)}
-                        </td>
-
-                        <td style="text-align:center;min-width:150px;vertical-align:middle;">
-                            <div style="display:flex;flex-direction:column;gap:4px;">
-                                <button onclick="window.open('${row.cv_url}','_blank')"
-                                    style="border:1px solid #dee2e6;background:#fff;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;">
-                                    📄 View CV
-                                </button>
-
-                                <button onclick="QualifiedCrew('${row.id}','${row.fullname}')"
-                                    style="background:#e6fcf5;border:1px solid #20c997;color:#087f5b;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;">
-                                    ✔ Qualified
-                                </button>
-
-                                <button onclick="notPositionCrew('${row.id}','${row.fullname}')"
-                                    style="background:#fff4e5;border:1px solid #ff922b;color:#b26a00;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;">
-                                    ⚠ Not Position
-                                </button>
-
-                                <button onclick="showNotQualifyModalLayer1(this)"
-                                    data-id="${row.id}"
-                                    data-name="${row.fullname}"
-                                    data-position="${row.position_applied}"
-                                    data-last-experience="${row.last_experience || ''}"
-                                    style="background:#fff5f5;border:1px solid #ff6b6b;color:#c92a2a;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;">
-                                    ✕ Not Qualified
-                                </button>
-            
-                                <button onclick="deleteData('${row.id}','${row.fullname}')"
-                                    style="background:#fff4e5;border:1px solid #ff2b2b;color:#b26a00;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;">
-                                    🗑 Delete
-                                </button>
-                            </div>
-                        </td>
-                    `;
-
-                    tbody.appendChild(tr);
-
                 });
-
+                uniqueVals.sort().forEach(function(val) {
+                    var safe = String(val).replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                    listContainer.append('<label><input type="checkbox" value="'+ safe +'"> '+ safe +'</label>');
+                });
             }
+        } catch(err) { console.warn('Filter err col '+ colIndex, err); }
 
-            renderPagination(
-                response.page,
-                response.total_pages,
-                searchValue,
-                response.total_rows,
-                response.rows_per_page
-            );
+        icon.on('click', function(e) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            $('.na-filter-dropdown').not(dropdown).hide();
+            var off = icon.offset();
+            dropdown.css({ top: off.top + icon.outerHeight() + 4, left: off.left }).toggle();
+        });
 
-            table.style.opacity = "1";
+        dropdown.find('.na-filter-search').on('keyup', function() {
+            var kw = $(this).val().toLowerCase();
+            listContainer.find('label').each(function() {
+                $(this).toggle($(this).text().toLowerCase().includes(kw));
+            });
+        });
 
-        }
+        dropdown.on('change', 'input[type="checkbox"]', function() {
+            var selected = [];
+            dropdown.find('input[type="checkbox"]:checked').each(function() { selected.push($(this).val()); });
+            if (selected.length > 0) {
+                var regex = selected.map(function(v){ return v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }).join('|');
+                api.column(colIndex).search(regex, true, false).draw();
+            } else {
+                api.column(colIndex).search('').draw();
+            }
+            dropdown.hide();
+        });
 
+        dropdown.on('click', '.na-btn-clear-filter', function() {
+            dropdown.find('input').prop('checked', false);
+            dropdown.find('.na-filter-search').val('');
+            listContainer.find('label').show();
+            api.column(colIndex).search('').draw();
+            dropdown.hide();
+        });
     });
 
+    $(document).on('click.naFilter', function(e) {
+        if (!$(e.target).closest('.na-filter-dropdown').length &&
+            !$(e.target).hasClass('filter-icon')) {
+            $('.na-filter-dropdown').hide();
+        }
+    });
 }
 
 function deleteData(id, name) {
@@ -898,6 +602,10 @@ function deleteData(id, name) {
             success: function() {
 
                 $("#idLoadingSpinner").fadeOut();
+
+                if (typeof tableDataReady !== 'undefined' && tableDataReady.ajax) {
+                    tableDataReady.ajax.reload(null, false);
+                }
 
                 Swal.fire({
                     title: "Deleted!",
@@ -931,26 +639,6 @@ function deleteData(id, name) {
 
 }
 
-function renumberTableRows() {
-
-    const tbody = document.getElementById("idTbodylistCrewNewModal");
-
-    if (!tbody) return;
-
-    const rows = tbody.querySelectorAll("tr");
-
-    rows.forEach((row, index) => {
-
-        const firstCell = row.querySelector("td");
-
-        if (firstCell) {
-            firstCell.innerText = index + 1;
-        }
-
-    });
-
-}
-
 function animateRemoveRow(row) {
 
     if (!row) return;
@@ -967,32 +655,14 @@ function animateRemoveRow(row) {
     }, 10);
 
     setTimeout(() => {
-
-        row.remove();
-
-        const currentPage = parseInt(table.dataset.page) || 1;
-        const searchValue = table.dataset.search || "";
-
-        const remainingRows = tbody.querySelectorAll("tr").length;
-
-        if (remainingRows === 0 && currentPage > 1) {
-
-            searchTableDataReady({
-                    value: searchValue
-                },
-                currentPage - 1
-            );
-
+        if (typeof tableDataReady !== 'undefined' && tableDataReady) {
+            tableDataReady.row($(row)).remove().draw(false);
+            
+            const total = document.getElementById("totalApplicants");
+            if (total) total.innerText = tableDataReady.rows().count();
         } else {
-
-            searchTableDataReady({
-                    value: searchValue
-                },
-                currentPage
-            );
-
+            row.remove();
         }
-
     }, 350);
 
 }
@@ -1026,6 +696,10 @@ function QualifiedCrew(id, name) {
             success: function() {
 
                 $("#idLoadingSpinner").fadeOut();
+
+                if (typeof tableDataReady !== 'undefined' && tableDataReady.ajax) {
+                    tableDataReady.ajax.reload(null, false);
+                }
 
                 Swal.fire({
                     title: "Berhasil!",
@@ -1314,6 +988,10 @@ function submitNotQualifiedLayer1() {
 
                     $('#modalNotQualifyLayer1').modal('hide');
 
+                    if (typeof tableDataReady !== 'undefined' && tableDataReady.ajax) {
+                        tableDataReady.ajax.reload(null, false);
+                    }
+
                     Swal.fire({
                         title: "Success!",
                         text: "Crew has been marked as Not Qualified.",
@@ -1541,6 +1219,10 @@ function notPositionCrew(id, name) {
 
                 $("#idLoadingSpinner").fadeOut();
 
+                if (typeof tableDataReady !== 'undefined' && tableDataReady.ajax) {
+                    tableDataReady.ajax.reload(null, false);
+                }
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Berhasil',
@@ -1591,7 +1273,7 @@ function goToPage(page, searchValue) {
 
 <div id="applicantsWorkspace" class="sap-workspace">
 
-    <div class="sap-header">
+    <!-- <div class="sap-header">
         <div class="sap-header-left">
             <h2><?php echo $title; ?></h2>
             <span>Recruitment Management · Talent Intake</span>
@@ -1603,15 +1285,9 @@ function goToPage(page, searchValue) {
                 <strong id="totalApplicants">0</strong>
             </div>
         </div>
-    </div>
+    </div> -->
 
-    <div class="sap-toolbar">
-        <div class="sap-search">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="Search name, email, position applied"
-                onkeyup="searchTableDataReady(this,'DataReady')">
-        </div>
-    </div>
+
 
     <div class="sap-content">
 
@@ -1626,32 +1302,45 @@ function goToPage(page, searchValue) {
             <p>Processing data…</p>
         </div>
 
-        <div class="sap-table-wrapper">
-            <div id="searchIndicator"></div>
-            <table class="sap-table" id="tableDataReady" data-page="1" data-search="">
-                <thead>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle mb-0 sap-table" id="tableDataReady" style="width:100%;">
+                <thead class="crew-header">
                     <tr>
-                        <th style="width:50px;">No</th>
-                        <th style="min-width:220px;">Seafarer</th>
-                        <th style="min-width:160px;">Position Applied & Certificate</th>
-                        <th style="min-width:140px;">Birth</th>
-                        <th style="min-width:120px;">Phone</th>
-                        <th style="min-width:120px;">Apply Vessel Type</th>
-                        <th style="min-width:120px;">Experience</th>
-                        <th style="width:90px;">Foreign</th>
-                        <th style="width:120px;">Last Salary</th>
-                        <th style="width:120px;">Expected Salary</th>
-                        <th style="width:100px;">Prev Join</th>
-                        <th style="width:120px;">Submit Date</th>
-                        <th style="width:140px;">Action</th>
+                        <th style="width:4%;" class="text-center">No</th>
+                        <th style="width:15%;">Seafarer <span class="filter-icon">☰</span></th>
+                        <th style="width:12%;">Position Applied<span class="filter-icon">☰</span></th>
+                        <th style="width:8%;">Birth <span class="filter-icon">☰</span></th>
+                        <th style="width:8%;">Phone <span class="filter-icon">☰</span></th>
+                        <th style="width:8%;">Vessel Type <span class="filter-icon">☰</span></th>
+                        <th style="width:14%;">Experience <span class="filter-icon">☰</span></th>
+                        <th style="width:10%;">Foreign <span class="filter-icon">☰</span></th>
+                        <th style="width:7%;text-align:right;">Last Salary</th>
+                        <th style="width:7%;text-align:right;">Expected Salary</th>
+                        <th style="width:5%;">Prev Join <span class="filter-icon">☰</span></th>
+                        <th style="width:7%;">Submit Date</th>
+                        <th style="width:10%;text-align:center;">Action</th>
                     </tr>
                 </thead>
-
+                <thead class="crew-search-header">
+                    <tr>
+                        <th></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th></th>
+                        <th></th>
+                        <th><input type="text" class="column-search" placeholder="Search..."></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
                 <tbody id="idTbodylistCrewNewModal"></tbody>
             </table>
         </div>
-
-        <div id="pagination" class="mt-3"></div>
     </div>
 </div>
 

@@ -3,32 +3,37 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class PublicFamiliar extends CI_Controller {
 
-    /**
-     * Mapping checklist item => department
-     */
-    private $itemDepartmentMap = array(
-        'item_1'  => 'Crewing',
-        'item_2'  => 'QHSE',
-        'item_3'  => 'DPA / Marine Safety',
-        'item_4'  => 'DPA',
-        'item_5'  => 'Operation',
-        'item_6'  => 'DPA / Marine Safety',
-        'item_7'  => 'Technical',
-        'item_8'  => 'Purchasing',
-        'item_9'  => 'Finance',
-        'item_10' => 'Operation',
-        'item_11' => 'DPA / Marine Safety',
-        'item_12' => 'DPA / Marine Safety',
-        'item_13' => 'DPA / Marine Safety',
-        'item_14' => 'DPA / Marine Safety',
-        'item_15' => 'Marine Safety',
-        'item_16' => 'Marine Safety',
-    );
-
     public function __construct()
     {
         parent::__construct();
         $this->load->model('MCrewscv');
+    }
+
+    // ============================================================
+    //  HELPER: Load topics/departments dari DB
+    // ============================================================
+    private function _getTopicsForDept($deptName)
+    {
+        return $this->db
+            ->where('dept_name', $deptName)
+            ->where('is_active', 1)
+            ->order_by('order_no', 'ASC')
+            ->get('mst_fam_topic')->result();
+    }
+
+    private function _getAllActiveTopics()
+    {
+        return $this->db
+            ->where('is_active', 1)
+            ->order_by('order_no', 'ASC')
+            ->get('mst_fam_topic')->result();
+    }
+
+    private function _getDeptByName($deptName)
+    {
+        return $this->db->where('department_name', $deptName)
+                        ->limit(1)
+                        ->get('mst_fam_department')->row();
     }
 
     /**
@@ -75,17 +80,11 @@ class PublicFamiliar extends CI_Controller {
             );
         }
 
-        // Filter items for this department
-        $allowedItems = array();
-        foreach ($this->itemDepartmentMap as $item => $dept) {
-            if ($dept === $link->department) {
-                $allowedItems[] = $item;
-            }
-        }
+        // Load ALL active topics (semua department)
+        $allTopics = $this->_getAllActiveTopics();
 
-        // Get existing audit trail for this batch+department
+        // Get existing audit trail untuk pre-fill form (semua department)
         $existingAudit = $this->db->where('batch_id', $link->batch_id)
-                                  ->where('department', $link->department)
                                   ->get('fam_checklist_audit')->result();
 
         $auditMap = array();
@@ -93,45 +92,35 @@ class PublicFamiliar extends CI_Controller {
             $auditMap[$a->item_name] = $a;
         }
 
-        // Checklist items definition
-        $checklistItems = array(
-            'item_1'  => array('no' => '1',    'topic' => 'Procedures Related Crewing (Payroll, Working Hours, etc)', 'dept' => 'Crewing'),
-            'item_2'  => array('no' => '2',    'topic' => '- Quality, Health, Safety and Environmental (QHSE) Policy', 'dept' => 'QHSE'),
-            'item_3'  => array('no' => '3',    'topic' => 'Safety Management System Manual and Document', 'dept' => 'DPA / Marine Safety'),
-            'item_4'  => array('no' => '4',    'topic' => 'Duties and Responsibility', 'dept' => 'DPA'),
-            'item_5'  => array('no' => '5',    'topic' => 'Procedures Related Ship Operation', 'dept' => 'Operation'),
-            'item_6'  => array('no' => '6',    'topic' => 'Procedures Related Emergency', 'dept' => 'DPA / Marine Safety'),
-            'item_7'  => array('no' => '7',    'topic' => 'Procedures Related Maintenance of Ship - Technical', 'dept' => 'Technical'),
-            'item_8'  => array('no' => '8',    'topic' => 'Procedures Related Maintenance of Ship - Purchasing', 'dept' => 'Purchasing'),
-            'item_9'  => array('no' => '9',    'topic' => 'Procedures Related Maintenance of Ship - Finance', 'dept' => 'Finance'),
-            'item_10' => array('no' => '10',   'topic' => 'Procedures Related Cargo Handling', 'dept' => 'Operation'),
-            'item_11' => array('no' => '11',   'topic' => 'Safety Drill', 'dept' => 'DPA / Marine Safety'),
-            'item_12' => array('no' => '12',   'topic' => 'Procedures Related Health', 'dept' => 'DPA / Marine Safet'),
-            'item_13' => array('no' => '13',   'topic' => 'Procedures Related Environmental Protection', 'dept' => 'DPA / Marine Safet'),
-            'item_14' => array('no' => '14',   'topic' => 'Audit External / Internal', 'dept' => 'DPA / Marine Safety'),
-            'item_15' => array('no' => '15',   'topic' => 'Hazard Identification / JSA', 'dept' => 'Marine Safety'),
-            'item_16' => array('no' => '16',   'topic' => 'Wearing Personal Protective Equipment (PPE)', 'dept' => 'Marine Safety'),
-        );
+        // Get existing topic detail values dari history_fam_topic_detail (untuk readonly topics)
+        $topicDetailMap = array();
+        if (!empty($master->id)) {
+            $details = $this->db->where('history_id', $master->id)->get('history_fam_topic_detail')->result();
+            foreach ($details as $d) {
+                $topicDetailMap[$d->topic_id] = $d->is_checked;
+            }
+        }
 
         $data = array(
-            'link'           => $link,
-            'master'         => $master,
-            'crewList'       => $crewList,
-            'allowedItems'   => $allowedItems,
-            'auditMap'       => $auditMap,
-            'checklistItems' => $checklistItems,
-            'token'          => $token
+            'link'            => $link,
+            'master'          => $master,
+            'crewList'        => $crewList,
+            'checklistTopics' => $allTopics,
+            'auditMap'        => $auditMap,
+            'topicDetailMap'  => $topicDetailMap,
+            'currentDept'     => $link->department,
+            'token'           => $token
         );
 
         $this->load->view('Public/public_familiar_checklist', $data);
     }
 
     /**
-     * Public API: Submit checklist from department
+     * Public API: Submit checklist from department (dinamis)
      */
     public function submit_checklist()
     {
-        $token = $this->input->post('token', true);
+        $token        = $this->input->post('token', true);
         $filledByName = $this->input->post('filled_by_name', true);
 
         if (empty($token)) {
@@ -154,52 +143,70 @@ class PublicFamiliar extends CI_Controller {
             return;
         }
 
-        // Get allowed items for this department
-        $allowedItems = array();
-        foreach ($this->itemDepartmentMap as $item => $dept) {
-            if ($dept === $link->department) {
-                $allowedItems[] = $item;
-            }
+        // Load topics untuk departemen ini (dinamis)
+        $topics = $this->_getTopicsForDept($link->department);
+        if (empty($topics)) {
+            echo json_encode(array('success' => false, 'message' => 'Tidak ada topic untuk departemen ini.'));
+            return;
         }
 
         $this->db->trans_begin();
 
-        $now = date('Y-m-d H:i:s');
-        
+        $now        = date('Y-m-d H:i:s');
         $time_start = $this->input->post('time_start', true);
-        $time_end = $this->input->post('time_end', true);
+        $time_end   = $this->input->post('time_end', true);
 
-        // Save time_start and time_end to fam_public_links
+        // Save time to fam_public_links
         $this->db->where('token', $token)
                  ->update('fam_public_links', array(
                      'time_start' => !empty($time_start) ? $time_start : null,
                      'time_end'   => !empty($time_end) ? $time_end : null
                  ));
 
-        foreach ($allowedItems as $itemName) {
-            $val = $this->input->post($itemName);
+        foreach ($topics as $topic) {
+            $fieldName = 'topic_' . $topic->id;
+            $val       = $this->input->post($fieldName);
+
             if ($val !== false && $val !== null && $val !== '') {
                 $itemValue = (int) $val;
+                $itemKey   = 'topic_' . $topic->id;
 
-                // Delete old audit for this item+batch+dept (replace mode)
+                // Delete old audit
                 $this->db->where('batch_id', $link->batch_id)
-                         ->where('item_name', $itemName)
+                         ->where('item_name', $itemKey)
                          ->where('department', $link->department)
                          ->delete('fam_checklist_audit');
 
                 // Insert new audit
                 $this->db->insert('fam_checklist_audit', array(
                     'batch_id'       => $link->batch_id,
-                    'item_name'      => $itemName,
+                    'item_name'      => $itemKey,
                     'item_value'     => $itemValue,
                     'department'     => $link->department,
                     'filled_by_name' => $filledByName,
                     'filled_at'      => $now
                 ));
 
-                // Update history_familiarization item value (semua crew dalam batch)
-                $this->db->where('batch_id', $link->batch_id)
-                         ->update('history_familiarization', array($itemName => $itemValue));
+                // Update history_fam_topic_detail untuk semua crew dalam batch
+                $historyRows = $this->db->where('batch_id', $link->batch_id)
+                                        ->get('history_familiarization')->result();
+                foreach ($historyRows as $h) {
+                    // Upsert: cek apakah sudah ada
+                    $existing = $this->db->where('history_id', $h->id)
+                                         ->where('topic_id', $topic->id)
+                                         ->get('history_fam_topic_detail')->row();
+                    if ($existing) {
+                        $this->db->where('history_id', $h->id)
+                                 ->where('topic_id', $topic->id)
+                                 ->update('history_fam_topic_detail', array('is_checked' => $itemValue));
+                    } else {
+                        $this->db->insert('history_fam_topic_detail', array(
+                            'history_id' => $h->id,
+                            'topic_id'   => $topic->id,
+                            'is_checked' => $itemValue
+                        ));
+                    }
+                }
             }
         }
 
@@ -209,43 +216,39 @@ class PublicFamiliar extends CI_Controller {
         } else {
             $this->db->trans_commit();
 
-            // --- Generate QR for the Submitted Department ---
-            $crewRows = $this->db->where('batch_id', $link->batch_id)->get('history_familiarization')->result();
+            // Generate QR untuk departemen ini (simpan ke history_fam_dept_signature)
+            $deptRow = $this->_getDeptByName($link->department);
+            if ($deptRow) {
+                $crewRows = $this->db->where('batch_id', $link->batch_id)
+                                     ->get('history_familiarization')->result();
 
-            // Map the department name to the specific qr column
-            $deptColumnMap = array(
-                'DPA'                  => 'qr_dpa', // or 'DPA / Marine Safety' depending on string
-                'DPA / Marine Safety'  => 'qr_dpa',
-                'Technical'            => 'qr_dept_technical',
-                'Marine Safety'        => 'qr_dept_marinesafety',
-                'Finance'              => 'qr_dept_finance',
-                'Purchasing'           => 'qr_dept_purchasing',
-                'QHSE'                 => 'qr_dept_qhse',
-                'Operation'            => 'qr_dept_operation',
-                'Crewing'              => 'qr_dept_crewing'
-            );
+                // Cek apakah sudah ada QR untuk dept ini
+                $existingSig = !empty($crewRows)
+                    ? $this->db->where('history_id', $crewRows[0]->id)
+                               ->where('dept_id', $deptRow->id)
+                               ->get('history_fam_dept_signature')->row()
+                    : null;
 
-            $deptName = $link->department;
-            $qrCol = isset($deptColumnMap[$deptName]) ? $deptColumnMap[$deptName] : '';
-
-            if (!empty($qrCol)) {
-                $qrFilename = '';
-                foreach ($crewRows as $crew) {
-                    if (!empty($crew->$qrCol)) {
-                        $qrFilename = $crew->$qrCol;
-                        break;
-                    }
-                }
-
-                if (empty($qrFilename)) {
+                if (!$existingSig) {
                     $address_name = 'All Crew - Batch ' . $link->batch_id;
-                    $qrFilename = $this->_generateQRRecord($address_name, $filledByName, 'fam_dept_' . strtolower(str_replace(array('/', ' '), '', $deptName)), $deptName);
-                }
+                    $qrFilename   = $this->_generateQRRecord(
+                        $address_name,
+                        $filledByName,
+                        'fam_dept_' . strtolower(str_replace(array('/', ' ', '-'), '', $link->department)),
+                        $link->department
+                    );
 
-                if ($qrFilename) {
-                    $this->db->where('batch_id', $link->batch_id)
-                             ->where("($qrCol IS NULL OR $qrCol = '')", NULL, FALSE)
-                             ->update('history_familiarization', array($qrCol => $qrFilename));
+                    if ($qrFilename) {
+                        foreach ($crewRows as $h) {
+                            $this->db->insert('history_fam_dept_signature', array(
+                                'history_id'    => $h->id,
+                                'dept_id'       => $deptRow->id,
+                                'qr_code_value' => $qrFilename,
+                                'signed_by'     => $filledByName,
+                                'signed_at'     => $now
+                            ));
+                        }
+                    }
                 }
             }
 
@@ -255,20 +258,19 @@ class PublicFamiliar extends CI_Controller {
 
     /**
      * Public API: Form for Crew Confirmation (Shared Link)
+     * Menampilkan semua topics dari DB secara dinamis
      */
     public function crew_checklist()
     {
         $batch_id = $this->input->get('batch', true);
-        $token = $this->input->get('token', true);
+        $token    = $this->input->get('token', true);
 
-        // Validasi Token
         if (md5($batch_id . 'CREW_ALL_SECRET') !== $token) {
             $data['error_message'] = 'Link tidak valid atau token kadaluarsa.';
             $this->load->view('Public/public_crew_checklist', $data);
             return;
         }
 
-        // Get Batch Data
         $crewRows = $this->db->where('batch_id', $batch_id)->get('history_familiarization')->result();
         if (empty($crewRows)) {
             $data['error_message'] = 'Data batch tidak ditemukan.';
@@ -276,7 +278,7 @@ class PublicFamiliar extends CI_Controller {
             return;
         }
 
-        $master = $crewRows[0]; // For generic data
+        $master   = $crewRows[0];
         $crewList = array();
         foreach ($crewRows as $row) {
             $crewList[] = array(
@@ -287,39 +289,35 @@ class PublicFamiliar extends CI_Controller {
             );
         }
 
-        // Get filled audit trails for this batch to show status
-        $audits = $this->db->where('batch_id', $batch_id)->get('fam_checklist_audit')->result();
+        // Ambil audit trails
+        $audits   = $this->db->where('batch_id', $batch_id)->get('fam_checklist_audit')->result();
         $auditMap = array();
         foreach ($audits as $au) {
             $auditMap[$au->item_name] = $au;
         }
 
-        $checklistItems = array(
-            'item_1'  => array('no' => '1',    'topic' => 'Familiarization / Handling Over', 'dept' => 'DPA'),
-            'item_2'  => array('no' => '2',    'topic' => 'Company Policy', 'dept' => 'DPA'),
-            'item_3'  => array('no' => '3',    'topic' => 'Safety Management System Manual and Document', 'dept' => 'DPA / Marine Safety'),
-            'item_4'  => array('no' => '4',    'topic' => 'Duties and Responsibility', 'dept' => 'DPA'),
-            'item_5'  => array('no' => '5',    'topic' => 'Procedures Related Ship Operation', 'dept' => 'Operation'),
-            'item_6'  => array('no' => '6',    'topic' => 'Procedures Related Emergency', 'dept' => 'DPA / Marine Safety'),
-            'item_7'  => array('no' => '7',    'topic' => 'Procedures Related Maintenance of Ship - Technical', 'dept' => 'Technical'),
-            'item_8'  => array('no' => '8',    'topic' => 'Procedures Related Maintenance of Ship - Purchasing', 'dept' => 'Purchasing'),
-            'item_9'  => array('no' => '9',    'topic' => 'Procedures Related Maintenance of Ship - Finance', 'dept' => 'Finance'),
-            'item_10' => array('no' => '10',   'topic' => 'Procedures Related Cargo Handling', 'dept' => 'Operation'),
-            'item_11' => array('no' => '11',   'topic' => 'Safety Drill', 'dept' => 'DPA / Marine Safety'),
-            'item_12' => array('no' => '12',   'topic' => 'Procedures Related Health', 'dept' => 'DPA / Marine Safety'),
-            'item_13' => array('no' => '13',   'topic' => 'Procedures Related Environmental Protection', 'dept' => 'DPA / Marine Safety'),
-            'item_14' => array('no' => '14',   'topic' => 'Audit External / Internal', 'dept' => 'DPA / Marine Safety'),
-            'item_15' => array('no' => '15',   'topic' => 'Hazard Identification / JSA', 'dept' => 'Marine Safety'),
-            'item_16' => array('no' => '16',   'topic' => 'Wearing Personal Protective Equipment (PPE)', 'dept' => 'Marine Safety'),
-        );
+        // Load semua topics aktif (dinamis)
+        $checklistItems = $this->db->where('is_active', 1)
+                                   ->order_by('order_no', 'ASC')
+                                   ->get('mst_fam_topic')->result();
+
+        // Pre-load topic detail values untuk master row (supaya view tidak perlu query DB langsung)
+        $topicDetailMap = array();
+        if (!empty($master->id)) {
+            $details = $this->db->where('history_id', $master->id)->get('history_fam_topic_detail')->result();
+            foreach ($details as $d) {
+                $topicDetailMap[$d->topic_id] = $d->is_checked;
+            }
+        }
 
         $data = array(
-            'batch_id'       => $batch_id,
-            'token'          => $token,
-            'master'         => $master,
-            'crewList'       => $crewList,
-            'auditMap'       => $auditMap,
-            'checklistItems' => $checklistItems
+            'batch_id'        => $batch_id,
+            'token'           => $token,
+            'master'          => $master,
+            'crewList'        => $crewList,
+            'auditMap'        => $auditMap,
+            'checklistItems'  => $checklistItems,
+            'topicDetailMap'  => $topicDetailMap
         );
 
         $this->load->view('Public/public_crew_checklist', $data);
