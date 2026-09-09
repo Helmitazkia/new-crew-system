@@ -99,278 +99,26 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Item 1 -->
-                                    <tr>
-                                        <td>Procedures Related Crewing (Payroll, Working Hours, etc)</td>
-                                        <td class="text-center">Crewing</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_1" id="item_1_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_1_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_1" id="item_1_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_1_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Company Policy header -->
-                                    <tr>
-                                        <td colspan="3" style="background-color:#f0f0f0; font-weight:bold;">Company Policy :</td>
-                                    </tr>
-                                    <!-- Item 2 -->
-                                    <tr>
-                                        <td>- Quality, Health, Safety and Environmental (QHSE) Policy</td>
-                                        <td class="text-center">QHSE</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_2" id="item_2_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_2_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_2" id="item_2_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_2_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Item 3 -->
-                                    <tr>
-                                        <td>Safety Management System Manual and Document</td>
-                                        <td class="text-center">DPA / Marine Safety</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_3" id="item_3_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_3_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_3" id="item_3_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_3_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Item 4 -->
-                                    <tr>
-                                        <td>Duties and Responsibility</td>
-                                        <td class="text-center">DPA</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_4" id="item_4_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_4_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_4" id="item_4_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_4_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Item 5 -->
-                                    <tr>
-                                        <td>Procedures Related Ship Operation</td>
-                                        <td class="text-center">Operation</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_5" id="item_5_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_5_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_5" id="item_5_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_5_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Item 6 -->
-                                    <tr>
-                                        <td>Procedures Related Emergency</td>
-                                        <td class="text-center">DPA / Marine Safety</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_6" id="item_6_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_6_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_6" id="item_6_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_6_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Item 7, 8, 9 — Maintenance rowspan -->
-                                    <tr>
-                                        <td rowspan="3">Procedures Related Maintenance of Ship (Plan Maintenance System)</td>
-                                        <td class="text-center">Technical</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_7" id="item_7_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_7_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_7" id="item_7_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_7_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">Purchasing</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_8" id="item_8_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_8_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_8" id="item_8_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_8_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">Finance</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_9" id="item_9_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_9_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_9" id="item_9_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_9_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Item 10 -->
-                                    <tr>
-                                        <td>Procedures Related Cargo Handling</td>
-                                        <td class="text-center">Operation</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_10" id="item_10_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_10_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_10" id="item_10_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_10_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Item 11 -->
-                                    <tr>
-                                        <td>Procedures Related Safety Drill</td>
-                                        <td class="text-center">DPA / Marine Safety</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_11" id="item_11_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_11_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_11" id="item_11_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_11_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Item 12 -->
-                                    <tr>
-                                        <td>Procedures Related Health</td>
-                                        <td class="text-center">DPA / Marine Safety</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_12" id="item_12_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_12_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_12" id="item_12_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_12_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Item 13 -->
-                                    <tr>
-                                        <td>Procedures Related Environmental Protection</td>
-                                        <td class="text-center">DPA / Marine Safety</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_13" id="item_13_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_13_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_13" id="item_13_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_13_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Item 14 -->
-                                    <tr>
-                                        <td>Procedures Related Audit (External / Internal)</td>
-                                        <td class="text-center">DPA / Marine Safety</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_14" id="item_14_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_14_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_14" id="item_14_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_14_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Item 15 -->
-                                    <tr>
-                                        <td>Hazard Identification / Risk Assessment / Job Safety Analysis (JSA)</td>
-                                        <td class="text-center">Marine Safety</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_15" id="item_15_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_15_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_15" id="item_15_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_15_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Item 16 -->
-                                    <tr>
-                                        <td>Wearing PPE and PPE Maintenance</td>
-                                        <td class="text-center">Marine Safety</td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-3">
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_16" id="item_16_yes" value="1">
-                                                    <label class="form-check-label text-success fw-bold" for="item_16_yes">✓</label>
-                                                </div>
-                                                <div class="form-check form-check-inline mb-0">
-                                                    <input class="form-check-input fam-radio" type="radio" name="item_16" id="item_16_no" value="0">
-                                                    <label class="form-check-label text-danger fw-bold" for="item_16_no">✗</label>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <?php if (!empty($topics)): ?>
+                                        <?php foreach ($topics as $topic): ?>
+                                            <tr>
+                                                <td><?php echo htmlspecialchars($topic->topic_name); ?></td>
+                                                <td class="text-center"><?php echo htmlspecialchars(!empty($topic->dept_name) ? $topic->dept_name : '-'); ?></td>
+                                                <td class="text-center">
+                                                    <div class="d-flex justify-content-center gap-3">
+                                                        <div class="form-check form-check-inline mb-0">
+                                                            <input class="form-check-input fam-radio" type="radio" name="item_<?php echo $topic->id; ?>" id="item_<?php echo $topic->id; ?>_yes" value="1">
+                                                            <label class="form-check-label text-success fw-bold" for="item_<?php echo $topic->id; ?>_yes">✓</label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline mb-0">
+                                                            <input class="form-check-input fam-radio" type="radio" name="item_<?php echo $topic->id; ?>" id="item_<?php echo $topic->id; ?>_no" value="2">
+                                                            <label class="form-check-label text-danger fw-bold" for="item_<?php echo $topic->id; ?>_no">✗</label>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -610,14 +358,7 @@
                                 '&quot;') : '') + '" data-namacrew="' + data.nama_crew +
                             '" data-rank="' + data.rank + '" data-vessel="' + data.vessel +
                             '" data-signondate="' + data.signon_date +
-                            '" data-items=\'' + JSON.stringify({
-                                item_1: data.item_1, item_2: data.item_2, item_3: data.item_3,
-                                item_4: data.item_4, item_5: data.item_5, item_6: data.item_6,
-                                item_7: data.item_7, item_8: data.item_8, item_9: data.item_9,
-                                item_10: data.item_10, item_11: data.item_11, item_12: data.item_12,
-                                item_13: data.item_13, item_14: data.item_14, item_15: data.item_15,
-                                item_16: data.item_16
-                            }) + '\'>' +
+                            '" data-items=\'' + JSON.stringify(data.items || {}) + '\'>' +
                             '<i class="fa fa-eye"></i>' +
                             '</button>' +
                             '<button type="button" class="btn btn-outline-danger btn-delete-fam" title="Delete" data-id="' +
@@ -667,13 +408,16 @@
 
         // Helper: set nilai radio button dari data DB
         function setRadioValues(items) {
-            for (var i = 1; i <= 16; i++) {
-                var key = 'item_' + i;
-                var val = items[key];
+            if (!items) return;
+            $.each(items, function (key, val) {
                 if (val !== null && val !== undefined && val !== '') {
-                    $('input[name="' + key + '"][value="' + val + '"]').prop('checked', true);
+                    var radioName = (typeof key === 'string' && key.indexOf('item_') === 0) ? key : 'item_' + key;
+                    var numericVal = parseInt(val, 10);
+                    if (numericVal === 1 || numericVal === 2) {
+                        $('input[name="' + radioName + '"][value="' + numericVal + '"]').prop('checked', true);
+                    }
                 }
-            }
+            });
         }
 
         // Helper: disable semua radio (mode view)
@@ -740,7 +484,7 @@
             if (items) {
                 setRadioValues(items);
             }
-            disableRadios();
+            //disableRadios();
 
             $('#btnSubmitFamiliar').addClass('d-none');
             $('#btnGeneratePdfFromModalFam').removeClass('d-none');
