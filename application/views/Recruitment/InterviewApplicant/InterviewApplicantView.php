@@ -731,6 +731,10 @@ function passInterview(applicantId) {
                     return;
                 }
 
+                if (typeof tableDataInterviewCrew !== 'undefined' && tableDataInterviewCrew.ajax) {
+                    tableDataInterviewCrew.ajax.reload(null, false);
+                }
+
                 Swal.fire({
                     icon: "success",
                     title: "Berhasil",
@@ -861,6 +865,10 @@ function submitNotReff() {
 
                 $("#modalNotReff").modal("hide");
 
+                if (typeof tableDataInterviewCrew !== 'undefined' && tableDataInterviewCrew.ajax) {
+                    tableDataInterviewCrew.ajax.reload(null, false);
+                }
+
                 Swal.fire({
                     icon: "success",
                     title: "Berhasil",
@@ -927,13 +935,13 @@ function submitNotReff() {
             <table class="table table-bordered align-middle mb-0 sap-table" id="tableDataInterviewCrew" style="width:100%;">
                 <thead class="crew-header">
                     <tr>
-                        <th style="min-width:40px;" class="text-center">No</th>
-                        <th style="min-width:150px;">Seafarer <span class="filter-icon">☰</span></th>
-                        <th style="min-width:150px;">Position Applied & Cert <span class="filter-icon">☰</span></th>
+                        <th style="min-width:60px;" class="text-center">No</th>
+                        <th style="min-width:170px;">Seafarer <span class="filter-icon">☰</span></th>
+                        <th style="min-width:150px;">Position Applied<span class="filter-icon">☰</span></th>
                         <th style="min-width:100px;">Birth <span class="filter-icon">☰</span></th>
                         <th style="min-width:110px;">Phone <span class="filter-icon">☰</span></th>
-                        <th style="min-width:110px;">Apply Vessel Type <span class="filter-icon">☰</span></th>
-                        <th style="min-width:140px;">Experience <span class="filter-icon">☰</span></th>
+                        <th style="min-width:110px;">Vessel Type <span class="filter-icon">☰</span></th>
+                        <th style="min-width:130px;">Experience <span class="filter-icon">☰</span></th>
                         <th style="min-width:120px;">Foreign <span class="filter-icon">☰</span></th>
                         <th style="min-width:90px;text-align:right;">Last Salary</th>
                         <th style="min-width:110px;text-align:right;">Expected Salary</th>

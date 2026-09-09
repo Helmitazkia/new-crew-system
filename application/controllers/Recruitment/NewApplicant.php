@@ -15,7 +15,7 @@ class NewApplicant extends CI_Controller {
     {
         $data = array(
             'title' => 'New Applicant',
-            'active_menu' => 'new_applicant',
+			'active_menu' => 'general_recruitment',
 			'active_submenu' => 'new_applicant',
             'content' => 'Recruitment/NewApplicant/newApplicantView'
         );

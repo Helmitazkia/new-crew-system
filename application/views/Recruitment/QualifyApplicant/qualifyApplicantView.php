@@ -1279,6 +1279,10 @@ function interviewCrewQualify(el) {
 
                 $("#idLoadingSpinnerQualifiedCrew").fadeOut();
 
+                if (typeof tableDataQualifiedCrew !== 'undefined' && tableDataQualifiedCrew.ajax) {
+                    tableDataQualifiedCrew.ajax.reload(null, false);
+                }
+
                 window.copyInterviewData =
                     `Link Login:
                 ${response.link}
@@ -1430,6 +1434,10 @@ function submitNotQualifiedCrew() {
                 animateRemoveRow(row[0]);
             }
 
+            if (typeof tableDataQualifiedCrew !== 'undefined' && tableDataQualifiedCrew.ajax) {
+                tableDataQualifiedCrew.ajax.reload(null, false);
+            }
+
             Swal.fire({
                 icon: 'success',
                 title: 'Evaluation Saved',
@@ -1493,7 +1501,7 @@ function submitNotQualifiedCrew() {
             <table class="table table-bordered align-middle mb-0 sap-table" id="tableDataQualifiedCrew" style="width:100%;">
                 <thead class="crew-header">
                     <tr>
-                        <th style="min-width:40px;" class="text-center">No</th>
+                        <th style="min-width:60px;" class="text-center">No</th>
                         <th style="min-width:150px;">Seafarer <span class="filter-icon">☰</span></th>
                         <th style="min-width:150px;">Position Applied <span class="filter-icon">☰</span></th>
                         <th style="min-width:100px;">Birth <span class="filter-icon">☰</span></th>

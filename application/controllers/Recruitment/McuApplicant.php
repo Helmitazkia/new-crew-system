@@ -15,7 +15,7 @@ class McuApplicant extends CI_Controller {
     {
         $data = array(
             'title' => 'MCU Applicant',
-            'active_menu' => 'mcu_applicant',
+        	'active_menu' => 'general_recruitment',
 			'active_submenu' => 'mcu_applicant',
             'content' => 'Recruitment/McuApplicant/McuApplicantView',
         );

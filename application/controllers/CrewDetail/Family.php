@@ -165,8 +165,22 @@ public function saveChild() {
     
     if (empty($idfm)) {
         // CREATE NEW
-        // Generate ID (contoh: CH + timestamp + random)
-        $newId = 'CH' . date('YmdHis') . rand(100, 999);
+        // Generate ID: nomor urut (001, 002, dst) berdasarkan idperson
+        $this->db->select('idfm');
+        $this->db->where('idperson', $idperson);
+        $query = $this->db->get('tblfamily');
+        
+        $maxNumeric = 0;
+        if ($query->num_rows() > 0) {
+            foreach ($query->result() as $row) {
+                $numericVal = intval($row->idfm);
+                if ($numericVal > $maxNumeric) {
+                    $maxNumeric = $numericVal;
+                }
+            }
+        }
+        $newId = sprintf('%03d', $maxNumeric + 1);
+        
         $data['idfm'] = $newId;
         
         // Tambahkan field untuk create
@@ -192,6 +206,7 @@ public function saveChild() {
         //var_dump($data); // Debugging line to check data being updated
         
         $this->db->where('idfm', $idfm);
+        $this->db->where('idperson', $idperson); // Tambahan keamanan karena idfm berupa nomor urut
         $this->db->update('tblfamily', $data);
         $insertId = $idfm;
         

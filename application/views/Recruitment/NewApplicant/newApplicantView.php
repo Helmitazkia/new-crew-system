@@ -414,7 +414,7 @@ $(document).ready(function() {
                     const lastExp = (row.last_experience || '').replace(/'/g, "\\'");
                     const btnStyle = 'display:flex;align-items:center;justify-content:center;gap:5px;padding:5px 8px;font-size:11px;font-weight:500;border-radius:8px;cursor:pointer;transition:all .2s;width:calc(50% - 3px);white-space:nowrap;';
                     return `<div style="display:flex;flex-wrap:wrap;gap:5px;min-width:170px;">
-                        <a href="<?php echo base_url('detailApplicant/'); ?>${row.id}"
+                        <a href="${row.cv_url}" target="_blank"
                             style="${btnStyle}background:#f0f4ff;color:#2563eb;border:1px solid #c7d9ff;text-decoration:none;"
                             onmouseover="this.style.background='#2563eb';this.style.color='#fff'"
                             onmouseout="this.style.background='#f0f4ff';this.style.color='#2563eb'">
@@ -603,6 +603,10 @@ function deleteData(id, name) {
 
                 $("#idLoadingSpinner").fadeOut();
 
+                if (typeof tableDataReady !== 'undefined' && tableDataReady.ajax) {
+                    tableDataReady.ajax.reload(null, false);
+                }
+
                 Swal.fire({
                     title: "Deleted!",
                     text: "The applicant's data has been deleted.",
@@ -692,6 +696,10 @@ function QualifiedCrew(id, name) {
             success: function() {
 
                 $("#idLoadingSpinner").fadeOut();
+
+                if (typeof tableDataReady !== 'undefined' && tableDataReady.ajax) {
+                    tableDataReady.ajax.reload(null, false);
+                }
 
                 Swal.fire({
                     title: "Berhasil!",
@@ -980,6 +988,10 @@ function submitNotQualifiedLayer1() {
 
                     $('#modalNotQualifyLayer1').modal('hide');
 
+                    if (typeof tableDataReady !== 'undefined' && tableDataReady.ajax) {
+                        tableDataReady.ajax.reload(null, false);
+                    }
+
                     Swal.fire({
                         title: "Success!",
                         text: "Crew has been marked as Not Qualified.",
@@ -1206,6 +1218,10 @@ function notPositionCrew(id, name) {
             success: function(response) {
 
                 $("#idLoadingSpinner").fadeOut();
+
+                if (typeof tableDataReady !== 'undefined' && tableDataReady.ajax) {
+                    tableDataReady.ajax.reload(null, false);
+                }
 
                 Swal.fire({
                     icon: 'success',
