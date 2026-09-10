@@ -33,7 +33,7 @@ class PersonDetail extends CI_Controller {
         $optTax = $dataContext->getTaxByOption();
         $optBlood = $dataContext->getBloodType();
         $optSize= $dataContext->getUkuran();
-		$optVessel= $dataContext->getVesselType("");
+		$optVessel= $dataContext->getVesselTypeByOption("","name");
         $vesselname = $dataContext->getVesselByOption("","name","");
         $optRank = $dataContext->getMstRankByOptionWithSelected("","");
 
