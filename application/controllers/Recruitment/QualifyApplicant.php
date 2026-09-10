@@ -244,7 +244,7 @@ class QualifyApplicant extends CI_Controller {
 			'new_applicant'
 		);
 
-		$this->sendInterviewWithAccountNotification(
+		$mailStatus = $this->sendInterviewWithAccountNotification(
 			$app->email,
 			$app->fullname,
 			$username,
@@ -252,37 +252,46 @@ class QualifyApplicant extends CI_Controller {
 		);
 		
 		echo json_encode(array(
-			'status'   => 'success',
-			'message'  => 'Crew has been set for interview.',
-			'username' => $username,
-			'password' => $password,
-			'link'     => base_url('crewPortal')
+			'status'      => 'success',
+			'message'     => 'Crew has been set for interview.',
+			'username'    => $username,
+			'password'    => $password,
+			'link'        => base_url('crewPortal'),
+			'mail_status' => $mailStatus
 		));
 	}
 
 	function sendInterviewWithAccountNotification($recipientEmail, $fullName, $username, $password)
 	{
 		require_once APPPATH . 'third_party/PHPMailer/PHPMailer/class.phpmailer.php';
-		require_once APPPATH . 'third_party/PHPMailer/PHPMailer/class.smtp.php';
+        require_once APPPATH . 'third_party/PHPMailer/PHPMailer/class.smtp.php';
 
-		$mail = new PHPMailer();
+		//$mail = new PHPMailer();
 
 		try {
+			// $mail->isSMTP();
+			// $mail->Host       = 'smtp.zoho.com';
+			// $mail->SMTPAuth   = true;
+			// $mail->Username   = 'noreply@andhika.com';
+			// $mail->Password   = '6bi_FH_dxV26Sh';
+			// $mail->SMTPSecure = 'tls';
+			// $mail->Port       = 587;
+
+			$mail = new PHPMailer();
 			$mail->isSMTP();
-			$mail->Host       = 'smtp.zoho.com';
-			$mail->SMTPAuth   = true;
-			$mail->Username   = 'noreply@andhika.com';
-			$mail->Password   = 'PCWLzCWDQH8C';
-			$mail->SMTPSecure = 'tls';
-			$mail->Port       = 587;
+            $mail->Host       = 'smtp.zoho.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'noreply@andhika.com';
+            $mail->Password   = 'PCWLzCWDQH8C';
+            $mail->SMTPSecure = 'tls';
+            $mail->Port       = 587;
 
 			$mail->setFrom('noreply@andhika.com', 'Crewing PT Andhika Lines');
-			$mail->Sender = 'noreply@andhika.com';
 			$mail->addAddress($recipientEmail);
 
 			$mail->addBCC('andhikacrewing@gmail.com', 'Andhika Crewing');
 
-			$mail->AddEmbeddedImage(APPPATH . '../assets/img/logo_andhika.png', 'logo_andhika');
+			$mail->AddEmbeddedImage(FCPATH . 'assets/img/logo_andhika.png', 'logo_andhika');
 			
 			$mail->isHTML(true);
 			$mail->Subject = 'Konfirmasi Proses Tes dan Interview';
@@ -361,12 +370,15 @@ class QualifyApplicant extends CI_Controller {
 
 			if (!$mail->send()) {
 				log_message('error', 'Interview Email failed to ' . $recipientEmail . ': ' . $mail->ErrorInfo);
+				return 'Error: ' . $mail->ErrorInfo;
 			} else {
 				log_message('info', "Interview email sent to $recipientEmail");
+				return 'Sent';
 			}
 
 		} catch (Exception $e) {
 			log_message('error', 'Exception while sending Interview email: ' . $e->getMessage());
+			return 'Exception: ' . $e->getMessage();
 		}
 	}
 

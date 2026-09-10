@@ -1290,6 +1290,11 @@ function interviewCrewQualify(el) {
                 Username: ${response.username}
                 Password: ${response.password}`;
 
+                console.log("Email Status: ", response.mail_status);
+                if (response.mail_status !== 'Sent') {
+                    console.error("Failed to send email: ", response.mail_status);
+                }
+
                 Swal.fire({
                     title: 'Interview Set!',
                     html: `
