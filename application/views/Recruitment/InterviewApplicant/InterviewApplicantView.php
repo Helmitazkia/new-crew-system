@@ -540,7 +540,7 @@ $(document).ready(function() {
                     <div style="display:flex;flex-direction:column;gap:4px;">
                         <button style="border:1px solid #dee2e6;background:#fff;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;" onclick="window.open('${row.cv_url}','_blank')">📄 View CV</button>
                         <button style="background:#e6fcf5;border:1px solid #20c997;color:#087f5b;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;" onclick="passInterview('${row.id}')">✔ Qualified</button>
-                        <button style="background:#fff5f5;border:1px solid #ffa8a8;color:#c92a2a;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;" onclick="notQualifyInterview('${row.id}','<b><i>:: '+(row.fullname||'-')+' ::</i></b>')">✖ Not Qualified</button>
+                        <button style="background:#fff5f5;border:1px solid #ffa8a8;color:#c92a2a;font-size:12px;padding:5px;border-radius:4px;cursor:pointer;" onclick="notQualifyInterview('${row.id}')">✖ Not Qualified</button>
                     </div>`;
             }}
         ],
