@@ -13,10 +13,14 @@ class FamiliarReport extends CI_Controller {
     // -------------------------------------------------------------------
     private function _getActiveTopics()
     {
-        return $this->db->where('is_active', 1)
-                        ->order_by('order_no', 'ASC')
-                        ->order_by('id', 'ASC')
-                        ->get('mst_fam_topic')->result();
+        $this->db->select('t.*');
+        $this->db->from('mst_fam_topic t');
+        $this->db->join('mst_fam_department d', 'd.id = t.dept_id', 'left');
+        $this->db->where('t.is_active', 1);
+        $this->db->where('(d.is_active = 1 OR t.dept_id IS NULL OR t.dept_id = 0)', NULL, FALSE);
+        $this->db->order_by('t.order_no', 'ASC');
+        $this->db->order_by('t.id', 'ASC');
+        return $this->db->get()->result();
     }
 
     private function _getActiveDepartments()
@@ -478,11 +482,6 @@ class FamiliarReport extends CI_Controller {
 
         $this->_generate_links_for_batch($batch_id);
 
-        $links = $this->db->where('batch_id', $batch_id)
-                          ->where('is_active', 1)
-                          ->order_by('department', 'ASC')
-                          ->get('fam_public_links')->result();
-
         $result = array();
 
         // Link crew
@@ -490,26 +489,66 @@ class FamiliarReport extends CI_Controller {
         $crewFilled = $this->db->where('batch_id', $batch_id)->where('qr_crew IS NOT NULL', null, false)->where('qr_crew !=', '')->get('history_familiarization')->num_rows();
         $crewToken  = md5($batch_id . 'CREW_ALL_SECRET');
         $crewLink   = new stdClass();
-        $crewLink->department  = 'Semua Crew (Link Konfirmasi Bersama)';
-        $crewLink->url         = base_url('PublicFamiliar/crew_checklist?batch=' . $batch_id . '&token=' . $crewToken);
+        $crewLink->department   = 'Semua Crew (Link Konfirmasi Bersama)';
+        $crewLink->url          = base_url('PublicFamiliar/crew_checklist?batch=' . $batch_id . '&token=' . $crewToken);
         $crewLink->filled_count = $crewFilled;
         $crewLink->total_items  = $crewTotal;
         $crewLink->status       = ($crewFilled >= $crewTotal && $crewTotal > 0) ? 'completed' : ($crewFilled > 0 ? 'partial' : 'pending');
         $result[] = $crewLink;
 
-        // Load topics per dept dari mst_fam_topic
+        // Ambil daftar departemen aktif dari master (mst_fam_department WHERE is_active = 1)
+        $activeDepts = $this->_getActiveDepartments();
+        $activeDeptNames = array();
+        foreach ($activeDepts as $ad) {
+            $activeDeptNames[] = trim($ad->department_name);
+        }
+
+        // Hitung topics aktif per dept dari mst_fam_topic (hanya topic dengan is_active = 1)
         $topicsByDept = array();
         $topics = $this->_getActiveTopics();
         foreach ($topics as $t) {
-            if (!isset($topicsByDept[$t->dept_name])) $topicsByDept[$t->dept_name] = 0;
-            $topicsByDept[$t->dept_name]++;
+            if (!empty($t->dept_name)) {
+                $dn = trim($t->dept_name);
+                if (!isset($topicsByDept[$dn])) $topicsByDept[$dn] = 0;
+                $topicsByDept[$dn]++;
+            }
         }
 
-        foreach ($links as $link) {
-            $filled     = $this->db->where('batch_id', $batch_id)->where('department', $link->department)->get('fam_checklist_audit')->num_rows();
-            $totalItems = isset($topicsByDept[$link->department]) ? $topicsByDept[$link->department] : 0;
+        $links = $this->db->where('batch_id', $batch_id)
+                          ->where('is_active', 1)
+                          ->order_by('department', 'ASC')
+                          ->get('fam_public_links')->result();
 
-            $link->url         = base_url('PublicFamiliar/form/' . $link->token);
+        foreach ($links as $link) {
+            $deptNameTrim = trim($link->department);
+
+            // 1. Departemen harus aktif di mst_fam_department
+            $isActiveDept = false;
+            foreach ($activeDeptNames as $adName) {
+                if (strcasecmp($adName, $deptNameTrim) === 0) {
+                    $isActiveDept = true;
+                    break;
+                }
+            }
+            if (!$isActiveDept) {
+                continue;
+            }
+
+            // 2. Departemen harus memiliki minimal 1 topic aktif di mst_fam_topic
+            $totalItems = 0;
+            foreach ($topicsByDept as $dn => $cnt) {
+                if (strcasecmp($dn, $deptNameTrim) === 0) {
+                    $totalItems = $cnt;
+                    break;
+                }
+            }
+            if ($totalItems <= 0) {
+                continue;
+            }
+
+            $filled = $this->db->where('batch_id', $batch_id)->where('department', $link->department)->get('fam_checklist_audit')->num_rows();
+
+            $link->url          = base_url('PublicFamiliar/form/' . $link->token);
             $link->filled_count = $filled;
             $link->total_items  = $totalItems;
             $link->status       = ($filled >= $totalItems && $totalItems > 0) ? 'completed' : ($filled > 0 ? 'partial' : 'pending');
